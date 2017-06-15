@@ -12,7 +12,7 @@ import com.mongodb.client.MongoDatabase;
 
 /**
  *
- * @author luisa
+ * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class DBUtils {
 

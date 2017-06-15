@@ -21,4 +21,5 @@ public class Formato extends Entity {
         this.fecha = fecha;
     }
 
+    
 }

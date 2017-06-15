@@ -11,8 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * proveedor: esoft
- *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class DateUtils {
