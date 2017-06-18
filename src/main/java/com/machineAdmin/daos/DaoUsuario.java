@@ -5,16 +5,16 @@
  */
 package com.machineAdmin.daos;
 
-import com.machineAdmin.entities.business.Formato;
+import com.machineAdmin.entities.admin.Usuario;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoFormato extends DaoFacade<Formato> {
-
-    public DaoFormato() {
-        super("formatos", Formato.class);
-    }
+public class DaoUsuario extends DaoFacade<Usuario>{
     
+    public DaoUsuario() {
+        super("usuarios", Usuario.class);
+    }
+        
 }

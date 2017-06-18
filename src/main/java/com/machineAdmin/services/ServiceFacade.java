@@ -2,7 +2,7 @@ package com.machineAdmin.services;
 
 import com.machineAdmin.entities.Entity;
 import com.machineAdmin.managers.ManagerFacade;
-import com.machineAdmin.models.Response;
+import com.machineAdmin.models.responses.Response;
 import com.machineAdmin.models.enums.Status;
 import com.machineAdmin.utils.JWTUtil;
 import javax.ws.rs.Consumes;
@@ -36,17 +36,14 @@ public class ServiceFacade<T extends Entity> {
         Response response = new Response();
         if (JWTUtil.isTokenValid(token)) {
             try {
-                response.setBody(manager.findAll());
-                response.setMessage("Entidades encontradas");
+                response.setData(manager.findAll());
+                response.setDevMessage("Entidades encontradas");
             } catch (Exception e) {
                 response.setStatus(Status.ERROR);
-                response.setMessage(e.getMessage());
-                if (e.getCause() != null) {
-                    response.setMessage(e.getMessage() + e.getCause().getMessage());
-                }
+                setCauseMessage(response, e);
             }
         } else {
-            response.setMessage("Token inválido");
+            response.setDevMessage("Token inválido");
             response.setStatus(Status.WARNING);
         }
         return response;
@@ -58,7 +55,7 @@ public class ServiceFacade<T extends Entity> {
         Response response = new Response();
         if (JWTUtil.isTokenValid(token)) {
             try {
-                response.setBody(manager.find(id));
+                response.setData(manager.find(id));
                 response.setMessage("Entidad encontrada");
             } catch (Exception e) {
                 response.setStatus(Status.ERROR);
@@ -79,7 +76,7 @@ public class ServiceFacade<T extends Entity> {
         Response response = new Response();
         if (JWTUtil.isTokenValid(token)) {
             try {
-                response.setBody(manager.persist(t));
+                response.setData(manager.persist(t));
                 response.setMessage("Entidad persistida");
             } catch (Exception e) {
                 response.setStatus(Status.ERROR);
@@ -100,7 +97,7 @@ public class ServiceFacade<T extends Entity> {
         Response response = new Response();
         if (JWTUtil.isTokenValid(token)) {
             try {
-                response.setBody(manager.update(t));
+                response.setData(manager.update(t));
                 response.setMessage("Entidad actualizada");
             } catch (Exception e) {
                 response.setStatus(Status.ERROR);
@@ -121,7 +118,7 @@ public class ServiceFacade<T extends Entity> {
         Response response = new Response();
         if (JWTUtil.isTokenValid(token)) {
             try {
-                response.setBody(manager.delete(t));
+                response.setData(manager.delete(t));
                 response.setMessage("Entidad eliminada");
             } catch (Exception e) {
                 response.setStatus(Status.ERROR);
@@ -135,6 +132,13 @@ public class ServiceFacade<T extends Entity> {
             response.setStatus(Status.WARNING);
         }
         return response;
+    }
+
+    protected void setCauseMessage(Response response, Throwable e) {
+        response.setDevMessage(e.getMessage());
+        if (e.getCause() != null) {
+            setCauseMessage(response, e.getCause());
+        }
     }
 
 }

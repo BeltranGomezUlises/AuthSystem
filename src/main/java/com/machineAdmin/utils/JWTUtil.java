@@ -18,19 +18,20 @@ import java.time.Instant;
  */
 public class JWTUtil {
 
-    private static final Key key = MacProvider.generateKey();    
-
-    public static String generateToken() {
-        return Jwts.builder().setSubject(Instant.now().toString()).signWith(SignatureAlgorithm.HS512, key).compact();
+    private static final Key KEY = MacProvider.generateKey();    
+    private static final String STRING_KEY = "LLAVE ULTRA SECRETA";
+    
+    public static String generateToken() {        
+        return Jwts.builder().setSubject(Instant.now().toString()).signWith(SignatureAlgorithm.HS512, STRING_KEY).compact();
     }
 
     public static String getBodyToken(String token) {
-        return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token).getBody().getSubject();
     }
 
     public static boolean isTokenValid(String token) {
-        try {
-            Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+        try {            
+            Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token);
             return true;
         } catch (SignatureException e) {
             return false;

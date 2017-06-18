@@ -3,18 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.daos;
-
-import com.machineAdmin.entities.business.Formato;
+package com.machineAdmin.managers.exceptions;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoFormato extends DaoFacade<Formato> {
+public class UsuarioInexistenteException extends Exception{
 
-    public DaoFormato() {
-        super("formatos", Formato.class);
-    }
+        public UsuarioInexistenteException(String menssage) {
+            super(menssage);
+        }        
     
 }

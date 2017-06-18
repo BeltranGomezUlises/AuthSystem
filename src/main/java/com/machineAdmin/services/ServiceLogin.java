@@ -5,12 +5,14 @@
  */
 package com.machineAdmin.services;
 
-import com.machineAdmin.entities.Usuario;
-import com.machineAdmin.models.Response;
+import com.machineAdmin.entities.admin.Usuario;
+import com.machineAdmin.managers.ManagerUsuario;
+import com.machineAdmin.managers.exceptions.UsuarioInexistenteException;
+import com.machineAdmin.models.enums.Status;
+import com.machineAdmin.models.responses.Response;
 import com.machineAdmin.utils.JWTUtil;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -23,24 +25,50 @@ import javax.ws.rs.core.MediaType;
 @Path("/login")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class ServiceLogin{
-        
+public class ServiceLogin extends ServiceFacade<Usuario> {
+
+    public ServiceLogin() {
+        super(new ManagerUsuario());
+    }
+
     @GET
     @Path("/{usuario}/{contra}")
-    public Response login(@PathParam("usuario") String usuario, @PathParam("contra") String contra){
-        Response r = new Response();
-        r.setBody(JWTUtil.generateToken());
+    public Response login(@PathParam("usuario") String usuario, @PathParam("contra") String contra) {
+        Response r = new Response();        
+        ManagerUsuario managerUsuario = new ManagerUsuario();                
+        try {
+            r.setData(managerUsuario.Login(new Usuario(usuario, contra)));           
+            r.setMetaData(JWTUtil.generateToken());
+        } catch (UsuarioInexistenteException e) {
+            r.setStatus(Status.WARNING);
+            r.setMessage("Usuario y/o contraseña incorrecto");
+            setCauseMessage(r, e);
+        } catch (Exception ex){
+            r.setStatus(Status.ERROR);            
+            setCauseMessage(r, ex);
+        }       
         return r;
     }
+
+    @Override
+    public Response delete(String token, Usuario t) {
+        return super.delete(token, t); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Response put(String token, Usuario t) {
+        return super.put(token, t); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Response post(String token, Usuario t) {
+        return super.post(token, t); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Response get(String token, String id) {
+        return super.get(token, id); //To change body of generated methods, choose Tools | Templates.
+    }
     
-    @GET
-    @Path("/token")
-    public Response login(@HeaderParam("Authorization") String token){
-        Response r = new Response();
-        if (JWTUtil.isTokenValid(token)) {
-            r.setBody(JWTUtil.getBodyToken(token));
-        }        
-        return r;
-    }     
     
 }

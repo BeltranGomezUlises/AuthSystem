@@ -5,10 +5,10 @@
  */
 package com.machineAdmin.services;
 
-import com.machineAdmin.entities.Formato;
+import com.machineAdmin.entities.business.Formato;
 import com.machineAdmin.managers.ManagerFormato;
 import com.machineAdmin.models.filters.FilterFormato;
-import com.machineAdmin.models.Response;
+import com.machineAdmin.models.responses.Response;
 import com.machineAdmin.models.enums.Status;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -31,7 +31,7 @@ public class ServiceFormato extends ServiceFacade<Formato> {
         Response response = new Response();
         try {
             ManagerFormato myManager = new ManagerFormato();
-            response.setBody(myManager.findAll(f));
+            response.setData(myManager.findAll(f));
             response.setMessage("Formatos encontrados con filtro");
         } catch (Exception e) {
             response.setStatus(Status.ERROR);
@@ -40,4 +40,35 @@ public class ServiceFormato extends ServiceFacade<Formato> {
         return response;
     }  
 
+    @Override
+    protected void setCauseMessage(Response response, Throwable e) {
+        super.setCauseMessage(response, e); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Response delete(String token, Formato t) {
+        return super.delete(token, t); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Response put(String token, Formato t) {
+        return super.put(token, t); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Response post(String token, Formato t) {
+        return super.post(token, t); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Response get(String token, String id) {
+        return super.get(token, id); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Response get(String token) {
+        return super.get(token); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
 }

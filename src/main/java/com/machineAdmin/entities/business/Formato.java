@@ -1,5 +1,6 @@
-package com.machineAdmin.entities;
+package com.machineAdmin.entities.business;
 
+import com.machineAdmin.entities.Entity;
 import java.util.Date;
 
 /**

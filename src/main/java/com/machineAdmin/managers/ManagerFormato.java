@@ -6,7 +6,7 @@
 package com.machineAdmin.managers;
 
 import com.machineAdmin.daos.DaoFormato;
-import com.machineAdmin.entities.Formato;
+import com.machineAdmin.entities.business.Formato;
 import com.machineAdmin.models.enums.Pagado;
 import com.machineAdmin.models.filters.FilterFormato;
 import java.util.List;
@@ -40,7 +40,7 @@ public class ManagerFormato extends ManagerFacade<Formato> {
             } else {
                 query.all("pagado", false);
             }
-        }
+        }        
         return dao.findAll(query);
     }
 }

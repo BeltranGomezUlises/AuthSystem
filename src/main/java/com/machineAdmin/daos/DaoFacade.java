@@ -51,10 +51,14 @@ public abstract class DaoFacade<T extends Entity> {
         return coll.update(query, t);
     }
        
-    public T find(Object id){
+    public T find(Object id){        
         return coll.findOneById(id.toString());
     }
     
+    public T find(Query query){        
+        return coll.findOne(query);
+    }
+        
     public List<T> findAll(){
         return coll.find().toArray();
     }

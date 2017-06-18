@@ -1,13 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package com.machineAdmin.entities;
+package com.machineAdmin.entities.admin;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.machineAdmin.entities.Entity;
 import java.util.Objects;
-import org.mongojack.ObjectId;
 
 /**
  *
@@ -17,7 +12,9 @@ public class Usuario extends Entity {
 
     private String usuario;
     private String correo;
+    @JsonIgnore
     private String contraseña;
+    private Object permisos;
 
     public Usuario() {
     }
@@ -31,15 +28,7 @@ public class Usuario extends Entity {
         this.usuario = usuario;
         this.correo = correo;
         this.contraseña = contraseña;
-    }
-
-    public String getNombre() {
-        return usuario;
-    }
-
-    public void setNombre(String nombre) {
-        this.usuario = nombre;
-    }
+    }   
 
     public String getCorreo() {
         return correo;
@@ -55,6 +44,22 @@ public class Usuario extends Entity {
 
     public void setContraseña(String contraseña) {
         this.contraseña = contraseña;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public Object getPermisos() {
+        return permisos;
+    }
+
+    public void setPermisos(Object permisos) {
+        this.permisos = permisos;
     }
 
     @Override

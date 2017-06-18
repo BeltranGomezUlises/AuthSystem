@@ -8,6 +8,7 @@ package com.machineAdmin.managers;
 import com.machineAdmin.daos.DaoFacade;
 import com.machineAdmin.entities.Entity;
 import java.util.List;
+import org.mongojack.DBQuery.Query;
 import org.mongojack.WriteResult;
 
 /**
@@ -38,8 +39,28 @@ public class ManagerFacade<T extends Entity> {
     public T find(String id){
         return (T) dao.find(id);
     }
+    
+    public T find(Query query){
+        return (T) dao.find(query);
+    }
+    
     public List<T> findAll() {        
         return dao.findAll();
     }         
 
+    public List<T> findAll(int max){        
+        return dao.findAll(max);
+    }       
+    
+    public List<T> findAll(Query query){
+        return dao.findAll(query);
+    }
+    
+    public List<T> findAll(Query query, int max){
+        return dao.findAll(query, max);
+    }
+    
+    public long count(){
+        return dao.count();
+    }
 }
