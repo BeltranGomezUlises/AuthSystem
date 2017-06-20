@@ -1,7 +1,7 @@
 package com.machineAdmin.daos;
 
 import com.machineAdmin.entities.Entity;
-import com.machineAdmin.utils.DBUtils;
+import com.machineAdmin.utils.UtilsDB;
 import java.util.List;
 import org.mongojack.DBQuery.Query;
 import org.mongojack.JacksonDBCollection;
@@ -20,7 +20,7 @@ public abstract class DaoFacade<T extends Entity> {
 
     protected DaoFacade(String collectionName, Class<T> clazz) {
         this.collectionName = collectionName;
-        this.coll = JacksonDBCollection.wrap(DBUtils.getCollection(collectionName), clazz, String.class);
+        this.coll = JacksonDBCollection.wrap(UtilsDB.getCollection(collectionName), clazz, String.class);
     }                
     
     public JacksonDBCollection<T,String> getCollection(){

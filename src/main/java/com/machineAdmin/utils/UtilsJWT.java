@@ -16,7 +16,7 @@ import java.time.Instant;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class JWTUtil {
+public class UtilsJWT {
 
     private static final Key KEY = MacProvider.generateKey();    
     private static final String STRING_KEY = "LLAVE ULTRA SECRETA";

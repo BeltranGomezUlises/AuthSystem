@@ -14,7 +14,7 @@ import com.mongodb.client.MongoDatabase;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DBUtils {
+public class UtilsDB {
 
     //<editor-fold defaultstate="collapsed" desc="DESCRIPTION">
     /**

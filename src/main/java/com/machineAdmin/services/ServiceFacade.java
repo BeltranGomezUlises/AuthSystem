@@ -1,10 +1,15 @@
 package com.machineAdmin.services;
 
 import com.machineAdmin.entities.Entity;
+import com.machineAdmin.entities.admin.Usuario;
 import com.machineAdmin.managers.ManagerFacade;
 import com.machineAdmin.models.responses.Response;
 import com.machineAdmin.models.enums.Status;
-import com.machineAdmin.utils.JWTUtil;
+import com.machineAdmin.utils.UtilsJWT;
+import com.machineAdmin.utils.UtilsJson;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -34,7 +39,7 @@ public class ServiceFacade<T extends Entity> {
     @GET
     public Response get(@HeaderParam("Authorization") String token) {
         Response response = new Response();
-        if (JWTUtil.isTokenValid(token)) {
+        if (UtilsJWT.isTokenValid(token)) {
             try {
                 response.setData(manager.findAll());
                 response.setDevMessage("Entidades encontradas");
@@ -53,16 +58,13 @@ public class ServiceFacade<T extends Entity> {
     @Path("/{id}")
     public Response get(@HeaderParam("Authorization") String token, @PathParam("id") String id) {
         Response response = new Response();
-        if (JWTUtil.isTokenValid(token)) {
+        if (UtilsJWT.isTokenValid(token)) {
             try {
                 response.setData(manager.find(id));
                 response.setMessage("Entidad encontrada");
             } catch (Exception e) {
                 response.setStatus(Status.ERROR);
-                response.setMessage(e.getMessage());
-                if (e.getCause() != null) {
-                    response.setMessage(e.getMessage() + e.getCause().getMessage());
-                }
+                setCauseMessage(response, e);
             }
         } else {
             response.setMessage("Token inválido");
@@ -74,16 +76,13 @@ public class ServiceFacade<T extends Entity> {
     @POST
     public Response post(@HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
-        if (JWTUtil.isTokenValid(token)) {
+        if (UtilsJWT.isTokenValid(token)) {
             try {
                 response.setData(manager.persist(t));
                 response.setMessage("Entidad persistida");
             } catch (Exception e) {
                 response.setStatus(Status.ERROR);
-                response.setMessage(e.getMessage());
-                if (e.getCause() != null) {
-                    response.setMessage(e.getMessage() + e.getCause().getMessage());
-                }
+                setCauseMessage(response, e);
             }
         } else {
             response.setMessage("Token inválido");
@@ -95,16 +94,13 @@ public class ServiceFacade<T extends Entity> {
     @PUT
     public Response put(@HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
-        if (JWTUtil.isTokenValid(token)) {
+        if (UtilsJWT.isTokenValid(token)) {
             try {
                 response.setData(manager.update(t));
                 response.setMessage("Entidad actualizada");
             } catch (Exception e) {
                 response.setStatus(Status.ERROR);
-                response.setMessage(e.getMessage());
-                if (e.getCause() != null) {
-                    response.setMessage(e.getMessage() + e.getCause().getMessage());
-                }
+                setCauseMessage(response, e);
             }
         } else {
             response.setMessage("Token inválido");
@@ -116,16 +112,13 @@ public class ServiceFacade<T extends Entity> {
     @DELETE
     public Response delete(@HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
-        if (JWTUtil.isTokenValid(token)) {
+        if (UtilsJWT.isTokenValid(token)) {
             try {
                 response.setData(manager.delete(t));
                 response.setMessage("Entidad eliminada");
             } catch (Exception e) {
                 response.setStatus(Status.ERROR);
-                response.setMessage(e.getMessage());
-                if (e.getCause() != null) {
-                    response.setMessage(e.getMessage() + e.getCause().getMessage());
-                }
+                setCauseMessage(response, e);
             }
         } else {
             response.setMessage("Token inválido");
@@ -140,5 +133,5 @@ public class ServiceFacade<T extends Entity> {
             setCauseMessage(response, e.getCause());
         }
     }
-
+    
 }

@@ -7,19 +7,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DateUtils {
+public class UtilsDate {
 
     private static final SimpleDateFormat SDF = new SimpleDateFormat("d/MM/yyyy");
     private static final SimpleDateFormat SDFHM = new SimpleDateFormat("HH:mm");
     private static final SimpleDateFormat SDFNDOW = new SimpleDateFormat("EEEE");
     private static final SimpleDateFormat SDFFULL = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSX");
-
+    private static final SimpleDateFormat SDFUTC = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    
     //Sumatoria de tiempo en formato HH:mm
     public static String sumatoriaDeTiempos(List<String> tiempos) {
         String res = "";
@@ -36,21 +38,25 @@ public class DateUtils {
 
             res = sdfh.format(cal.getTime());
         } catch (ParseException ex) {
-            Logger.getLogger(DateUtils.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UtilsDate.class.getName()).log(Level.SEVERE, null, ex);
         }
         return res;
     }
 
-    public static SimpleDateFormat sdf() {
-        return SDF;
+    public static String sdf(Date date) {
+        return SDF.format(date);
     }
 
-    public static SimpleDateFormat sdfhm() {
-        return SDFHM;
+    public static String sdfHM(Date date) {
+        return SDFHM.format(date);
     }
     
-    public static SimpleDateFormat sdffull(){
-        return SDFFULL;
+    public static String sdfFull(Date date){
+        return SDFFULL.format(date);
+    }
+    
+    public static String sdfUTC(Date date){
+        return SDFUTC.format(date);
     }
 
     public static String nameDayOfWeek(String date, String DateFormat) throws ParseException {

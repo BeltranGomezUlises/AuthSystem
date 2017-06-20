@@ -10,7 +10,9 @@ import com.machineAdmin.managers.ManagerUsuario;
 import com.machineAdmin.managers.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.enums.Status;
 import com.machineAdmin.models.responses.Response;
-import com.machineAdmin.utils.JWTUtil;
+import com.machineAdmin.utils.UtilsDate;
+import com.machineAdmin.utils.UtilsJWT;
+import java.util.Date;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -38,7 +40,7 @@ public class ServiceLogin extends ServiceFacade<Usuario> {
         ManagerUsuario managerUsuario = new ManagerUsuario();                
         try {
             r.setData(managerUsuario.Login(new Usuario(usuario, contra)));           
-            r.setMetaData(JWTUtil.generateToken());
+            r.setMetaData(UtilsJWT.generateToken());
         } catch (UsuarioInexistenteException e) {
             r.setStatus(Status.WARNING);
             r.setMessage("Usuario y/o contraseña incorrecto");
@@ -70,5 +72,14 @@ public class ServiceLogin extends ServiceFacade<Usuario> {
         return super.get(token, id); //To change body of generated methods, choose Tools | Templates.
     }
     
-    
+    @GET
+    @Path("/test")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Object test(){
+        String fecha = UtilsDate.sdfUTC(new Date());
+        String fecha2 = UtilsDate.sdf(new Date());
+        String fecha3 = UtilsDate.sdfHM(new Date());
+        String fecha4 = UtilsDate.sdfFull(new Date());
+        return fecha;
+    }
 }

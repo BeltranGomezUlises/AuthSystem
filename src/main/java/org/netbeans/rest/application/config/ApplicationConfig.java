@@ -24,6 +24,7 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(com.machineAdmin.services.ServiceCommons.class);
         resources.add(com.machineAdmin.services.ServiceFacade.class);
         resources.add(com.machineAdmin.services.ServiceFormato.class);
         resources.add(com.machineAdmin.services.ServiceLogin.class);
