@@ -1,6 +1,6 @@
-package com.machineAdmin.daos;
+package com.machineAdmin.daos.cg;
 
-import com.machineAdmin.entities.Entity;
+import com.machineAdmin.entities.cg.Entity;
 import com.machineAdmin.utils.UtilsDB;
 import java.util.List;
 import org.mongojack.DBQuery.Query;
@@ -15,8 +15,8 @@ import org.mongojack.WriteResult;
  */
 public abstract class DaoFacade<T extends Entity> {
         
-    private final String collectionName;
-    JacksonDBCollection<T, String> coll;
+    protected final String collectionName;
+    protected JacksonDBCollection<T, String> coll;
 
     protected DaoFacade(String collectionName, Class<T> clazz) {
         this.collectionName = collectionName;

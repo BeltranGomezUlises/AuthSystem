@@ -5,9 +5,10 @@
  */
 package com.machineAdmin.managers;
 
+import com.machineAdmin.managers.cg.exceptions.ManagerFacade;
 import com.machineAdmin.daos.DaoUsuario;
-import com.machineAdmin.entities.admin.Usuario;
-import com.machineAdmin.managers.exceptions.UsuarioInexistenteException;
+import com.machineAdmin.entities.business.Usuario;
+import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import org.mongojack.DBQuery;
 import org.mongojack.DBQuery.Query;
 

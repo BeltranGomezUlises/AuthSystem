@@ -5,11 +5,12 @@
  */
 package com.machineAdmin.services;
 
+import com.machineAdmin.services.cg.ServiceFacade;
 import com.machineAdmin.entities.business.Formato;
 import com.machineAdmin.managers.ManagerFormato;
 import com.machineAdmin.models.filters.FilterFormato;
-import com.machineAdmin.models.responses.Response;
-import com.machineAdmin.models.enums.Status;
+import com.machineAdmin.models.cg.enums.responses.Response;
+import com.machineAdmin.models.cg.enums.Status;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -39,12 +40,7 @@ public class ServiceFormato extends ServiceFacade<Formato> {
         }
         return response;
     }  
-
-    @Override
-    protected void setCauseMessage(Response response, Throwable e) {
-        super.setCauseMessage(response, e); //To change body of generated methods, choose Tools | Templates.
-    }
-
+ 
     @Override
     public Response delete(String token, Formato t) {
         return super.delete(token, t); //To change body of generated methods, choose Tools | Templates.

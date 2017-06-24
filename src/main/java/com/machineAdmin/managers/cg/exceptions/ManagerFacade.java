@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.managers;
+package com.machineAdmin.managers.cg.exceptions;
 
-import com.machineAdmin.daos.DaoFacade;
-import com.machineAdmin.entities.Entity;
+import com.machineAdmin.daos.cg.DaoFacade;
+import com.machineAdmin.entities.cg.Entity;
 import java.util.List;
 import org.mongojack.DBQuery.Query;
 import org.mongojack.WriteResult;
@@ -18,7 +18,7 @@ import org.mongojack.WriteResult;
  */
 public class ManagerFacade<T extends Entity> {
 
-    DaoFacade dao;
+    protected DaoFacade dao;
 
     public ManagerFacade(DaoFacade dao) {
         this.dao = dao;

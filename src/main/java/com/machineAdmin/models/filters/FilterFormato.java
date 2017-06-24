@@ -5,7 +5,7 @@
  */
 package com.machineAdmin.models.filters;
 
-import com.machineAdmin.models.enums.Pagado;
+import com.machineAdmin.models.cg.enums.Pagado;
 
 /**
  *

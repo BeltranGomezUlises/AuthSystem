@@ -7,7 +7,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -198,4 +197,18 @@ public class UtilsDate {
         return res;
     }
 
+    
+     public static class DateClass {
+
+        private final Date date;
+
+        public Date getDate() {
+            return date;
+        }
+        
+        public DateClass() {
+            this.date = new Date();
+        }
+    }
+     
 }

@@ -5,9 +5,10 @@
  */
 package com.machineAdmin.managers;
 
+import com.machineAdmin.managers.cg.exceptions.ManagerFacade;
 import com.machineAdmin.daos.DaoFormato;
 import com.machineAdmin.entities.business.Formato;
-import com.machineAdmin.models.enums.Pagado;
+import com.machineAdmin.models.cg.enums.Pagado;
 import com.machineAdmin.models.filters.FilterFormato;
 import java.util.List;
 import org.mongojack.DBQuery;

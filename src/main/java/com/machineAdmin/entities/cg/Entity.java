@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.entities;
+package com.machineAdmin.entities.cg;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.mongojack.ObjectId;

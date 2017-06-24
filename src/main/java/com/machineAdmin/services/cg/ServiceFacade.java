@@ -1,15 +1,10 @@
-package com.machineAdmin.services;
+package com.machineAdmin.services.cg;
 
-import com.machineAdmin.entities.Entity;
-import com.machineAdmin.entities.admin.Usuario;
-import com.machineAdmin.managers.ManagerFacade;
-import com.machineAdmin.models.responses.Response;
-import com.machineAdmin.models.enums.Status;
+import com.machineAdmin.entities.cg.Entity;
+import com.machineAdmin.managers.cg.exceptions.ManagerFacade;
+import com.machineAdmin.models.cg.enums.responses.Response;
+import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.utils.UtilsJWT;
-import com.machineAdmin.utils.UtilsJson;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -127,8 +122,8 @@ public class ServiceFacade<T extends Entity> {
         return response;
     }
 
-    protected void setCauseMessage(Response response, Throwable e) {
-        response.setDevMessage(e.getMessage());
+    protected final void setCauseMessage(Response response, Throwable e) {
+        response.setDevMessage(response.getMeta().getDevMessage() + " CAUSE:" + e.getMessage());
         if (e.getCause() != null) {
             setCauseMessage(response, e.getCause());
         }

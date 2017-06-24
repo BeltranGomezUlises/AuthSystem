@@ -5,6 +5,7 @@
  */
 package com.machineAdmin.daos;
 
+import com.machineAdmin.daos.cg.DaoFacade;
 import com.machineAdmin.entities.business.Formato;
 
 /**

@@ -1,7 +1,7 @@
-package com.machineAdmin.entities.admin;
+package com.machineAdmin.entities.business;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.machineAdmin.entities.Entity;
+import com.machineAdmin.entities.cg.Entity;
 import java.util.Objects;
 
 /**

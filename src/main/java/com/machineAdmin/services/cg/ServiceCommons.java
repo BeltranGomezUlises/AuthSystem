@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.services;
+package com.machineAdmin.services.cg;
 
-import java.util.Date;
+import com.machineAdmin.utils.UtilsDate.DateClass;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -19,12 +19,12 @@ import javax.ws.rs.core.MediaType;
 @Path("/commons")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class ServiceCommons{
-    
+public class ServiceCommons {
+
     @GET
-    @Path("/serverDate")    
-    public Date serverDate(){
-        return new Date();
+    @Path("/serverDate")
+    public DateClass serverDate() {
+        return new DateClass();
     }
-    
+
 }

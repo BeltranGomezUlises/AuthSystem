@@ -5,7 +5,8 @@
  */
 package com.machineAdmin.daos;
 
-import com.machineAdmin.entities.admin.Usuario;
+import com.machineAdmin.daos.cg.DaoFacade;
+import com.machineAdmin.entities.business.Usuario;
 
 /**
  *

@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.models.enums;
+package com.machineAdmin.models.cg.enums;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public enum Status {
-    OK,ERROR,WARNING
+public enum Pagado {
+    PAGADO, NO_PAGADO, TODOS
 }
