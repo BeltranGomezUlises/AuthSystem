@@ -10,7 +10,10 @@ import com.machineAdmin.managers.ManagerUsuario;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.enums.responses.Response;
+import com.machineAdmin.utils.UtilsSecurity;
 import com.machineAdmin.utils.UtilsJWT;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -43,6 +46,21 @@ public class ServiceLogin {
             r.setStatus(Status.ERROR);            
             r.setDevMessage("imposible inicio de sesión, por: " + ex.getMessage());
         }       
+        return r;
+    }
+    
+    @GET
+    @Path("/pass/{test}")
+    public Response ecnript(@PathParam("test") String text){
+        Response r = new Response();
+        r.setMessage(UtilsSecurity.Encriptar(text));
+        try {
+            r.setDevMessage(UtilsSecurity.Desencriptar(r.getMeta().getMessage()));
+        } catch (Exception ex) {
+            Logger.getLogger(ServiceLogin.class.getName()).log(Level.SEVERE, null, ex);
+            r.setDevMessage("imposible desencriptar");
+        }
+        
         return r;
     }
        

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.daos.cg;
+package com.machineAdmin.managers.cg;
 
 import com.machineAdmin.entities.cg.Entity;
 import java.util.List;
@@ -11,10 +11,9 @@ import java.util.List;
 /**
  *
  * @author ulises
- * @param <T>
- * @param <Entity>
+ * @param <T> class entity used to restrict the class of use
  */
-public interface DaoFacade<T extends Entity> {
+public interface ManagerFacade<T extends Entity> {
     
     public T persist(T entity);
     
@@ -36,6 +35,6 @@ public interface DaoFacade<T extends Entity> {
     
     public List<T> findAll(int max);
     
-    public long count();
+    public long count();        
     
 }

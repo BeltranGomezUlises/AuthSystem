@@ -1,14 +1,14 @@
 package com.machineAdmin.entities.business;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.machineAdmin.entities.cg.Entity;
+import com.machineAdmin.entities.cg.EntityMongo;
 import java.util.Objects;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class Usuario extends Entity {
+public class Usuario extends EntityMongo {
 
     private String usuario;
     private String correo;

@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.entities.cg;
+package com.machineAdmin.managers.cg;
 
 /**
  *
  * @author ulises
  */
-public interface Entity {
+public class ManagerSQLFacade {
     
 }

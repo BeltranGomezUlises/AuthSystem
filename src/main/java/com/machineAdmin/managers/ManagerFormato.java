@@ -5,8 +5,6 @@
  */
 package com.machineAdmin.managers;
 
-import com.machineAdmin.managers.cg.exceptions.ManagerFacade;
-import com.machineAdmin.daos.DaoFormato;
 import com.machineAdmin.entities.business.Formato;
 import com.machineAdmin.models.cg.enums.Pagado;
 import com.machineAdmin.models.filters.FilterFormato;
@@ -18,30 +16,27 @@ import org.mongojack.DBQuery.Query;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerFormato extends ManagerFacade<Formato> {
+public class ManagerFormato {
 
-    public ManagerFormato() {
-        super(new DaoFormato());
-    }
-
-    public List<Formato> findAll(FilterFormato f) {
-        Query query = DBQuery.exists("_id");
-        if (f.getEncargado() != null) {
-            query.all("encargado", f.getEncargado());
-        }
-        if (f.getSucursal() != null) {
-            query.all("sucursal", f.getSucursal());
-        }
-        if (f.getTurno() != null) {
-            query.all("turno", f.getTurno());
-        }
-        if (f.getPagado() != Pagado.TODOS) {
-            if (f.getPagado() == Pagado.PAGADO) {
-                query.all("pagado", true);
-            } else {
-                query.all("pagado", false);
-            }
-        }        
-        return dao.findAll(query);
-    }
+    
+//    public List<Formato> findAll(FilterFormato f) {
+//        Query query = DBQuery.exists("_id");
+//        if (f.getEncargado() != null) {
+//            query.all("encargado", f.getEncargado());
+//        }
+//        if (f.getSucursal() != null) {
+//            query.all("sucursal", f.getSucursal());
+//        }
+//        if (f.getTurno() != null) {
+//            query.all("turno", f.getTurno());
+//        }
+//        if (f.getPagado() != Pagado.TODOS) {
+//            if (f.getPagado() == Pagado.PAGADO) {
+//                query.all("pagado", true);
+//            } else {
+//                query.all("pagado", false);
+//            }
+//        }        
+//        return dao.findAll(query);
+//    }
 }

@@ -5,7 +5,7 @@
  */
 package com.machineAdmin.managers;
 
-import com.machineAdmin.managers.cg.exceptions.ManagerFacade;
+import com.machineAdmin.managers.cg.ManagerMongoFacade;
 import com.machineAdmin.daos.DaoUsuario;
 import com.machineAdmin.entities.business.Usuario;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
@@ -16,7 +16,7 @@ import org.mongojack.DBQuery.Query;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerUsuario extends ManagerFacade<Usuario> {
+public class ManagerUsuario extends ManagerMongoFacade<Usuario> {
     
     public ManagerUsuario() {
         super(new DaoUsuario());
@@ -26,7 +26,7 @@ public class ManagerUsuario extends ManagerFacade<Usuario> {
         Query q = DBQuery.exists("_id");
         q.is("usuario", usuario.getUsuario());
         q.is("contraseña", usuario.getContraseña());
-        Usuario loged= this.find(q);
+        Usuario loged= this.findOne(q);
         if (loged != null) {
             return loged;
         }else{

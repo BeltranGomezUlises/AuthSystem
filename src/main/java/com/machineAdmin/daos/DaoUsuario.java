@@ -5,17 +5,17 @@
  */
 package com.machineAdmin.daos;
 
-import com.machineAdmin.daos.cg.DaoFacade;
+import com.machineAdmin.daos.cg.DaoMongoFacade;
 import com.machineAdmin.entities.business.Usuario;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoUsuario extends DaoFacade<Usuario>{
-    
+public class DaoUsuario extends DaoMongoFacade{
+
     public DaoUsuario() {
         super("usuarios", Usuario.class);
     }
-        
+                
 }

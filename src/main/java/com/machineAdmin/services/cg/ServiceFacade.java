@@ -1,7 +1,9 @@
 package com.machineAdmin.services.cg;
 
 import com.machineAdmin.entities.cg.Entity;
-import com.machineAdmin.managers.cg.exceptions.ManagerFacade;
+import com.machineAdmin.entities.cg.EntityMongo;
+import com.machineAdmin.managers.cg.ManagerFacade;
+import com.machineAdmin.managers.cg.ManagerMongoFacade;
 import com.machineAdmin.models.cg.enums.responses.Response;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.utils.UtilsJWT;
@@ -55,7 +57,7 @@ public class ServiceFacade<T extends Entity> {
         Response response = new Response();
         if (UtilsJWT.isTokenValid(token)) {
             try {
-                response.setData(manager.find(id));
+                response.setData(manager.findOne(id));
                 response.setMessage("Entidad encontrada");
             } catch (Exception e) {
                 response.setStatus(Status.ERROR);

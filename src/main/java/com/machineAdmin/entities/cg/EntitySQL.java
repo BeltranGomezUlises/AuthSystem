@@ -9,6 +9,6 @@ package com.machineAdmin.entities.cg;
  *
  * @author ulises
  */
-public interface Entity {
+public class EntitySQL implements Entity{
     
 }

@@ -5,17 +5,15 @@
  */
 package com.machineAdmin.daos;
 
-import com.machineAdmin.daos.cg.DaoFacade;
+import com.machineAdmin.daos.cg.DaoSQLFacade;
 import com.machineAdmin.entities.business.Formato;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoFormato extends DaoFacade<Formato> {
+public class DaoFormato extends DaoSQLFacade {
 
-    public DaoFormato() {
-        super("formatos", Formato.class);
-    }
+    
     
 }

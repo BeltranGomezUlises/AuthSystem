@@ -1,13 +1,13 @@
 package com.machineAdmin.entities.business;
 
-import com.machineAdmin.entities.cg.Entity;
-import java.util.Date;
+import com.machineAdmin.entities.cg.EntityMongo;
+import com.machineAdmin.entities.cg.EntitySQL;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class Formato extends Entity {
+public class Formato extends EntitySQL {
 
     private String fecha;
 

@@ -18,7 +18,10 @@ import java.time.Instant;
  */
 public class UtilsJWT {
 
+    //llave de encriptacion generada por instancia
     private static final Key KEY = MacProvider.generateKey();    
+    
+    //llave de encriptacion por text
     private static final String STRING_KEY = "LLAVE ULTRA SECRETA";
     
     public static String generateToken() {        
@@ -31,9 +34,10 @@ public class UtilsJWT {
 
     public static boolean isTokenValid(String token) {
         try {            
-            Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token);
+            //si no es un token valido lanzará SignaturaException
+            Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token); 
             return true;
-        } catch (SignatureException e) {
+        } catch (SignatureException | IllegalArgumentException e) {
             return false;
         }
     }
