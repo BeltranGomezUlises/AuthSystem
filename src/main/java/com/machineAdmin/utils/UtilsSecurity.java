@@ -5,11 +5,18 @@
  */
 package com.machineAdmin.utils;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -17,20 +24,43 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base64;
+
 /**
  *
  * @author ulises
  */
 public class UtilsSecurity {
 
-    private static final String secretStringKey = "secrect ultra private string key";
-    
-    public static String Encriptar(String texto) {        
+    private static final String SECRET_MD5_KEY = "secrect ultra private string key";
+
+    private static KeyPairGenerator keyGen;
+    private static KeyPair clavesRSA;
+    private static PrivateKey clavePrivada;
+    private static PublicKey clavePublica;
+
+    static {
+        try {
+            //Creación y obtención del par de claves
+            keyGen = KeyPairGenerator.getInstance("RSA");
+            keyGen.initialize(512);//tamaño de la clave            
+            clavesRSA = keyGen.generateKeyPair();
+
+            //Clave privada
+            clavePrivada = clavesRSA.getPrivate();
+
+            //Clave pública
+            clavePublica = clavesRSA.getPublic();
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(UtilsSecurity.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static String cifrarMD5(String texto) {
         String base64EncryptedString = "";
         try {
 
             MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] digestOfPassword = md.digest(secretStringKey.getBytes("utf-8"));
+            byte[] digestOfPassword = md.digest(SECRET_MD5_KEY.getBytes("utf-8"));
             byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
 
             SecretKey key = new SecretKeySpec(keyBytes, "DESede");
@@ -47,13 +77,13 @@ public class UtilsSecurity {
         return base64EncryptedString;
     }
 
-    public static String Desencriptar(String textoEncriptado) throws Exception{       
+    public static String decifrarMD5(String textoEncriptado) throws Exception {
         String base64EncryptedString = "";
 
         try {
             byte[] message = Base64.decodeBase64(textoEncriptado.getBytes("utf-8"));
             MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] digestOfPassword = md.digest(secretStringKey.getBytes("utf-8"));
+            byte[] digestOfPassword = md.digest(SECRET_MD5_KEY.getBytes("utf-8"));
             byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
             SecretKey key = new SecretKeySpec(keyBytes, "DESede");
 
@@ -68,6 +98,74 @@ public class UtilsSecurity {
             throw ex;
         }
         return base64EncryptedString;
+    }
+
+    public static Object getPublicKey() {
+        return clavePublica;
+    }
+
+    public static String getCifredContentByPrivateKey(String bufferCifrado) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+        try {
+            Cipher cifrador = Cipher.getInstance("RSA");
+            cifrador.init(Cipher.DECRYPT_MODE, clavePrivada);
+            System.out.println("Descifrar con clave privada");
+            
+            //Obtener texto descifrado
+            byte[] bufferClaro = cifrador.doFinal(bufferCifrado.getBytes());
+            
+            return Arrays.toString(bufferClaro);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException ex) {
+            throw ex;
+        }        
+    }
+
+    public static void test() {
+        try {
+            //Se pueden mostrar las claves para ver cuáles son, aunque esto no es aconsejable
+            System.out.println("clavePublica: " + clavePublica);
+            System.out.println("clavePrivada: " + clavePrivada);
+
+            //Texto plano
+            byte[] bufferClaro = "Mensaje del cliente a cifrar con la publica".getBytes();
+
+            //Ciframos con clave pública el texto plano utilizando RSA
+            Cipher cifrador = Cipher.getInstance("RSA");
+            cifrador.init(Cipher.ENCRYPT_MODE, clavePublica);
+            System.out.println("Cifrar con clave pública el Texto:");
+            mostrarBytes(bufferClaro);
+
+            //Realización del cifrado del texto plano
+            byte[] bufferCifrado = cifrador.doFinal(bufferClaro);
+            System.out.println("Texto CIFRADO");
+            mostrarBytes(bufferCifrado);
+            System.out.println("\n_______________________________");
+
+            //Desencriptación utilizando la clave privada
+            cifrador.init(Cipher.DECRYPT_MODE, clavePrivada);
+            System.out.println("Descifrar con clave privada");
+
+            //Obtener y mostrar texto descifrado
+            bufferClaro = cifrador.doFinal(bufferCifrado);
+            System.out.println("Texto DESCIFRADO");
+            mostrarBytes(bufferClaro);
+            System.out.println("\n_______________________________");
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(UtilsSecurity.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(UtilsSecurity.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(UtilsSecurity.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(UtilsSecurity.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(UtilsSecurity.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(UtilsSecurity.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private static void mostrarBytes(byte[] buffer) throws IOException {
+        System.out.write(buffer);
     }
 
 }

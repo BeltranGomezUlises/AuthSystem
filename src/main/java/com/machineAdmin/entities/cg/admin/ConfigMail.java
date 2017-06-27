@@ -48,7 +48,7 @@ public class ConfigMail extends EntityMongo{
 
         public String getPass() {
             try {
-                return UtilsSecurity.Desencriptar(pass);
+                return UtilsSecurity.decifrarMD5(pass);
             } catch (Exception ex) {
                 Logger.getLogger(ConfigMail.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -56,7 +56,7 @@ public class ConfigMail extends EntityMongo{
         }
 
         public void setPass(String pass) {
-            this.pass = UtilsSecurity.Encriptar(pass);
+            this.pass = UtilsSecurity.cifrarMD5(pass);
         }
         
     }

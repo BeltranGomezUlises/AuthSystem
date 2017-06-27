@@ -24,7 +24,7 @@ public class UtilsJWT {
     //llave de encriptacion por text
     private static final String STRING_KEY = "LLAVE ULTRA SECRETA";
     
-    public static String generateToken() {        
+    public static String generateToken() {
         return Jwts.builder().setSubject(Instant.now().toString()).signWith(SignatureAlgorithm.HS512, STRING_KEY).compact();
     }
 
@@ -35,7 +35,7 @@ public class UtilsJWT {
     public static boolean isTokenValid(String token) {
         try {            
             //si no es un token valido lanzará SignaturaException
-            Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token); 
+            Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token).getBody(); 
             return true;
         } catch (SignatureException | IllegalArgumentException e) {
             return false;

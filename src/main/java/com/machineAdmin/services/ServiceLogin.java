@@ -53,9 +53,10 @@ public class ServiceLogin {
     @Path("/pass/{test}")
     public Response ecnript(@PathParam("test") String text){
         Response r = new Response();
-        r.setMessage(UtilsSecurity.Encriptar(text));
+        r.setMessage(UtilsSecurity.cifrarMD5(text));
+        UtilsSecurity.test();
         try {
-            r.setDevMessage(UtilsSecurity.Desencriptar(r.getMeta().getMessage()));
+            r.setDevMessage(UtilsSecurity.decifrarMD5(r.getMeta().getMessage()));
         } catch (Exception ex) {
             Logger.getLogger(ServiceLogin.class.getName()).log(Level.SEVERE, null, ex);
             r.setDevMessage("imposible desencriptar");
