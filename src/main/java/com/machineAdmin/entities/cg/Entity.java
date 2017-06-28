@@ -7,7 +7,7 @@ package com.machineAdmin.entities.cg;
 
 /**
  *
- * @author ulises
+ * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public interface Entity {
     

@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  *
- * @author ulises
+ * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T>
  * @param <Entity>
  */

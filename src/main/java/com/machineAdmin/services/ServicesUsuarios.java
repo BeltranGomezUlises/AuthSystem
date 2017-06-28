@@ -7,7 +7,7 @@ package com.machineAdmin.services;
 
 import com.machineAdmin.entities.business.Usuario;
 import com.machineAdmin.managers.ManagerUsuario;
-import com.machineAdmin.models.cg.enums.responses.Response;
+import com.machineAdmin.models.cg.responses.Response;
 import com.machineAdmin.services.cg.ServiceFacade;
 import com.machineAdmin.utils.UtilsMail;
 import javax.ws.rs.GET;
@@ -17,7 +17,7 @@ import javax.ws.rs.core.MediaType;
 
 /**
  *
- * @author ulises
+ * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/usuarios")
 public class ServicesUsuarios extends ServiceFacade<Usuario>{

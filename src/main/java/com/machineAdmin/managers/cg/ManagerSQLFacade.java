@@ -7,7 +7,7 @@ package com.machineAdmin.managers.cg;
 
 /**
  *
- * @author ulises
+ * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ManagerSQLFacade {
     

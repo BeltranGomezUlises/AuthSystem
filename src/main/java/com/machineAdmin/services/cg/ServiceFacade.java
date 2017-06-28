@@ -1,10 +1,8 @@
 package com.machineAdmin.services.cg;
 
 import com.machineAdmin.entities.cg.Entity;
-import com.machineAdmin.entities.cg.EntityMongo;
 import com.machineAdmin.managers.cg.ManagerFacade;
-import com.machineAdmin.managers.cg.ManagerMongoFacade;
-import com.machineAdmin.models.cg.enums.responses.Response;
+import com.machineAdmin.models.cg.responses.Response;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.utils.UtilsJWT;
 import javax.ws.rs.Consumes;
@@ -124,7 +122,7 @@ public class ServiceFacade<T extends Entity> {
         return response;
     }
 
-    protected final void setCauseMessage(Response response, Throwable e) {
+    public static final void setCauseMessage(Response response, Throwable e) {
         response.setDevMessage(response.getMeta().getDevMessage() + " CAUSE:" + e.getMessage());
         if (e.getCause() != null) {
             setCauseMessage(response, e.getCause());

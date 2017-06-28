@@ -1,6 +1,5 @@
 package com.machineAdmin.entities.business;
 
-import com.machineAdmin.entities.cg.EntityMongo;
 import com.machineAdmin.entities.cg.EntitySQL;
 
 /**

@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  *
- * @author ulises
+ * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> class entity used to restrict the class of use
  */
 public interface ManagerFacade<T extends Entity> {

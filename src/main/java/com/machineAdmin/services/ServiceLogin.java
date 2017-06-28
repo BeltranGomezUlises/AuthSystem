@@ -8,14 +8,15 @@ package com.machineAdmin.services;
 import com.machineAdmin.entities.business.Usuario;
 import com.machineAdmin.managers.ManagerUsuario;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
+import com.machineAdmin.models.cg.LoginContent;
 import com.machineAdmin.models.cg.enums.Status;
-import com.machineAdmin.models.cg.enums.responses.Response;
+import com.machineAdmin.models.cg.responses.Response;
 import com.machineAdmin.utils.UtilsSecurity;
 import com.machineAdmin.utils.UtilsJWT;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.machineAdmin.utils.UtilsJson;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -30,14 +31,16 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 public class ServiceLogin {
    
-    @GET
-    @Path("/{usuario}/{contra}")
-    public Response login(@PathParam("usuario") String usuario, @PathParam("contra") String contra) {
+    @POST
+    @Path("/login")
+    public Response login(LoginContent content) {
         Response r = new Response();        
-        ManagerUsuario managerUsuario = new ManagerUsuario();                
-        try {
-            r.setData(managerUsuario.Login(new Usuario(usuario, contra)));           
-            r.setMetaData(UtilsJWT.generateToken());
+        ManagerUsuario managerUsuario = new ManagerUsuario();                        
+        try {            
+            Usuario usuarioAutenticando = UtilsJson.jsonDeserialize(UtilsSecurity.decryptBase64ByPrivateKey(content.getContent()), Usuario.class);            
+            Usuario usuarioLogeado = managerUsuario.Login(usuarioAutenticando);
+            r.setData(usuarioLogeado);           
+            r.setMetaData(UtilsJWT.generateToken(usuarioLogeado));
         } catch (UsuarioInexistenteException e) {
             r.setStatus(Status.WARNING);
             r.setMessage("Usuario y/o contraseña incorrecto");
@@ -50,19 +53,20 @@ public class ServiceLogin {
     }
     
     @GET
-    @Path("/pass/{test}")
-    public Response ecnript(@PathParam("test") String text){
-        Response r = new Response();
-        r.setMessage(UtilsSecurity.cifrarMD5(text));
-        UtilsSecurity.test();
-        try {
-            r.setDevMessage(UtilsSecurity.decifrarMD5(r.getMeta().getMessage()));
-        } catch (Exception ex) {
-            Logger.getLogger(ServiceLogin.class.getName()).log(Level.SEVERE, null, ex);
-            r.setDevMessage("imposible desencriptar");
-        }
-        
+    @Path("/publicKey")
+    public Response publicKey(){
+        Response r = new Response();        
+        r.setData(UtilsSecurity.getPublicKey());        
+        r.setDevMessage("llave public de cifrado RSA Base64");        
         return r;
     }
+    
+    //<editor-fold defaultstate="collapsed" desc="TEST -> cifrado y decifrado por UtilsSecurity">
+    @GET
+    @Path("/test")
+    public void test(){
+        UtilsSecurity.testDeCrifradoYDecifrado();
+    }
+    //</editor-fold>     
        
 }

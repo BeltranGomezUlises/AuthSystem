@@ -5,6 +5,7 @@
  */
 package com.machineAdmin.utils;
 
+import com.machineAdmin.entities.business.Usuario;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
@@ -24,7 +25,7 @@ public class UtilsJWT {
     //llave de encriptacion por text
     private static final String STRING_KEY = "LLAVE ULTRA SECRETA";
     
-    public static String generateToken() {
+    public static String generateToken(Usuario usuarioLogeado) {
         return Jwts.builder().setSubject(Instant.now().toString()).signWith(SignatureAlgorithm.HS512, STRING_KEY).compact();
     }
 

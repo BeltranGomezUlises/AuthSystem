@@ -11,7 +11,7 @@ import com.machineAdmin.managers.cg.ManagerMongoFacade;
 
 /**
  *
- * @author ulises
+ * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ManagerConfigMail extends ManagerMongoFacade<ConfigMail> {
 

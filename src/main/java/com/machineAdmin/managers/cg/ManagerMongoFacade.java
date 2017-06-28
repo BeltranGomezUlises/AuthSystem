@@ -9,7 +9,6 @@ import com.machineAdmin.daos.cg.DaoMongoFacade;
 import com.machineAdmin.entities.cg.EntityMongo;
 import java.util.List;
 import org.mongojack.DBQuery.Query;
-import org.mongojack.WriteResult;
 
 /**
  *

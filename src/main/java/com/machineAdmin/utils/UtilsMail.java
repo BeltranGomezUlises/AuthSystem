@@ -17,7 +17,7 @@ import org.apache.commons.mail.SimpleEmail;
 
 /**
  *
- * @author ulises
+ * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class UtilsMail {
     
@@ -26,7 +26,7 @@ public class UtilsMail {
             Email email = new SimpleEmail();
             email.setHostName("smtp.googlemail.com");
             email.setSmtpPort(465);
-            email.setAuthenticator(new DefaultAuthenticator("beltrangomezulises@gmail.com", "ELECTRO-nic1"));
+            email.setAuthenticator(new DefaultAuthenticator("correo@gmail.com", "pass"));
             email.setSSL(true);
             email.setFrom("Ulises Beltran");
             email.setSubject("TestMail");
@@ -44,7 +44,7 @@ public class UtilsMail {
             HtmlEmail email = new HtmlEmail();
             email.setHostName("smtp.googlemail.com");
             email.setSmtpPort(465);
-            email.setAuthentication("beltrangomezulises@gmail.com", "ELECTRO-nic1");
+            email.setAuthentication("correo@gmail.com", "pass");
             email.setSSL(true);
             email.setFrom("beltrangomezulises@gmail.com", "Ulises Beltrán");
             email.setSubject("Test email with inline image");

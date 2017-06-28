@@ -10,7 +10,7 @@ import com.machineAdmin.entities.cg.admin.ConfigMail;
 
 /**
  *
- * @author ulises
+ * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class DaoConfigMail extends DaoMongoFacade<ConfigMail>{
 
