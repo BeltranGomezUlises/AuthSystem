@@ -25,7 +25,7 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(com.machineAdmin.services.ServiceLogin.class);
-        resources.add(com.machineAdmin.services.ServicesUsuarios.class);
+        resources.add(com.machineAdmin.services.ServicesUsers.class);
         resources.add(com.machineAdmin.services.cg.ServiceCommons.class);
         resources.add(com.machineAdmin.services.cg.ServiceFacade.class);
         resources.add(com.machineAdmin.services.cg.admin.ServiceConfigMail.class);

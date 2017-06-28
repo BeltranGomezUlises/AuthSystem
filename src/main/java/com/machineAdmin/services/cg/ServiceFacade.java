@@ -33,7 +33,7 @@ public class ServiceFacade<T extends Entity> {
 
     @GET
     public Response get(@HeaderParam("Authorization") String token) {
-        Response response = new Response();
+        Response response = new Response();        
         if (UtilsJWT.isTokenValid(token)) {
             try {
                 response.setData(manager.findAll());
@@ -63,6 +63,7 @@ public class ServiceFacade<T extends Entity> {
             }
         } else {
             response.setMessage("Token inválido");
+            response.setDevMessage("Token inválido");
             response.setStatus(Status.WARNING);
         }
         return response;
@@ -81,6 +82,7 @@ public class ServiceFacade<T extends Entity> {
             }
         } else {
             response.setMessage("Token inválido");
+            response.setDevMessage("Token inválido");
             response.setStatus(Status.WARNING);
         }
         return response;
@@ -99,6 +101,7 @@ public class ServiceFacade<T extends Entity> {
             }
         } else {
             response.setMessage("Token inválido");
+            response.setDevMessage("Token inválido");
             response.setStatus(Status.WARNING);
         }
         return response;
@@ -117,6 +120,7 @@ public class ServiceFacade<T extends Entity> {
             }
         } else {
             response.setMessage("Token inválido");
+            response.setDevMessage("Token inválido");
             response.setStatus(Status.WARNING);
         }
         return response;

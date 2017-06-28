@@ -96,7 +96,7 @@
             <version>0.7.0</version>
         </dependency>
         
-        <!-- commons-codec -->
+        <!-- commons-codec Security -->
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>

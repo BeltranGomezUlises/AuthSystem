@@ -43,7 +43,7 @@ public class UtilsSecurity {
         try {
             //Creación y obtención del par de claves
             keyGen = KeyPairGenerator.getInstance("RSA");
-            keyGen.initialize(2048);//tamaño de la clave            
+            keyGen.initialize(1024);//tamaño de la clave            
             clavesRSA = keyGen.generateKeyPair();
 
             //Clave privada
@@ -156,5 +156,5 @@ public class UtilsSecurity {
             Logger.getLogger(UtilsSecurity.class.getName()).log(Level.SEVERE, null, ex);            
         }
     }  
-
+    
 }

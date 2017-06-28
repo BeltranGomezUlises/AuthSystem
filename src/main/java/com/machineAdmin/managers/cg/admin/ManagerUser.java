@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.managers;
+package com.machineAdmin.managers.cg.admin;
 
 import com.machineAdmin.managers.cg.ManagerMongoFacade;
-import com.machineAdmin.daos.DaoUsuario;
-import com.machineAdmin.entities.business.Usuario;
+import com.machineAdmin.daos.cg.admin.DaoUser;
+import com.machineAdmin.entities.cg.admin.User;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import org.mongojack.DBQuery;
 import org.mongojack.DBQuery.Query;
@@ -16,17 +16,18 @@ import org.mongojack.DBQuery.Query;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerUsuario extends ManagerMongoFacade<Usuario> {
+public class ManagerUser extends ManagerMongoFacade<User> {
     
-    public ManagerUsuario() {
-        super(new DaoUsuario());
+    public ManagerUser() {
+        super(new DaoUser());
     }
     
-    public Usuario Login(Usuario usuario) throws UsuarioInexistenteException{
-        Query q = DBQuery.exists("_id");
-        q.is("usuario", usuario.getUsuario());
-        q.is("contraseña", usuario.getContraseña());
-        Usuario loged= this.findOne(q);
+    public User Login(User usuario) throws UsuarioInexistenteException{
+        Query q = DBQuery
+                .is("user", usuario.getUser())
+                .is("pass", usuario.getPass());
+        
+        User loged = this.findOne(q);
         if (loged != null) {
             return loged;
         }else{

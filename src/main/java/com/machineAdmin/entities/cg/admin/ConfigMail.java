@@ -22,7 +22,51 @@ public class ConfigMail extends EntityMongo{
     private AuthMail auth;
     private boolean ssl;
     private String from;
+
+    public ConfigMail() {
+    }
+    
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public AuthMail getAuth() {
+        return auth;
+    }
+
+    public void setAuth(AuthMail auth) {
+        this.auth = auth;
+    }
+
+    public boolean isSsl() {
+        return ssl;
+    }
+
+    public void setSsl(boolean ssl) {
+        this.ssl = ssl;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
         
+    
     public static final class AuthMail {
 
         public AuthMail() {

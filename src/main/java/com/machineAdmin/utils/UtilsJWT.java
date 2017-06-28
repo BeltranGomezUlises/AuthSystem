@@ -5,13 +5,19 @@
  */
 package com.machineAdmin.utils;
 
-import com.machineAdmin.entities.business.Usuario;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.machineAdmin.entities.cg.admin.User;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 import java.security.Key;
-import java.time.Instant;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  *
@@ -25,8 +31,17 @@ public class UtilsJWT {
     //llave de encriptacion por text
     private static final String STRING_KEY = "LLAVE ULTRA SECRETA";
     
-    public static String generateToken(Usuario usuarioLogeado) {
-        return Jwts.builder().setSubject(Instant.now().toString()).signWith(SignatureAlgorithm.HS512, STRING_KEY).compact();
+    public static String generateToken(User usuarioLogeado) throws JsonProcessingException {                        
+        JwtBuilder builder = Jwts.builder();        
+        Calendar cal = new GregorianCalendar();        //calendario de tiempos        
+        builder.setIssuedAt(cal.getTime());     //fecha de expedicion        
+        
+        cal.add(Calendar.SECOND, UtilsConfig.getJwtExp()); //aumentar tiempo para asignar expiracion
+        builder.setExpiration(cal.getTime());
+        
+        builder.setSubject(UtilsJson.jsonSerialize(usuarioLogeado)); //poner el sujeto en jwt
+        
+        return builder.signWith(SignatureAlgorithm.HS512, STRING_KEY).compact();
     }
 
     public static String getBodyToken(String token) {
@@ -36,8 +51,8 @@ public class UtilsJWT {
     public static boolean isTokenValid(String token) {
         try {            
             //si no es un token valido lanzará SignaturaException
-            Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token).getBody(); 
-            return true;
+            Jws<Claims> jws = Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token);
+            return !jws.getBody().getExpiration().before(new Date());
         } catch (SignatureException | IllegalArgumentException e) {
             return false;
         }

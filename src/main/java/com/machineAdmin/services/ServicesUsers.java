@@ -5,11 +5,12 @@
  */
 package com.machineAdmin.services;
 
-import com.machineAdmin.entities.business.Usuario;
-import com.machineAdmin.managers.ManagerUsuario;
+import com.machineAdmin.entities.cg.admin.User;
+import com.machineAdmin.managers.cg.admin.ManagerUser;
 import com.machineAdmin.models.cg.responses.Response;
 import com.machineAdmin.services.cg.ServiceFacade;
 import com.machineAdmin.utils.UtilsMail;
+import com.machineAdmin.utils.UtilsSecurity;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -19,25 +20,26 @@ import javax.ws.rs.core.MediaType;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-@Path("/usuarios")
-public class ServicesUsuarios extends ServiceFacade<Usuario>{
+@Path("/users")
+public class ServicesUsers extends ServiceFacade<User>{
     
-    public ServicesUsuarios() {
-        super(new ManagerUsuario());
+    public ServicesUsers() {
+        super(new ManagerUser());
     }
 
     @Override
-    public Response delete(String token, Usuario t) {
+    public Response delete(String token, User t) {
         return super.delete(token, t); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Response put(String token, Usuario t) {
+    public Response put(String token, User t) {
         return super.put(token, t); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Response post(String token, Usuario t) {
+    public Response post(String token, User t) {
+        t.setPass(UtilsSecurity.cifrarMD5(t.getPass()));
         return super.post(token, t); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -55,7 +57,7 @@ public class ServicesUsuarios extends ServiceFacade<Usuario>{
     @Path("/mail")
     @Produces(MediaType.TEXT_PLAIN)
     public String sendMail(){
-        UtilsMail.sendHTMLMail();
+        UtilsMail.sendHTMLMail("smtp.googlemail.com", 465, "beltrangomezulises@gmail.com", "ELECTRO-nic1", true, "prueba2", "html", "no soportado html", "ubg700@gmail.com");
         return "sending";
     }
     
