@@ -36,26 +36,70 @@ public class UtilsMail {
             email.send();
         } catch (EmailException ex) {
             Logger.getLogger(UtilsMail.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
         }
-    }    
-    
+    }
+
     public static void sendMail(ConfigMail configMail, String subject, String msg, String toMail) {
         try {
             Email email = new SimpleEmail();
             email.setHostName(configMail.getHostName());
             email.setSmtpPort(configMail.getPort());
-            email.setAuthenticator(new DefaultAuthenticator(configMail.getAuth().getMail(),configMail.getAuth().getPass()));
+            email.setAuthenticator(new DefaultAuthenticator(configMail.getAuth().getMail(), configMail.getAuth().getPass()));
             email.setSSL(true);
-            email.setFrom(configMail.getFrom());
+            email.setFrom(configMail.getAuth().getMail());
             email.setSubject(subject);
             email.setMsg(msg);
             email.addTo(toMail);
             email.send();
         } catch (EmailException ex) {
             Logger.getLogger(UtilsMail.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
         }
+    }
+
+    public static void sendRecuperarContraseñaHTMLMail(String toMail, String codigoRecuperacion) throws EmailException, MalformedURLException {
+
+        //cargar la configuracion del correo que esta asignado para recuperacion de contraseñas
+        ConfigMail configMail = UtilsConfig.getResetPasswordConfigMail();                
+        
+        HtmlEmail email = new HtmlEmail();
+        email.setHostName(configMail.getHostName());
+        email.setSmtpPort(465);
+        email.setAuthentication(configMail.getAuth().getMail(), configMail.getAuth().getPass());
+        email.setSSL(true);
+        email.setFrom(configMail.getAuth().getMail());
+        email.setSubject("Recuperar Contraseña");
+        email.addTo(toMail);
+
+        // embed the image and get the content id to see it in-line
+        URL url = new URL("http://localhost/pruebas/esoft-transparent.png");
+        String cid = email.embed(url, "esoftLogo");
+
+        String htmlCadena
+                = "<html>\n"
+                + "  <head>\n"
+                + "    <meta charset=\"utf-8\">\n"
+                + "    <title>Recuperacion de contraseña</title>\n"
+                + "  </head>\n"
+                + "  <body>\n"
+                + "    <div>\n"
+                + "        <img src=\"cid:" + cid + "\" alt=\"Logo\" height=\"100\" width=\"165\">\n"
+                + "    </div>\n"
+                + "    <p>Para iniciar al proceso de recuperación de contraseña ingrese el siguiente código en la pantalla de restablecer: </p>\n"
+                + "    <div style=\"border-color: #2196F3!important;color: #000!important;\n"
+                + "    background-color: #ddffff!important;border-left: 6px solid !important;padding: 0.01em 16px;\">\n"
+                + "      <h3>" + codigoRecuperacion + "</h3>\n"
+                + "    </div>\n"
+                + "\n"
+                + "  </body>\n"
+                + "</html>";
+
+        // set the html message           
+        email.setHtmlMsg(htmlCadena);
+        String defaultMsg = "Su código de recuperación es: " + codigoRecuperacion;
+        // set the alternative message
+        email.setTextMsg(defaultMsg);
+        // send the email
+        email.send();
     }
 
     public static void testSendMail() {
@@ -75,7 +119,7 @@ public class UtilsMail {
             ex.printStackTrace();
         }
     }
-    
+
     public static void testSendHTMLMail() {
         try {
             HtmlEmail email = new HtmlEmail();
@@ -101,35 +145,5 @@ public class UtilsMail {
             Logger.getLogger(UtilsMail.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public static void sendHTMLMail(String hostName, int smtpPort, String userMail, String userPass, boolean ssl, String subject, String html , String defaultMsg, String toMail) {
-        try {
-            HtmlEmail email = new HtmlEmail();
-            email.setHostName(hostName);
-            email.setSmtpPort(smtpPort);
-            email.setAuthentication(userMail, userPass);
-            email.setSSL(ssl);
-            email.setFrom(userMail);
-            email.setSubject(subject);
-            email.addTo(toMail);
-            
-            // embed the image and get the content id to see it in-line
-            URL url = new URL("http://www.apache.org/images/asf_logo_wide.gif");
-            String cid = email.embed(url, "Apache logo");
-            
-            System.out.println("ruta de imagen");
-            System.out.println(cid);
-            
-            // set the html message
-            String htmlCadena = "<html>The apache logo - <img src=\"cid:" + "dcyydlakby" + "\"></html>";
-            email.setHtmlMsg(htmlCadena);
-                        
-            // set the alternative message
-            email.setTextMsg(defaultMsg);
-            // send the email
-            email.send();
-        } catch (EmailException | MalformedURLException ex) {
-            Logger.getLogger(UtilsMail.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+
 }

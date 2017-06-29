@@ -1,8 +1,5 @@
 package com.machineAdmin.entities.cg.admin;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.machineAdmin.entities.cg.EntityMongo;
 
 /**
@@ -12,14 +9,31 @@ import com.machineAdmin.entities.cg.EntityMongo;
 public class User extends EntityMongo {
 
     private String user;
-    private String mail;  
-    @JsonProperty(access = Access.WRITE_ONLY)
+    private String mail;      
     private String pass;
     private Object permissions;
-
+    private String phone;    
+    private String resetPasswordCode;
+    
     public User() {
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getResetPasswordCode() {
+        return resetPasswordCode;
+    }
+
+    public void setResetPasswordCode(String resetPasswordCode) {
+        this.resetPasswordCode = resetPasswordCode;
+    }
+    
     public String getUser() {
         return user;
     }

@@ -20,11 +20,11 @@ package com.machineAdmin.models.cg;
  *
  * @author ulises
  */
-public class LoginContent {
+public class ModelEncryptContent {
 
     private String content;
 
-    public LoginContent() {
+    public ModelEncryptContent() {
     }
 
     public String getContent() {

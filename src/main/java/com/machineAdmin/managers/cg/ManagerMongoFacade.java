@@ -58,8 +58,8 @@ public class ManagerMongoFacade<T extends EntityMongo> implements ManagerFacade<
     }
 
     @Override
-    public T update(T entity) {
-        return (T) dao.update(entity);
+    public boolean update(T entity) {        
+        return dao.update(entity);
     }
 
     public List<T> update(Query q, T t){

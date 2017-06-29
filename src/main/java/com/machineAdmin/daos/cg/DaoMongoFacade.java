@@ -87,8 +87,8 @@ public class DaoMongoFacade<T extends EntityMongo> implements DaoFacade<T> {
     }
 
     @Override
-    public T update(T entity) {
-        return coll.updateById(entity.getId(), entity).getSavedObject();
+    public boolean  update(T entity) {        
+        return coll.updateById(entity.getId(), entity).isUpdateOfExisting();
     }
 
     public List<T> update(Query query, T t) {

@@ -46,7 +46,7 @@ public class DaoSQLFacade<T extends EntitySQL>implements DaoFacade<T>{
     }
 
     @Override
-    public T update(T entity) {
+    public boolean  update(T entity) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

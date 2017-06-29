@@ -44,6 +44,14 @@ public class UtilsJWT {
         return builder.signWith(SignatureAlgorithm.HS512, STRING_KEY).compact();
     }
 
+    public static String generateResetToken(){
+        JwtBuilder builder = Jwts.builder();        
+        Calendar cal = new GregorianCalendar();        //calendario de tiempos                
+        cal.add(Calendar.SECOND, 900);// 15 minutos //aumentar tiempo para asignar expiracion
+        builder.setExpiration(cal.getTime());                        
+        return builder.signWith(SignatureAlgorithm.HS512, STRING_KEY).compact();
+    }
+    
     public static String getBodyToken(String token) {
         return Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token).getBody().getSubject();
     }

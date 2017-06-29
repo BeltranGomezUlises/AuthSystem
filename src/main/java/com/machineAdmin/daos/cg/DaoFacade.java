@@ -28,7 +28,7 @@ public interface DaoFacade<T extends Entity> {
     
     public List<T> deleteAll(T... entities);
     
-    public T update(T entity);
+    public boolean  update(T entity);
         
     public T findOne(Object id);
     

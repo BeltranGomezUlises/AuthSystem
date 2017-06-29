@@ -5,7 +5,6 @@
  */
 package com.machineAdmin.entities.cg.admin;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.machineAdmin.entities.cg.EntityMongo;
 import com.machineAdmin.utils.UtilsSecurity;
 import java.util.logging.Level;
@@ -20,8 +19,7 @@ public class ConfigMail extends EntityMongo{
     private String hostName;
     private int port;    
     private AuthMail auth;
-    private boolean ssl;
-    private String from;
+    private boolean ssl;    
 
     public ConfigMail() {
     }
@@ -56,16 +54,7 @@ public class ConfigMail extends EntityMongo{
 
     public void setSsl(boolean ssl) {
         this.ssl = ssl;
-    }
-
-    public String getFrom() {
-        return from;
-    }
-
-    public void setFrom(String from) {
-        this.from = from;
-    }
-        
+    }           
     
     public static final class AuthMail {
 
@@ -77,9 +66,7 @@ public class ConfigMail extends EntityMongo{
             this.pass = pass;
         }
 
-        private String mail;
-        
-        @JsonIgnore
+        private String mail;                
         private String pass;
 
         public String getMail() {
