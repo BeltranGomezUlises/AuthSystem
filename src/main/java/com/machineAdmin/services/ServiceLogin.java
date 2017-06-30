@@ -15,11 +15,9 @@ import com.machineAdmin.models.cg.responses.Response;
 import com.machineAdmin.services.cg.ServiceFacade;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsJson;
+import com.machineAdmin.utils.UtilsSMS;
 import com.machineAdmin.utils.UtilsSecurity;
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -150,4 +148,17 @@ public class ServiceLogin {
         return res;
     }
 
+    @GET
+    @Path("/recoverCodeSMS/{phone}")
+    public Response recoverCodeSMS(@PathParam("phone") String phone){                
+        Response res = new Response();
+        try {
+            ManagerUser managerUser = new ManagerUser();
+            //managerUser.
+        } catch (Exception e) {
+            
+        }
+        return res;
+    }
+    
 }

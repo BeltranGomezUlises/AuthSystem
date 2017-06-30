@@ -25,6 +25,7 @@ public class ServicesUsers extends ServiceFacade<User>{
 
     @Override
     public Response delete(String token, User t) {
+    //delete solo deshabilita los usuarios
         return super.delete(token, t); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -35,7 +36,7 @@ public class ServicesUsers extends ServiceFacade<User>{
 
     @Override
     public Response post(String token, User t) {
-        t.setPass(UtilsSecurity.cifrarMD5(t.getPass()));
+        
         return super.post(token, t); //To change body of generated methods, choose Tools | Templates.
     }
 

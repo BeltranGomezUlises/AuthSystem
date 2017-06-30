@@ -73,6 +73,32 @@ public class ManagerUser extends ManagerMongoFacade<User> {
         }                        
     }
     
+    public void enviarCodigoSMS(String phone){
+        //obtener el usuario registrado con ese numero de telefono
+        ManagerUser managerUser = new ManagerUser();
+        
+        Query q = DBQuery.is("phone", phone);
+        User u = managerUser.findOne(q);
+        if (u != null) {
+            Random r = new Random();
+            
+            //generar codigo de 8 digitos aleatorios
+            String code = String.valueOf(r.nextInt(99));
+            code += String.valueOf(r.nextInt(99));
+            code += String.valueOf(r.nextInt(99));
+            code += String.valueOf(r.nextInt(99));
+            
+            //asignar codigo de recuperacion al usuario
+            u.setResetPasswordCode(code);
+            if (managerUser.update(u)) {
+                //enviar correo con codigo de recuperacion
+                UtilsMail.sendRecuperarContraseñaHTMLMail(mail, code);
+            }                                    
+        }else{
+             throw new UsuarioInexistenteException("No se encontro usuario con el correo especificado");
+        }
+    }
+    
     public String generateTokenResetPassword(String mail, String code) throws UsuarioInexistenteException, JsonProcessingException{
         //obtener el usuario registrado con ese mail y el codigo 
         ManagerUser managerUser = new ManagerUser();        

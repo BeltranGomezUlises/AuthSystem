@@ -19,7 +19,7 @@ package com.machineAdmin.utils;
 import com.machineAdmin.entities.cg.EntityMongo;
 import com.machineAdmin.entities.cg.admin.ConfigMail;
 import com.machineAdmin.managers.cg.admin.ManagerConfigMail;
-import org.mongojack.DBQuery;
+import com.machineAdmin.utils.UtilsConfig.CGConfig.SMSConfig;
 import org.mongojack.JacksonDBCollection;
 
 /**
@@ -34,25 +34,38 @@ public class UtilsConfig {
     public static int getJwtExp() {
         return COLLECTION.findOne().getJwtConfig().getJwtExp();
     }
-    
-    public static ConfigMail getResetPasswordConfigMail(){
-        String mailId = COLLECTION.findOne().getMailConfig().getResetPasswordMailId();        
-        ManagerConfigMail managerConfigMail = new ManagerConfigMail();        
-        return managerConfigMail.findOne(mailId);                                
+
+    public static ConfigMail getResetPasswordConfigMail() {
+        String mailId = COLLECTION.findOne().getMailConfig().getResetPasswordMailId();
+        ManagerConfigMail managerConfigMail = new ManagerConfigMail();
+        return managerConfigMail.findOne(mailId);
     }
 
-    private static class CGConfig extends EntityMongo {
+    public static SMSConfig getSMSConfig() {
+        return COLLECTION.findOne().getSmsConfig();
+    }
+
+    protected static class CGConfig extends EntityMongo {
 
         private JwtsConfig jwtConfig;
         private MailsConfig mailConfig;
+        private SMSConfig smsConfig;
+
+        public SMSConfig getSmsConfig() {
+            return smsConfig;
+        }
+
+        public void setSmsConfig(SMSConfig smsConfig) {
+            this.smsConfig = smsConfig;
+        }
 
         public JwtsConfig getJwtConfig() {
             return jwtConfig;
-        }       
-        
+        }
+
         public void setJwtConfig(JwtsConfig jwtConfig) {
             this.jwtConfig = jwtConfig;
-        }        
+        }
 
         public MailsConfig getMailConfig() {
             return mailConfig;
@@ -61,9 +74,8 @@ public class UtilsConfig {
         public void setMailConfig(MailsConfig mailConfig) {
             this.mailConfig = mailConfig;
         }
-        
-        
-        private static class MailsConfig {
+
+        protected static class MailsConfig {
 
             private String resetPasswordMailId;
             private String supportMailId;
@@ -91,11 +103,11 @@ public class UtilsConfig {
 
             public void setContactMailId(String contactMailId) {
                 this.contactMailId = contactMailId;
-            }                       
-            
+            }
+
         }
 
-        private static class JwtsConfig {
+        protected static class JwtsConfig {
 
             private int jwtExp;
 
@@ -105,6 +117,38 @@ public class UtilsConfig {
 
             public void setJwtExp(int jwtExp) {
                 this.jwtExp = jwtExp;
+            }
+
+        }
+
+        protected static class SMSConfig {
+
+            private String uri;
+            private String deviceImei;
+            private String usuarioId;
+
+            public String getUri() {
+                return uri;
+            }
+
+            public void setUri(String uri) {
+                this.uri = uri;
+            }
+
+            public String getDeviceImei() {
+                return deviceImei;
+            }
+
+            public void setDeviceImei(String deviceImei) {
+                this.deviceImei = deviceImei;
+            }
+
+            public String getUsuarioId() {
+                return usuarioId;
+            }
+
+            public void setUsuarioId(String usuarioId) {
+                this.usuarioId = usuarioId;
             }
 
         }
