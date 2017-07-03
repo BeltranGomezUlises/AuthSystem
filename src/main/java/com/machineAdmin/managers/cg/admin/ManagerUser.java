@@ -12,6 +12,7 @@ import com.machineAdmin.entities.cg.admin.User;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsMail;
+import com.machineAdmin.utils.UtilsSMS;
 import com.machineAdmin.utils.UtilsSecurity;
 import java.net.MalformedURLException;
 import java.util.Random;
@@ -73,26 +74,24 @@ public class ManagerUser extends ManagerMongoFacade<User> {
         }                        
     }
     
-    public void enviarCodigoSMS(String phone){
+    public void enviarCodigoSMS(String phone) throws UsuarioInexistenteException{
         //obtener el usuario registrado con ese numero de telefono
         ManagerUser managerUser = new ManagerUser();
         
         Query q = DBQuery.is("phone", phone);
         User u = managerUser.findOne(q);
         if (u != null) {
-            Random r = new Random();
-            
+            Random r = new Random();            
             //generar codigo de 8 digitos aleatorios
             String code = String.valueOf(r.nextInt(99));
             code += String.valueOf(r.nextInt(99));
             code += String.valueOf(r.nextInt(99));
-            code += String.valueOf(r.nextInt(99));
-            
+            code += String.valueOf(r.nextInt(99));            
             //asignar codigo de recuperacion al usuario
             u.setResetPasswordCode(code);
             if (managerUser.update(u)) {
                 //enviar correo con codigo de recuperacion
-                UtilsMail.sendRecuperarContraseñaHTMLMail(mail, code);
+                UtilsSMS.sendSMS(phone, "Su código de recuperacion de contraseña es: " + code);
             }                                    
         }else{
              throw new UsuarioInexistenteException("No se encontro usuario con el correo especificado");

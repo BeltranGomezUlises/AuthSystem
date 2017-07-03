@@ -15,7 +15,6 @@ import com.machineAdmin.models.cg.responses.Response;
 import com.machineAdmin.services.cg.ServiceFacade;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsJson;
-import com.machineAdmin.utils.UtilsSMS;
 import com.machineAdmin.utils.UtilsSecurity;
 import java.net.MalformedURLException;
 import javax.ws.rs.Consumes;
@@ -154,9 +153,14 @@ public class ServiceLogin {
         Response res = new Response();
         try {
             ManagerUser managerUser = new ManagerUser();
-            //managerUser.
-        } catch (Exception e) {
-            
+            managerUser.enviarCodigoSMS(phone);
+            res.setMetaData(UtilsJWT.generateResetToken());
+            res.setDevMessage("token de codigo para restaurar contraseña");
+            res.setMessage("El código para recuperar contraseña fue enviado por correo electrónico");                    
+        } catch (UsuarioInexistenteException ex) {
+            res.setStatus(Status.WARNING);
+            res.setMessage("No se encontro el usuario con el correo especificado");
+            ServiceFacade.setCauseMessage(res, ex);
         }
         return res;
     }

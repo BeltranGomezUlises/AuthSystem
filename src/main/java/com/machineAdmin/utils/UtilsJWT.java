@@ -25,7 +25,7 @@ import java.util.GregorianCalendar;
  */
 public class UtilsJWT {
 
-    //llave de encriptacion generada por instancia
+    //llave de encriptacion generada por instancia desplegada
     private static final Key KEY = MacProvider.generateKey();    
     
     //llave de encriptacion por text
