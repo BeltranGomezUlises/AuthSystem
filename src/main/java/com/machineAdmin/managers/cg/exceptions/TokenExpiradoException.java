@@ -14,18 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.utils;
-
-import com.machineAdmin.entities.cg.admin.User;
+package com.machineAdmin.managers.cg.exceptions;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class UtilsPermissions {                  
-    
-    public static boolean hasPermission(User u, String accion){
-        return true;
-    }
+public class TokenExpiradoException extends Exception{
+
+    public TokenExpiradoException(String message) {
+        super(message);
+    }    
     
 }

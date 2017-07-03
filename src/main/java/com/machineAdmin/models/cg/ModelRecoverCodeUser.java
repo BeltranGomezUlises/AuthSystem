@@ -14,18 +14,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.utils;
-
-import com.machineAdmin.entities.cg.admin.User;
+package com.machineAdmin.models.cg;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class UtilsPermissions {                  
-    
-    public static boolean hasPermission(User u, String accion){
-        return true;
+public class ModelRecoverCodeUser {
+
+    private String code;
+    private String idUser;
+
+    public String getCode() {
+        return code;
     }
-    
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(String idUser) {
+        this.idUser = idUser;
+    }
+
 }

@@ -3,19 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.services;
+package com.machineAdmin.services.cg;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.machineAdmin.entities.cg.admin.User;
 import com.machineAdmin.managers.cg.admin.ManagerUser;
+import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.cg.ModelEncryptContent;
+import com.machineAdmin.models.cg.ModelRecoverCodeUser;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responses.Response;
-import com.machineAdmin.services.cg.ServiceFacade;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsJson;
 import com.machineAdmin.utils.UtilsSecurity;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -53,8 +55,7 @@ public class ServiceLogin {
             res.setStatus(Status.WARNING);
             res.setMessage("Usuario y/o contraseña incorrecto");
             res.setDevMessage("imposible inicio de sesión, por: " + e.getMessage());
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception ex) {            
             res.setStatus(Status.ERROR);
             res.setDevMessage("imposible inicio de sesión, por: " + ex.getMessage());
         }
@@ -68,49 +69,56 @@ public class ServiceLogin {
         r.setData(UtilsSecurity.getPublicKey());
         r.setDevMessage("llave publica de cifrado RSA Base64");
         return r;
-    }
-
+    }   
+   
     @GET
-    @Path("/recoverCodeMail/{mail}")
-    public Response recoverCodeMail(@PathParam("mail") String mail) {
+    @Path("/recoverCode/{identifier}")
+    public Response recoverCode(@PathParam("identifier") String identifier){                
         Response res = new Response();
         try {
             ManagerUser managerUser = new ManagerUser();
-            managerUser.enviarCodigoMail(mail);
-            res.setMetaData(UtilsJWT.generateResetToken());
+            ModelRecoverCodeUser recoverCode = managerUser.enviarCodigo(identifier);
+            res.setMetaData(UtilsJWT.generateValidateUserToken(recoverCode));
             res.setDevMessage("token de codigo para restaurar contraseña");
-            res.setMessage("El código para recuperar contraseña fue enviado por correo electrónico");
-        } catch (MalformedURLException | EmailException e) {
-            res.setStatus(Status.ERROR);
-            res.setMessage("No fue posible enviar el código al correo registrado, comuniquese con su administrador");
-            ServiceFacade.setCauseMessage(res, e);
+            res.setMessage("El código para recuperar contraseña fué enviado");                    
         } catch (UsuarioInexistenteException ex) {
             res.setStatus(Status.WARNING);
-            res.setMessage("No se encontro el usuario con el correo especificado");
+            res.setMessage("No se encontró el usuario con el identificador proporsionado");
+            ServiceFacade.setCauseMessage(res, ex);
+        } catch (ParametroInvalidoException ex) {
+            res.setStatus(Status.WARNING);
+            res.setMessage("El parametro de identificación de usuario no se reconoce como válido");
+            ServiceFacade.setCauseMessage(res, ex);
+        } catch (EmailException | MalformedURLException ex) {
+            res.setStatus(Status.ERROR);
+            res.setMessage("No fue posible enviar el código de recuperación, intente mas tarde");
+            ServiceFacade.setCauseMessage(res, ex);
+        } catch (JsonProcessingException ex) {
+            res.setStatus(Status.ERROR);
+            res.setMessage("No fue posible generar el token de recuperación, intente mas tarde");
             ServiceFacade.setCauseMessage(res, ex);
         }
         return res;
     }
-
+    
     @GET
-    @Path("/tokenReset/{mail}/{code}")
-    public Response getTokenReset(@HeaderParam("Authorization") String token, @PathParam("mail") String mail, @PathParam("code") String code) {
+    @Path("/tokenResetPassword/{code}")
+    public Response getTokenReset(@HeaderParam("Authorization") String token, @PathParam("code") String code) {
         Response res = new Response();
-        if (UtilsJWT.isTokenValid(token)) {
+        if (UtilsJWT.isTokenValid(token)) {                                    
             try {
-                ManagerUser managerUser = new ManagerUser();
-                res.setData(managerUser.generateTokenResetPassword(mail, code));
-            } catch (UsuarioInexistenteException ex) {
-                res.setStatus(Status.WARNING);
-                res.setMessage("No se encontro el usuario con el correo especificado");
-                ServiceFacade.setCauseMessage(res, ex);
-            } catch (JsonProcessingException ex) {
+                res.setMetaData(UtilsJWT.generateTokenResetPassword(token, code));
+            } catch (IOException ex) {
                 res.setStatus(Status.ERROR);
-                res.setMessage("Existion un error en la generacion del token de reseteo");
-                ServiceFacade.setCauseMessage(res, ex);
-            }
+                res.setMessage("No fué posible verificar el código proporsionado, intente mas tarde");
+                ServiceFacade.setCauseMessage(res, ex);                    
+            } catch (ParametroInvalidoException ex) {
+                res.setStatus(Status.WARNING);
+                res.setMessage("No fué posible verificar el código proporsionado, intente repetir el proceso");
+                ServiceFacade.setCauseMessage(res, ex);                    
+            }            
         } else {
-            res.setMessage("Token inválido");
+            res.setMessage("No fué posible verificar el código proporsionado, intente repetir el proceso");
             res.setDevMessage("Token inválido");
             res.setStatus(Status.WARNING);
         }
@@ -123,12 +131,12 @@ public class ServiceLogin {
         Response res = new Response();
         if (UtilsJWT.isTokenValid(tokenResetPassword)) {
             try {
-                User u = UtilsJson.jsonDeserialize(UtilsJWT.getBodyToken(tokenResetPassword), User.class);
+                String userId = UtilsJWT.getBodyToken(tokenResetPassword);
                 String pass = UtilsSecurity.decryptBase64ByPrivateKey(content.getContent());
 
                 ManagerUser managerUser = new ManagerUser();
-                if (managerUser.resetPassword(u, pass)) {
-                    res.setMessage("La contraseña fue restablecida con éxito");
+                if (managerUser.resetPassword(userId, pass)) {
+                    res.setMessage("La contraseña fué restablecida con éxito");
                 } else {
                     res.setMessage("No se logró restablecer la contraseña, intente repetir el proceso completo");
                     res.setStatus(Status.WARNING);
@@ -147,22 +155,6 @@ public class ServiceLogin {
         return res;
     }
 
-    @GET
-    @Path("/recoverCodeSMS/{phone}")
-    public Response recoverCodeSMS(@PathParam("phone") String phone){                
-        Response res = new Response();
-        try {
-            ManagerUser managerUser = new ManagerUser();
-            managerUser.enviarCodigoSMS(phone);
-            res.setMetaData(UtilsJWT.generateResetToken());
-            res.setDevMessage("token de codigo para restaurar contraseña");
-            res.setMessage("El código para recuperar contraseña fue enviado por correo electrónico");                    
-        } catch (UsuarioInexistenteException ex) {
-            res.setStatus(Status.WARNING);
-            res.setMessage("No se encontro el usuario con el correo especificado");
-            ServiceFacade.setCauseMessage(res, ex);
-        }
-        return res;
-    }
+   
     
 }

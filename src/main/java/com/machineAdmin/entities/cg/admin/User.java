@@ -12,8 +12,7 @@ public class User extends EntityMongo {
     private String mail;      
     private String pass;
     private Object permissions;
-    private String phone;    
-    private String resetPasswordCode;
+    private String phone;        
     
     public User() {
     }
@@ -24,15 +23,7 @@ public class User extends EntityMongo {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getResetPasswordCode() {
-        return resetPasswordCode;
-    }
-
-    public void setResetPasswordCode(String resetPasswordCode) {
-        this.resetPasswordCode = resetPasswordCode;
-    }
+    }    
     
     public String getUser() {
         return user;

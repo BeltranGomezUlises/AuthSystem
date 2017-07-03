@@ -31,8 +31,12 @@ public class UtilsConfig {
     protected static final String COLLECTION_NAME = "config.cg";
     protected static final JacksonDBCollection<CGConfig, String> COLLECTION = JacksonDBCollection.wrap(UtilsDB.getCollection(COLLECTION_NAME), CGConfig.class, String.class);
 
-    public static int getJwtExp() {
-        return COLLECTION.findOne().getJwtConfig().getJwtExp();
+    public static int getSessionJwtExp() {
+        return COLLECTION.findOne().getJwtConfig().getSessionJwtExp();
+    }
+
+    public static int getRecoverJwtExp() {
+        return COLLECTION.findOne().getJwtConfig().getRecoverJwtExp();
     }
 
     public static ConfigMail getResetPasswordConfigMail() {
@@ -109,14 +113,23 @@ public class UtilsConfig {
 
         protected static class JwtsConfig {
 
-            private int jwtExp;
+            private int sessionJwtExp;
+            private int recoverJwtExp;
 
-            public int getJwtExp() {
-                return jwtExp;
+            public int getSessionJwtExp() {
+                return sessionJwtExp;
             }
 
-            public void setJwtExp(int jwtExp) {
-                this.jwtExp = jwtExp;
+            public void setSessionJwtExp(int sessionJwtExp) {
+                this.sessionJwtExp = sessionJwtExp;
+            }
+
+            public int getRecoverJwtExp() {
+                return recoverJwtExp;
+            }
+
+            public void setRecoverJwtExp(int recoverJwtExp) {
+                this.recoverJwtExp = recoverJwtExp;
             }
 
         }
