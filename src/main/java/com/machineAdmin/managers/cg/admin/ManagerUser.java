@@ -5,23 +5,17 @@
  */
 package com.machineAdmin.managers.cg.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.machineAdmin.managers.cg.ManagerMongoFacade;
 import com.machineAdmin.daos.cg.admin.DaoUser;
 import com.machineAdmin.entities.cg.admin.User;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.cg.ModelRecoverCodeUser;
-import com.machineAdmin.utils.UtilsJWT;
-import com.machineAdmin.utils.UtilsJson;
 import com.machineAdmin.utils.UtilsMail;
 import com.machineAdmin.utils.UtilsSMS;
 import com.machineAdmin.utils.UtilsSecurity;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.mail.EmailException;
 import org.mongojack.DBQuery;
 import org.mongojack.DBQuery.Query;

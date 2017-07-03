@@ -20,12 +20,12 @@ import org.jinq.jpa.JinqJPAStreamProvider;
 public class UtilsDB {
 
     //<editor-fold defaultstate="collapsed" desc="mongo utils">
-        /**
-         * The MongoClient instance actually represents a pool of connections to the
-         * database; you will only need one instance of class MongoClient even with
-         * multiple threads.
-         *
-         */
+    /**
+     * The MongoClient instance actually represents a pool of connections to the
+     * database; you will only need one instance of class MongoClient even with
+     * multiple threads.
+     *
+     */
     //</editor-fold>        
     private static final String DATA_BASE_NAME = "machineAdmin";
     private static final MongoClientURI CONNECTION_STRING = new MongoClientURI("mongodb://localhost:27017");
@@ -35,13 +35,13 @@ public class UtilsDB {
     public static DBCollection getCollection(String name) {
         return MONGO_CLIENT.getDB(DATA_BASE_NAME).getCollection(name);
     }
-   
+
     //<editor-fold defaultstate="collapsed" desc="JPA utils">
-        /*
+    /*
         the jpa clients are defined here,
         you need to add the factories and streams providers
         for each persistence unit you nedd
-        */
+     */
     //</editor-fold>
     private static EntityManagerFactory EMFactoryPostgres;
     private static JinqJPAStreamProvider streamProviderPostgres;

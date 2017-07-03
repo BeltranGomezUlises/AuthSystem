@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.services.cg;
+package com.machineAdmin.services.cg.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.machineAdmin.entities.cg.admin.User;
@@ -14,6 +14,7 @@ import com.machineAdmin.models.cg.ModelEncryptContent;
 import com.machineAdmin.models.cg.ModelRecoverCodeUser;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responses.Response;
+import com.machineAdmin.services.cg.ServiceFacade;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsJson;
 import com.machineAdmin.utils.UtilsSecurity;

@@ -20,7 +20,7 @@ public class UtilsDate {
     private static final SimpleDateFormat SDFNDOW = new SimpleDateFormat("EEEE");
     private static final SimpleDateFormat SDFFULL = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSX");
     private static final SimpleDateFormat SDFUTC = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-    
+
     //Sumatoria de tiempo en formato HH:mm
     public static String sumatoriaDeTiempos(List<String> tiempos) {
         String res = "";
@@ -49,12 +49,12 @@ public class UtilsDate {
     public static String sdfHM(Date date) {
         return SDFHM.format(date);
     }
-    
-    public static String sdfFull(Date date){
+
+    public static String sdfFull(Date date) {
         return SDFFULL.format(date);
     }
-    
-    public static String sdfUTC(Date date){
+
+    public static String sdfUTC(Date date) {
         return SDFUTC.format(date);
     }
 
@@ -197,18 +197,17 @@ public class UtilsDate {
         return res;
     }
 
-    
-     public static class DateClass {
+    public static class DateClass {
 
         private final Date date;
 
         public Date getDate() {
             return date;
         }
-        
+
         public DateClass() {
             this.date = new Date();
         }
     }
-     
+
 }

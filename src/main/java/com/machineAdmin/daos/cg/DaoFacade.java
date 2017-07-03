@@ -12,7 +12,6 @@ import java.util.List;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T>
- * @param <Entity>
  */
 public interface DaoFacade<T extends Entity> {
     
