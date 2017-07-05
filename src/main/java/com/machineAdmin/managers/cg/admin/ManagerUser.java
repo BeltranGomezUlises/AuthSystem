@@ -91,4 +91,5 @@ public class ManagerUser extends ManagerMongoFacade<User> {
         u.setPass(UtilsSecurity.cifrarMD5(pass));
         return this.update(u);
     }
+    
 }

@@ -4,11 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.machineAdmin.entities.cg.EntityMongo;
 import com.machineAdmin.utils.UtilsDB;
 import com.machineAdmin.utils.UtilsJson;
+import com.mongodb.BasicDBObject;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
+import org.mongojack.DBProjection;
 import org.mongojack.DBQuery;
 import org.mongojack.DBQuery.Query;
 import org.mongojack.JacksonDBCollection;
@@ -34,7 +36,7 @@ public class DaoMongoFacade<T extends EntityMongo> implements DaoFacade<T> {
     }
 
     @Override
-    public T persist(T entity) {
+    public T persist(T entity) {        
         return coll.insert(entity).getSavedObject();
     }
 
@@ -99,27 +101,63 @@ public class DaoMongoFacade<T extends EntityMongo> implements DaoFacade<T> {
     public T findOne(Object id) {
         return coll.findOneById(id.toString());
     }
+    
+    public T findOne(Object id, String... attributesProject) {
+        return coll.findOneById(id.toString(), DBProjection.include(attributesProject));              
+    }
 
     public T findOne(Query query) {
         return coll.findOne(query);
+    }
+    
+    public T findOne(Query query, String... attributesProject) {
+        return coll.findOne(query, DBProjection.include(attributesProject));        
     }
 
     @Override
     public List<T> findAll() {
         return coll.find().toArray();
     }
+    
+    public List<T> findAll(String... attributesProject) {
+        BasicDBObject keys = new BasicDBObject();
+        for (String attribute : attributesProject) {
+            keys.put(attribute,1);
+        }                
+        return coll.find(new BasicDBObject(), keys).toArray();
+    }
 
-    public List<T> findAll(Query query) {
-        return coll.find(query).toArray();
+    public List<T> findAll(Query query, String... attributesProject) {
+        BasicDBObject keys = new BasicDBObject();
+        for (String attribute : attributesProject) {
+            keys.put(attribute,1);
+        } 
+        return coll.find(query, keys).toArray();        
     }
 
     @Override
     public List<T> findAll(int max) {
         return coll.find().toArray(max);
     }
+    
+    public List<T> findAll(int max, String... attributesProject) {
+        BasicDBObject keys = new BasicDBObject();
+        for (String attribute : attributesProject) {
+            keys.put(attribute,1);
+        }          
+        return coll.find(new BasicDBObject(), keys).toArray(max);
+    }
 
     public List<T> findAll(Query query, int max) {
         return coll.find(query).limit(max).toArray();
+    }
+    
+    public List<T> findAll(Query query, int max, String... attributesProject) {
+        BasicDBObject keys = new BasicDBObject();
+        for (String attribute : attributesProject) {
+            keys.put(attribute,1);
+        }  
+        return coll.find(query, keys).limit(max).toArray();
     }
 
     @Override

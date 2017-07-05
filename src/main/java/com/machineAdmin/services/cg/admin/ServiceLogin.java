@@ -48,10 +48,12 @@ public class ServiceLogin {
             usuarioAutenticando.setPass(UtilsSecurity.cifrarMD5(usuarioAutenticando.getPass()));
             User usuarioLogeado = managerUsuario.Login(usuarioAutenticando);
             //no enviar pass
-            usuarioLogeado.setPass(null);
-            
+            usuarioLogeado.setPass(null);            
             res.setData(usuarioLogeado);
             res.setMetaData(UtilsJWT.generateToken(usuarioLogeado));
+            
+            //bitacora de accesos            
+            
         } catch (UsuarioInexistenteException e) {
             res.setStatus(Status.WARNING);
             res.setMessage("Usuario y/o contraseña incorrecto");
