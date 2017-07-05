@@ -7,24 +7,22 @@ package com.machineAdmin.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.IOException;
 
 /**
  *
- * @author luisa
+ * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class Utileria {
+public class UtilsJson {
     
     public static final ObjectMapper MAPPER = new ObjectMapper();
     
-    public static String jsonSerialize(Object o){
-        try {
-            return MAPPER.writeValueAsString(o);
-        } catch (JsonProcessingException ex) {
-            Logger.getLogger(Utileria.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
+    public static String jsonSerialize(Object o) throws JsonProcessingException{        
+        return MAPPER.writeValueAsString(o);
+    }
+    
+    public static <T> T jsonDeserialize(String json, Class<T> clazz) throws IOException{
+        return (T) MAPPER.readValue(json, clazz);        
     }
     
 }
