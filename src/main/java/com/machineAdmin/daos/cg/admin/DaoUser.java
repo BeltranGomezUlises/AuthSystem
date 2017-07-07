@@ -12,7 +12,7 @@ import com.machineAdmin.entities.cg.admin.User;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoUser extends DaoMongoFacade{
+public class DaoUser extends DaoMongoFacade<User>{
 
     public DaoUser() {
         super("config.users", User.class);

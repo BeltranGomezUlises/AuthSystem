@@ -7,7 +7,7 @@ package com.machineAdmin.services.cg.admin;
 
 import com.machineAdmin.entities.cg.admin.ConfigMail;
 import com.machineAdmin.managers.cg.admin.ManagerConfigMail;
-import com.machineAdmin.models.cg.responses.Response;
+import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.ServiceFacade;
 import javax.ws.rs.Path;
 

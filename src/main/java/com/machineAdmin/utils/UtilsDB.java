@@ -28,8 +28,8 @@ public class UtilsDB {
      */
     //</editor-fold>        
     private static final String DATA_BASE_NAME = "machineAdmin";
-    private static final MongoClientURI CONNECTION_STRING = new MongoClientURI("mongodb://admin:mongo.90Y9B8yh$@192.168.10.8:27170/admin");
-    //private static final MongoClientURI CONNECTION_STRING = new MongoClientURI("mongodb://localhost:27017");
+    //private static final MongoClientURI CONNECTION_STRING = new MongoClientURI("mongodb://admin:mongo.90Y9B8yh$@192.168.10.8:27170/admin");
+    private static final MongoClientURI CONNECTION_STRING = new MongoClientURI("mongodb://localhost:27017");
     private static final MongoClient MONGO_CLIENT = new MongoClient(CONNECTION_STRING);
     public static final MongoDatabase DB = MONGO_CLIENT.getDatabase(DATA_BASE_NAME);
 
@@ -46,6 +46,10 @@ public class UtilsDB {
     //</editor-fold>
     private static EntityManagerFactory EMFactoryPostgres;
     private static JinqJPAStreamProvider streamProviderPostgres;
+    
+    /**
+     * PERSISTENCE UNIT NAMES
+     */
     private static final String POSTGRES_UNIT_NAME = "postgres-unit";
 
     public static EntityManagerFactory getEMFactoryPostgres() {

@@ -6,6 +6,7 @@
 package com.machineAdmin.utils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -31,8 +32,15 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class UtilsSecurity {
 
+    /**
+     * SYMETRIC ENCRYPTION
+     */
     private static final String SECRET_MD5_KEY = "secrect ultra private string key";
+    private static final String ENCRYPT_ALGORITHM = "DESede";
 
+    /**
+     * ASYMETRIC ENCRYPTION
+     */
     private static KeyPairGenerator keyGen;
     private static KeyPair clavesRSA;
     private static PrivateKey clavePrivada;
@@ -59,13 +67,12 @@ public class UtilsSecurity {
     public static String cifrarMD5(String texto) {
         String base64EncryptedString = "";
         try {
-
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] digestOfPassword = md.digest(SECRET_MD5_KEY.getBytes("utf-8"));
             byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
 
-            SecretKey key = new SecretKeySpec(keyBytes, "DESede");
-            Cipher cipher = Cipher.getInstance("DESede");
+            SecretKey key = new SecretKeySpec(keyBytes, ENCRYPT_ALGORITHM);
+            Cipher cipher = Cipher.getInstance(ENCRYPT_ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, key);
 
             byte[] plainTextBytes = texto.getBytes("utf-8");
@@ -73,7 +80,7 @@ public class UtilsSecurity {
             byte[] base64Bytes = Base64.encodeBase64(buf);
             base64EncryptedString = new String(base64Bytes);
 
-        } catch (Exception ex) {
+        } catch (UnsupportedEncodingException | InvalidKeyException | NoSuchAlgorithmException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException ex) {
         }
         return base64EncryptedString;
     }
@@ -86,38 +93,38 @@ public class UtilsSecurity {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] digestOfPassword = md.digest(SECRET_MD5_KEY.getBytes("utf-8"));
             byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
-            SecretKey key = new SecretKeySpec(keyBytes, "DESede");
+            SecretKey key = new SecretKeySpec(keyBytes, ENCRYPT_ALGORITHM);
 
-            Cipher decipher = Cipher.getInstance("DESede");
+            Cipher decipher = Cipher.getInstance(ENCRYPT_ALGORITHM);
             decipher.init(Cipher.DECRYPT_MODE, key);
 
             byte[] plainText = decipher.doFinal(message);
 
             base64EncryptedString = new String(plainText, "UTF-8");
 
-        } catch (Exception ex) {
+        } catch (UnsupportedEncodingException | InvalidKeyException | NoSuchAlgorithmException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException ex) {
             throw ex;
         }
         return base64EncryptedString;
     }
 
-    public static String getPublicKey() {        
+    public static String getPublicKey() {
         return Base64.encodeBase64String(clavePublica.getEncoded());
     }
-    
-    private static String getPrivateKey() {        
+
+    private static String getPrivateKey() {
         return Base64.encodeBase64String(clavePrivada.getEncoded());
     }
-    
+
     public static String decryptBase64ByPrivateKey(String bufferCifrado) throws Exception {
-        try {            
+        try {
             Cipher cifrador = Cipher.getInstance("RSA");
-            cifrador.init(Cipher.DECRYPT_MODE, clavePrivada);                        
+            cifrador.init(Cipher.DECRYPT_MODE, clavePrivada);
             //Obtener texto descifrado            
-            byte[] bufferClaro = cifrador.doFinal(Base64.decodeBase64(bufferCifrado));            
+            byte[] bufferClaro = cifrador.doFinal(Base64.decodeBase64(bufferCifrado));
             return new String(bufferClaro, StandardCharsets.UTF_8);
         } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException ex) {
-            throw ex;        
+            throw ex;
         }
     }
 
@@ -132,7 +139,7 @@ public class UtilsSecurity {
             byte[] bufferClaro = textoACifrar.getBytes();
 
             //Ciframos con clave pública el texto plano utilizando RSA
-            Cipher cifrador = Cipher.getInstance("RSA");            
+            Cipher cifrador = Cipher.getInstance("RSA");
             cifrador.init(Cipher.ENCRYPT_MODE, clavePublica);
             System.out.println("Cifrar con clave pública el Texto:");
             System.out.write(bufferClaro);
@@ -153,8 +160,8 @@ public class UtilsSecurity {
             System.out.write(bufferClaro);
             System.out.println("\n_______________________________");
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException | IllegalBlockSizeException | BadPaddingException ex) {
-            Logger.getLogger(UtilsSecurity.class.getName()).log(Level.SEVERE, null, ex);            
+            Logger.getLogger(UtilsSecurity.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }  
-    
+    }
+
 }

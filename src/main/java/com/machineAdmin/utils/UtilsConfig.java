@@ -20,6 +20,7 @@ import com.machineAdmin.entities.cg.EntityMongo;
 import com.machineAdmin.entities.cg.admin.ConfigMail;
 import com.machineAdmin.managers.cg.admin.ManagerConfigMail;
 import com.machineAdmin.utils.UtilsConfig.CGConfig.SMSConfig;
+import java.util.Date;
 import org.mongojack.JacksonDBCollection;
 
 /**
@@ -39,7 +40,7 @@ public class UtilsConfig {
         return COLLECTION.findOne().getJwtConfig().getRecoverJwtExp();
     }
 
-    public static ConfigMail getResetPasswordConfigMail() {
+    public static ConfigMail getResetPasswordConfigMail() {        
         String mailId = COLLECTION.findOne().getMailConfig().getResetPasswordMailId();
         ManagerConfigMail managerConfigMail = new ManagerConfigMail();
         return managerConfigMail.findOne(mailId);
@@ -54,6 +55,7 @@ public class UtilsConfig {
         private JwtsConfig jwtConfig;
         private MailsConfig mailConfig;
         private SMSConfig smsConfig;
+        private LoginAttemptConfig loginConfig;
 
         public SMSConfig getSmsConfig() {
             return smsConfig;
@@ -164,6 +166,29 @@ public class UtilsConfig {
                 this.usuarioId = usuarioId;
             }
 
+        }
+
+        protected static class LoginAttemptConfig {
+            
+            private Date lastAttemptDate;
+            private int numberAttemps;
+
+            public Date getLastAttemptDate() {
+                return lastAttemptDate;
+            }
+
+            public void setLastAttemptDate(Date lastAttemptDate) {
+                this.lastAttemptDate = lastAttemptDate;
+            }
+
+            public int getNumberAttemps() {
+                return numberAttemps;
+            }
+
+            public void setNumberAttemps(int numberAttemps) {
+                this.numberAttemps = numberAttemps;
+            }                        
+            
         }
     }
 }

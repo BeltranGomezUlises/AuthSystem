@@ -5,6 +5,7 @@
  */
 package com.machineAdmin.entities.cg;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 import org.mongojack.ObjectId;
@@ -13,7 +14,8 @@ import org.mongojack.ObjectId;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class EntityMongo implements Entity{
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class EntityMongo{
                 
     @ObjectId
     @JsonProperty("_id")

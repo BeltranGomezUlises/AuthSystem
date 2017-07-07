@@ -24,82 +24,82 @@ public class ManagerMongoFacade<T extends EntityMongo> implements ManagerFacade<
     }
 
     @Override
-    public T persist(T entity) {
+    public T persist(T entity) throws Exception {
         return (T) dao.persist(entity);
     }
 
     @Override
-    public List<T> persistAll(List<T> entities) {
+    public List<T> persistAll(List<T> entities) throws Exception {
         return dao.persistAll(entities);
     }
 
     @Override
-    public List<T> persistAll(T... entities) {
+    public List<T> persistAll(T... entities) throws Exception {
         return dao.persistAll(entities);
     }
 
     @Override
-    public boolean delete(T entity) {
-        return dao.delete(entity);
+    public void delete(Object id) throws Exception {
+        dao.delete(id);
     }
-    
-    public boolean delete(Query q){
-        return dao.delete(q);
-    }
-    
-    @Override
-    public List<T> deleteAll(List<T> entities) {
-        return dao.deleteAll(entities);
+
+    public void delete(Query q) {
+        dao.delete(q);
     }
 
     @Override
-    public List<T> deleteAll(T... entities) {
-        return dao.deleteAll(entities);
+    public void deleteAll(List<Object> ids) throws Exception {
+        dao.deleteAll(ids);
     }
 
     @Override
-    public boolean update(T entity) {        
-        return dao.update(entity);
+    public void deleteAll(Object... ids) throws Exception {
+        dao.deleteAll(ids);
     }
 
-    public List<T> update(Query q, T t){
+    @Override
+    public void update(T entity) throws Exception {
+        dao.update(entity);
+    }
+
+    public List<T> update(Query q, T t) {
         return dao.update(q, t);
     }
-    
+
     @Override
     public T findOne(Object id) {
         return (T) dao.findOne(id);
     }
 
-    public T findOne(Query q){
+    public T findOne(Query q) {
         return (T) dao.findOne(q);
     }
-    
+
     @Override
     public List<T> findAll() {
         return dao.findAll();
     }
 
-    public List<T> findAll(Query q){
-        return dao.findAll(q);
-    }
-    
     @Override
     public List<T> findAll(int max) {
         return dao.findAll(max);
     }
 
-    public List<T> findAll(Query q, int max){
+    public List<T> findAll(Query q) {
+        return dao.findAll(q);
+    }
+
+    public List<T> findAll(Query q, int max) {
         return dao.findAll(q, max);
     }
-    
+
+    public long count(Query q) {
+        return dao.count(q);
+    }
+
     @Override
     public long count() {
         return dao.count();
-    }            
-    
-    public long count(Query q) {
-        return dao.count(q);
-    }            
-    
+    }
+
 }

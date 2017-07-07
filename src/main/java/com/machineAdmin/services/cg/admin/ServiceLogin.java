@@ -13,7 +13,7 @@ import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.cg.ModelEncryptContent;
 import com.machineAdmin.models.cg.ModelRecoverCodeUser;
 import com.machineAdmin.models.cg.enums.Status;
-import com.machineAdmin.models.cg.responses.Response;
+import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.ServiceFacade;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsJson;
@@ -48,17 +48,16 @@ public class ServiceLogin {
             usuarioAutenticando.setPass(UtilsSecurity.cifrarMD5(usuarioAutenticando.getPass()));
             User usuarioLogeado = managerUsuario.Login(usuarioAutenticando);
             //no enviar pass
-            usuarioLogeado.setPass(null);            
+            usuarioLogeado.setPass(null);
             res.setData(usuarioLogeado);
             res.setMetaData(UtilsJWT.generateToken(usuarioLogeado));
-            
+
             //bitacora de accesos            
-            
         } catch (UsuarioInexistenteException e) {
             res.setStatus(Status.WARNING);
             res.setMessage("Usuario y/o contraseña incorrecto");
             res.setDevMessage("imposible inicio de sesión, por: " + e.getMessage());
-        } catch (Exception ex) {            
+        } catch (Exception ex) {
             res.setStatus(Status.ERROR);
             res.setDevMessage("imposible inicio de sesión, por: " + ex.getMessage());
         }
@@ -72,18 +71,18 @@ public class ServiceLogin {
         r.setData(UtilsSecurity.getPublicKey());
         r.setDevMessage("llave publica de cifrado RSA Base64");
         return r;
-    }   
-   
+    }
+
     @GET
     @Path("/recoverCode/{identifier}")
-    public Response recoverCode(@PathParam("identifier") String identifier){                
+    public Response recoverCode(@PathParam("identifier") String identifier) {
         Response res = new Response();
         try {
             ManagerUser managerUser = new ManagerUser();
             ModelRecoverCodeUser recoverCode = managerUser.enviarCodigo(identifier);
             res.setMetaData(UtilsJWT.generateValidateUserToken(recoverCode));
             res.setDevMessage("token de codigo para restaurar contraseña");
-            res.setMessage("El código para recuperar contraseña fué enviado");                    
+            res.setMessage("El código para recuperar contraseña fué enviado");
         } catch (UsuarioInexistenteException ex) {
             res.setStatus(Status.WARNING);
             res.setMessage("No se encontró el usuario con el identificador proporsionado");
@@ -103,23 +102,23 @@ public class ServiceLogin {
         }
         return res;
     }
-    
+
     @GET
     @Path("/tokenResetPassword/{code}")
     public Response getTokenReset(@HeaderParam("Authorization") String token, @PathParam("code") String code) {
         Response res = new Response();
-        if (UtilsJWT.isTokenValid(token)) {                                    
+        if (UtilsJWT.isTokenValid(token)) {
             try {
                 res.setMetaData(UtilsJWT.generateTokenResetPassword(token, code));
             } catch (IOException ex) {
                 res.setStatus(Status.ERROR);
                 res.setMessage("No fué posible verificar el código proporsionado, intente mas tarde");
-                ServiceFacade.setCauseMessage(res, ex);                    
+                ServiceFacade.setCauseMessage(res, ex);
             } catch (ParametroInvalidoException ex) {
                 res.setStatus(Status.WARNING);
                 res.setMessage("No fué posible verificar el código proporsionado, intente repetir el proceso");
-                ServiceFacade.setCauseMessage(res, ex);                    
-            }            
+                ServiceFacade.setCauseMessage(res, ex);
+            }
         } else {
             res.setMessage("No fué posible verificar el código proporsionado, intente repetir el proceso");
             res.setDevMessage("Token inválido");
@@ -138,13 +137,9 @@ public class ServiceLogin {
                 String pass = UtilsSecurity.decryptBase64ByPrivateKey(content.getContent());
 
                 ManagerUser managerUser = new ManagerUser();
-                if (managerUser.resetPassword(userId, pass)) {
-                    res.setMessage("La contraseña fué restablecida con éxito");
-                } else {
-                    res.setMessage("No se logró restablecer la contraseña, intente repetir el proceso completo");
-                    res.setStatus(Status.WARNING);
-                    res.setDevMessage("Falló al actualizar la contraseña del usuario");
-                }
+                managerUser.resetPassword(userId, pass);
+                
+                res.setMessage("La contraseña fué restablecida con éxito");               
             } catch (Exception ex) {
                 res.setMessage("No se logró restablecer la contraseña, intente repetir el proceso completo");
                 ServiceFacade.setCauseMessage(res, ex);
@@ -158,6 +153,4 @@ public class ServiceLogin {
         return res;
     }
 
-   
-    
 }
