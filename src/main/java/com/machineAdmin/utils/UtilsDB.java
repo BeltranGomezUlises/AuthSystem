@@ -9,8 +9,10 @@ import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
+import java.util.Date;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import org.bson.types.ObjectId;
 import org.jinq.jpa.JinqJPAStreamProvider;
 
 /**
@@ -36,7 +38,7 @@ public class UtilsDB {
     public static DBCollection getCollection(String name) {
         return MONGO_CLIENT.getDB(DATA_BASE_NAME).getCollection(name);
     }
-
+    
     //<editor-fold defaultstate="collapsed" desc="JPA utils">
     /*
         the jpa clients are defined here,

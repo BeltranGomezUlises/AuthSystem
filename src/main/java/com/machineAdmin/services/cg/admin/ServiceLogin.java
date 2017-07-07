@@ -8,13 +8,16 @@ package com.machineAdmin.services.cg.admin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.machineAdmin.entities.cg.admin.User;
 import com.machineAdmin.managers.cg.admin.ManagerUser;
+import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
+import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.cg.ModelEncryptContent;
 import com.machineAdmin.models.cg.ModelRecoverCodeUser;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.ServiceFacade;
+import com.machineAdmin.utils.UtilsBitacora;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsJson;
 import com.machineAdmin.utils.UtilsSecurity;
@@ -47,19 +50,33 @@ public class ServiceLogin {
             User usuarioAutenticando = UtilsJson.jsonDeserialize(UtilsSecurity.decryptBase64ByPrivateKey(content.getContent()), User.class);
             usuarioAutenticando.setPass(UtilsSecurity.cifrarMD5(usuarioAutenticando.getPass()));
             User usuarioLogeado = managerUsuario.Login(usuarioAutenticando);
-            //no enviar pass
+            
+            //no estos datos ó mapear a modelo
             usuarioLogeado.setPass(null);
+            usuarioLogeado.setBlocked(null);
+            usuarioLogeado.setLoginAttempt(null);
+            
             res.setData(usuarioLogeado);
             res.setMetaData(UtilsJWT.generateToken(usuarioLogeado));
-
+            
+            //bitacora                                                
+            new Thread( ()-> {
+                UtilsBitacora.bitacorizar("bitacora.accesos", usuarioLogeado);
+            }).start();
+            
             //bitacora de accesos            
-        } catch (UsuarioInexistenteException e) {
+        } catch (UsuarioInexistenteException | ContraseñaIncorrectaException e) {
             res.setStatus(Status.WARNING);
             res.setMessage("Usuario y/o contraseña incorrecto");
             res.setDevMessage("imposible inicio de sesión, por: " + e.getMessage());
+        } catch (UsuarioBlockeadoException ex) {
+            res.setStatus(Status.WARNING);
+            res.setMessage(ex.getMessage());
+            res.setDevMessage("El Usuario está bloqueado temporalmente. Cause: " + ex.getMessage());
         } catch (Exception ex) {
+            ex.printStackTrace();
             res.setStatus(Status.ERROR);
-            res.setDevMessage("imposible inicio de sesión, por: " + ex.getMessage());
+            ServiceFacade.setCauseMessage(res, ex);
         }
         return res;
     }

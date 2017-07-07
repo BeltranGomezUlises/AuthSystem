@@ -15,11 +15,12 @@ import java.util.logging.Logger;
  */
 public class UtilsDate {
 
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("d/MM/yyyy");
-    private static final SimpleDateFormat SDFHM = new SimpleDateFormat("HH:mm");
-    private static final SimpleDateFormat SDFNDOW = new SimpleDateFormat("EEEE");
-    private static final SimpleDateFormat SDFFULL = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSX");
-    private static final SimpleDateFormat SDFUTC = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    private static final SimpleDateFormat SDF_D_MM_YYYY = new SimpleDateFormat("d/MM/yyyy");
+    private static final SimpleDateFormat SDF_D_MM_YYYY_HH_MM = new SimpleDateFormat("d/MM/yyyy HH:mm   ");
+    private static final SimpleDateFormat SDF_HM = new SimpleDateFormat("HH:mm");
+    private static final SimpleDateFormat SDF_NDOW = new SimpleDateFormat("EEEE");
+    private static final SimpleDateFormat SDF_YYYY_MM_DD_T_HH_MM_SS_sssssssX = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSX");
+    private static final SimpleDateFormat SDF_UTC = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     //Sumatoria de tiempo en formato HH:mm
     public static String sumatoriaDeTiempos(List<String> tiempos) {
@@ -42,20 +43,24 @@ public class UtilsDate {
         return res;
     }
 
-    public static String sdf(Date date) {
-        return SDF.format(date);
+    public static String format_D_MM_YYYY(Date date) {
+        return SDF_D_MM_YYYY.format(date);
     }
 
-    public static String sdfHM(Date date) {
-        return SDFHM.format(date);
+    public static String format_D_MM_YYYY_HH_MM(Date date) {
+        return SDF_D_MM_YYYY_HH_MM.format(date);
     }
 
-    public static String sdfFull(Date date) {
-        return SDFFULL.format(date);
+    public static String format_HH_MM(Date date) {
+        return SDF_HM.format(date);
+    }
+
+    public static String format_YYYY_MM_DD_T_HH_MM_SS_sssssss(Date date) {
+        return SDF_YYYY_MM_DD_T_HH_MM_SS_sssssssX.format(date);
     }
 
     public static String sdfUTC(Date date) {
-        return SDFUTC.format(date);
+        return SDF_UTC.format(date);
     }
 
     public static String nameDayOfWeek(String date, String DateFormat) throws ParseException {
@@ -64,78 +69,17 @@ public class UtilsDate {
     }
 
     public static String nameDayOfWeek(String date) throws ParseException {
-        return nameDayOfWeek(SDF.parse(date));
+        return nameDayOfWeek(SDF_NDOW.parse(date));
     }
 
     public static String nameDayOfWeek(Date date) {
-        return SDFNDOW.format(date);
-    }
-
-    public static void BubbleOrderStringOfDates(ArrayList<String> lista) {
-        ArrayList<Date> dates = new ArrayList<>();
-        for (String s : lista) {
-            try {
-                dates.add(SDF.parse(s));
-            } catch (ParseException ex) {
-            }
-        }
-        for (int i = 0; i < dates.size() - 1; i++) {
-            for (int j = 0; j < dates.size() - 1 - i; j++) {
-                if (dates.get(j).after(dates.get(j + 1))) {
-                    //para la lista de fechas
-                    Date aux = dates.get(j + 1);
-                    dates.set(j + 1, dates.get(j));
-                    dates.set(j, aux);
-                    //su equivalente de string
-                    String auxS = lista.get(j + 1);
-                    lista.set(j + 1, lista.get(j));
-                    lista.set(j, auxS);
-                }
-            }
-        }
-
-    }
-
-    public static void QSortStringDates(ArrayList<String> dates) throws ParseException {
-        ArrayList<Date> miDates = new ArrayList<>();
-        for (String date : dates) {
-            miDates.add(SDF.parse(date));
-        }
-        QuickSortStringOfDates(miDates, 0, miDates.size() - 1);
-    }
-
-    public static void QuickSortStringOfDates(ArrayList<Date> lista, int izq, int der) throws ParseException {
-        int i = izq;
-        int j = der;
-        Date x = lista.get((izq + der) / 2);
-        Date aux;
-        do {
-            while ((lista.get(i).compareTo(x) < 0) && (j <= der)) {
-                i++;
-            }
-            while ((lista.get(j).compareTo(x) > 0) && (j > izq)) {
-                j--;
-            }
-            if (i <= j) {
-                aux = SDF.parse(SDF.format(lista.get(i)));
-                lista.set(i, lista.get(j));
-                lista.set(j, aux);
-                i++;
-                j--;
-            }
-        } while (i <= j);
-        if (izq < j) {
-            QuickSortStringOfDates(lista, izq, j);
-        }
-        if (i < der) {
-            QuickSortStringOfDates(lista, i, der);
-        }
+        return SDF_NDOW.format(date);
     }
 
     public static Date lunesAnterior(String fecha) {
         GregorianCalendar cal = new GregorianCalendar();
         try {
-            cal.setTime(SDF.parse(fecha));
+            cal.setTime(SDF_D_MM_YYYY.parse(fecha));
         } catch (Exception e) {
         }
         while (cal.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) { //mientras sea mayor que lunes           
@@ -147,7 +91,7 @@ public class UtilsDate {
     public static Date lunesPosterior(String fecha) {
         GregorianCalendar cal = new GregorianCalendar();
         try {
-            cal.setTime(SDF.parse(fecha));
+            cal.setTime(SDF_D_MM_YYYY.parse(fecha));
         } catch (Exception e) {
         }
         while (cal.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) { //mientras sea mayor que lunes           
@@ -186,8 +130,8 @@ public class UtilsDate {
             GregorianCalendar calDate = new GregorianCalendar();
             GregorianCalendar calWeek = new GregorianCalendar();
 
-            calDate.setTime(SDF.parse(date));
-            calWeek.setTime(SDF.parse(week));
+            calDate.setTime(SDF_D_MM_YYYY.parse(date));
+            calWeek.setTime(SDF_D_MM_YYYY.parse(week));
 
             if (calDate.get(Calendar.WEEK_OF_YEAR) == calWeek.get(Calendar.WEEK_OF_YEAR)) {
                 res = true;
@@ -207,6 +151,10 @@ public class UtilsDate {
 
         public DateClass() {
             this.date = new Date();
+        }
+        
+        public DateClass(Date date){
+            this.date = date;
         }
     }
 

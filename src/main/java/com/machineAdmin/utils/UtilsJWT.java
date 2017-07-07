@@ -40,7 +40,7 @@ public class UtilsJWT {
         Calendar cal = new GregorianCalendar();        //calendario de tiempos        
         builder.setIssuedAt(cal.getTime());     //fecha de expedicion        
 
-        cal.add(Calendar.SECOND, UtilsConfig.getSessionJwtExp()); //aumentar tiempo para asignar expiracion
+        cal.add(Calendar.SECOND, UtilsConfig.getSecondsSessionJwtExp()); //aumentar tiempo para asignar expiracion
         builder.setExpiration(cal.getTime());
 
         builder.setSubject(UtilsJson.jsonSerialize(usuarioLogeado)); //poner el sujeto en jwt
@@ -51,7 +51,7 @@ public class UtilsJWT {
     public static String generateValidateUserToken(ModelRecoverCodeUser model) throws JsonProcessingException {
         JwtBuilder builder = Jwts.builder();
         Calendar cal = new GregorianCalendar();        //calendario de tiempos                
-        cal.add(Calendar.SECOND, UtilsConfig.getRecoverJwtExp());
+        cal.add(Calendar.SECOND, UtilsConfig.getSecondsRecoverJwtExp());
         builder.setExpiration(cal.getTime());
         builder.setSubject(UtilsJson.jsonSerialize(model));
 
@@ -61,7 +61,7 @@ public class UtilsJWT {
     public static String generateTokenResetPassword(String token, String code) throws IOException, ParametroInvalidoException{
         JwtBuilder builder = Jwts.builder();
         Calendar cal = new GregorianCalendar();        //calendario de tiempos                
-        cal.add(Calendar.SECOND, UtilsConfig.getRecoverJwtExp());
+        cal.add(Calendar.SECOND, UtilsConfig.getSecondsRecoverJwtExp());
         builder.setExpiration(cal.getTime());    
         
         ModelRecoverCodeUser codeUser = UtilsJson.jsonDeserialize(UtilsJWT.getBodyToken(token), ModelRecoverCodeUser.class);        
