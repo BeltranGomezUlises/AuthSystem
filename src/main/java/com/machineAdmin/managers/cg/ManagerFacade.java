@@ -5,7 +5,6 @@
  */
 package com.machineAdmin.managers.cg;
 
-import com.machineAdmin.entities.cg.Entity;
 import java.util.List;
 
 /**
@@ -13,21 +12,21 @@ import java.util.List;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> class entity used to restrict the class of use
  */
-public interface ManagerFacade<T extends Entity> {
+public interface ManagerFacade<T> {
     
-    public T persist(T entity);
+    public T persist(T entity) throws Exception;
     
-    public List<T> persistAll(List<T> entities);
+    public List<T> persistAll(List<T> entities) throws Exception;
     
-    public List<T> persistAll(T... entities);        
+    public List<T> persistAll(T... entities) throws Exception;        
     
-    public boolean delete(T entity);
+    public void delete(Object id) throws Exception;
     
-    public List<T> deleteAll(List<T> entities);
+    public void deleteAll(List<Object> ids) throws Exception;
     
-    public List<T> deleteAll(T... entities);
+    public void deleteAll(Object... ids) throws Exception;
     
-    public boolean update(T entity);
+    public void update(T entity) throws Exception;
         
     public T findOne(Object id);
     

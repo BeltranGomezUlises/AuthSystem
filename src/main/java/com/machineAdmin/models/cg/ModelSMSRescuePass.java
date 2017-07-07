@@ -18,7 +18,6 @@ package com.machineAdmin.models.cg;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
-import javax.ws.rs.client.Entity;
 
 /**
  *

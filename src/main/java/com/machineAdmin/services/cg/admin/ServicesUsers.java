@@ -8,7 +8,7 @@ package com.machineAdmin.services.cg.admin;
 import com.machineAdmin.daos.cg.admin.DaoUser;
 import com.machineAdmin.entities.cg.admin.User;
 import com.machineAdmin.managers.cg.admin.ManagerUser;
-import com.machineAdmin.models.cg.responses.Response;
+import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.ServiceFacade;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

@@ -1,8 +1,7 @@
 package com.machineAdmin.services.cg;
 
-import com.machineAdmin.entities.cg.Entity;
 import com.machineAdmin.managers.cg.ManagerFacade;
-import com.machineAdmin.models.cg.responses.Response;
+import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.utils.UtilsJWT;
 import javax.ws.rs.Consumes;
@@ -19,15 +18,15 @@ import javax.ws.rs.core.MediaType;
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
- * @param <T> is an entity
+ * @param <T> is a Entity that workw with de manager<T>
  */
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class ServiceFacade<T extends Entity> {
+public class ServiceFacade<T> {
 
-    ManagerFacade manager;
+    ManagerFacade<T> manager;
 
-    public ServiceFacade(ManagerFacade manager) {
+    public ServiceFacade(ManagerFacade<T> manager) {
         this.manager = manager;
     }
 
@@ -35,7 +34,7 @@ public class ServiceFacade<T extends Entity> {
     public Response get(@HeaderParam("Authorization") String token) {
         Response response = new Response();        
         if (UtilsJWT.isTokenValid(token)) {
-            try {
+            try {                
                 response.setData(manager.findAll());
                 response.setDevMessage("Entidades encontradas");
             } catch (Exception e) {
@@ -93,7 +92,8 @@ public class ServiceFacade<T extends Entity> {
         Response response = new Response();
         if (UtilsJWT.isTokenValid(token)) {
             try {
-                response.setData(manager.update(t));
+                manager.update(t);
+                response.setData(t);
                 response.setMessage("Entidad actualizada");
             } catch (Exception e) {
                 response.setStatus(Status.ERROR);
@@ -112,7 +112,8 @@ public class ServiceFacade<T extends Entity> {
         Response response = new Response();
         if (UtilsJWT.isTokenValid(token)) {
             try {
-                response.setData(manager.delete(t));
+                manager.delete(t);
+                response.setData(t);
                 response.setMessage("Entidad eliminada");
             } catch (Exception e) {
                 response.setStatus(Status.ERROR);

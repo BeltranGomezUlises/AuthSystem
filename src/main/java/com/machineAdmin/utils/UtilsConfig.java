@@ -20,6 +20,9 @@ import com.machineAdmin.entities.cg.EntityMongo;
 import com.machineAdmin.entities.cg.admin.ConfigMail;
 import com.machineAdmin.managers.cg.admin.ManagerConfigMail;
 import com.machineAdmin.utils.UtilsConfig.CGConfig.SMSConfig;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import org.mongojack.JacksonDBCollection;
 
 /**
@@ -31,12 +34,12 @@ public class UtilsConfig {
     protected static final String COLLECTION_NAME = "config.cg";
     protected static final JacksonDBCollection<CGConfig, String> COLLECTION = JacksonDBCollection.wrap(UtilsDB.getCollection(COLLECTION_NAME), CGConfig.class, String.class);
 
-    public static int getSessionJwtExp() {
-        return COLLECTION.findOne().getJwtConfig().getSessionJwtExp();
+    public static int getSecondsSessionJwtExp() {
+        return COLLECTION.findOne().getJwtConfig().getSecondsSessionJwtExp();
     }
 
-    public static int getRecoverJwtExp() {
-        return COLLECTION.findOne().getJwtConfig().getRecoverJwtExp();
+    public static int getSecondsRecoverJwtExp() {
+        return COLLECTION.findOne().getJwtConfig().getSecondsRecoverJwtExp();
     }
 
     public static ConfigMail getResetPasswordConfigMail() {
@@ -49,11 +52,30 @@ public class UtilsConfig {
         return COLLECTION.findOne().getSmsConfig();
     }
 
-    protected static class CGConfig extends EntityMongo {
+    public static CGConfig getCGConfig() {
+        return COLLECTION.findOne();
+    }
+
+    public static int getSecondsBetweenLoginAttempt() {
+        return getCGConfig().getLoginConfig().getSecondsBetweenEvents();
+    }
+
+    public static int getMaxNumberLoginAttempt() {
+        return getCGConfig().getLoginConfig().getMaxNumberAttemps();
+    }
+
+    public static Date getDateUtilUserStillBlocked(){
+        Calendar cal = new GregorianCalendar();
+        cal.add(Calendar.SECOND, getCGConfig().getLoginConfig().getSecondsTermporalBlockingUser());
+        return cal.getTime();
+    }
+    
+    public static class CGConfig extends EntityMongo {
 
         private JwtsConfig jwtConfig;
         private MailsConfig mailConfig;
         private SMSConfig smsConfig;
+        private LoginAttemptConfig loginConfig;
 
         public SMSConfig getSmsConfig() {
             return smsConfig;
@@ -79,6 +101,17 @@ public class UtilsConfig {
             this.mailConfig = mailConfig;
         }
 
+        public LoginAttemptConfig getLoginConfig() {
+            return loginConfig;
+        }
+
+        public void setLoginConfig(LoginAttemptConfig loginConfig) {
+            this.loginConfig = loginConfig;
+        }
+
+        /**
+         * clases anidadas
+         */
         protected static class MailsConfig {
 
             private String resetPasswordMailId;
@@ -109,27 +142,37 @@ public class UtilsConfig {
                 this.contactMailId = contactMailId;
             }
 
+            @Override
+            public String toString() {
+                return "MailsConfig{" + "resetPasswordMailId=" + resetPasswordMailId + ", supportMailId=" + supportMailId + ", contactMailId=" + contactMailId + '}';
+            }
+
         }
 
         protected static class JwtsConfig {
 
-            private int sessionJwtExp;
-            private int recoverJwtExp;
+            private int secondsSessionJwtExp;
+            private int secondsRecoverJwtExp;
 
-            public int getSessionJwtExp() {
-                return sessionJwtExp;
+            public int getSecondsSessionJwtExp() {
+                return secondsSessionJwtExp;
             }
 
-            public void setSessionJwtExp(int sessionJwtExp) {
-                this.sessionJwtExp = sessionJwtExp;
+            public void setSecondsSessionJwtExp(int secondsSessionJwtExp) {
+                this.secondsSessionJwtExp = secondsSessionJwtExp;
             }
 
-            public int getRecoverJwtExp() {
-                return recoverJwtExp;
+            public int getSecondsRecoverJwtExp() {
+                return secondsRecoverJwtExp;
             }
 
-            public void setRecoverJwtExp(int recoverJwtExp) {
-                this.recoverJwtExp = recoverJwtExp;
+            public void setSecondsRecoverJwtExp(int secondsRecoverJwtExp) {
+                this.secondsRecoverJwtExp = secondsRecoverJwtExp;
+            }
+
+            @Override
+            public String toString() {
+                return "JwtsConfig{" + "secondsSessionJwtExp=" + secondsSessionJwtExp + ", secondsRecoverJwtExp=" + secondsRecoverJwtExp + '}';
             }
 
         }
@@ -164,6 +207,55 @@ public class UtilsConfig {
                 this.usuarioId = usuarioId;
             }
 
+            @Override
+            public String toString() {
+                return "SMSConfig{" + "uri=" + uri + ", deviceImei=" + deviceImei + ", usuarioId=" + usuarioId + '}';
+            }
+
         }
+
+        protected static class LoginAttemptConfig {
+
+            private int secondsBetweenEvents;
+            private int maxNumberAttemps;
+            private int secondsTermporalBlockingUser;
+
+            public int getSecondsBetweenEvents() {
+                return secondsBetweenEvents;
+            }
+
+            public void setSecondsBetweenEvents(int secondsBetweenEvents) {
+                this.secondsBetweenEvents = secondsBetweenEvents;
+            }
+
+            public int getMaxNumberAttemps() {
+                return maxNumberAttemps;
+            }
+
+            public void setMaxNumberAttemps(int maxNumberAttemps) {
+                this.maxNumberAttemps = maxNumberAttemps;
+            }
+
+            public int getSecondsTermporalBlockingUser() {
+                return secondsTermporalBlockingUser;
+            }
+
+            public void setSecondsTermporalBlockingUser(int secondsTermporalBlockingUser) {
+                this.secondsTermporalBlockingUser = secondsTermporalBlockingUser;
+            }
+
+            @Override
+            public String toString() {
+                return "LoginAttemptConfig{" + "secondsBetweenEvents=" + secondsBetweenEvents + ", maxNumberAttemps=" + maxNumberAttemps + ", secondsTermporalBlockingUser=" + secondsTermporalBlockingUser + '}';
+            }
+
+        }
+
+        @Override
+        public String toString() {
+            return "CGConfig{" + "jwtConfig=" + jwtConfig + ", mailConfig=" + mailConfig + ", smsConfig=" + smsConfig + ", loginConfig=" + loginConfig + '}';
+        }
+
     }
+
 }

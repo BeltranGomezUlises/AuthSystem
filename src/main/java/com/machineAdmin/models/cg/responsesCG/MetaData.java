@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.models.cg.responses;
+package com.machineAdmin.models.cg.responsesCG;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -19,18 +19,14 @@ public class MetaData {
     private String message;
     private Status status;
     private String devMessage;
-    private Object metaData;
+    private Object metaData;   
 
-    private static final String DEFAULT_DEV_MESSAGE = "Operación Realizada";
-
-    public MetaData() {
-        this.devMessage = DEFAULT_DEV_MESSAGE;
+    public MetaData() {        
         this.status = Status.OK;
     }
 
     public MetaData(String message) {
-        this.message = message;
-        this.devMessage = DEFAULT_DEV_MESSAGE;
+        this.message = message;        
         this.status = Status.OK;
     }
 
@@ -46,8 +42,7 @@ public class MetaData {
     }
 
     public MetaData(Object metaData, String message) {
-        this.message = message;
-        this.devMessage = DEFAULT_DEV_MESSAGE;
+        this.message = message;        
         this.status = Status.OK;
         this.metaData = metaData;
     }
