@@ -14,26 +14,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.daos;
+package com.machineAdmin.entities.cg.admin;
 
-import com.machineAdmin.daos.cg.DaoSQLFacade;
-import com.machineAdmin.daos.jpaControllers.PermisoJpaController;
-import com.machineAdmin.entities.postgres.Permiso;
-import com.machineAdmin.utils.UtilsDB;
+import com.machineAdmin.entities.cg.EntityMongo;
+import java.util.Date;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoPermiso extends DaoSQLFacade<Permiso> {
-
-    public DaoPermiso() {
-        super(UtilsDB.getEMFactoryPostgres(), PermisoJpaController.class, Permiso.class, "permisos");
-    }
-
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return Integer.class;
-    }
+public class BinnacleAccess extends EntityMongo {
     
+    private Date accessDate;    
+    private String userId;
+
+    public BinnacleAccess(Date accessDate, String userId) {
+        this.accessDate = accessDate;
+        this.userId = userId;
+    }
+
+    public BinnacleAccess(String userId) {
+        this.accessDate = new Date();
+        this.userId = userId;
+    }
+
+    
+    public Date getAccessDate() {
+        return accessDate;
+    }
+
+    public void setAccessDate(Date accessDate) {
+        this.accessDate = accessDate;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+            
 }

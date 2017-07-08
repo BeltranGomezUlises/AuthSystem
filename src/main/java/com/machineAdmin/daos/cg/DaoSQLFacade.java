@@ -28,14 +28,14 @@ public abstract class DaoSQLFacade<E extends Serializable>{
     private final Class<?> claseController;
     private final Class<E> claseEntity;
     private final EntityManagerFactory eMFactory;
-    private final JinqJPAStreamProvider streams;
-    
-    
-    public DaoSQLFacade(EntityManagerFactory eMFactory, Class<?> claseController, Class<E> claseEntity){
+    private final JinqJPAStreamProvider streams;    
+    private final String binnacleName;    
+        
+    public DaoSQLFacade(EntityManagerFactory eMFactory, Class<?> claseController, Class<E> claseEntity, String binnacleName){
         this.eMFactory = eMFactory;
         this.claseController = claseController;        
         this.claseEntity = claseEntity;
-        
+        this.binnacleName = binnacleName;
         streams = new JinqJPAStreamProvider(eMFactory);
     }
         
@@ -135,4 +135,9 @@ public abstract class DaoSQLFacade<E extends Serializable>{
     private EntityManager getEM(){
         return eMFactory.createEntityManager();
     }
+    
+    public String getBinnacleName(){
+        return binnacleName;
+    }
+        
 }

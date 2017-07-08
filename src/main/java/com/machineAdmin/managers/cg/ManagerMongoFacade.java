@@ -19,7 +19,7 @@ public class ManagerMongoFacade<T extends EntityMongo> implements ManagerFacade<
 
     protected DaoMongoFacade dao;
 
-    protected ManagerMongoFacade(DaoMongoFacade dao) {
+    protected ManagerMongoFacade(DaoMongoFacade dao){
         this.dao = dao;
     }
 

@@ -15,7 +15,7 @@ import com.machineAdmin.entities.cg.admin.User;
 public class DaoUser extends DaoMongoFacade<User>{
 
     public DaoUser() {
-        super("config.users", User.class);
+        super("cg.config.users", User.class);
     }
                 
 }

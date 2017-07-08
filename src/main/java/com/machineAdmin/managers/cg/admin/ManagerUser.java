@@ -7,6 +7,7 @@ package com.machineAdmin.managers.cg.admin;
 
 import com.machineAdmin.managers.cg.ManagerMongoFacade;
 import com.machineAdmin.daos.cg.admin.DaoUser;
+import com.machineAdmin.entities.cg.admin.BinnacleAccess;
 import com.machineAdmin.entities.cg.admin.User;
 import com.machineAdmin.entities.cg.admin.User.LoginAttempt;
 import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
@@ -14,16 +15,14 @@ import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.cg.ModelRecoverCodeUser;
+import com.machineAdmin.utils.UtilsBitacora;
 import com.machineAdmin.utils.UtilsConfig;
-import com.machineAdmin.utils.UtilsDB;
 import com.machineAdmin.utils.UtilsDate;
 import com.machineAdmin.utils.UtilsMail;
 import com.machineAdmin.utils.UtilsSMS;
 import com.machineAdmin.utils.UtilsSecurity;
 import java.net.MalformedURLException;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,6 +72,13 @@ public class ManagerUser extends ManagerMongoFacade<User> {
             }
             loged.setLoginAttempt(null);
             this.update(loged);
+                        
+            //login exitoso, generar bitácora                                    
+            new Thread( ()-> {
+                BinnacleAccess access = new BinnacleAccess(loged.getId());
+                UtilsBitacora.bitacorizar("cg.bitacora.accesos", access);
+                }).start();            
+            
             return loged;
         } else { //ver si el usuario existe y verificar número de intentos
             this.numberAttemptVerification(user);
@@ -189,9 +195,12 @@ public class ManagerUser extends ManagerMongoFacade<User> {
                 return userIdentifierType.USER;
             }
         }
-    }
-
+    }    
+    
     private enum userIdentifierType {
         PHONE, MAIL, USER
     }
+    
+    
+       
 }
