@@ -12,8 +12,8 @@ public class ApplicationConfig extends Application {
 
     @Override
     public Set<Class<?>> getClasses() {
-        Set<Class<?>> resources = new java.util.HashSet<>();       
-        addRestResourceClasses(resources);
+        Set<Class<?>> resources = new java.util.HashSet<>();
+        addRestResourceClasses(resources);                
         return resources;
     }
 
@@ -24,8 +24,10 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(com.machineAdmin.services.ServiceFacade.class);
-        resources.add(com.machineAdmin.services.ServiceFormato.class);
+        resources.add(com.machineAdmin.services.cg.ServiceCommons.class);
+        resources.add(com.machineAdmin.services.cg.admin.ServiceConfigMail.class);
+        resources.add(com.machineAdmin.services.cg.admin.ServiceLogin.class);
+        resources.add(com.machineAdmin.services.cg.admin.ServicesUsers.class);
     }
     
 }
