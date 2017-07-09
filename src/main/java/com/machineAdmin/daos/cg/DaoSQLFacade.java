@@ -93,6 +93,10 @@ public abstract class DaoSQLFacade<E extends Serializable>{
         }          
     }
         
+    public E findFirst(){
+        return findAll(false, 1, 0).get(0);
+    }
+    
     public E findOne(Object id){
         return getEM().find(claseEntity, id);        
     }
@@ -118,7 +122,7 @@ public abstract class DaoSQLFacade<E extends Serializable>{
             if (!all) {
                 q.setMaxResults(maxResults);
                 q.setFirstResult(firstResult);
-            }
+            }            
             return q.getResultList();
         } finally {
             em.close();

@@ -14,16 +14,16 @@ import java.util.logging.Logger;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ConfigMail extends EntityMongo{
+public class ConfigMail extends EntityMongo {
 
     private String hostName;
-    private int port;    
+    private int port;
     private AuthMail auth;
-    private boolean ssl;    
+    private boolean ssl;
 
     public ConfigMail() {
     }
-    
+
     public String getHostName() {
         return hostName;
     }
@@ -54,8 +54,8 @@ public class ConfigMail extends EntityMongo{
 
     public void setSsl(boolean ssl) {
         this.ssl = ssl;
-    }           
-    
+    }
+
     public static final class AuthMail {
 
         public AuthMail() {
@@ -66,7 +66,7 @@ public class ConfigMail extends EntityMongo{
             this.pass = pass;
         }
 
-        private String mail;                
+        private String mail;
         private String pass;
 
         public String getMail() {
@@ -78,18 +78,23 @@ public class ConfigMail extends EntityMongo{
         }
 
         public String getPass() {
-            try {
-                return UtilsSecurity.decifrarMD5(pass);
-            } catch (Exception ex) {
-                Logger.getLogger(ConfigMail.class.getName()).log(Level.SEVERE, null, ex);
-            }
             return pass;
         }
 
         public void setPass(String pass) {
-            this.pass = UtilsSecurity.cifrarMD5(pass);
+            this.pass = pass;
         }
-        
+
+        @Override
+        public String toString() {
+            return "AuthMail{" + "mail=" + mail + ", pass=" + pass + '}';
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        return "ConfigMail{" + "hostName=" + hostName + ", port=" + port + ", auth=" + auth + ", ssl=" + ssl + '}';
     }
 
 }

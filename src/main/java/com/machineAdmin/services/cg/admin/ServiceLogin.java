@@ -17,7 +17,6 @@ import com.machineAdmin.models.cg.ModelRecoverCodeUser;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.ServiceFacade;
-import com.machineAdmin.utils.UtilsBitacora;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsJson;
 import com.machineAdmin.utils.UtilsSecurity;
@@ -51,7 +50,7 @@ public class ServiceLogin {
             usuarioAutenticando.setPass(UtilsSecurity.cifrarMD5(usuarioAutenticando.getPass()));
             User usuarioLogeado = managerUsuario.Login(usuarioAutenticando);
             
-            //no estos datos ó mapear a modelo
+            //no regresar estos datos ó mapear a modelo
             usuarioLogeado.setPass(null);
             usuarioLogeado.setBlocked(null);
             usuarioLogeado.setLoginAttempt(null);

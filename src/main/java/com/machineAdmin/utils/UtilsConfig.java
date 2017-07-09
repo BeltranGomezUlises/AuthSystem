@@ -64,12 +64,12 @@ public class UtilsConfig {
         return getCGConfig().getLoginConfig().getMaxNumberAttemps();
     }
 
-    public static Date getDateUtilUserStillBlocked(){
+    public static Date getDateUtilUserStillBlocked() {
         Calendar cal = new GregorianCalendar();
         cal.add(Calendar.SECOND, getCGConfig().getLoginConfig().getSecondsTermporalBlockingUser());
         return cal.getTime();
     }
-    
+
     public static class CGConfig extends EntityMongo {
 
         private JwtsConfig jwtConfig;
