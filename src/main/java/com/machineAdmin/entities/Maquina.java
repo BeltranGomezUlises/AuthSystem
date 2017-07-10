@@ -14,19 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.utils;
+package com.machineAdmin.entities;
 
-import org.mongojack.JacksonDBCollection;
+import com.machineAdmin.entities.cg.EntityMongo;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class UtilsBitacora {
-        
-    public static void bitacorizar(String collectionName, Object objectToPersist){
-        JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getCollection(collectionName), Object.class, String.class);
-        coll.insert(objectToPersist);
-    }        
-            
+public class Maquina extends EntityMongo{
+    
 }

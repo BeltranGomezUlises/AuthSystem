@@ -20,10 +20,20 @@ import com.machineAdmin.daos.cg.admin.DaoConfigMail;
 import com.machineAdmin.daos.cg.admin.DaoUser;
 import com.machineAdmin.entities.cg.admin.ConfigMail;
 import com.machineAdmin.entities.cg.admin.User;
+import com.machineAdmin.managers.cg.ManagerFacade;
 import static com.machineAdmin.utils.UtilsConfig.COLLECTION_NAME;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import org.mongojack.JacksonDBCollection;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
 /**
  *
@@ -35,11 +45,30 @@ public class InitServletContext implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         this.initDBConfigs();
 
+        this.initDBPermissions();
+
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
 
+    }
+
+    private void initDBPermissions() {
+        List<ClassLoader> classLoadersList = new LinkedList<>();
+        classLoadersList.add(ClasspathHelper.contextClassLoader());
+        classLoadersList.add(ClasspathHelper.staticClassLoader());
+
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
+                .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
+                .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("com.machineAdmin.managers"))));
+        
+        Set<Class<?>> clases = reflections.getSubTypesOf(Object.class);
+        
+        clases.forEach((clase) -> {
+            System.out.println(clase.getSimpleName());
+        });
     }
 
     private void initDBConfigs() {
@@ -83,6 +112,7 @@ public class InitServletContext implements ServletContextListener {
         UtilsConfig.CGConfig config = collection.findOne();
 
         if (config == null) {
+            config = new UtilsConfig.CGConfig();
             //<editor-fold defaultstate="collapsed" desc="JWT CONFIGS">
             UtilsConfig.CGConfig.JwtsConfig jwtConfig = new UtilsConfig.CGConfig.JwtsConfig();
             jwtConfig.setSecondsRecoverJwtExp(900); //15 minutos

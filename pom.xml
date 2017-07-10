@@ -124,6 +124,13 @@
             <scope>test</scope>
             <type>jar</type>
         </dependency> 
+        
+        <!-- REFLECTIONS -->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.11</version>
+        </dependency>
     </dependencies>
 
     <build>

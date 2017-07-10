@@ -15,7 +15,7 @@ import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.cg.ModelRecoverCodeUser;
-import com.machineAdmin.utils.UtilsBitacora;
+import com.machineAdmin.utils.UtilsBinnacle;
 import com.machineAdmin.utils.UtilsConfig;
 import com.machineAdmin.utils.UtilsDate;
 import com.machineAdmin.utils.UtilsMail;
@@ -76,7 +76,7 @@ public class ManagerUser extends ManagerMongoFacade<User> {
             //login exitoso, generar bitácora                                    
             new Thread( ()-> {
                 BinnacleAccess access = new BinnacleAccess(loged.getId());
-                UtilsBitacora.bitacorizar("cg.bitacora.accesos", access);
+                UtilsBinnacle.bitacorizar("cg.bitacora.accesos", access);
                 }).start();            
             
             return loged;
