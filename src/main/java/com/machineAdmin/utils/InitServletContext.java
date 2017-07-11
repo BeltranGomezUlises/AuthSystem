@@ -67,7 +67,9 @@ public class InitServletContext implements ServletContextListener {
         Set<Class<?>> clases = reflections.getSubTypesOf(Object.class);
         
         clases.forEach((clase) -> {
-            System.out.println(clase.getSimpleName());
+            if (clase.getSimpleName() != null || !clase.getSimpleName().equals("")) {
+                System.out.println(clase.getSimpleName());
+            }            
         });
     }
 

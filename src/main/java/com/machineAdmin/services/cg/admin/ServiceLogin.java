@@ -48,7 +48,7 @@ public class ServiceLogin {
         try {
             User usuarioAutenticando = UtilsJson.jsonDeserialize(UtilsSecurity.decryptBase64ByPrivateKey(content.getContent()), User.class);
             usuarioAutenticando.setPass(UtilsSecurity.cifrarMD5(usuarioAutenticando.getPass()));
-            User usuarioLogeado = managerUsuario.Login(usuarioAutenticando);
+            User usuarioLogeado = managerUsuario.login(usuarioAutenticando);
             
             //no regresar estos datos ó mapear a modelo
             usuarioLogeado.setPass(null);
@@ -74,6 +74,22 @@ public class ServiceLogin {
         return res;
     }
 
+    @GET
+    @Path("/logout")
+    public Response logout(@HeaderParam("Authorization") String token){        
+        Response res = new Response();
+        ManagerUser managerUsuario = new ManagerUser();
+        try {            
+            managerUsuario.logout(token);                                    
+            res.setMessage("Saliendo del sistema");
+            res.setDevMessage("Registro de salida del sistema realizado");                                    
+        } catch (Exception ex) {            
+            res.setStatus(Status.ERROR);
+            ServiceFacade.setCauseMessage(res, ex);
+        }
+        return res;
+    }
+    
     @GET
     @Path("/publicKey")
     public Response getPublicKey() {

@@ -18,9 +18,12 @@ import com.machineAdmin.models.cg.ModelRecoverCodeUser;
 import com.machineAdmin.utils.UtilsBinnacle;
 import com.machineAdmin.utils.UtilsConfig;
 import com.machineAdmin.utils.UtilsDate;
+import com.machineAdmin.utils.UtilsJWT;
+import com.machineAdmin.utils.UtilsJson;
 import com.machineAdmin.utils.UtilsMail;
 import com.machineAdmin.utils.UtilsSMS;
 import com.machineAdmin.utils.UtilsSecurity;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.Random;
@@ -51,7 +54,7 @@ public class ManagerUser extends ManagerMongoFacade<User> {
      * com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException
      * @throws com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException
      */
-    public User Login(User user) throws UsuarioInexistenteException, ContraseñaIncorrectaException, UsuarioBlockeadoException, Exception {
+    public User login(User user) throws UsuarioInexistenteException, ContraseñaIncorrectaException, UsuarioBlockeadoException, Exception {
         Query q = DBQuery.is("pass", user.getPass());
         switch (getUserIdentifierType(user.getUser())) {
             case MAIL:
@@ -72,19 +75,25 @@ public class ManagerUser extends ManagerMongoFacade<User> {
             }
             loged.setLoginAttempt(null);
             this.update(loged);
-                        
+
             //login exitoso, generar bitácora                                    
-            new Thread( ()-> {
+            new Thread(() -> {
                 BinnacleAccess access = new BinnacleAccess(loged.getId());
                 UtilsBinnacle.bitacorizar("cg.bitacora.accesos", access);
-                }).start();            
-            
+            }).start();
+
             return loged;
         } else { //ver si el usuario existe y verificar número de intentos
             this.numberAttemptVerification(user);
             throw new ContraseñaIncorrectaException("No se encontro un usuario con esa contraseña");
         }
 
+    }
+
+    public void logout(String token) throws IOException {
+        User u = UtilsJson.jsonDeserialize(UtilsJWT.getBodyToken(token), User.class);        
+        BinnacleAccess exit = new BinnacleAccess(u.getId());        
+        UtilsBinnacle.bitacorizar("cg.bitacora.salidas", exit);
     }
 
     private void numberAttemptVerification(User usuario) throws UsuarioInexistenteException, UsuarioBlockeadoException {
@@ -195,12 +204,10 @@ public class ManagerUser extends ManagerMongoFacade<User> {
                 return userIdentifierType.USER;
             }
         }
-    }    
-    
+    }
+
     private enum userIdentifierType {
         PHONE, MAIL, USER
     }
-    
-    
-       
+
 }
