@@ -35,7 +35,7 @@ public class UtilsJWT {
     //llave de encriptacion por text
     private static final String STRING_KEY = "LLAVE ULTRA SECRETA";
 
-    public static String generateToken(User usuarioLogeado) throws JsonProcessingException {
+    public static String generateSessionToken(String userId) throws JsonProcessingException {
         JwtBuilder builder = Jwts.builder();
         Calendar cal = new GregorianCalendar();        //calendario de tiempos        
         builder.setIssuedAt(cal.getTime());     //fecha de expedicion        
@@ -43,7 +43,7 @@ public class UtilsJWT {
         cal.add(Calendar.SECOND, UtilsConfig.getSecondsSessionJwtExp()); //aumentar tiempo para asignar expiracion
         builder.setExpiration(cal.getTime());
 
-        builder.setSubject(UtilsJson.jsonSerialize(usuarioLogeado)); //poner el sujeto en jwt
+        builder.setSubject(userId); //poner el sujeto en jwt
 
         return builder.signWith(SignatureAlgorithm.HS512, STRING_KEY).compact();
     }
@@ -93,9 +93,7 @@ public class UtilsJWT {
             Jws<Claims> jws = Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token);
             if (!jws.getBody().getExpiration().before(new Date())) { //token expirado
                 throw new TokenExpiradoException("El token que proporsionó ya expiró");
-            }
-            
-            
+            }                        
         } catch (SignatureException | IllegalArgumentException e) {
             
         }

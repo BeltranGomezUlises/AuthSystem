@@ -20,7 +20,6 @@ import com.machineAdmin.daos.cg.admin.DaoConfigMail;
 import com.machineAdmin.daos.cg.admin.DaoUser;
 import com.machineAdmin.entities.cg.admin.ConfigMail;
 import com.machineAdmin.entities.cg.admin.User;
-import com.machineAdmin.managers.cg.ManagerFacade;
 import static com.machineAdmin.utils.UtilsConfig.COLLECTION_NAME;
 import java.util.LinkedList;
 import java.util.List;
@@ -63,13 +62,13 @@ public class InitServletContext implements ServletContextListener {
                 .setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
                 .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
                 .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("com.machineAdmin.managers"))));
-        
+
         Set<Class<?>> clases = reflections.getSubTypesOf(Object.class);
-        
+
         clases.forEach((clase) -> {
             if (clase.getSimpleName() != null || !clase.getSimpleName().equals("")) {
                 System.out.println(clase.getSimpleName());
-            }            
+            }
         });
     }
 
@@ -87,10 +86,11 @@ public class InitServletContext implements ServletContextListener {
             mail.setPort(465);
             mail.setSsl(true);
             mail = daoMail.persist(mail);
+
+            System.out.println("Correo dado de alta por defecto:");
+            System.out.println(mail);
         }
         //</editor-fold>                
-        System.out.println("Correo dado de alta por defecto:");
-        System.out.println(mail);
 
         //<editor-fold defaultstate="collapsed" desc="DAFULT USER CONFIG">
         DaoUser daoUser = new DaoUser();
@@ -104,11 +104,17 @@ public class InitServletContext implements ServletContextListener {
             userMaster.setPass(UtilsSecurity.cifrarMD5("1234"));
 
             daoUser.persist(userMaster);
+
+            System.out.println("Usuario dado de alta por defecto: (contraseña : \"1234\")");
+            System.out.println(userMaster);
         }
         //</editor-fold>
-        System.out.println("Usuario dado de alta por defecto: (contraseña : \"1234\")");
-        System.out.println(userMaster);
 
+        //<editor-fold defaultstate="collapsed" desc="DEFAULT PERMISSIONS CONFIG">
+        
+        System.out.println("CONFIGURACION DE PERMISOS GENERADA");                        
+        //</editor-fold>
+        
         //<editor-fold defaultstate="collapsed" desc="GENERAL CONFIGS">
         JacksonDBCollection<UtilsConfig.CGConfig, String> collection = JacksonDBCollection.wrap(UtilsDB.getCollection(COLLECTION_NAME), UtilsConfig.CGConfig.class, String.class);
         UtilsConfig.CGConfig config = collection.findOne();
@@ -123,12 +129,14 @@ public class InitServletContext implements ServletContextListener {
             //</editor-fold>
 
             //<editor-fold defaultstate="collapsed" desc="LOGIN CONFIGS">
-            UtilsConfig.CGConfig.LoginAttemptConfig loginAttemptConfig = new UtilsConfig.CGConfig.LoginAttemptConfig();
+            UtilsConfig.CGConfig.AccessConfig loginAttemptConfig = new UtilsConfig.CGConfig.AccessConfig();
 
             loginAttemptConfig.setMaxNumberAttemps(10); // 10 intentos fallidos maximo
             loginAttemptConfig.setSecondsBetweenEvents(120); // 2 minutos de intervalo para contar
             loginAttemptConfig.setSecondsTermporalBlockingUser(1800); // bloqueado por media hora al sobrepasar intentos maximos
-            config.setLoginConfig(loginAttemptConfig);
+            loginAttemptConfig.setMaxPasswordRecords(3);
+
+            config.setAccessConfig(loginAttemptConfig);
             //</editor-fold>
 
             //<editor-fold defaultstate="collapsed" desc="MAIL CONFIGS">
@@ -148,9 +156,11 @@ public class InitServletContext implements ServletContextListener {
             //</editor-fold>
 
             collection.insert(config);
+
+            System.out.println("configuracion generales instaladas:");
+            System.out.println(config);
         }
         //</editor-fold>        
-        System.out.println("configuracion generales instaladas:");
-        System.out.println(config);
+
     }
 }

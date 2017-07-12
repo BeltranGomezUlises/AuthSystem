@@ -1,8 +1,9 @@
 package com.machineAdmin.entities.cg.admin;
 
 import com.machineAdmin.entities.cg.EntityMongo;
+import java.util.ArrayList;
 import java.util.Date;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import java.util.List;
 
 /**
  *
@@ -19,9 +20,24 @@ public class User extends EntityMongo {
     private LoginAttempt loginAttempt;
     private BlockedUser blocked;
 
+    private List<String> lastPasswords;
+    
     public User() {
+        lastPasswords = new ArrayList<>();
     }
 
+    public List<String> getLastPasswords() {
+        return lastPasswords;
+    }
+
+    public void setLastPasswords(List<String> lastPasswords) {
+        this.lastPasswords = lastPasswords;
+    }
+    
+    public void addLastPassword(String password){
+        this.lastPasswords.add(password);
+    }
+        
     public void riseLoginAttemps() {
         this.loginAttempt.riseNumberAttempts();
         this.loginAttempt.setLastLoginAttemptDate(new Date());

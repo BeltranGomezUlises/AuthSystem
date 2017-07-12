@@ -14,6 +14,7 @@ import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.cg.ModelEncryptContent;
 import com.machineAdmin.models.cg.ModelRecoverCodeUser;
+import com.machineAdmin.models.cg.ModelUsuarioLogeado;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.ServiceFacade;
@@ -30,18 +31,20 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.mail.EmailException;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-@Path("/login")
+@Path("/access")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class ServiceLogin {
 
     @POST
+    @Path("/login")
     public Response login(ModelEncryptContent content) {
         Response res = new Response();
         ManagerUser managerUsuario = new ManagerUser();
@@ -50,13 +53,12 @@ public class ServiceLogin {
             usuarioAutenticando.setPass(UtilsSecurity.cifrarMD5(usuarioAutenticando.getPass()));
             User usuarioLogeado = managerUsuario.login(usuarioAutenticando);
             
-            //no regresar estos datos ó mapear a modelo
-            usuarioLogeado.setPass(null);
-            usuarioLogeado.setBlocked(null);
-            usuarioLogeado.setLoginAttempt(null);
+            ModelUsuarioLogeado modelUsuarioLogeado = new ModelUsuarioLogeado();
             
-            res.setData(usuarioLogeado);
-            res.setMetaData(UtilsJWT.generateToken(usuarioLogeado));                                          
+            BeanUtils.copyProperties(modelUsuarioLogeado, usuarioLogeado);
+            
+            res.setData(modelUsuarioLogeado);
+            res.setMetaData(UtilsJWT.generateSessionToken(usuarioLogeado.getId()));                                          
             res.setMessage("Bienvenido " + usuarioLogeado.getUser());
             res.setDevMessage("Token de sesion de usuario, necesario para las cabeceras de los demas servicios");
         } catch (UsuarioInexistenteException | ContraseñaIncorrectaException e) {
@@ -107,8 +109,8 @@ public class ServiceLogin {
             ManagerUser managerUser = new ManagerUser();
             ModelRecoverCodeUser recoverCode = managerUser.enviarCodigo(identifier);
             res.setMetaData(UtilsJWT.generateValidateUserToken(recoverCode));
-            res.setDevMessage("token de codigo para restaurar contraseña");
-            res.setMessage("El código para recuperar contraseña fué enviado");
+            res.setDevMessage("token de verificacion de usuario, necesario para el siguiente servicio en la cabecera Authorization");
+            res.setMessage("El código para recuperar contraseña fué enviado a : " + identifier);
         } catch (UsuarioInexistenteException ex) {
             res.setStatus(Status.WARNING);
             res.setMessage("No se encontró el usuario con el identificador proporsionado");
@@ -139,6 +141,7 @@ public class ServiceLogin {
             } catch (IOException ex) {
                 res.setStatus(Status.ERROR);
                 res.setMessage("No fué posible verificar el código proporsionado, intente mas tarde");
+                res.setDevMessage("Token de reseteo de contraseña, necesario para resetear la contraseña en la cabecera Authorization");
                 ServiceFacade.setCauseMessage(res, ex);
             } catch (ParametroInvalidoException ex) {
                 res.setStatus(Status.WARNING);

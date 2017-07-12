@@ -16,7 +16,7 @@
     
     <dependencies>
         
-        <!-- java ee web API-->
+        <!-- java ee web API-->        
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
@@ -115,6 +115,13 @@
             <artifactId>commons-email</artifactId>
             <version>1.2</version>
         </dependency>       
+        <!-- APACHE commons - BeanUtils -->
+        <!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.3</version>
+        </dependency>
         
         <!-- Testing -->
         <dependency>

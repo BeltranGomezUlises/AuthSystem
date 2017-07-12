@@ -5,12 +5,10 @@
  */
 package com.machineAdmin.services.cg.admin;
 
-import com.machineAdmin.daos.cg.admin.DaoUser;
 import com.machineAdmin.entities.cg.admin.User;
 import com.machineAdmin.managers.cg.admin.ManagerUser;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.ServiceFacade;
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 /**
@@ -50,13 +48,5 @@ public class ServicesUsers extends ServiceFacade<User>{
     public Response get(String token) {
         return super.get(token); //To change body of generated methods, choose Tools | Templates.
     }
-       
-    @GET
-    @Path("/getUser")
-    public User getUser(){
-        DaoUser daoUser = new DaoUser();
-        return (User) daoUser.findOne("59541b37af0feb893b3102bf", "user", "mail");                
-    }
-    
-    
+         
 }

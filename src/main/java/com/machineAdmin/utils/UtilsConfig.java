@@ -19,6 +19,7 @@ package com.machineAdmin.utils;
 import com.machineAdmin.entities.cg.EntityMongo;
 import com.machineAdmin.entities.cg.admin.ConfigMail;
 import com.machineAdmin.managers.cg.admin.ManagerConfigMail;
+import com.machineAdmin.utils.UtilsConfig.CGConfig.AccessConfig;
 import com.machineAdmin.utils.UtilsConfig.CGConfig.SMSConfig;
 import java.util.Calendar;
 import java.util.Date;
@@ -56,26 +57,34 @@ public class UtilsConfig {
         return COLLECTION.findOne();
     }
 
+    public static AccessConfig getAccessConfig(){
+        return COLLECTION.findOne().getAccessConfig();
+    }
+    
     public static int getSecondsBetweenLoginAttempt() {
-        return getCGConfig().getLoginConfig().getSecondsBetweenEvents();
+        return getCGConfig().getAccessConfig().getSecondsBetweenEvents();
     }
 
     public static int getMaxNumberLoginAttempt() {
-        return getCGConfig().getLoginConfig().getMaxNumberAttemps();
+        return getCGConfig().getAccessConfig().getMaxNumberAttemps();
     }
 
     public static Date getDateUtilUserStillBlocked() {
         Calendar cal = new GregorianCalendar();
-        cal.add(Calendar.SECOND, getCGConfig().getLoginConfig().getSecondsTermporalBlockingUser());
+        cal.add(Calendar.SECOND, getCGConfig().getAccessConfig().getSecondsTermporalBlockingUser());
         return cal.getTime();
     }
 
+    public static int getMaxPasswordRecords(){
+        return COLLECTION.findOne().getAccessConfig().getMaxPasswordRecords();
+    }
+    
     public static class CGConfig extends EntityMongo {
 
         private JwtsConfig jwtConfig;
         private MailsConfig mailConfig;
         private SMSConfig smsConfig;
-        private LoginAttemptConfig loginConfig;
+        private AccessConfig accessConfig;
 
         public SMSConfig getSmsConfig() {
             return smsConfig;
@@ -101,12 +110,12 @@ public class UtilsConfig {
             this.mailConfig = mailConfig;
         }
 
-        public LoginAttemptConfig getLoginConfig() {
-            return loginConfig;
+        public AccessConfig getAccessConfig() {
+            return accessConfig;
         }
 
-        public void setLoginConfig(LoginAttemptConfig loginConfig) {
-            this.loginConfig = loginConfig;
+        public void setAccessConfig(AccessConfig accessConfig) {
+            this.accessConfig = accessConfig;
         }
 
         /**
@@ -214,11 +223,20 @@ public class UtilsConfig {
 
         }
 
-        protected static class LoginAttemptConfig {
+        protected static class AccessConfig {
 
             private int secondsBetweenEvents;
             private int maxNumberAttemps;
             private int secondsTermporalBlockingUser;
+            private int maxPasswordRecords;
+
+            public int getMaxPasswordRecords() {
+                return maxPasswordRecords;
+            }
+
+            public void setMaxPasswordRecords(int maxPasswordRecords) {
+                this.maxPasswordRecords = maxPasswordRecords;
+            }
 
             public int getSecondsBetweenEvents() {
                 return secondsBetweenEvents;
@@ -246,14 +264,14 @@ public class UtilsConfig {
 
             @Override
             public String toString() {
-                return "LoginAttemptConfig{" + "secondsBetweenEvents=" + secondsBetweenEvents + ", maxNumberAttemps=" + maxNumberAttemps + ", secondsTermporalBlockingUser=" + secondsTermporalBlockingUser + '}';
+                return "AccessConfig{" + "secondsBetweenEvents=" + secondsBetweenEvents + ", maxNumberAttemps=" + maxNumberAttemps + ", secondsTermporalBlockingUser=" + secondsTermporalBlockingUser + ", maxPasswordRecords=" + maxPasswordRecords + '}';
             }
 
         }
 
         @Override
         public String toString() {
-            return "CGConfig{" + "jwtConfig=" + jwtConfig + ", mailConfig=" + mailConfig + ", smsConfig=" + smsConfig + ", loginConfig=" + loginConfig + '}';
+            return "CGConfig{" + "jwtConfig=" + jwtConfig + ", mailConfig=" + mailConfig + ", smsConfig=" + smsConfig + ", loginConfig=" + accessConfig + '}';
         }
 
     }

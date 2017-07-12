@@ -25,7 +25,10 @@ import com.machineAdmin.utils.UtilsSMS;
 import com.machineAdmin.utils.UtilsSecurity;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -91,8 +94,8 @@ public class ManagerUser extends ManagerMongoFacade<User> {
     }
 
     public void logout(String token) throws IOException {
-        User u = UtilsJson.jsonDeserialize(UtilsJWT.getBodyToken(token), User.class);        
-        BinnacleAccess exit = new BinnacleAccess(u.getId());        
+        User u = UtilsJson.jsonDeserialize(UtilsJWT.getBodyToken(token), User.class);
+        BinnacleAccess exit = new BinnacleAccess(u.getId());
         UtilsBinnacle.bitacorizar("cg.bitacora.salidas", exit);
     }
 
@@ -190,6 +193,23 @@ public class ManagerUser extends ManagerMongoFacade<User> {
 
     public void resetPassword(String userId, String pass) throws Exception {
         User u = this.findOne(userId);
+        List<String> lastPassword = u.getLastPasswords();
+        //obtener el numero maximo de contraseñas a guardar para impedir repeticion
+        int maxNumber = UtilsConfig.getMaxPasswordRecords();
+
+        // lastPassword.size() < maxNumber -> agregar pass actual al registro
+        // lastPassword.size() >= maxNumber -> resize de lastPassword con los ultimos maxNumber contraseñas
+        if (lastPassword.size() < maxNumber) {
+            lastPassword.add(u.getPass()); //añadimos le passActual            
+        } else {
+            String[] newLastPasswords = new String[maxNumber];
+            for (int i = 1; i < maxNumber; i++) {
+                newLastPasswords[i - 1] = lastPassword.get(i);
+            }
+            newLastPasswords[maxNumber - 1] = u.getPass(); //añadir la final            
+            u.setLastPasswords(Arrays.asList(newLastPasswords));
+        }
+
         u.setPass(UtilsSecurity.cifrarMD5(pass));
         this.update(u);
     }
