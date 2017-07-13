@@ -29,8 +29,8 @@ public class ApplicationConfig extends Application {
         resources.add(com.machineAdmin.services.backoffice.maquinitas.ServiceMaquinita.class);
         resources.add(com.machineAdmin.services.cg.ServiceCommons.class);
         resources.add(com.machineAdmin.services.cg.ServiceFacade.class);
+        resources.add(com.machineAdmin.services.cg.admin.ServiceAccess.class);
         resources.add(com.machineAdmin.services.cg.admin.ServiceConfigMail.class);
-        resources.add(com.machineAdmin.services.cg.admin.ServiceLogin.class);
         resources.add(com.machineAdmin.services.cg.admin.ServiceUsers.class);
         resources.add(com.machineAdmin.services.pruebas.module1.Menu1.class);
     }

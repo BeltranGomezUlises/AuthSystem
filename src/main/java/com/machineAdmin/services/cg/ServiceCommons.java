@@ -5,6 +5,7 @@
  */
 package com.machineAdmin.services.cg;
 
+import com.machineAdmin.entities.cg.admin.CGConfig;
 import com.machineAdmin.utils.UtilsConfig;
 import com.machineAdmin.utils.UtilsDate.DateClass;
 import javax.ws.rs.Consumes;
@@ -30,7 +31,7 @@ public class ServiceCommons {
 
     @GET
     @Path("/getConfig")
-    public UtilsConfig.CGConfig getConfig(){
+    public CGConfig getConfig(){
         return UtilsConfig.getCGConfig();
     }
     

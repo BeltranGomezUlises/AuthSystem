@@ -41,7 +41,7 @@ import org.apache.commons.mail.EmailException;
 @Path("/access")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class ServiceLogin {
+public class ServiceAccess {
 
     @POST
     @Path("/login")
