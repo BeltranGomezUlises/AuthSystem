@@ -31,7 +31,7 @@ import org.mongojack.JacksonDBCollection;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class UtilsConfig {
-
+        
     protected static final String COLLECTION_NAME = "cg.config.general";
     protected static final JacksonDBCollection<CGConfig, String> COLLECTION = JacksonDBCollection.wrap(UtilsDB.getCollection(COLLECTION_NAME), CGConfig.class, String.class);
 

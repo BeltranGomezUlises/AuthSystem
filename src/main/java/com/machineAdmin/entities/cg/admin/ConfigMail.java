@@ -6,9 +6,6 @@
 package com.machineAdmin.entities.cg.admin;
 
 import com.machineAdmin.entities.cg.EntityMongo;
-import com.machineAdmin.utils.UtilsSecurity;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

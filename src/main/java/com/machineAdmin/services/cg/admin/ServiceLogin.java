@@ -45,7 +45,7 @@ public class ServiceLogin {
 
     @POST
     @Path("/login")
-    public Response login(ModelEncryptContent content) {
+    public Response login(ModelEncryptContent content) {                                        
         Response res = new Response();
         ManagerUser managerUsuario = new ManagerUser();
         try {
@@ -61,6 +61,10 @@ public class ServiceLogin {
             res.setMetaData(UtilsJWT.generateSessionToken(usuarioLogeado.getId()));                                          
             res.setMessage("Bienvenido " + usuarioLogeado.getUser());
             res.setDevMessage("Token de sesion de usuario, necesario para las cabeceras de los demas servicios");
+            
+            System.out.println(Thread.currentThread().getStackTrace()[0].getMethodName());
+            System.out.println(Thread.currentThread().getStackTrace()[1].getMethodName());
+            
         } catch (UsuarioInexistenteException | ContraseñaIncorrectaException e) {
             res.setStatus(Status.WARNING);
             res.setMessage("Usuario y/o contraseña incorrecto");

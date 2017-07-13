@@ -9,16 +9,18 @@ import com.machineAdmin.entities.cg.admin.User;
 import com.machineAdmin.managers.cg.admin.ManagerUser;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.ServiceFacade;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/users")
-public class ServicesUsers extends ServiceFacade<User>{
+public class ServiceUsers extends ServiceFacade<User>{
     
-    public ServicesUsers() {
+    public ServiceUsers() {
         super(new ManagerUser());
     }
 
@@ -48,5 +50,5 @@ public class ServicesUsers extends ServiceFacade<User>{
     public Response get(String token) {
         return super.get(token); //To change body of generated methods, choose Tools | Templates.
     }
-         
+             
 }

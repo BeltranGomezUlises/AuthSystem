@@ -35,6 +35,8 @@ public class ServiceFacade<T> {
         Response response = new Response();        
         if (UtilsJWT.isTokenValid(token)) {
             try {                
+                //StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+                
                 response.setData(manager.findAll());
                 response.setDevMessage("Entidades encontradas");
             } catch (Exception e) {

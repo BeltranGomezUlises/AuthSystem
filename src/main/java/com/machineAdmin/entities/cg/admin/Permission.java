@@ -16,13 +16,14 @@
  */
 package com.machineAdmin.entities.cg.admin;
 
+import com.machineAdmin.entities.cg.EntityMongo;
 import java.util.List;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class Permission {
+public class Permission extends EntityMongo {
 
     private List<Seccion> secciones;
 
@@ -34,16 +35,28 @@ public class Permission {
         this.secciones = secciones;
     }
 
-    public class Seccion {
+    @Override
+    public String toString() {
+        return "Permission{" + "secciones=" + secciones + '}';
+    }
+
+    public static class Seccion {
 
         private String name;
-        private List<Seccion> Modulos;
+        private List<Module> Modulos;
 
-        public List<Seccion> getModulos() {
+        public Seccion(String name) {
+            this.name = name;
+        }
+
+        public Seccion() {
+        }
+
+        public List<Module> getModulos() {
             return Modulos;
         }
 
-        public void setModulos(List<Seccion> Modulos) {
+        public void setModulos(List<Module> Modulos) {
             this.Modulos = Modulos;
         }
 
@@ -55,10 +68,22 @@ public class Permission {
             this.name = name;
         }
 
-        public class Module {
+        @Override
+        public String toString() {
+            return "Seccion{" + "name=" + name + ", Modulos=" + Modulos + '}';
+        }
+
+        public static class Module {
 
             private String name;
             private List<Menu> menus;
+
+            public Module() {
+            }
+
+            public Module(String name) {
+                this.name = name;
+            }
 
             public String getName() {
                 return name;
@@ -76,10 +101,22 @@ public class Permission {
                 this.menus = menus;
             }
 
-            public class Menu {
+            @Override
+            public String toString() {
+                return "Module{" + "name=" + name + ", menus=" + menus + '}';
+            }
+
+            public static class Menu {
 
                 private String name;
                 private List<Action> acciones;
+
+                public Menu(String name) {
+                    this.name = name;
+                }
+
+                public Menu() {
+                }
 
                 public String getName() {
                     return name;
@@ -97,7 +134,12 @@ public class Permission {
                     this.acciones = acciones;
                 }
 
-                public class Action {
+                @Override
+                public String toString() {
+                    return "Menu{" + "name=" + name + ", acciones=" + acciones + '}';
+                }
+
+                public static class Action {
 
                     private String name;
                     private List<PermissionType> types;
@@ -116,6 +158,11 @@ public class Permission {
 
                     public void setTypes(List<PermissionType> types) {
                         this.types = types;
+                    }
+
+                    @Override
+                    public String toString() {
+                        return "Action{" + "name=" + name + ", types=" + types + '}';
                     }
 
                 }
