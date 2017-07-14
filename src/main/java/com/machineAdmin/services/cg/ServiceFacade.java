@@ -1,6 +1,8 @@
 package com.machineAdmin.services.cg;
 
 import com.machineAdmin.managers.cg.ManagerFacade;
+import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.utils.UtilsJWT;
@@ -32,20 +34,17 @@ public class ServiceFacade<T> {
 
     @GET
     public Response get(@HeaderParam("Authorization") String token) {
-        Response response = new Response();        
-        if (UtilsJWT.isTokenValid(token)) {
-            try {                
-                //StackTraceElement[] elements = Thread.currentThread().getStackTrace();
-                
-                response.setData(manager.findAll());
-                response.setDevMessage("Entidades encontradas");
-            } catch (Exception e) {
-                response.setStatus(Status.ERROR);
-                setCauseMessage(response, e);
-            }
-        } else {
+        Response response = new Response();
+        try {
+            UtilsJWT.validateSessionToken(token);
+            response.setData(manager.findAll());
+            response.setDevMessage("Entidades encontradas");
+        } catch (TokenExpiradoException | TokenInvalidoException e) {
             response.setDevMessage("Token inválido");
             response.setStatus(Status.WARNING);
+        } catch (Exception ex) {
+            response.setStatus(Status.ERROR);
+            setCauseMessage(response, ex);
         }
         return response;
     }
@@ -54,18 +53,18 @@ public class ServiceFacade<T> {
     @Path("/{id}")
     public Response get(@HeaderParam("Authorization") String token, @PathParam("id") String id) {
         Response response = new Response();
-        if (UtilsJWT.isTokenValid(token)) {
-            try {
-                response.setData(manager.findOne(id));
-                response.setMessage("Entidad encontrada");
-            } catch (Exception e) {
-                response.setStatus(Status.ERROR);
-                setCauseMessage(response, e);
-            }
-        } else {
-            response.setMessage("Token inválido");
+
+        try {
+            UtilsJWT.validateSessionToken(token);
+            response.setData(manager.findOne(id));
+            response.setMessage("Entidad encontrada");
+
+        } catch (TokenExpiradoException | TokenInvalidoException ex) {
             response.setDevMessage("Token inválido");
             response.setStatus(Status.WARNING);
+        } catch (Exception e) {
+            response.setStatus(Status.ERROR);
+            setCauseMessage(response, e);
         }
         return response;
     }
@@ -73,18 +72,16 @@ public class ServiceFacade<T> {
     @POST
     public Response post(@HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
-        if (UtilsJWT.isTokenValid(token)) {
-            try {
-                response.setData(manager.persist(t));
-                response.setMessage("Entidad persistida");
-            } catch (Exception e) {
-                response.setStatus(Status.ERROR);
-                setCauseMessage(response, e);
-            }
-        } else {
+        try {
+            response.setData(manager.persist(t));
+            response.setMessage("Entidad persistida");
+        } catch (TokenExpiradoException | TokenInvalidoException ex) {
             response.setMessage("Token inválido");
             response.setDevMessage("Token inválido");
             response.setStatus(Status.WARNING);
+        } catch (Exception e) {
+            response.setStatus(Status.ERROR);
+            setCauseMessage(response, e);
         }
         return response;
     }
@@ -92,19 +89,17 @@ public class ServiceFacade<T> {
     @PUT
     public Response put(@HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
-        if (UtilsJWT.isTokenValid(token)) {
-            try {
-                manager.update(t);
-                response.setData(t);
-                response.setMessage("Entidad actualizada");
-            } catch (Exception e) {
-                response.setStatus(Status.ERROR);
-                setCauseMessage(response, e);
-            }
-        } else {
-            response.setMessage("Token inválido");
+        try {
+            UtilsJWT.validateSessionToken(token);
+            manager.update(t);
+            response.setData(t);
+            response.setMessage("Entidad actualizada");
+        } catch (TokenExpiradoException | TokenInvalidoException ex) {
             response.setDevMessage("Token inválido");
             response.setStatus(Status.WARNING);
+        } catch (Exception e) {
+            response.setStatus(Status.ERROR);
+            setCauseMessage(response, e);
         }
         return response;
     }
@@ -112,19 +107,17 @@ public class ServiceFacade<T> {
     @DELETE
     public Response delete(@HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
-        if (UtilsJWT.isTokenValid(token)) {
-            try {
-                manager.delete(t);
-                response.setData(t);
-                response.setMessage("Entidad eliminada");
-            } catch (Exception e) {
-                response.setStatus(Status.ERROR);
-                setCauseMessage(response, e);
-            }
-        } else {
-            response.setMessage("Token inválido");
+        try {
+            UtilsJWT.validateSessionToken(token);
+            manager.delete(t);
+            response.setData(t);
+            response.setMessage("Entidad eliminada");
+        } catch (TokenExpiradoException | TokenInvalidoException ex) {
             response.setDevMessage("Token inválido");
             response.setStatus(Status.WARNING);
+        } catch (Exception e) {
+            response.setStatus(Status.ERROR);
+            setCauseMessage(response, e);
         }
         return response;
     }
@@ -135,5 +128,5 @@ public class ServiceFacade<T> {
             setCauseMessage(response, e.getCause());
         }
     }
-    
+
 }

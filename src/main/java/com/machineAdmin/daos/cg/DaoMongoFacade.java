@@ -80,7 +80,7 @@ public class DaoMongoFacade<T extends EntityMongo> {
     public T findFirst(){
         return coll.findOne();
     }
-    
+        
     public T findOne(Object id) {
         return coll.findOneById(id.toString());
     }

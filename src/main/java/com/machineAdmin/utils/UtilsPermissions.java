@@ -16,16 +16,68 @@
  */
 package com.machineAdmin.utils;
 
+import com.machineAdmin.entities.cg.admin.Permission;
 import com.machineAdmin.entities.cg.admin.User;
+import com.machineAdmin.managers.cg.admin.ManagerPermission;
+import com.machineAdmin.managers.cg.admin.ManagerUser;
+import com.machineAdmin.managers.cg.exceptions.AccessDenied;
+import com.machineAdmin.models.cg.ModelAsignedPermission;
+import com.machineAdmin.models.cg.enums.PermissionType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class UtilsPermissions {                  
-    
-    public static boolean hasPermission(User u, String accion){
+public class UtilsPermissions {
+
+    private static final ManagerPermission MANAGER = new ManagerPermission();
+
+    public static boolean hasPermission(User u, String accion) {
         return true;
     }
+
+    public static List<ModelAsignedPermission> getAsignedPermissionsAvailable() {
+        List<ModelAsignedPermission> asignedPermissions = new ArrayList<>();
+        Permission permission = MANAGER.findFirst();
+        for (Permission.Seccion seccion : permission.getSecciones()) {
+            for (Permission.Seccion.Module modulo : seccion.getModulos()) {
+                for (Permission.Seccion.Module.Menu menu : modulo.getMenus()) {
+                    for (Permission.Seccion.Module.Menu.Action action : menu.getAcciones()) {
+                        ModelAsignedPermission asigned = new ModelAsignedPermission();
+                        asigned.setId(action.getId());
+                        asigned.setType(PermissionType.ALL);
+                        asignedPermissions.add(asigned);
+                    }
+                }
+            }
+        }
+        return asignedPermissions;
+    }
+
+    public static PermissionType getActionPermissionType(String token, String permissionId) throws AccessDenied {
+        ManagerUser managerUser = new ManagerUser();
+        User u = managerUser.findOne(UtilsJWT.getBodyToken(token));
+
+        ModelAsignedPermission asignedPermissionLockedFor = u.getAsignedPermissions().stream().filter(p -> p.getId().equals(permissionId)).findFirst().get();
+
+        if (asignedPermissionLockedFor != null) {
+            return asignedPermissionLockedFor.getType();
+        } else {
+            throw new AccessDenied("No cuenta con los permisos necesarios para esta acción");
+        }
+    }
+
+    public static String getPermissionId(){
+        String permissionId = "";
+        
+        for (StackTraceElement stackTraceElement : Thread.currentThread().getStackTrace()) {
+            System.out.println("class: " + stackTraceElement.getClassName() + "method: " + stackTraceElement.getMethodName() + " otro: " + stackTraceElement.getFileName());
+        }
+        
+        return permissionId;               
+    }
+    
     
 }

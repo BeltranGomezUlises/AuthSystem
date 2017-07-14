@@ -17,6 +17,7 @@
 package com.machineAdmin.entities.cg.admin;
 
 import com.machineAdmin.entities.cg.EntityMongo;
+import com.machineAdmin.models.cg.enums.PermissionType;
 import java.util.List;
 
 /**
@@ -142,6 +143,7 @@ public class Permission extends EntityMongo {
                 public static class Action {
 
                     private String name;
+                    private String id;
                     private List<PermissionType> types;
 
                     public String getName() {
@@ -160,9 +162,17 @@ public class Permission extends EntityMongo {
                         this.types = types;
                     }
 
+                    public String getId() {
+                        return id;
+                    }
+
+                    public void setId(String id) {
+                        this.id = id;
+                    }
+
                     @Override
                     public String toString() {
-                        return "Action{" + "name=" + name + ", types=" + types + '}';
+                        return "Action{" + "name=" + name + ", id=" + id + ", types=" + types + '}';
                     }
 
                 }
@@ -171,9 +181,5 @@ public class Permission extends EntityMongo {
         }
 
     }
-
-    public static enum PermissionType {
-        ALL, OWNER, OWNER_AND_PROFILE
-    }
-
+   
 }

@@ -81,4 +81,9 @@ public class ManagerSQLFacade<T extends Serializable> implements ManagerFacade<T
         return dao.count();
     }
 
+    @Override
+    public T findFirst() {
+        return (T) dao.findFirst();
+    }
+
 }

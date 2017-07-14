@@ -14,31 +14,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.services.pruebas.module1;
+package com.machineAdmin.models.cg;
 
-import com.machineAdmin.entities.cg.admin.User;
-import com.machineAdmin.managers.cg.admin.ManagerUser;
-import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.ServiceFacade;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import java.util.List;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-@Path("/pruebasDeModulo")
-public class Menu1 extends ServiceFacade<User> {
+public class ModelSetPermissionUser {
 
-    public Menu1() {
-        super(new ManagerUser());
+    private String userId;
+    private List<ModelAsignedPermission> permissionsAsigned;
+
+    public String getUserId() {
+        return userId;
     }
 
-    @GET
-    @Path("/get")
-    public Response post() {
-        Response r = new Response();
-
-        return r;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
+
+    public List<ModelAsignedPermission> getPermissionsAsigned() {
+        return permissionsAsigned;
+    }
+
+    public void setPermissionsAsigned(List<ModelAsignedPermission> permissionsAsigned) {
+        this.permissionsAsigned = permissionsAsigned;
+    }
+
+    @Override
+    public String toString() {
+        return "ModelSetPermissionUser{" + "userId=" + userId + ", permissionsAsigned=" + permissionsAsigned + '}';
+    }
+
 }

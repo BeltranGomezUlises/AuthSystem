@@ -30,6 +30,8 @@ public interface ManagerFacade<T> {
         
     public T findOne(Object id);
     
+    public T findFirst();
+            
     public List<T> findAll();
     
     public List<T> findAll(int max);
