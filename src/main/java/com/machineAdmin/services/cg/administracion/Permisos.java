@@ -14,14 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.entities;
+package com.machineAdmin.services.cg.administracion;
 
-import com.machineAdmin.entities.cg.commons.EntityMongo;
+import com.machineAdmin.entities.cg.admin.AvailablePermission;
+import com.machineAdmin.managers.cg.admin.ManagerPermission;
+import com.machineAdmin.models.cg.responsesCG.Response;
+import com.machineAdmin.services.cg.commons.ServiceFacade;
+import javax.ws.rs.Path;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class Maquina extends EntityMongo{
-    
+@Path("/permisos")
+public class Permisos extends ServiceFacade<AvailablePermission> {
+
+    public Permisos() {
+        super(new ManagerPermission());
+    }
+
+    @Override
+    public Response listar(String token) {
+        return super.listar(token); //To change body of generated methods, choose Tools | Templates.
+    }
+       
 }

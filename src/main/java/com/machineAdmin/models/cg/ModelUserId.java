@@ -23,13 +23,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ModelUsuarioLogeado {
+public class ModelUserId {
 
     private String id;
-    private String user;
-    private String mail;
-    private Object permissions;
-    private String phone;
 
     public String getId() {
         return id;
@@ -37,38 +33,6 @@ public class ModelUsuarioLogeado {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getMail() {
-        return mail;
-    }
-
-    public void setMail(String mail) {
-        this.mail = mail;
-    }
-
-    public Object getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(Object permissions) {
-        this.permissions = permissions;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
 }

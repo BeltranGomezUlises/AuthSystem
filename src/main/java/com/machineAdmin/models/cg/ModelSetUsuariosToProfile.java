@@ -14,34 +14,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.services.administradores.juntas;
+package com.machineAdmin.models.cg;
 
-import com.machineAdmin.entities.cg.admin.User;
-import com.machineAdmin.managers.cg.admin.ManagerUser;
-import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.ServiceFacade;
-import javax.ws.rs.Path;
+import java.util.List;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-@Path("/administradores")
-public class Prueba extends ServiceFacade<User>{
-    
-    public Prueba() {
-        super(new ManagerUser());
+public class ModelSetUsuariosToProfile {
+
+    private String id;
+    private List<ModelAsignedUser> usuarios;
+
+    public String getId() {
+        return id;
     }
 
-    @Override
-    public Response get(String token, String id) {
-        return super.get(token, id); //To change body of generated methods, choose Tools | Templates.
+    public void setId(String id) {
+        this.id = id;
     }
 
-    @Override
-    public Response get(String token) {
-        return super.get(token); //To change body of generated methods, choose Tools | Templates.
+    public List<ModelAsignedUser> getUsuarios() {
+        return usuarios;
     }
-    
-    
+
+    public void setUsuarios(List<ModelAsignedUser> usuarios) {
+        this.usuarios = usuarios;
+    }
+
 }

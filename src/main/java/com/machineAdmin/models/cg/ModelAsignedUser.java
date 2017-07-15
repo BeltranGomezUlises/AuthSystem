@@ -16,16 +16,14 @@
  */
 package com.machineAdmin.models.cg;
 
-import java.util.List;
-
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ModelSetPermissionUser {
+public class ModelAsignedUser {
 
     private String userId;
-    private List<ModelAsignedPermission> permissionsAsigned;
+    private boolean hereda;
 
     public String getUserId() {
         return userId;
@@ -35,17 +33,13 @@ public class ModelSetPermissionUser {
         this.userId = userId;
     }
 
-    public List<ModelAsignedPermission> getPermissionsAsigned() {
-        return permissionsAsigned;
+    public boolean isHereda() {
+        return hereda;
     }
 
-    public void setPermissionsAsigned(List<ModelAsignedPermission> permissionsAsigned) {
-        this.permissionsAsigned = permissionsAsigned;
+    public void setHereda(boolean hereda) {
+        this.hereda = hereda;
     }
 
-    @Override
-    public String toString() {
-        return "ModelSetPermissionUser{" + "userId=" + userId + ", permissionsAsigned=" + permissionsAsigned + '}';
-    }
-
+    
 }

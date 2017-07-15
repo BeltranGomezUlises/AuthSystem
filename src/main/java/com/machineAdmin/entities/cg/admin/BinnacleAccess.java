@@ -16,7 +16,7 @@
  */
 package com.machineAdmin.entities.cg.admin;
 
-import com.machineAdmin.entities.cg.EntityMongo;
+import com.machineAdmin.entities.cg.commons.EntityMongo;
 import java.util.Date;
 
 /**

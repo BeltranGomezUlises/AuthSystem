@@ -16,7 +16,7 @@
  */
 package com.machineAdmin.daos;
 
-import com.machineAdmin.daos.cg.DaoSQLFacade;
+import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.daos.jpaControllers.PermisoJpaController;
 import com.machineAdmin.entities.postgres.Permiso;
 import com.machineAdmin.utils.UtilsDB;

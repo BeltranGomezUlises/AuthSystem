@@ -16,7 +16,7 @@
  */
 package com.machineAdmin.utils;
 
-import com.machineAdmin.entities.cg.admin.Permission;
+import com.machineAdmin.entities.cg.admin.AvailablePermission;
 import com.machineAdmin.entities.cg.admin.User;
 import com.machineAdmin.managers.cg.admin.ManagerPermission;
 import com.machineAdmin.managers.cg.admin.ManagerUser;
@@ -40,11 +40,11 @@ public class UtilsPermissions {
 
     public static List<ModelAsignedPermission> getAsignedPermissionsAvailable() {
         List<ModelAsignedPermission> asignedPermissions = new ArrayList<>();
-        Permission permission = MANAGER.findFirst();
-        for (Permission.Seccion seccion : permission.getSecciones()) {
-            for (Permission.Seccion.Module modulo : seccion.getModulos()) {
-                for (Permission.Seccion.Module.Menu menu : modulo.getMenus()) {
-                    for (Permission.Seccion.Module.Menu.Action action : menu.getAcciones()) {
+        AvailablePermission permission = MANAGER.findFirst();
+        for (AvailablePermission.Seccion seccion : permission.getSecciones()) {
+            for (AvailablePermission.Seccion.Module modulo : seccion.getModulos()) {
+                for (AvailablePermission.Seccion.Module.Menu menu : modulo.getMenus()) {
+                    for (AvailablePermission.Seccion.Module.Menu.Action action : menu.getAcciones()) {
                         ModelAsignedPermission asigned = new ModelAsignedPermission();
                         asigned.setId(action.getId());
                         asigned.setType(PermissionType.ALL);
@@ -56,7 +56,7 @@ public class UtilsPermissions {
         return asignedPermissions;
     }
 
-    public static PermissionType getActionPermissionType(String token, String permissionId) throws AccessDenied {
+    public static PermissionType getLevelPermissionType(String token, String permissionId) throws AccessDenied {
         ManagerUser managerUser = new ManagerUser();
         User u = managerUser.findOne(UtilsJWT.getBodyToken(token));
 
@@ -69,15 +69,18 @@ public class UtilsPermissions {
         }
     }
 
-    public static String getPermissionId(){
+    /**
+     * 
+     * @return id del permiso que corresponde al metodo en ejecución    
+     */
+    public static String getPermissionId() {
         String permissionId = "";
-        
+
         for (StackTraceElement stackTraceElement : Thread.currentThread().getStackTrace()) {
             System.out.println("class: " + stackTraceElement.getClassName() + "method: " + stackTraceElement.getMethodName() + " otro: " + stackTraceElement.getFileName());
         }
-        
-        return permissionId;               
+
+        return permissionId;
     }
-    
-    
+
 }

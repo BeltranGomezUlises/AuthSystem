@@ -16,20 +16,16 @@
  */
 package com.machineAdmin.models.cg;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ModelUsuarioLogeado {
+public class ModelSetPermission {
 
     private String id;
-    private String user;
-    private String mail;
-    private Object permissions;
-    private String phone;
+    private List<ModelAsignedPermission> permissionsAsigned;
 
     public String getId() {
         return id;
@@ -39,36 +35,12 @@ public class ModelUsuarioLogeado {
         this.id = id;
     }
 
-    public String getUser() {
-        return user;
+    public List<ModelAsignedPermission> getPermissionsAsigned() {
+        return permissionsAsigned;
     }
 
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getMail() {
-        return mail;
-    }
-
-    public void setMail(String mail) {
-        this.mail = mail;
-    }
-
-    public Object getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(Object permissions) {
-        this.permissions = permissions;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPermissionsAsigned(List<ModelAsignedPermission> permissionsAsigned) {
+        this.permissionsAsigned = permissionsAsigned;
     }
 
 }

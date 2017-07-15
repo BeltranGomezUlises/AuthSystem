@@ -1,8 +1,7 @@
 package com.machineAdmin.entities.cg.admin;
 
-import com.machineAdmin.entities.cg.EntityMongo;
+import com.machineAdmin.entities.cg.commons.EntityMongo;
 import com.machineAdmin.models.cg.ModelAsignedPermission;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,15 +15,32 @@ public class User extends EntityMongo {
     private String mail;
     private String pass;
     private String phone;
+    private boolean inhabilitado;
 
     private LoginAttempt loginAttempt;
     private BlockedUser blocked;
 
     private List<String> lastPasswords;
     private List<ModelAsignedPermission> asignedPermissions;
+    private List<Profile> profiles;
 
     public User() {
-        lastPasswords = new ArrayList<>();
+    }
+
+    public List<Profile> getProfiles() {
+        return profiles;
+    }
+
+    public void setProfiles(List<Profile> profiles) {
+        this.profiles = profiles;
+    }
+
+    public boolean isInhabilitado() {
+        return inhabilitado;
+    }
+
+    public void setInhabilitado(boolean inhabilitado) {
+        this.inhabilitado = inhabilitado;
     }
 
     public List<ModelAsignedPermission> getAsignedPermissions() {
@@ -99,7 +115,7 @@ public class User extends EntityMongo {
     public void setPass(String pass) {
         this.pass = pass;
     }
-
+   
     @Override
     public int hashCode() {
         return super.hashCode();

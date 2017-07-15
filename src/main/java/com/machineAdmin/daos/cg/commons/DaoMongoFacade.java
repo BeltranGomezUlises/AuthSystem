@@ -1,13 +1,9 @@
-package com.machineAdmin.daos.cg;
+package com.machineAdmin.daos.cg.commons;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.machineAdmin.entities.cg.EntityMongo;
+import com.machineAdmin.entities.cg.commons.EntityMongo;
 import com.machineAdmin.utils.UtilsDB;
-import com.machineAdmin.utils.UtilsJson;
 import com.mongodb.BasicDBObject;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.mongojack.DBProjection;
 import org.mongojack.DBQuery;
 import org.mongojack.DBQuery.Query;
@@ -19,12 +15,12 @@ import org.mongojack.WriteResult;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> entidad que extienda de la clase EntityMongo
  */
-public class DaoMongoFacade<T extends EntityMongo> {
+public class DaoMongoFacade<T extends EntityMongo>{
 
     protected final String collectionName;
     protected JacksonDBCollection<T, String> coll;
 
-    protected DaoMongoFacade(String collectionName, Class<T> clazz) {
+    public DaoMongoFacade(String collectionName, Class<T> clazz) {
         this.collectionName = collectionName;
         this.coll = JacksonDBCollection.wrap(UtilsDB.getCollection(collectionName), clazz, String.class);
     }
@@ -46,12 +42,7 @@ public class DaoMongoFacade<T extends EntityMongo> {
     }
 
     public boolean delete(Object id) {
-        WriteResult<T, String> result = coll.removeById(id.toString());
-        try {
-            System.out.println(UtilsJson.jsonSerialize(result));
-        } catch (JsonProcessingException ex) {
-            Logger.getLogger(DaoMongoFacade.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        WriteResult<T, String> result = coll.removeById(id.toString());        
         return true;
     }
 
@@ -69,12 +60,19 @@ public class DaoMongoFacade<T extends EntityMongo> {
         coll.remove(q);
     }
 
-    public boolean update(T entity) {
-        return coll.updateById(entity.getId(), entity).isUpdateOfExisting();
+    public void update(T entity) throws Exception {
+//        try {
+//            T toUpdate = coll.findOneById(entity.getId());
+//            BeanUtils.copyProperties(toUpdate, entity);
+//            coll.updateById(entity.getId(), toUpdate);            
+//        } catch (IllegalAccessException | InvocationTargetException ex) {
+//            throw new Exception("No fue posible actualizar la entidad, Causa: " + ex.getMessage());
+//        }
+          coll.updateById(entity.getId(), entity);            
     }
 
-    public List<T> update(Query query, T t) {
-        return coll.update(query, t).getSavedObjects();
+    public List<T> update(Query query, T t) {                   
+        return coll.update(query, t).getSavedObjects();       
     }
 
     public T findFirst(){

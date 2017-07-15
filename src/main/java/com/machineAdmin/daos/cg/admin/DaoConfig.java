@@ -16,7 +16,7 @@
  */
 package com.machineAdmin.daos.cg.admin;
 
-import com.machineAdmin.daos.cg.DaoMongoFacade;
+import com.machineAdmin.daos.cg.commons.DaoMongoFacade;
 import com.machineAdmin.entities.cg.admin.CGConfig;
 
 /**

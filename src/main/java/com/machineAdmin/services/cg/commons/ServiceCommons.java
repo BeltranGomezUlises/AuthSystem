@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.services.cg;
+package com.machineAdmin.services.cg.commons;
 
 import com.machineAdmin.entities.cg.admin.CGConfig;
 import com.machineAdmin.utils.UtilsConfig;

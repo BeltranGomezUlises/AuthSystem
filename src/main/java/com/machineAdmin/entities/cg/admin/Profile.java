@@ -16,7 +16,10 @@
  */
 package com.machineAdmin.entities.cg.admin;
 
-import com.machineAdmin.entities.cg.EntityMongo;
+import com.machineAdmin.entities.cg.admin.AvailablePermission.Seccion.Module.Menu.Action;
+import com.machineAdmin.entities.cg.commons.EntityMongo;
+import com.machineAdmin.models.cg.ModelAsignedPermission;
+import com.machineAdmin.models.cg.ModelAsignedUser;
 import java.util.List;
 
 /**
@@ -26,7 +29,8 @@ import java.util.List;
 public class Profile extends EntityMongo {
 
     private String name;
-    private List<User> users;
+    private List<ModelAsignedUser> users;
+    private List<ModelAsignedPermission> permisos;
 
     public Profile() {
     }
@@ -35,9 +39,12 @@ public class Profile extends EntityMongo {
         this.name = name;
     }
 
-    public Profile(String name, List<User> users) {
-        this.name = name;
-        this.users = users;
+    public List<ModelAsignedPermission> getPermisos() {
+        return permisos;
+    }
+
+    public void setPermisos(List<ModelAsignedPermission> permisos) {
+        this.permisos = permisos;
     }
 
     public String getName() {
@@ -48,11 +55,11 @@ public class Profile extends EntityMongo {
         this.name = name;
     }
 
-    public List<User> getUsers() {
+    public List<ModelAsignedUser> getUsers() {
         return users;
     }
 
-    public void setUsers(List<User> users) {
+    public void setUsers(List<ModelAsignedUser> users) {
         this.users = users;
     }
 

@@ -16,17 +16,17 @@
  */
 package com.machineAdmin.daos.cg.admin;
 
-import com.machineAdmin.daos.cg.DaoMongoFacade;
-import com.machineAdmin.entities.cg.admin.Permission;
+import com.machineAdmin.daos.cg.commons.DaoMongoFacade;
+import com.machineAdmin.entities.cg.admin.AvailablePermission;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoPermission extends DaoMongoFacade<Permission>{
+public class DaoPermission extends DaoMongoFacade<AvailablePermission>{
 
     public DaoPermission() {
-        super("cg.config.permissions", Permission.class);
+        super("cg.config.permissions", AvailablePermission.class);
     }
        
 }

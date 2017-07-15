@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.managers.cg;
+package com.machineAdmin.managers.cg.commons;
 
-import com.machineAdmin.daos.cg.DaoMongoFacade;
-import com.machineAdmin.entities.cg.EntityMongo;
+import com.machineAdmin.daos.cg.commons.DaoMongoFacade;
+import com.machineAdmin.entities.cg.commons.EntityMongo;
 import java.util.List;
 import org.mongojack.DBQuery.Query;
 
@@ -19,12 +19,13 @@ public class ManagerMongoFacade<T extends EntityMongo> implements ManagerFacade<
 
     protected DaoMongoFacade dao;
 
-    protected ManagerMongoFacade(DaoMongoFacade<T> dao){
+    public ManagerMongoFacade(DaoMongoFacade<T> dao){
         this.dao = dao;
     }
 
     @Override
     public T persist(T entity) throws Exception {
+        
         return (T) dao.persist(entity);
     }
 

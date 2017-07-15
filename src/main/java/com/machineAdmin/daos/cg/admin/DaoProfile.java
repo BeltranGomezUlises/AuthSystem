@@ -14,29 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.services.backoffice.cortes;
+package com.machineAdmin.daos.cg.admin;
 
-import com.machineAdmin.entities.cg.admin.User;
-import com.machineAdmin.managers.cg.admin.ManagerUser;
-import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.ServiceFacade;
-import javax.ws.rs.Path;
+import com.machineAdmin.daos.cg.commons.DaoMongoFacade;
+import com.machineAdmin.entities.cg.admin.Profile;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
+public class DaoProfile extends DaoMongoFacade<Profile>{
 
-@Path("/pruebaService")
-public class ServiceMaquinitaSucursal extends ServiceFacade<User> {
-
-    public ServiceMaquinitaSucursal() {
-        super(new ManagerUser());
+    public DaoProfile() {
+        super("cg.config.profiles", Profile.class);
     }
-
-    @Override
-    public Response put(String token, User t) {
-        return super.put(token, t); //To change body of generated methods, choose Tools | Templates.
-    }
-
+            
 }

@@ -16,18 +16,32 @@
  */
 package com.machineAdmin.managers.cg.admin;
 
-import com.machineAdmin.daos.cg.admin.DaoPermission;
-import com.machineAdmin.entities.cg.admin.AvailablePermission;
+import com.machineAdmin.daos.cg.admin.DaoProfile;
+import com.machineAdmin.entities.cg.admin.Profile;
 import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
+import com.machineAdmin.models.cg.ModelSetPermission;
+import com.machineAdmin.models.cg.ModelSetUsuariosToProfile;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerPermission extends ManagerMongoFacade<AvailablePermission>{
+public class ManagerProfile extends ManagerMongoFacade<Profile> {
+    
+    public ManagerProfile() {
+        super(new DaoProfile());
+    }
 
-    public ManagerPermission() {
-        super(new DaoPermission());
+    public void setPermissionsToProfile(ModelSetPermission modelSetPermission) throws Exception {
+        Profile profile = this.findOne(modelSetPermission.getId());
+        profile.setPermisos(modelSetPermission.getPermissionsAsigned());
+        this.update(profile);
+    }
+
+    public void setUsersToProfile(ModelSetUsuariosToProfile modelSetUsuariosToProfile) throws Exception {
+        Profile profile = this.findOne(modelSetUsuariosToProfile.getId());
+        profile.setUsers(modelSetUsuariosToProfile.getUsuarios());
+        this.update(profile);
     }
     
 }

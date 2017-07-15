@@ -14,14 +14,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.entities;
-
-import com.machineAdmin.entities.cg.commons.EntityMongo;
+package com.machineAdmin.managers.cg.exceptions;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class Maquina extends EntityMongo{
-    
+public class UserException extends Exception {
+
+    public UserException(String message) {
+        super(message);
+    }
+
+    public static class UsuarioYaExistente extends UserException {
+
+        public UsuarioYaExistente(String message) {
+            super(message);
+        }
+
+    }
+
+    public static class CorreoYaExistente extends UserException {
+
+        public CorreoYaExistente(String message) {
+            super(message);
+        }
+
+    }
+
+    public static class TelefonoYaExistente extends UserException {
+
+        public TelefonoYaExistente(String message) {
+            super(message);
+        }
+
+    }
 }

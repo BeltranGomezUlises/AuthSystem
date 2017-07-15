@@ -16,7 +16,7 @@
  */
 package com.machineAdmin.entities.cg.admin;
 
-import com.machineAdmin.entities.cg.EntityMongo;
+import com.machineAdmin.entities.cg.commons.EntityMongo;
 import com.machineAdmin.models.cg.enums.PermissionType;
 import java.util.List;
 
@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class Permission extends EntityMongo {
+public class AvailablePermission extends EntityMongo {
 
     private List<Seccion> secciones;
 

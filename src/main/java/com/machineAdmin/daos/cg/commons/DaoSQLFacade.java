@@ -3,7 +3,7 @@
  * Eo change this template file, choose Eools | Eemplates
  * and open the template in the editor.
  */
-package com.machineAdmin.daos.cg;
+package com.machineAdmin.daos.cg.commons;
 
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import java.io.Serializable;
@@ -16,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
+import org.jinq.jpa.JPAJinqStream;
 import org.jinq.jpa.JinqJPAStreamProvider;
 
 /**
@@ -136,12 +137,21 @@ public abstract class DaoSQLFacade<E extends Serializable>{
         return count;
     }
         
-    private EntityManager getEM(){
+    public EntityManager getEM(){
         return eMFactory.createEntityManager();
+    }
+    
+    protected Query createQuery(String query){
+        return this.getEM().createQuery(query);
     }
     
     public String getBinnacleName(){
         return binnacleName;
     }
-        
+     
+            
+    public JPAJinqStream<E> stream() {
+        return new JinqJPAStreamProvider(eMFactory).streamAll(eMFactory.createEntityManager(), claseEntity);        
+    }
+    
 }

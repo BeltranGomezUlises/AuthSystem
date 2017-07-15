@@ -18,7 +18,7 @@ package com.machineAdmin.managers;
 
 import com.machineAdmin.daos.DaoMaquina;
 import com.machineAdmin.entities.Maquina;
-import com.machineAdmin.managers.cg.ManagerMongoFacade;
+import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
 
 /**
  *

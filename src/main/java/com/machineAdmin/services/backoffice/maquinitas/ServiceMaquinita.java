@@ -19,7 +19,7 @@ package com.machineAdmin.services.backoffice.maquinitas;
 import com.machineAdmin.entities.Maquina;
 import com.machineAdmin.managers.ManagerMaquina;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.ServiceFacade;
+import com.machineAdmin.services.cg.commons.ServiceFacade;
 import javax.ws.rs.Path;
 
 /**
@@ -34,29 +34,31 @@ public class ServiceMaquinita extends ServiceFacade<Maquina>{
     }
 
     @Override
-    public Response delete(String token, Maquina t) {
-        return super.delete(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response eliminar(String token, Maquina t) {
+        return super.eliminar(token, t); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Response put(String token, Maquina t) {
-        return super.put(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response modificar(String token, Maquina t) {
+        return super.modificar(token, t); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Response post(String token, Maquina t) {
-        return super.post(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response alta(String token, Maquina t) {
+        return super.alta(token, t); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Response get(String token, String id) {
-        return super.get(token, id); //To change body of generated methods, choose Tools | Templates.
+    public Response obtener(String token, String id) {
+        return super.obtener(token, id); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Response get(String token) {
-        return super.get(token); //To change body of generated methods, choose Tools | Templates.
+    public Response listar(String token) {
+        return super.listar(token); //To change body of generated methods, choose Tools | Templates.
     }
+
+   
     
     
 }

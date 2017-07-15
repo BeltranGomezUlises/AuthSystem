@@ -23,14 +23,18 @@ import com.machineAdmin.daos.cg.admin.DaoPermission;
 import com.machineAdmin.daos.cg.admin.DaoUser;
 import com.machineAdmin.entities.cg.admin.CGConfig;
 import com.machineAdmin.entities.cg.admin.ConfigMail;
-import com.machineAdmin.entities.cg.admin.Permission;
-import com.machineAdmin.entities.cg.admin.Permission.Seccion;
-import com.machineAdmin.entities.cg.admin.Permission.Seccion.Module;
-import com.machineAdmin.entities.cg.admin.Permission.Seccion.Module.Menu;
-import com.machineAdmin.entities.cg.admin.Permission.Seccion.Module.Menu.Action;
+import com.machineAdmin.entities.cg.admin.AvailablePermission;
+import com.machineAdmin.entities.cg.admin.AvailablePermission.Seccion;
+import com.machineAdmin.entities.cg.admin.AvailablePermission.Seccion.Module;
+import com.machineAdmin.entities.cg.admin.AvailablePermission.Seccion.Module.Menu;
+import com.machineAdmin.entities.cg.admin.AvailablePermission.Seccion.Module.Menu.Action;
+import com.machineAdmin.entities.cg.admin.Profile;
 import com.machineAdmin.entities.cg.admin.User;
+import com.machineAdmin.managers.cg.admin.ManagerProfile;
+import com.machineAdmin.models.cg.ModelAsignedUser;
+import com.machineAdmin.models.cg.ModelSetPermission;
 import com.machineAdmin.models.cg.enums.PermissionType;
-import com.machineAdmin.services.cg.ServiceFacade;
+import com.machineAdmin.services.cg.commons.ServiceFacade;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,24 +54,28 @@ import org.reflections.Reflections;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class InitServletContext implements ServletContextListener {
-    
+
     private final String PACKAGE_SERVICES = "com.machineAdmin.services";
-    
+
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        this.initDBConfigs();
+        try {
+            this.initDBConfigs();
+        } catch (Exception ex) {
+            Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-    
+
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        
+
     }
-    
+
     private void initDBPermissions() {
 
         //ESTRUCTURAD DE ORGANIZACION DE SECCIONES
         // com.{nombre negocio}.services.{seccion}.{modulo}.{menu}                
-        Permission permission = new Permission();
+        AvailablePermission permission = new AvailablePermission();
         Package[] paquetes = Package.getPackages();
         List<String> paquetesServicios = Arrays.stream(paquetes)
                 .map(p -> p.getName())
@@ -78,83 +86,86 @@ public class InitServletContext implements ServletContextListener {
         Set<String> nombreSecciones = paquetesServicios.stream()
                 .map(seccion -> seccion.split("\\.")[3])
                 .collect(Collectors.toSet());
-        List<Seccion> secciones = new ArrayList<>();        
+        List<Seccion> secciones = new ArrayList<>();
         for (String nombreSeccion : nombreSecciones) {
-            if (!nombreSeccion.equals("cgt")) {
-                Seccion seccion = new Seccion(nombreSeccion);
-                
-                String packageSeccionName = PACKAGE_SERVICES + "." + nombreSeccion;
-                
-                List<Module> modulos = new ArrayList<>();
-                List<String> modulosPackageNombre = Arrays.stream(paquetes)
-                        .map(p -> p.getName())
-                        .filter(name -> name.startsWith(packageSeccionName))
-                        .collect(toList());
-                
-                List<String> modulosNombres = modulosPackageNombre.stream()
-                        .filter(packageName -> !packageName.endsWith(nombreSeccion))
-                        .map(n -> n.split("\\.")[4])
-                        .collect(toList());
-                //<editor-fold defaultstate="collapsed" desc="MODULOS">
-                for (String nombreModulo : modulosNombres) {
-                    Module module = new Module(nombreModulo);
-                    
-                    String packageModuleName = packageSeccionName + "." + nombreModulo;
-                    
-                    List<String> menusNames = getClasesSimpleNameFromPackage2(packageModuleName);
-                    List<Menu> menus = new ArrayList<>();
-                    //<editor-fold defaultstate="collapsed" desc="MENUS">
-                    for (String menusName : menusNames) {
-                        Menu menu = new Menu(menusName);
-                        
-                        String packageClassName = packageModuleName + "." + menusName;
+            Seccion seccion = new Seccion(nombreSeccion);
 
-                        //<editor-fold defaultstate="collapsed" desc="ACCIONES">
-                        List<Action> acciones = new ArrayList<>();
-                        try {
-                            Class<?> clase = Class.forName(packageClassName);
-                            Method[] methods = clase.getDeclaredMethods();
-                            for (Method method : methods) {
-                                method.setAccessible(true);
-                                
-                                if (acciones.stream()
-                                        .map(a -> a.getName())
-                                        .collect(toList())
-                                        .contains(method.getName())) {
-                                    continue;
-                                }
-                                
-                                Action action = new Action();
-                                action.setName(method.getName());                                
-                                String actionId = seccion.getName()+"."+module.getName()+"."+menu.getName()+"."+action.getName();                                
-                                action.setId(actionId);                                
-                                
-                                List<PermissionType> types = new ArrayList<>();
-                                types.add(PermissionType.OWNER);
-                                
-                                if (!action.getName().equals("post")) {
-                                    types.add(PermissionType.ALL);
-                                    types.add(PermissionType.OWNER_AND_PROFILE);
-                                }
-                                action.setTypes(types);
-                                acciones.add(action);
+            String packageSeccionName = PACKAGE_SERVICES + "." + nombreSeccion;
+
+            List<Module> modulos = new ArrayList<>();
+            List<String> modulosPackageNombre = Arrays.stream(paquetes)
+                    .map(p -> p.getName())
+                    .filter(name -> name.startsWith(packageSeccionName))
+                    .collect(toList());
+
+            List<String> modulosNombres = modulosPackageNombre.stream()
+                    .filter(packageName -> !packageName.endsWith(nombreSeccion))
+                    .map(n -> n.split("\\.")[4])
+                    .collect(toList());
+            //<editor-fold defaultstate="collapsed" desc="MODULOS">
+            for (String nombreModulo : modulosNombres) {
+                if (nombreModulo.equals("commons")) {
+                    continue;
+                }
+
+                Module module = new Module(nombreModulo);
+
+                String packageModuleName = packageSeccionName + "." + nombreModulo;
+
+                List<String> menusNames = getClasesSimpleNameFromPackage2(packageModuleName);
+                List<Menu> menus = new ArrayList<>();
+                //<editor-fold defaultstate="collapsed" desc="MENUS">
+                for (String menusName : menusNames) {
+                    Menu menu = new Menu(menusName);
+
+                    String packageClassName = packageModuleName + "." + menusName;
+
+                    //<editor-fold defaultstate="collapsed" desc="ACCIONES">
+                    List<Action> acciones = new ArrayList<>();
+                    try {
+                        Class<?> clase = Class.forName(packageClassName);
+                        Method[] methods = clase.getDeclaredMethods();
+                        for (Method method : methods) {
+                            method.setAccessible(true);
+
+                            if (acciones.stream()
+                                    .map(a -> a.getName())
+                                    .collect(toList())
+                                    .contains(method.getName())) {
+                                continue;
                             }
-                        } catch (ClassNotFoundException ex) {
-                            Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
-                            continue;
+
+                            Action action = new Action();
+                            action.setName(method.getName());
+                            String actionId = seccion.getName() + "." + module.getName() + "." + menu.getName() + "." + action.getName();
+                            action.setId(actionId);
+
+                            List<PermissionType> types = new ArrayList<>();
+                            types.add(PermissionType.OWNER);
+
+                            if (!action.getName().equals("alta")) {
+                                types.add(PermissionType.ALL);
+                                types.add(PermissionType.OWNER_AND_PROFILE);
+                            }
+                            action.setTypes(types);
+                            acciones.add(action);
                         }
-                        menu.setAcciones(acciones);
-                        menus.add(menu);
-                        //</editor-fold>
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
+                        continue;
                     }
+                    menu.setAcciones(acciones);
+                    menus.add(menu);
                     //</editor-fold>
-                    module.setMenus(menus);
-                    modulos.add(module);
                 }
                 //</editor-fold>
-                seccion.setModulos(modulos);
-                secciones.add(seccion);
+                module.setMenus(menus);
+                modulos.add(module);
             }
+            //</editor-fold>
+            seccion.setModulos(modulos);
+            secciones.add(seccion);
+
         }
         permission.setSecciones(secciones);
         //</editor-fold>
@@ -162,12 +173,17 @@ public class InitServletContext implements ServletContextListener {
         //<editor-fold defaultstate="collapsed" desc="ACTUALIZAR DB">
         //actualizar catalogo de permisos disponibles
         DaoPermission daoPermission = new DaoPermission();
-        Permission dbPermission = daoPermission.findFirst();
-        
+        AvailablePermission dbPermission = daoPermission.findFirst();
+
         if (dbPermission == null) {
             daoPermission.persist(permission);
         } else {
-            daoPermission.update(DBQuery.is("_id", dbPermission.getId()), permission);            
+            try {
+                dbPermission.setSecciones(secciones);
+                daoPermission.update(DBQuery.exists("_id"), dbPermission);
+            } catch (Exception ex) {
+                Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         //</editor-fold>
 
@@ -178,15 +194,15 @@ public class InitServletContext implements ServletContextListener {
             Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void initDBConfigs() {
+
+    private void initDBConfigs() throws Exception {
         System.out.println("INICIANDO LA CONFIGURACION EN BASE DE DATOS DEFAULT");
 
         //<editor-fold defaultstate="collapsed" desc="DEFAULT PERMISSIONS CONFIG"> 
         this.initDBPermissions();
         //AGREGAR LOS PERMISOS AL USUARIO MASTER
         //</editor-fold>
-        
+
         DaoConfigMail daoMail = new DaoConfigMail();
         DaoUser daoUser = new DaoUser();
         DaoConfig daoConfig = new DaoConfig();
@@ -201,55 +217,71 @@ public class InitServletContext implements ServletContextListener {
             mail.setPort(465);
             mail.setSsl(true);
             mail = daoMail.persist(mail);
-            
+
             System.out.println("Correo dado de alta por defecto:");
             System.out.println(mail);
         }
         //</editor-fold>                
-
-        //<editor-fold defaultstate="collapsed" desc="DAFULT USER CONFIG">        
+                
+        //<editor-fold defaultstate="collapsed" desc="DAFULT USER CONFIG AND PROFILE">        
         DaoPermission daoPermission = new DaoPermission();
-        
-        User userMaster = daoUser.findFirst();        
+
+        User userMaster = daoUser.findFirst();
         if (userMaster == null) {
-            userMaster = new User();
             
+            //crear el perfil default de master
+            Profile profile = new Profile();
+            profile.setName("Master");
+            profile.setPermisos(UtilsPermissions.getAsignedPermissionsAvailable());
+                                    
+            userMaster = new User();
             userMaster.setUser("Admin");
             userMaster.setMail("usuariosexpertos@gmail.com");
             userMaster.setPass(UtilsSecurity.cifrarMD5("1234"));
+            userMaster.setAsignedPermissions(profile.getPermisos());
+            userMaster = daoUser.persist(userMaster); //obtener el id de base de datos
             
-            userMaster.setAsignedPermissions(UtilsPermissions.getAsignedPermissionsAvailable());
+            ManagerProfile managerProfile = new ManagerProfile();
             
-            daoUser.persist(userMaster);
-            
+            ModelAsignedUser modelAsignedUser = new ModelAsignedUser();
+            modelAsignedUser.setHereda(true);
+            modelAsignedUser.setUserId(userMaster.getId());            
+                        
+            profile.setUsers(Arrays.asList(modelAsignedUser));  //asignar el usuario al perfil            
+            managerProfile.persist(profile); //persistir el perfil con los permisos y el usuario default
+
             System.out.println("Usuario dado de alta por defecto: (contraseña : \"1234\")");
             System.out.println(userMaster);
+            System.out.println("Perfil dado de alta por defecto: " + profile.getName());
+                                                                        
         } else {
             userMaster.setAsignedPermissions(UtilsPermissions.getAsignedPermissionsAvailable());
             daoUser.update(userMaster);
         }
+        
+        
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="GENERAL CONFIGS">
         CGConfig configuracionGeneral = daoConfig.findFirst();
-        
+
         if (configuracionGeneral == null) {
             configuracionGeneral = new CGConfig();
             //<editor-fold defaultstate="collapsed" desc="JWT CONFIGS">
             CGConfig.JwtsConfig jwtConfig = new CGConfig.JwtsConfig();
-            jwtConfig.setSecondsRecoverJwtExp(900); //15 minutos
-            jwtConfig.setSecondsSessionJwtExp(3600); //1 hora
+            jwtConfig.setSecondsRecoverJwtExp(1800); //30 minutos
+            jwtConfig.setSecondsSessionJwtExp(7200); //12 horas
             configuracionGeneral.setJwtConfig(jwtConfig);
             //</editor-fold>
 
             //<editor-fold defaultstate="collapsed" desc="LOGIN CONFIGS">
             CGConfig.AccessConfig loginAttemptConfig = new CGConfig.AccessConfig();
-            
+
             loginAttemptConfig.setMaxNumberAttemps(10); // 10 intentos fallidos maximo
             loginAttemptConfig.setSecondsBetweenEvents(120); // 2 minutos de intervalo para contar
             loginAttemptConfig.setSecondsTermporalBlockingUser(1800); // bloqueado por media hora al sobrepasar intentos maximos
             loginAttemptConfig.setMaxPasswordRecords(3);
-            
+
             configuracionGeneral.setAccessConfig(loginAttemptConfig);
             //</editor-fold>
 
@@ -270,19 +302,19 @@ public class InitServletContext implements ServletContextListener {
             //</editor-fold>
 
             daoConfig.persist(configuracionGeneral);
-            
+
             System.out.println("configuracion generales instaladas:");
             System.out.println(configuracionGeneral);
         }
         //</editor-fold>        
 
     }
-    
+
     private List<String> getClasesSimpleNameFromPackage2(String packageName) {
         Reflections reflections = new Reflections(packageName);
         Set<Class<? extends ServiceFacade>> subtypes = reflections.getSubTypesOf(ServiceFacade.class);
-        
+
         return subtypes.stream().map(c -> c.getSimpleName()).collect(toList());
     }
-    
+
 }

@@ -5,16 +5,18 @@
  */
 package com.machineAdmin.managers.cg.admin;
 
-import com.machineAdmin.managers.cg.ManagerMongoFacade;
+import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
 import com.machineAdmin.daos.cg.admin.DaoUser;
 import com.machineAdmin.entities.cg.admin.BinnacleAccess;
 import com.machineAdmin.entities.cg.admin.User;
 import com.machineAdmin.entities.cg.admin.User.LoginAttempt;
 import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
+import com.machineAdmin.managers.cg.exceptions.UserException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.cg.ModelRecoverCodeUser;
+import com.machineAdmin.models.cg.ModelSetPermission;
 import com.machineAdmin.utils.UtilsBinnacle;
 import com.machineAdmin.utils.UtilsConfig;
 import com.machineAdmin.utils.UtilsDate;
@@ -74,6 +76,9 @@ public class ManagerUser extends ManagerMongoFacade<User> {
                 if (loged.getBlocked().isBlocked() && loged.getBlocked().getBlockedUntilDate().after(new Date())) {
                     throw new UsuarioBlockeadoException("Usuario bloqueado hasta " + UtilsDate.format_D_MM_YYYY_HH_MM(loged.getBlocked().getBlockedUntilDate()));
                 }
+            }
+            if (loged.isInhabilitado()) {
+                throw new ContraseñaIncorrectaException("No se encontro un usuario con esa contraseña");
             }
             loged.setLoginAttempt(null);
             this.update(loged);
@@ -213,6 +218,68 @@ public class ManagerUser extends ManagerMongoFacade<User> {
         this.update(u);
     }
 
+    @Override
+    public List<User> findAll() {
+        return this.findAll("user", "mail", "phone", "_id", "inhabilitado", "permission");
+    }
+
+    @Override
+    public User persist(User entity) throws UserException, Exception {
+        this.verificarUnicidadCreate(entity);
+        entity.setPass(UtilsSecurity.cifrarMD5(entity.getPass()));
+        return super.persist(entity); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void update(User entity) throws UserException, Exception {
+        this.verificarUnicidadUpdate(entity);
+        super.update(entity);
+    }
+
+    /**
+     * 
+     * @param userId -> id de usuario a habilitar/inhabilitar
+     * @return -> true si fue habilitado, false si fue inhabilitado
+     * @throws Exception 
+     */
+    public boolean inhabilitar(String userId) throws Exception {
+        User u = this.findOne(userId);
+        if (u == null) {
+            throw new NullPointerException("Usuario inexistente");
+        }
+        u.setInhabilitado(!u.isInhabilitado());
+        this.update(u);
+        return u.isInhabilitado();
+    }
+
+    private void verificarUnicidadCreate(User entity) throws UserException {
+        if (entity.getMail() == null && entity.getPhone() == null) {
+            throw new UserException("Se necesita tener un correo o un numero de telefono para poder registrar el usuario");
+        }
+        if (this.findOne(DBQuery.is("user", entity.getUser())) != null) {
+            throw new UserException.UsuarioYaExistente("Nombre de Usuario ya ha sido utilizado");
+        }
+        if (entity.getMail() != null && this.findOne(DBQuery.is("mail", entity.getMail())) != null) {
+            throw new UserException.CorreoYaExistente("Correo de usuario ya ha sido utilizado");
+        }
+        if (entity.getPhone() != null && this.findOne(DBQuery.is("phone", entity.getPhone())) != null) {
+            throw new UserException.CorreoYaExistente("Telefono de usuario ya ha sido utilizado");
+        }
+
+    }
+
+    private void verificarUnicidadUpdate(User entity) throws UserException {
+        if (this.findOne(DBQuery.is("user", entity.getUser()).notEquals("_id", entity.getId())) != null) {
+            throw new UserException.UsuarioYaExistente("Nombre de Usuario ya ha sido utilizado");
+        }
+        if (entity.getMail() != null && this.findOne(DBQuery.is("mail", entity.getMail()).notEquals("_id", entity.getId())) != null) {
+            throw new UserException.CorreoYaExistente("Correo de usuario ya ha sido utilizado");
+        }
+        if (entity.getPhone() != null && this.findOne(DBQuery.is("phone", entity.getPhone()).notEquals("_id", entity.getId())) != null) {
+            throw new UserException.CorreoYaExistente("Telefono de usuario ya ha sido utilizado");
+        }
+    }
+
     private userIdentifierType getUserIdentifierType(String userIdentifier) {
         if (userIdentifier.contains("@")) { //es un correo
             return userIdentifierType.MAIL;
@@ -223,6 +290,12 @@ public class ManagerUser extends ManagerMongoFacade<User> {
                 return userIdentifierType.USER;
             }
         }
+    }
+
+    public void setPermissionToUser(ModelSetPermission modelSetPermissionUser) throws Exception {
+        User u = this.findOne(modelSetPermissionUser.getId());
+        u.setAsignedPermissions(modelSetPermissionUser.getPermissionsAsigned());
+        this.update(u);
     }
 
     private enum userIdentifierType {
