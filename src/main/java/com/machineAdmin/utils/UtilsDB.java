@@ -9,10 +9,8 @@ import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
-import java.util.Date;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import org.bson.types.ObjectId;
 import org.jinq.jpa.JinqJPAStreamProvider;
 
 /**

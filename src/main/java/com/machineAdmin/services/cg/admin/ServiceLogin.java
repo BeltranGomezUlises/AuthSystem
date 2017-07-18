@@ -17,7 +17,6 @@ import com.machineAdmin.models.cg.ModelRecoverCodeUser;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.ServiceFacade;
-import com.machineAdmin.utils.UtilsBitacora;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsJson;
 import com.machineAdmin.utils.UtilsSecurity;
@@ -51,20 +50,15 @@ public class ServiceLogin {
             usuarioAutenticando.setPass(UtilsSecurity.cifrarMD5(usuarioAutenticando.getPass()));
             User usuarioLogeado = managerUsuario.Login(usuarioAutenticando);
             
-            //no estos datos ó mapear a modelo
+            //no regresar estos datos ó mapear a modelo
             usuarioLogeado.setPass(null);
             usuarioLogeado.setBlocked(null);
             usuarioLogeado.setLoginAttempt(null);
             
             res.setData(usuarioLogeado);
-            res.setMetaData(UtilsJWT.generateToken(usuarioLogeado));
-            
-            //bitacora                                                
-            new Thread( ()-> {
-                UtilsBitacora.bitacorizar("bitacora.accesos", usuarioLogeado);
-            }).start();
-            
-            //bitacora de accesos            
+            res.setMetaData(UtilsJWT.generateToken(usuarioLogeado));                                          
+            res.setMessage("Bienvenido " + usuarioLogeado.getUser());
+            res.setDevMessage("Token de sesion de usuario, necesario para las cabeceras de los demas servicios");
         } catch (UsuarioInexistenteException | ContraseñaIncorrectaException e) {
             res.setStatus(Status.WARNING);
             res.setMessage("Usuario y/o contraseña incorrecto");
@@ -73,8 +67,7 @@ public class ServiceLogin {
             res.setStatus(Status.WARNING);
             res.setMessage(ex.getMessage());
             res.setDevMessage("El Usuario está bloqueado temporalmente. Cause: " + ex.getMessage());
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception ex) {            
             res.setStatus(Status.ERROR);
             ServiceFacade.setCauseMessage(res, ex);
         }

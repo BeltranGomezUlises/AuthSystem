@@ -77,6 +77,10 @@ public class DaoMongoFacade<T extends EntityMongo> {
         return coll.update(query, t).getSavedObjects();
     }
 
+    public T findFirst(){
+        return coll.findOne();
+    }
+    
     public T findOne(Object id) {
         return coll.findOneById(id.toString());
     }

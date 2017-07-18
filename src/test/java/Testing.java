@@ -1,6 +1,3 @@
-
-import com.machineAdmin.daos.DaoPermiso;
-
 /*
  * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  *
@@ -18,15 +15,51 @@ import com.machineAdmin.daos.DaoPermiso;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class Testing {
-    public static void main(String[] args) {
-        DaoPermiso dao = new DaoPermiso();        
-        
-        dao.findAll(4, 2).forEach( p -> System.out.println(p));
-        
+
+    @BeforeClass //this id done before everything
+    public static void beforeClass() {
+        //System.out.println("beforeClass");
     }
+
+    @Before //this is done before every @Test
+    public void before() {
+        //System.out.println("before");
+    }
+
+    @Test
+    public void generarCGConfigUsers() {
+        //System.out.println("generarCGConfigUsers");
+    }
+
+    @Test
+    public void generarCGConfigMails() {
+        //System.out.println("generarCGConfigMails");
+    }
+
+    @Test
+    public void generarCGConfigGeneral() {
+        //System.out.println("generarCGConfigGeneral");
+    }
+
+    @After //this is done after every @Test
+    public void after() {
+        //System.out.println("after");
+    }
+
+    @AfterClass //this is done after everything
+    public static void afterClass() {
+        //System.out.println("afterClass");
+    }
+
 }

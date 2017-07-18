@@ -28,7 +28,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoPermiso extends DaoSQLFacade<Permiso> {
 
     public DaoPermiso() {
-        super(UtilsDB.getEMFactoryPostgres(), PermisoJpaController.class, Permiso.class);
+        super(UtilsDB.getEMFactoryPostgres(), PermisoJpaController.class, Permiso.class, "permisos");
     }
 
     @Override

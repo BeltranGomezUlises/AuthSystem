@@ -31,7 +31,7 @@ import org.mongojack.JacksonDBCollection;
  */
 public class UtilsConfig {
 
-    protected static final String COLLECTION_NAME = "config.cg";
+    protected static final String COLLECTION_NAME = "cg.config.general";
     protected static final JacksonDBCollection<CGConfig, String> COLLECTION = JacksonDBCollection.wrap(UtilsDB.getCollection(COLLECTION_NAME), CGConfig.class, String.class);
 
     public static int getSecondsSessionJwtExp() {
@@ -64,12 +64,12 @@ public class UtilsConfig {
         return getCGConfig().getLoginConfig().getMaxNumberAttemps();
     }
 
-    public static Date getDateUtilUserStillBlocked(){
+    public static Date getDateUtilUserStillBlocked() {
         Calendar cal = new GregorianCalendar();
         cal.add(Calendar.SECOND, getCGConfig().getLoginConfig().getSecondsTermporalBlockingUser());
         return cal.getTime();
     }
-    
+
     public static class CGConfig extends EntityMongo {
 
         private JwtsConfig jwtConfig;
