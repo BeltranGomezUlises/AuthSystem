@@ -14,26 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.daos;
+package com.machineAdmin.managers;
 
-import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
-import com.machineAdmin.daos.jpaControllers.PermisoJpaController;
-import com.machineAdmin.entities.postgres.Permiso;
-import com.machineAdmin.utils.UtilsDB;
+import com.machineAdmin.daos.DaoMaquina;
+import com.machineAdmin.entities.Maquina;
+import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoPermiso extends DaoSQLFacade<Permiso> {
+public class ManagerMaquina extends ManagerMongoFacade<Maquina> {
 
-    public DaoPermiso() {
-        super(UtilsDB.getEMFactoryPostgres(), PermisoJpaController.class, Permiso.class, "permisos");
+    public ManagerMaquina() {
+        super(new DaoMaquina());
     }
 
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return Integer.class;
-    }
-    
 }

@@ -16,24 +16,17 @@
  */
 package com.machineAdmin.daos;
 
-import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
-import com.machineAdmin.daos.jpaControllers.PermisoJpaController;
-import com.machineAdmin.entities.postgres.Permiso;
-import com.machineAdmin.utils.UtilsDB;
+import com.machineAdmin.daos.cg.commons.DaoMongoFacade;
+import com.machineAdmin.entities.Maquina;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoPermiso extends DaoSQLFacade<Permiso> {
+public class DaoMaquina extends DaoMongoFacade<Maquina>{
 
-    public DaoPermiso() {
-        super(UtilsDB.getEMFactoryPostgres(), PermisoJpaController.class, Permiso.class, "permisos");
+    public DaoMaquina() {
+        super("maquinas", Maquina.class);
     }
-
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return Integer.class;
-    }
-    
+     
 }

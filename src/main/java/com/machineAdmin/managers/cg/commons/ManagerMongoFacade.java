@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.managers.cg;
+package com.machineAdmin.managers.cg.commons;
 
-import com.machineAdmin.daos.cg.DaoMongoFacade;
-import com.machineAdmin.entities.cg.EntityMongo;
+import com.machineAdmin.daos.cg.commons.DaoMongoFacade;
+import com.machineAdmin.entities.cg.commons.EntityMongo;
 import java.util.List;
 import org.mongojack.DBQuery.Query;
 
@@ -19,12 +19,13 @@ public class ManagerMongoFacade<T extends EntityMongo> implements ManagerFacade<
 
     protected DaoMongoFacade dao;
 
-    protected ManagerMongoFacade(DaoMongoFacade dao){
+    public ManagerMongoFacade(DaoMongoFacade<T> dao){
         this.dao = dao;
     }
 
     @Override
     public T persist(T entity) throws Exception {
+        
         return (T) dao.persist(entity);
     }
 
@@ -74,23 +75,47 @@ public class ManagerMongoFacade<T extends EntityMongo> implements ManagerFacade<
     public T findOne(Query q) {
         return (T) dao.findOne(q);
     }
+    
+    public T findOne(Query q, String... attributesProjection) {
+        return (T) dao.findOne(q, attributesProjection);
+    }
 
     @Override
     public List<T> findAll() {
         return dao.findAll();
     }
+    
+    public List<T> findAll(String... attributesProjection) {
+        return dao.findAll(attributesProjection);
+    }
 
+    public List<T> findall(String... attributesProjection){
+        return dao.findAll(attributesProjection);
+    }
+    
     @Override
     public List<T> findAll(int max) {
         return dao.findAll(max);
+    }
+    
+    public List<T> findAll(int max, String... attributesProjection) {
+        return dao.findAll(max, attributesProjection);
     }
 
     public List<T> findAll(Query q) {
         return dao.findAll(q);
     }
+    
+    public List<T> findall(Query query, String... attributesProjection){
+        return dao.findAll(query, attributesProjection);
+    }
 
     public List<T> findAll(Query q, int max) {
         return dao.findAll(q, max);
+    }
+    
+    public List<T> findAll(Query q, int max, String attributesProjection) {
+        return dao.findAll(q, max, attributesProjection);
     }
 
     public long count(Query q) {
@@ -100,6 +125,11 @@ public class ManagerMongoFacade<T extends EntityMongo> implements ManagerFacade<
     @Override
     public long count() {
         return dao.count();
+    }
+
+    @Override
+    public T findFirst() {
+       return (T) dao.findFirst();
     }
 
 }

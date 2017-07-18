@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.managers.cg;
+package com.machineAdmin.managers.cg.commons;
 
-import com.machineAdmin.daos.cg.DaoSQLFacade;
+import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import org.jinq.jpa.JPAJinqStream;
 
 /**
  *
@@ -81,4 +82,13 @@ public class ManagerSQLFacade<T extends Serializable> implements ManagerFacade<T
         return dao.count();
     }
 
+    @Override
+    public T findFirst() {
+        return (T) dao.findFirst();
+    }
+    
+    public JPAJinqStream<T> stream(){
+        return dao.stream();
+    }
+    
 }

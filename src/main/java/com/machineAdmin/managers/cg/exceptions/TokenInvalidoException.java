@@ -14,26 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.daos;
-
-import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
-import com.machineAdmin.daos.jpaControllers.PermisoJpaController;
-import com.machineAdmin.entities.postgres.Permiso;
-import com.machineAdmin.utils.UtilsDB;
+package com.machineAdmin.managers.cg.exceptions;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoPermiso extends DaoSQLFacade<Permiso> {
+public class TokenInvalidoException extends Exception{
 
-    public DaoPermiso() {
-        super(UtilsDB.getEMFactoryPostgres(), PermisoJpaController.class, Permiso.class, "permisos");
+    public TokenInvalidoException(String message) {
+        super(message);
     }
-
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return Integer.class;
-    }
-    
+        
 }

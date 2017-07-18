@@ -5,24 +5,31 @@
  */
 package com.machineAdmin.managers.cg.admin;
 
-import com.machineAdmin.managers.cg.ManagerMongoFacade;
+import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
 import com.machineAdmin.daos.cg.admin.DaoUser;
 import com.machineAdmin.entities.cg.admin.BinnacleAccess;
 import com.machineAdmin.entities.cg.admin.User;
 import com.machineAdmin.entities.cg.admin.User.LoginAttempt;
 import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
+import com.machineAdmin.managers.cg.exceptions.UserException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.cg.ModelRecoverCodeUser;
-import com.machineAdmin.utils.UtilsBitacora;
+import com.machineAdmin.models.cg.ModelSetPermission;
+import com.machineAdmin.utils.UtilsBinnacle;
 import com.machineAdmin.utils.UtilsConfig;
 import com.machineAdmin.utils.UtilsDate;
+import com.machineAdmin.utils.UtilsJWT;
+import com.machineAdmin.utils.UtilsJson;
 import com.machineAdmin.utils.UtilsMail;
 import com.machineAdmin.utils.UtilsSMS;
 import com.machineAdmin.utils.UtilsSecurity;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,7 +58,7 @@ public class ManagerUser extends ManagerMongoFacade<User> {
      * com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException
      * @throws com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException
      */
-    public User Login(User user) throws UsuarioInexistenteException, ContraseñaIncorrectaException, UsuarioBlockeadoException, Exception {
+    public User login(User user) throws UsuarioInexistenteException, ContraseñaIncorrectaException, UsuarioBlockeadoException, Exception {
         Query q = DBQuery.is("pass", user.getPass());
         switch (getUserIdentifierType(user.getUser())) {
             case MAIL:
@@ -70,21 +77,30 @@ public class ManagerUser extends ManagerMongoFacade<User> {
                     throw new UsuarioBlockeadoException("Usuario bloqueado hasta " + UtilsDate.format_D_MM_YYYY_HH_MM(loged.getBlocked().getBlockedUntilDate()));
                 }
             }
+            if (loged.isInhabilitado()) {
+                throw new ContraseñaIncorrectaException("No se encontro un usuario con esa contraseña");
+            }
             loged.setLoginAttempt(null);
             this.update(loged);
-                        
+
             //login exitoso, generar bitácora                                    
-            new Thread( ()-> {
+            new Thread(() -> {
                 BinnacleAccess access = new BinnacleAccess(loged.getId());
-                UtilsBitacora.bitacorizar("cg.bitacora.accesos", access);
-                }).start();            
-            
+                UtilsBinnacle.bitacorizar("cg.bitacora.accesos", access);
+            }).start();
+
             return loged;
         } else { //ver si el usuario existe y verificar número de intentos
             this.numberAttemptVerification(user);
             throw new ContraseñaIncorrectaException("No se encontro un usuario con esa contraseña");
         }
 
+    }
+
+    public void logout(String token) throws IOException {
+        User u = UtilsJson.jsonDeserialize(UtilsJWT.getBodyToken(token), User.class);
+        BinnacleAccess exit = new BinnacleAccess(u.getId());
+        UtilsBinnacle.bitacorizar("cg.bitacora.salidas", exit);
     }
 
     private void numberAttemptVerification(User usuario) throws UsuarioInexistenteException, UsuarioBlockeadoException {
@@ -181,8 +197,87 @@ public class ManagerUser extends ManagerMongoFacade<User> {
 
     public void resetPassword(String userId, String pass) throws Exception {
         User u = this.findOne(userId);
+        List<String> lastPassword = u.getLastPasswords();
+        //obtener el numero maximo de contraseñas a guardar para impedir repeticion
+        int maxNumber = UtilsConfig.getMaxPasswordRecords();
+
+        // lastPassword.size() < maxNumber -> agregar pass actual al registro
+        // lastPassword.size() >= maxNumber -> resize de lastPassword con los ultimos maxNumber contraseñas
+        if (lastPassword.size() < maxNumber) {
+            lastPassword.add(u.getPass()); //añadimos le passActual            
+        } else {
+            String[] newLastPasswords = new String[maxNumber];
+            for (int i = 1; i < maxNumber; i++) {
+                newLastPasswords[i - 1] = lastPassword.get(i);
+            }
+            newLastPasswords[maxNumber - 1] = u.getPass(); //añadir la final            
+            u.setLastPasswords(Arrays.asList(newLastPasswords));
+        }
+
         u.setPass(UtilsSecurity.cifrarMD5(pass));
         this.update(u);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return this.findAll("user", "mail", "phone", "_id", "inhabilitado", "permission");
+    }
+
+    @Override
+    public User persist(User entity) throws UserException, Exception {
+        this.verificarUnicidadCreate(entity);
+        entity.setPass(UtilsSecurity.cifrarMD5(entity.getPass()));
+        return super.persist(entity); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void update(User entity) throws UserException, Exception {
+        this.verificarUnicidadUpdate(entity);
+        super.update(entity);
+    }
+
+    /**
+     * 
+     * @param userId -> id de usuario a habilitar/inhabilitar
+     * @return -> true si fue habilitado, false si fue inhabilitado
+     * @throws Exception 
+     */
+    public boolean inhabilitar(String userId) throws Exception {
+        User u = this.findOne(userId);
+        if (u == null) {
+            throw new NullPointerException("Usuario inexistente");
+        }
+        u.setInhabilitado(!u.isInhabilitado());
+        this.update(u);
+        return u.isInhabilitado();
+    }
+
+    private void verificarUnicidadCreate(User entity) throws UserException {
+        if (entity.getMail() == null && entity.getPhone() == null) {
+            throw new UserException("Se necesita tener un correo o un numero de telefono para poder registrar el usuario");
+        }
+        if (this.findOne(DBQuery.is("user", entity.getUser())) != null) {
+            throw new UserException.UsuarioYaExistente("Nombre de Usuario ya ha sido utilizado");
+        }
+        if (entity.getMail() != null && this.findOne(DBQuery.is("mail", entity.getMail())) != null) {
+            throw new UserException.CorreoYaExistente("Correo de usuario ya ha sido utilizado");
+        }
+        if (entity.getPhone() != null && this.findOne(DBQuery.is("phone", entity.getPhone())) != null) {
+            throw new UserException.CorreoYaExistente("Telefono de usuario ya ha sido utilizado");
+        }
+
+    }
+
+    private void verificarUnicidadUpdate(User entity) throws UserException {
+        if (this.findOne(DBQuery.is("user", entity.getUser()).notEquals("_id", entity.getId())) != null) {
+            throw new UserException.UsuarioYaExistente("Nombre de Usuario ya ha sido utilizado");
+        }
+        if (entity.getMail() != null && this.findOne(DBQuery.is("mail", entity.getMail()).notEquals("_id", entity.getId())) != null) {
+            throw new UserException.CorreoYaExistente("Correo de usuario ya ha sido utilizado");
+        }
+        if (entity.getPhone() != null && this.findOne(DBQuery.is("phone", entity.getPhone()).notEquals("_id", entity.getId())) != null) {
+            throw new UserException.CorreoYaExistente("Telefono de usuario ya ha sido utilizado");
+        }
     }
 
     private userIdentifierType getUserIdentifierType(String userIdentifier) {
@@ -195,12 +290,16 @@ public class ManagerUser extends ManagerMongoFacade<User> {
                 return userIdentifierType.USER;
             }
         }
-    }    
-    
+    }
+
+    public void setPermissionToUser(ModelSetPermission modelSetPermissionUser) throws Exception {
+        User u = this.findOne(modelSetPermissionUser.getId());
+        u.setAsignedPermissions(modelSetPermissionUser.getPermissionsAsigned());
+        this.update(u);
+    }
+
     private enum userIdentifierType {
         PHONE, MAIL, USER
     }
-    
-    
-       
+
 }

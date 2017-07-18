@@ -1,8 +1,9 @@
 package com.machineAdmin.entities.cg.admin;
 
-import com.machineAdmin.entities.cg.EntityMongo;
+import com.machineAdmin.entities.cg.commons.EntityMongo;
+import com.machineAdmin.models.cg.ModelAsignedPermission;
 import java.util.Date;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import java.util.List;
 
 /**
  *
@@ -13,13 +14,53 @@ public class User extends EntityMongo {
     private String user;
     private String mail;
     private String pass;
-    private Object permissions;
     private String phone;
+    private boolean inhabilitado;
 
     private LoginAttempt loginAttempt;
     private BlockedUser blocked;
 
+    private List<String> lastPasswords;
+    private List<ModelAsignedPermission> asignedPermissions;
+    private List<Profile> profiles;
+
     public User() {
+    }
+
+    public List<Profile> getProfiles() {
+        return profiles;
+    }
+
+    public void setProfiles(List<Profile> profiles) {
+        this.profiles = profiles;
+    }
+
+    public boolean isInhabilitado() {
+        return inhabilitado;
+    }
+
+    public void setInhabilitado(boolean inhabilitado) {
+        this.inhabilitado = inhabilitado;
+    }
+
+    public List<ModelAsignedPermission> getAsignedPermissions() {
+        return asignedPermissions;
+    }
+
+    public void setAsignedPermissions(List<ModelAsignedPermission> asignedPermissions) {
+        this.asignedPermissions = asignedPermissions;
+    }
+
+    public List<String> getLastPasswords() {
+        return lastPasswords;
+    }
+
+    public void setLastPasswords(List<String> lastPasswords) {
+        this.lastPasswords = lastPasswords;
+    }
+
+    public void addLastPassword(String password) {
+        this.lastPasswords.add(password);
     }
 
     public void riseLoginAttemps() {
@@ -74,15 +115,7 @@ public class User extends EntityMongo {
     public void setPass(String pass) {
         this.pass = pass;
     }
-
-    public Object getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(Object permissions) {
-        this.permissions = permissions;
-    }
-
+   
     @Override
     public int hashCode() {
         return super.hashCode();
@@ -105,7 +138,7 @@ public class User extends EntityMongo {
 
     @Override
     public String toString() {
-        return "User{" + "user=" + user + ", mail=" + mail + ", pass=" + pass + ", permissions=" + permissions + '}';
+        return "User{" + "user=" + user + ", mail=" + mail + ", pass=" + pass + ", phone=" + phone + ", loginAttempt=" + loginAttempt + ", blocked=" + blocked + ", lastPasswords=" + lastPasswords + ", asignedPermissions=" + asignedPermissions + '}';
     }
 
     public static class LoginAttempt {

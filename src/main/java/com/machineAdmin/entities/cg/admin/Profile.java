@@ -16,43 +16,51 @@
  */
 package com.machineAdmin.entities.cg.admin;
 
+import com.machineAdmin.entities.cg.admin.AvailablePermission.Seccion.Module.Menu.Action;
 import com.machineAdmin.entities.cg.commons.EntityMongo;
-import java.util.Date;
+import com.machineAdmin.models.cg.ModelAsignedPermission;
+import com.machineAdmin.models.cg.ModelAsignedUser;
+import java.util.List;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class BinnacleAccess extends EntityMongo {
-    
-    private Date accessDate;    
-    private String userId;
+public class Profile extends EntityMongo {
 
-    public BinnacleAccess(Date accessDate, String userId) {
-        this.accessDate = accessDate;
-        this.userId = userId;
+    private String name;
+    private List<ModelAsignedUser> users;
+    private List<ModelAsignedPermission> permisos;
+
+    public Profile() {
     }
 
-    public BinnacleAccess(String userId) {
-        this.accessDate = new Date();
-        this.userId = userId;
+    public Profile(String name) {
+        this.name = name;
     }
 
-    
-    public Date getAccessDate() {
-        return accessDate;
+    public List<ModelAsignedPermission> getPermisos() {
+        return permisos;
     }
 
-    public void setAccessDate(Date accessDate) {
-        this.accessDate = accessDate;
+    public void setPermisos(List<ModelAsignedPermission> permisos) {
+        this.permisos = permisos;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getName() {
+        return name;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setName(String name) {
+        this.name = name;
     }
-            
+
+    public List<ModelAsignedUser> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<ModelAsignedUser> users) {
+        this.users = users;
+    }
+
 }

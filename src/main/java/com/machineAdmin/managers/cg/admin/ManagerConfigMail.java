@@ -7,7 +7,7 @@ package com.machineAdmin.managers.cg.admin;
 
 import com.machineAdmin.daos.cg.admin.DaoConfigMail;
 import com.machineAdmin.entities.cg.admin.ConfigMail;
-import com.machineAdmin.managers.cg.ManagerMongoFacade;
+import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
 
 /**
  *

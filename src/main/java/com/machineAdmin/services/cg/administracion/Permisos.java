@@ -14,26 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.daos;
+package com.machineAdmin.services.cg.administracion;
 
-import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
-import com.machineAdmin.daos.jpaControllers.PermisoJpaController;
-import com.machineAdmin.entities.postgres.Permiso;
-import com.machineAdmin.utils.UtilsDB;
+import com.machineAdmin.entities.cg.admin.AvailablePermission;
+import com.machineAdmin.managers.cg.admin.ManagerPermission;
+import com.machineAdmin.models.cg.responsesCG.Response;
+import com.machineAdmin.services.cg.commons.ServiceFacade;
+import javax.ws.rs.Path;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoPermiso extends DaoSQLFacade<Permiso> {
+@Path("/permisos")
+public class Permisos extends ServiceFacade<AvailablePermission> {
 
-    public DaoPermiso() {
-        super(UtilsDB.getEMFactoryPostgres(), PermisoJpaController.class, Permiso.class, "permisos");
+    public Permisos() {
+        super(new ManagerPermission());
     }
 
     @Override
-    protected Class<?> getIdAttributeType() {
-        return Integer.class;
+    public Response listar(String token) {
+        return super.listar(token); //To change body of generated methods, choose Tools | Templates.
     }
-    
+       
 }

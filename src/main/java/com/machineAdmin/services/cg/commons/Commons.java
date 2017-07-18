@@ -3,15 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.services.cg;
+package com.machineAdmin.services.cg.commons;
 
+import com.machineAdmin.entities.cg.admin.CGConfig;
 import com.machineAdmin.utils.UtilsConfig;
-import com.machineAdmin.utils.UtilsDB;
 import com.machineAdmin.utils.UtilsDate.DateClass;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -22,7 +21,7 @@ import javax.ws.rs.core.MediaType;
 @Path("/commons")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class ServiceCommons {
+public class Commons {
 
     @GET
     @Path("/serverDate")
@@ -32,7 +31,7 @@ public class ServiceCommons {
 
     @GET
     @Path("/getConfig")
-    public UtilsConfig.CGConfig getConfig(){
+    public CGConfig getConfig(){
         return UtilsConfig.getCGConfig();
     }
     

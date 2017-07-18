@@ -14,19 +14,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.utils;
-
-import org.mongojack.JacksonDBCollection;
+package com.machineAdmin.models.cg;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class UtilsBitacora {
-        
-    public static void bitacorizar(String collectionName, Object objectToPersist){
-        JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getCollection(collectionName), Object.class, String.class);
-        coll.insert(objectToPersist);
-    }        
-            
+public class ModelAsignedUser {
+
+    private String userId;
+    private boolean hereda;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public boolean isHereda() {
+        return hereda;
+    }
+
+    public void setHereda(boolean hereda) {
+        this.hereda = hereda;
+    }
+
+    
 }
