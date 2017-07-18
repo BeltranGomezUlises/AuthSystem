@@ -24,14 +24,15 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(com.machineAdmin.services.backoffice.maquinitas.ServiceMaquinita.class);
+        resources.add(com.machineAdmin.services.backoffice.maquinitas.Maquinitas.class);
         resources.add(com.machineAdmin.services.cg.administracion.Accesos.class);
         resources.add(com.machineAdmin.services.cg.administracion.Correos.class);
         resources.add(com.machineAdmin.services.cg.administracion.Perfiles.class);
         resources.add(com.machineAdmin.services.cg.administracion.Permisos.class);
         resources.add(com.machineAdmin.services.cg.administracion.Usuarios.class);
-        resources.add(com.machineAdmin.services.cg.commons.ServiceCommons.class);
+        resources.add(com.machineAdmin.services.cg.commons.Commons.class);
         resources.add(com.machineAdmin.services.cg.commons.ServiceFacade.class);
+        resources.add(com.webcohesion.enunciate.rt.EnunciateJaxbContextResolver.class);
     }
     
 }

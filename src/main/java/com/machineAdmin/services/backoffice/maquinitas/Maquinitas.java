@@ -27,9 +27,9 @@ import javax.ws.rs.Path;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/maquinitas")
-public class ServiceMaquinita extends ServiceFacade<Maquina>{
+public class Maquinitas extends ServiceFacade<Maquina>{
     
-    public ServiceMaquinita() {
+    public Maquinitas() {
         super(new ManagerMaquina());
     }
 

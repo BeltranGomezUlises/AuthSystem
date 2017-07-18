@@ -62,7 +62,7 @@ public class CGConfig extends EntityMongo {
         }
 
         /**
-         * clases anidadas
+         * Clases modelo de configuraciones generales
          */
         public static class MailsConfig {
 

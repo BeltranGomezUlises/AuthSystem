@@ -21,7 +21,7 @@ import javax.ws.rs.core.MediaType;
 @Path("/commons")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class ServiceCommons {
+public class Commons {
 
     @GET
     @Path("/serverDate")
