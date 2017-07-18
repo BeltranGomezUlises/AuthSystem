@@ -31,6 +31,7 @@ public class ApplicationConfig extends Application {
         resources.add(com.machineAdmin.services.cg.administracion.Permisos.class);
         resources.add(com.machineAdmin.services.cg.administracion.Usuarios.class);
         resources.add(com.machineAdmin.services.cg.commons.ServiceCommons.class);
+        resources.add(com.machineAdmin.services.cg.commons.ServiceFacade.class);
     }
     
 }
