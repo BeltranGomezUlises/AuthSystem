@@ -16,31 +16,29 @@
  */
 package com.machineAdmin.models.cg;
 
-import java.util.List;
-
 /**
- * modelo para asignar permisos generico
+ * modelo contenedor de perfil y herencia de permisos
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ModelSetPermission {
+public class ModelProfileAndHeritage {
 
-    private String id;
-    private List<ModelAsignedPermission> permissionsAsigned;
+    private String perfilId;
+    private boolean hereda;
 
-    public String getId() {
-        return id;
+    public String getPerfilId() {
+        return perfilId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setPerfilId(String profileId) {
+        this.perfilId = profileId;
     }
 
-    public List<ModelAsignedPermission> getPermissionsAsigned() {
-        return permissionsAsigned;
+    public boolean isHereda() {
+        return hereda;
     }
 
-    public void setPermissionsAsigned(List<ModelAsignedPermission> permissionsAsigned) {
-        this.permissionsAsigned = permissionsAsigned;
+    public void setHereda(boolean heritage) {
+        this.hereda = heritage;
     }
 
 }

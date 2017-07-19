@@ -8,6 +8,7 @@ package com.machineAdmin.managers.cg.admin;
 import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
 import com.machineAdmin.daos.cg.admin.DaoUser;
 import com.machineAdmin.entities.cg.admin.BinnacleAccess;
+import com.machineAdmin.entities.cg.admin.Profile;
 import com.machineAdmin.entities.cg.admin.User;
 import com.machineAdmin.entities.cg.admin.User.LoginAttempt;
 import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
@@ -15,8 +16,10 @@ import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.UserException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
+import com.machineAdmin.models.cg.ModelAsignedUser;
 import com.machineAdmin.models.cg.ModelRecoverCodeUser;
 import com.machineAdmin.models.cg.ModelSetPermission;
+import com.machineAdmin.models.cg.ModelSetProfilesToUsuario;
 import com.machineAdmin.utils.UtilsBinnacle;
 import com.machineAdmin.utils.UtilsConfig;
 import com.machineAdmin.utils.UtilsDate;
@@ -33,6 +36,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static java.util.stream.Collectors.toList;
 import org.apache.commons.mail.EmailException;
 import org.mongojack.DBQuery;
 import org.mongojack.DBQuery.Query;
@@ -237,10 +241,10 @@ public class ManagerUser extends ManagerMongoFacade<User> {
     }
 
     /**
-     * 
+     *
      * @param userId -> id de usuario a habilitar/inhabilitar
      * @return -> true si fue habilitado, false si fue inhabilitado
-     * @throws Exception 
+     * @throws Exception
      */
     public boolean inhabilitar(String userId) throws Exception {
         User u = this.findOne(userId);
@@ -296,6 +300,45 @@ public class ManagerUser extends ManagerMongoFacade<User> {
         User u = this.findOne(modelSetPermissionUser.getId());
         u.setAsignedPermissions(modelSetPermissionUser.getPermissionsAsigned());
         this.update(u);
+    }
+
+    public void setProfiles(ModelSetProfilesToUsuario modelSetProfilesToUsuario) {
+        ManagerProfile managerProfile = new ManagerProfile();
+
+        List<Profile> perfilesAsignarUsuario = managerProfile.findAll(
+                DBQuery.in("_id", modelSetProfilesToUsuario.getPerfiles().stream()
+                        .map(e -> e.getPerfilId())
+                        .collect(toList())
+                )
+        );
+        
+        perfilesAsignarUsuario.stream().forEach( p -> {
+            //buscar el perfil y ver si hereda o no
+            ModelAsignedUser modelAsignedUser = new ModelAsignedUser();
+
+            modelAsignedUser.setHeritage(modelSetProfilesToUsuario.getPerfiles().stream()
+                    .filter(m -> m.getPerfilId().equals(p.getId()))
+                    .findFirst()
+                    .get()
+                    .isHereda()
+            );
+            
+            modelAsignedUser.setUserId(modelSetProfilesToUsuario.getUserId());
+            
+            //si p ya tiene el usuario, actualizar la herencia
+            if (p.getUsers().stream().anyMatch( u -> u.getUserId().equals(modelSetProfilesToUsuario.getUserId()))) {
+                p.getUsers().stream().filter( u -> u.getUserId().equals(modelSetProfilesToUsuario.getUserId())).findFirst().get().setHeritage(modelAsignedUser.isHeritage());
+            }else{
+                p.getUsers().add(modelAsignedUser);
+            }
+                        
+            try {
+                managerProfile.update(p);
+            } catch (Exception ex) {
+                Logger.getLogger(ManagerUser.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+                
     }
 
     private enum userIdentifierType {

@@ -19,8 +19,8 @@ package com.machineAdmin.entities.cg.admin;
 import com.machineAdmin.entities.cg.commons.EntityMongo;
 
 /**
- *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * contenedor de configuraciones generales del sistema
+ * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com  
  */
 public class CGConfig extends EntityMongo {
 
@@ -62,7 +62,7 @@ public class CGConfig extends EntityMongo {
         }
 
         /**
-         * Clases modelo de configuraciones generales
+         * modelo de configuraciones generales
          */
         public static class MailsConfig {
 
@@ -101,6 +101,9 @@ public class CGConfig extends EntityMongo {
 
         }
 
+        /**
+         * modelo de configuraciones de json web tokens
+         */
         public static class JwtsConfig {
 
             private int secondsSessionJwtExp;
@@ -129,6 +132,9 @@ public class CGConfig extends EntityMongo {
 
         }
 
+        /**
+         * modelo de configuracion de provedor de SMS
+         */
         public static class SMSConfig {
 
             private String uri;
@@ -166,6 +172,9 @@ public class CGConfig extends EntityMongo {
 
         }
 
+        /**
+         * modelo de configuracion de accesos del sistema
+         */
         public static class AccessConfig {
 
             private int secondsBetweenEvents;

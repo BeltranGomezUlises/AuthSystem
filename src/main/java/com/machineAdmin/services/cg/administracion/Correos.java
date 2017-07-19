@@ -12,7 +12,7 @@ import com.machineAdmin.services.cg.commons.ServiceFacade;
 import javax.ws.rs.Path;
 
 /**
- *
+ * servicios de administracion de correos del sistema para soporte, contacto y recuperacion de usuarios
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/correos")

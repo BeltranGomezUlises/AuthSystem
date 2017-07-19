@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.machineAdmin.models.cg.enums.Status;
 
 /**
- *
+ * modelo de respuesta generico para servicios
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -57,8 +57,5 @@ public class Maquinitas extends ServiceFacade<Maquina>{
     public Response listar(String token) {
         return super.listar(token); //To change body of generated methods, choose Tools | Templates.
     }
-
-   
-    
-    
+           
 }

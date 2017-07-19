@@ -20,10 +20,11 @@ import com.machineAdmin.entities.cg.admin.AvailablePermission;
 import com.machineAdmin.managers.cg.admin.ManagerPermission;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
+import java.util.List;
 import javax.ws.rs.Path;
 
 /**
- *
+ * servicios de administracion de permisos del sistema (los permisos son generados al arrancar la api)
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/permisos")
@@ -34,8 +35,13 @@ public class Permisos extends ServiceFacade<AvailablePermission> {
     }
 
     @Override
-    public Response listar(String token) {
-        return super.listar(token); //To change body of generated methods, choose Tools | Templates.
+    public Response listar(String token) {        
+        Response res = super.listar(token);        
+        AvailablePermission availablePermission = ((List<AvailablePermission>) res.getData()).get(0);
+        availablePermission.setId(null);
+        
+        res.setData(availablePermission);        
+        return res;
     }
        
 }

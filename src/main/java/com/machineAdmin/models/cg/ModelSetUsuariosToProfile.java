@@ -19,7 +19,7 @@ package com.machineAdmin.models.cg;
 import java.util.List;
 
 /**
- *
+ * modelo para asignar usuarios a un perfil
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ModelSetUsuariosToProfile {

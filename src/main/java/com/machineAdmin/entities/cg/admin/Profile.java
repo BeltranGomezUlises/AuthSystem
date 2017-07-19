@@ -16,15 +16,16 @@
  */
 package com.machineAdmin.entities.cg.admin;
 
-import com.machineAdmin.entities.cg.admin.AvailablePermission.Seccion.Module.Menu.Action;
 import com.machineAdmin.entities.cg.commons.EntityMongo;
 import com.machineAdmin.models.cg.ModelAsignedPermission;
 import com.machineAdmin.models.cg.ModelAsignedUser;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * perfil contenedor de permisos y usuarios
  */
 public class Profile extends EntityMongo {
 
@@ -33,6 +34,8 @@ public class Profile extends EntityMongo {
     private List<ModelAsignedPermission> permisos;
 
     public Profile() {
+        users = new ArrayList<>();
+        permisos = new ArrayList<>();
     }
 
     public Profile(String name) {

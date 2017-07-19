@@ -10,6 +10,7 @@ import com.machineAdmin.managers.cg.admin.ManagerUser;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelSetPermission;
+import com.machineAdmin.models.cg.ModelSetProfilesToUsuario;
 import com.machineAdmin.models.cg.ModelUserId;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
@@ -19,7 +20,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 /**
- *
+ * servicios de administracion de usuarios del sitema
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/usuarios")
@@ -31,12 +32,12 @@ public class Usuarios extends ServiceFacade<User> {
     
     @Override
     public Response modificar(String token, User t) {
-        return super.modificar(token, t); //To change body of generated methods, choose Tools | Templates.
+        return super.modificar(token, t);
     }
     
     @Override
     public Response alta(String token, User t) {
-        return super.alta(token, t); //To change body of generated methods, choose Tools | Templates.                    
+        return super.alta(token, t);
     }
     
     @Override
@@ -72,8 +73,8 @@ public class Usuarios extends ServiceFacade<User> {
         return res;
     }
     
-    @Path("/asignarPermisos")
     @POST
+    @Path("/asignarPermisos")    
     public Response asignarPermisos(@HeaderParam("Authorization") String token, ModelSetPermission modelSetPermissionUser) {
         Response res = new Response();
         try {
@@ -89,5 +90,33 @@ public class Usuarios extends ServiceFacade<User> {
         }
         return res;
     }
-            
+                
+    @POST
+    @Path("/asignarPerfiles")        
+    public Response asignarPerfiles(@HeaderParam("Authorization") String token, ModelSetProfilesToUsuario modelSetProfilesToUsuario){
+        Response res = new Response();
+        try {
+            UtilsJWT.validateSessionToken(token);
+            ManagerUser managerUser = new ManagerUser();
+            managerUser.setProfiles(modelSetProfilesToUsuario);
+            res.setDevMessage("Roles del usuario actualizados");
+            res.setDevMessage("Los roles del usuario fueron actualizados con éxito");
+        } catch (TokenExpiradoException | TokenInvalidoException ex) {
+            setInvalidTokenResponse(res);
+        } catch (Exception ex) {
+            setErrorResponse(res, ex);
+        }
+        return res;
+    }
+    
+    //falta poder agregar los perfiles de un grupo de perfiles
+    
+    //al crear el usuario debes de crearlo con un perfil?
+    
+    //al crear el perfil debe de tener permisos?
+    
+    //al crear un grupo de perfiles, debe de tener perfiles?
+    
+    
+    
 }

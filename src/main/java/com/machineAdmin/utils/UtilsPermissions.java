@@ -41,18 +41,20 @@ public class UtilsPermissions {
     public static List<ModelAsignedPermission> getAsignedPermissionsAvailable() {
         List<ModelAsignedPermission> asignedPermissions = new ArrayList<>();
         AvailablePermission permission = MANAGER.findFirst();
-        for (AvailablePermission.Seccion seccion : permission.getSecciones()) {
-            for (AvailablePermission.Seccion.Module modulo : seccion.getModulos()) {
-                for (AvailablePermission.Seccion.Module.Menu menu : modulo.getMenus()) {
-                    for (AvailablePermission.Seccion.Module.Menu.Action action : menu.getAcciones()) {
+        permission.getSecciones().forEach((seccion) -> {
+            seccion.getModulos().forEach((modulo) -> {
+                modulo.getMenus().forEach((menu) -> {
+                    menu.getAcciones().stream().map((action) -> {
                         ModelAsignedPermission asigned = new ModelAsignedPermission();
                         asigned.setId(action.getId());
                         asigned.setType(PermissionType.ALL);
+                        return asigned;
+                    }).forEachOrdered((asigned) -> {
                         asignedPermissions.add(asigned);
-                    }
-                }
-            }
-        }
+                    });
+                });
+            });
+        });
         return asignedPermissions;
     }
 
@@ -70,10 +72,13 @@ public class UtilsPermissions {
     }
 
     /**
-     * 
-     * @return id del permiso que corresponde al metodo en ejecución    
+     *
+     * @return id del permiso que corresponde al metodo en ejecución
      */
     public static String getPermissionId() {
+        /**
+         * @todo -> obtener el paquete, subpaquete, clase y metodo en ejecucion para conjugar el id de la accion y comprobar el permiso bien pínche pro! 
+         */
         String permissionId = "";
 
         for (StackTraceElement stackTraceElement : Thread.currentThread().getStackTrace()) {

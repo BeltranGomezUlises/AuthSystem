@@ -32,7 +32,6 @@ import com.machineAdmin.entities.cg.admin.Profile;
 import com.machineAdmin.entities.cg.admin.User;
 import com.machineAdmin.managers.cg.admin.ManagerProfile;
 import com.machineAdmin.models.cg.ModelAsignedUser;
-import com.machineAdmin.models.cg.ModelSetPermission;
 import com.machineAdmin.models.cg.enums.PermissionType;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
 import java.lang.reflect.Method;
@@ -222,46 +221,44 @@ public class InitServletContext implements ServletContextListener {
             System.out.println(mail);
         }
         //</editor-fold>                
-                
+
         //<editor-fold defaultstate="collapsed" desc="DAFULT USER CONFIG AND PROFILE">        
         DaoPermission daoPermission = new DaoPermission();
 
         User userMaster = daoUser.findFirst();
         if (userMaster == null) {
-            
+
             //crear el perfil default de master
             Profile profile = new Profile();
             profile.setName("Master");
             profile.setPermisos(UtilsPermissions.getAsignedPermissionsAvailable());
-                                    
+
             userMaster = new User();
             userMaster.setUser("Admin");
             userMaster.setMail("usuariosexpertos@gmail.com");
             userMaster.setPass(UtilsSecurity.cifrarMD5("1234"));
             userMaster.setAsignedPermissions(profile.getPermisos());
             userMaster = daoUser.persist(userMaster); //obtener el id de base de datos
-            
+
             ManagerProfile managerProfile = new ManagerProfile();
-            
+
             ModelAsignedUser modelAsignedUser = new ModelAsignedUser();
-            modelAsignedUser.setHereda(true);
-            modelAsignedUser.setUserId(userMaster.getId());            
-                        
+            modelAsignedUser.setHeritage(true);
+            modelAsignedUser.setUserId(userMaster.getId());
+
             profile.setUsers(Arrays.asList(modelAsignedUser));  //asignar el usuario al perfil            
             managerProfile.persist(profile); //persistir el perfil con los permisos y el usuario default
 
             System.out.println("Usuario dado de alta por defecto: (contraseña : \"1234\")");
             System.out.println(userMaster);
             System.out.println("Perfil dado de alta por defecto: " + profile.getName());
-                                                                        
+
         } else {
             userMaster.setAsignedPermissions(UtilsPermissions.getAsignedPermissionsAvailable());
             daoUser.update(userMaster);
         }
-        
-        
-        //</editor-fold>
 
+        //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="GENERAL CONFIGS">
         CGConfig configuracionGeneral = daoConfig.findFirst();
 

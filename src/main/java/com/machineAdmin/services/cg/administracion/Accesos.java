@@ -36,7 +36,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.mail.EmailException;
 
 /**
- *
+ * servicios de accesos al sistema
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/accesos")

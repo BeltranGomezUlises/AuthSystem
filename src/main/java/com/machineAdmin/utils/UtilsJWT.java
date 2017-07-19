@@ -6,7 +6,6 @@
 package com.machineAdmin.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.machineAdmin.entities.cg.admin.User;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
@@ -22,7 +21,6 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
 import java.io.IOException;
 import java.security.Key;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**

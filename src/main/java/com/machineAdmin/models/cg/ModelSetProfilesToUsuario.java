@@ -19,28 +19,28 @@ package com.machineAdmin.models.cg;
 import java.util.List;
 
 /**
- * modelo para asignar permisos generico
+ * modelo para asignar permisos a un usuario
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ModelSetPermission {
+public class ModelSetProfilesToUsuario {
 
-    private String id;
-    private List<ModelAsignedPermission> permissionsAsigned;
+    private String userId;
+    private List<ModelProfileAndHeritage> perfiles;
 
-    public String getId() {
-        return id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public List<ModelAsignedPermission> getPermissionsAsigned() {
-        return permissionsAsigned;
+    public List<ModelProfileAndHeritage> getPerfiles() {
+        return perfiles;
     }
 
-    public void setPermissionsAsigned(List<ModelAsignedPermission> permissionsAsigned) {
-        this.permissionsAsigned = permissionsAsigned;
+    public void setPerfiles(List<ModelProfileAndHeritage> perfiles) {
+        this.perfiles = perfiles;
     }
 
 }

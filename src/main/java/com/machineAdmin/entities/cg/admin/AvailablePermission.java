@@ -21,8 +21,9 @@ import com.machineAdmin.models.cg.enums.PermissionType;
 import java.util.List;
 
 /**
- *
+ * modelo contenedor de todos los permisos disponibles por el sistema
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * 
  */
 public class AvailablePermission extends EntityMongo {
 
@@ -41,6 +42,9 @@ public class AvailablePermission extends EntityMongo {
         return "Permission{" + "secciones=" + secciones + '}';
     }
 
+    /**
+     * modelo de seccion represtativo de una seccion del sistema
+     */
     public static class Seccion {
 
         private String name;
@@ -73,7 +77,9 @@ public class AvailablePermission extends EntityMongo {
         public String toString() {
             return "Seccion{" + "name=" + name + ", Modulos=" + Modulos + '}';
         }
-
+        /**
+         * modelo de modulo representativo a un modulo de una seccion del sistema
+         */
         public static class Module {
 
             private String name;
@@ -106,7 +112,9 @@ public class AvailablePermission extends EntityMongo {
             public String toString() {
                 return "Module{" + "name=" + name + ", menus=" + menus + '}';
             }
-
+            /**
+             * modelo de menu representativo de un menu de un modulo del sistema
+             */
             public static class Menu {
 
                 private String name;
@@ -139,7 +147,9 @@ public class AvailablePermission extends EntityMongo {
                 public String toString() {
                     return "Menu{" + "name=" + name + ", acciones=" + acciones + '}';
                 }
-
+                /**
+                 * modelo de accion representativa a un accion de un modulo del sistema
+                 */
                 public static class Action {
 
                     private String name;

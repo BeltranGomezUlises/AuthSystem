@@ -19,7 +19,7 @@ package com.machineAdmin.models.cg;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
- *
+ * modelo para comunicar el id de un usuario
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)

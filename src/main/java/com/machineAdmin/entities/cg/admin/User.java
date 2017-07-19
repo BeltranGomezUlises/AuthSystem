@@ -6,8 +6,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
+ * 
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Usuario del sistema
  */
 public class User extends EntityMongo {
 
@@ -141,6 +142,9 @@ public class User extends EntityMongo {
         return "User{" + "user=" + user + ", mail=" + mail + ", pass=" + pass + ", phone=" + phone + ", loginAttempt=" + loginAttempt + ", blocked=" + blocked + ", lastPasswords=" + lastPasswords + ", asignedPermissions=" + asignedPermissions + '}';
     }
 
+    /**
+     * modelo de control de los intentos fallidos de login del usuario
+     */
     public static class LoginAttempt {
 
         private Date lastLoginAttemptDate;
@@ -181,6 +185,9 @@ public class User extends EntityMongo {
 
     }
 
+    /**
+     * modelo para control de bloques del usuario por intentos de login
+     */
     public static class BlockedUser {
 
         private boolean blocked;

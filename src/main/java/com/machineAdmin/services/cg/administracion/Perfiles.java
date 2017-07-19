@@ -22,7 +22,6 @@ import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelSetPermission;
 import com.machineAdmin.models.cg.ModelSetUsuariosToProfile;
-import com.machineAdmin.models.cg.ModelUserId;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
 import com.machineAdmin.utils.UtilsJWT;
@@ -30,10 +29,9 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import static com.machineAdmin.services.cg.commons.ServiceFacade.setInvalidTokenResponse;
-import java.util.List;
 
 /**
- *
+ * servicios de administracion de perfiles del sistema
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/perfiles")

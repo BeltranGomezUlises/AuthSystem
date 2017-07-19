@@ -11,7 +11,7 @@ import java.util.Objects;
 import org.mongojack.ObjectId;
 
 /**
- *
+ * clase padre de entidades de mongo
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)

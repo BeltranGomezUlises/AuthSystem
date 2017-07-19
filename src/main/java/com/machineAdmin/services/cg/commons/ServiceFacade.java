@@ -20,7 +20,7 @@ import javax.ws.rs.core.MediaType;
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
- * @param <T> is a Entity that workw with de manager<T>
+ * @param <T> is a Entity that workw with de manager
  */
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)

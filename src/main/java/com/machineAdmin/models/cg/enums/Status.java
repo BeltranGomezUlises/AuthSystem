@@ -6,7 +6,7 @@
 package com.machineAdmin.models.cg.enums;
 
 /**
- *
+ * enumerador de estado de operacion
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public enum Status {

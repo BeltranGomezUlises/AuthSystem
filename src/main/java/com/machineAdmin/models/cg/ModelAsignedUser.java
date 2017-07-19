@@ -17,13 +17,13 @@
 package com.machineAdmin.models.cg;
 
 /**
- *
+ * modelo contenedor de usuario para asignar a perfil
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ModelAsignedUser {
 
     private String userId;
-    private boolean hereda;
+    private boolean heritage;
 
     public String getUserId() {
         return userId;
@@ -33,13 +33,12 @@ public class ModelAsignedUser {
         this.userId = userId;
     }
 
-    public boolean isHereda() {
-        return hereda;
+    public boolean isHeritage() {
+        return heritage;
     }
 
-    public void setHereda(boolean hereda) {
-        this.hereda = hereda;
+    public void setHeritage(boolean heritage) {
+        this.heritage = heritage;
     }
 
-    
 }

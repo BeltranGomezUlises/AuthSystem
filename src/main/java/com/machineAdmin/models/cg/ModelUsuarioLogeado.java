@@ -19,7 +19,7 @@ package com.machineAdmin.models.cg;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
- *
+ * modelo de respuesta del usuario logeado
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)

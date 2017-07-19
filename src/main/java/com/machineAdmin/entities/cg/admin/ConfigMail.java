@@ -10,6 +10,7 @@ import com.machineAdmin.entities.cg.commons.EntityMongo;
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * configuracion de correo para su uso por el sistema
  */
 public class ConfigMail extends EntityMongo {
 
@@ -53,6 +54,9 @@ public class ConfigMail extends EntityMongo {
         this.ssl = ssl;
     }
 
+    /**
+     * modelo contenedor de la autentificacion del correo
+     */
     public static final class AuthMail {
 
         public AuthMail() {

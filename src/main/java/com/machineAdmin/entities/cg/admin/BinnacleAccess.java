@@ -20,8 +20,9 @@ import com.machineAdmin.entities.cg.commons.EntityMongo;
 import java.util.Date;
 
 /**
- *
+ * modelo de registro de bitacoras
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * 
  */
 public class BinnacleAccess extends EntityMongo {
     

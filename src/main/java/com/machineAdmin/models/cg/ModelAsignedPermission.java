@@ -20,7 +20,7 @@ import com.machineAdmin.models.cg.enums.PermissionType;
 import java.util.Objects;
 
 /**
- *
+ * modelo contenedor de la accion y la profundidad del permiso
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ModelAsignedPermission {

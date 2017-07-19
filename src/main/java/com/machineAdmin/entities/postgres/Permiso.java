@@ -37,7 +37,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
- *
+ * 
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity

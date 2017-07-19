@@ -14,33 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.models.cg;
+package com.machineAdmin.entities.cg.admin;
 
-import java.util.List;
+import com.machineAdmin.entities.cg.commons.EntityMongo;
 
 /**
- * modelo para asignar permisos generico
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ModelSetPermission {
-
-    private String id;
-    private List<ModelAsignedPermission> permissionsAsigned;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public List<ModelAsignedPermission> getPermissionsAsigned() {
-        return permissionsAsigned;
-    }
-
-    public void setPermissionsAsigned(List<ModelAsignedPermission> permissionsAsigned) {
-        this.permissionsAsigned = permissionsAsigned;
-    }
-
+public class GroupProfile extends EntityMongo{
+        
+    private String name;   
+            
 }
