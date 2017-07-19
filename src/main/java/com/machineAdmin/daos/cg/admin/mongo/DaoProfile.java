@@ -14,19 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.daos;
+package com.machineAdmin.daos.cg.admin.mongo;
 
 import com.machineAdmin.daos.cg.commons.DaoMongoFacade;
-import com.machineAdmin.entities.mongo.Maquina;
+import com.machineAdmin.entities.cg.admin.mongo.Profile;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoMaquina extends DaoMongoFacade<Maquina>{
+public class DaoProfile extends DaoMongoFacade<Profile>{
 
-    public DaoMaquina() {
-        super("maquinas", Maquina.class);
+    public DaoProfile() {
+        super("cg.config.profiles", Profile.class);
     }
-     
+            
 }

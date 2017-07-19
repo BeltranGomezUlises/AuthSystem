@@ -115,8 +115,7 @@
             <artifactId>commons-email</artifactId>
             <version>1.2</version>
         </dependency>       
-        <!-- APACHE commons - BeanUtils -->
-        <!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
+        <!-- APACHE commons - BeanUtils -->        
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>

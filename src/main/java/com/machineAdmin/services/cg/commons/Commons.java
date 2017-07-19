@@ -5,7 +5,7 @@
  */
 package com.machineAdmin.services.cg.commons;
 
-import com.machineAdmin.entities.cg.admin.CGConfig;
+import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.utils.UtilsConfig;
 import com.machineAdmin.utils.UtilsDate.DateClass;
 import javax.ws.rs.Consumes;

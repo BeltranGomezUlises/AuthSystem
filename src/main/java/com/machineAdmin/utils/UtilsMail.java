@@ -5,7 +5,7 @@
  */
 package com.machineAdmin.utils;
 
-import com.machineAdmin.entities.cg.admin.ConfigMail;
+import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;

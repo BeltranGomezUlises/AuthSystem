@@ -16,7 +16,7 @@
  */
 package com.machineAdmin.utils;
 
-import com.machineAdmin.entities.cg.admin.CGConfig;
+import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.models.cg.ModelSMSRescuePass;
 import com.sun.jersey.api.client.Client;
 import javax.ws.rs.core.MediaType;

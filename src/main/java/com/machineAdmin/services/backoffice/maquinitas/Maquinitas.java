@@ -16,7 +16,7 @@
  */
 package com.machineAdmin.services.backoffice.maquinitas;
 
-import com.machineAdmin.entities.Maquina;
+import com.machineAdmin.entities.mongo.Maquina;
 import com.machineAdmin.managers.ManagerMaquina;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacade;

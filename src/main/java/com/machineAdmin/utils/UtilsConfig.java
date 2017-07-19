@@ -16,12 +16,12 @@
  */
 package com.machineAdmin.utils;
 
-import com.machineAdmin.daos.cg.admin.DaoConfig;
-import com.machineAdmin.entities.cg.admin.CGConfig;
-import com.machineAdmin.entities.cg.admin.CGConfig.AccessConfig;
-import com.machineAdmin.entities.cg.admin.CGConfig.SMSConfig;
-import com.machineAdmin.entities.cg.admin.ConfigMail;
-import com.machineAdmin.managers.cg.admin.ManagerConfigMail;
+import com.machineAdmin.daos.cg.admin.mongo.DaoConfig;
+import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
+import com.machineAdmin.entities.cg.admin.mongo.CGConfig.AccessConfig;
+import com.machineAdmin.entities.cg.admin.mongo.CGConfig.SMSConfig;
+import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
+import com.machineAdmin.managers.cg.admin.mongo.ManagerConfigMail;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;

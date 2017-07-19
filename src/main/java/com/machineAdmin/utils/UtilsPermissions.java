@@ -16,10 +16,10 @@
  */
 package com.machineAdmin.utils;
 
-import com.machineAdmin.entities.cg.admin.AvailablePermission;
-import com.machineAdmin.entities.cg.admin.User;
-import com.machineAdmin.managers.cg.admin.ManagerPermission;
-import com.machineAdmin.managers.cg.admin.ManagerUser;
+import com.machineAdmin.entities.cg.admin.mongo.AvailablePermission;
+import com.machineAdmin.entities.cg.admin.mongo.User;
+import com.machineAdmin.managers.cg.admin.mongo.ManagerPermission;
+import com.machineAdmin.managers.cg.admin.mongo.ManagerUser;
 import com.machineAdmin.managers.cg.exceptions.AccessDenied;
 import com.machineAdmin.models.cg.ModelAsignedPermission;
 import com.machineAdmin.models.cg.enums.PermissionType;

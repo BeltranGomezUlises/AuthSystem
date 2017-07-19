@@ -5,8 +5,8 @@
  */
 package com.machineAdmin.services.cg.administracion;
 
-import com.machineAdmin.entities.cg.admin.User;
-import com.machineAdmin.managers.cg.admin.ManagerUser;
+import com.machineAdmin.entities.cg.admin.mongo.User;
+import com.machineAdmin.managers.cg.admin.mongo.ManagerUser;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelSetPermission;

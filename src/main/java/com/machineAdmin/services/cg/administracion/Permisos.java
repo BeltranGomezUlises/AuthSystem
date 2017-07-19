@@ -16,8 +16,8 @@
  */
 package com.machineAdmin.services.cg.administracion;
 
-import com.machineAdmin.entities.cg.admin.AvailablePermission;
-import com.machineAdmin.managers.cg.admin.ManagerPermission;
+import com.machineAdmin.entities.cg.admin.mongo.AvailablePermission;
+import com.machineAdmin.managers.cg.admin.mongo.ManagerPermission;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
 import java.util.List;

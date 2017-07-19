@@ -16,8 +16,8 @@
  */
 package com.machineAdmin.services.cg.administracion;
 
-import com.machineAdmin.entities.cg.admin.Profile;
-import com.machineAdmin.managers.cg.admin.ManagerProfile;
+import com.machineAdmin.entities.cg.admin.mongo.Profile;
+import com.machineAdmin.managers.cg.admin.mongo.ManagerProfile;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelSetPermission;

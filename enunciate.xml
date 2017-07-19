@@ -22,13 +22,13 @@
     <ruby-json-client disabled="true"/>
     <php-json-client disabled="true"/>
     <idl disabled="true"/>
-    
+
     <docs>
       <download file="LICENSE" name="Apache II" description="The license governing this API" showLink="true"/>
     </docs>
     <java-xml-client>
       <package-conversions>
-        <convert from="com.ifyouwannabecool" to="com.ifyouwannabecool.client"/>
+        <convert from="com.machineAdmin" to="com.machineAdmin.client"/>
       </package-conversions>
     </java-xml-client>
   </modules>
