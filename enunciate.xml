@@ -1,0 +1,36 @@
+<enunciate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://enunciate.webcohesion.com/schemas/enunciate-2.0.0-M.4.xsd">
+
+  <title>MachineAdmin API</title>
+  <description package="com.machineAdmin.services"/>
+
+
+<!-- exclude clases example
+  <api-classes>
+      <exclude pattern="com.machineAdmin.services.cg.administracion.*"/>
+      <include pattern="com.machineAdmin.services.cg.administracion.Permisos"/>
+  </api-classes>
+-->
+<!--
+
+-->
+
+  <modules>
+
+    <jackson1 disabled="true"/>
+    <gwt-json-overlay disabled="true"/>
+    <swagger disabled="true"/>
+    <ruby-json-client disabled="true"/>
+    <php-json-client disabled="true"/>
+    <idl disabled="true"/>
+
+    <docs>
+      <download file="LICENSE" name="Apache II" description="The license governing this API" showLink="true"/>
+    </docs>
+    <java-xml-client>
+      <package-conversions>
+        <convert from="com.machineAdmin" to="com.machineAdmin.client"/>
+      </package-conversions>
+    </java-xml-client>
+  </modules>
+
+</enunciate>

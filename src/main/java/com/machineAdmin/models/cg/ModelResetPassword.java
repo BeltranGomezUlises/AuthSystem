@@ -17,7 +17,7 @@
 package com.machineAdmin.models.cg;
 
 /**
- *
+ * modelo de reseteo de contraseña
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ModelResetPassword {

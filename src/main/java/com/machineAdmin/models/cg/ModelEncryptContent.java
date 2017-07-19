@@ -17,8 +17,8 @@
 package com.machineAdmin.models.cg;
 
 /**
- *
- * @author ulises
+ * modelo de comunicacion de contenido cirado (login y reset password)
+ * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ModelEncryptContent {
 

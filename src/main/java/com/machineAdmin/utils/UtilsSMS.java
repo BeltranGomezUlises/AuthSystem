@@ -16,6 +16,7 @@
  */
 package com.machineAdmin.utils;
 
+import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.models.cg.ModelSMSRescuePass;
 import com.sun.jersey.api.client.Client;
 import javax.ws.rs.core.MediaType;
@@ -26,7 +27,7 @@ import javax.ws.rs.core.MediaType;
 public class UtilsSMS {        
     
     public static ModelSMSRescuePass.ModelSMSRescuePassResponse sendSMS(String phoneNumber, String message){                                                
-        UtilsConfig.CGConfig.SMSConfig config = UtilsConfig.getSMSConfig();        
+        CGConfig.SMSConfig config = UtilsConfig.getSMSConfig();        
         ModelSMSRescuePass smsRescue = new ModelSMSRescuePass();
         
         smsRescue.setDestino(phoneNumber);

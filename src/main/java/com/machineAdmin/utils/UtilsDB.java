@@ -33,7 +33,7 @@ public class UtilsDB {
     private static final MongoClient MONGO_CLIENT = new MongoClient(CONNECTION_STRING);
     public static final MongoDatabase DB = MONGO_CLIENT.getDatabase(DATA_BASE_NAME);
 
-    public static DBCollection getCollection(String name) {
+    public static DBCollection getCollection(String name) {        
         return MONGO_CLIENT.getDB(DATA_BASE_NAME).getCollection(name);
     }
     

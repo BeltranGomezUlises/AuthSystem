@@ -17,7 +17,7 @@
 package com.machineAdmin.models.cg;
 
 /**
- *
+ * modelo contenedor de usuario y codigo de recuperacion
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ModelRecoverCodeUser {

@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
 
 /**
- *
+ * modelo de mensaje para proveedor de SMS
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ModelSMSRescuePass {
