@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.LockModeType;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import org.jinq.jpa.JPAJinqStream;
@@ -113,7 +114,11 @@ public abstract class DaoSQLFacade<E extends Serializable>{
     }
         
     public E findFirst(){
-        return findAll(false, 1, 0).get(0);
+        try {
+            return findAll(false, 1, 0).get(0);
+        } catch (Exception e) {
+            return null;
+        }        
     }
     
     public E findOne(Object id){

@@ -43,10 +43,10 @@ import org.apache.commons.beanutils.BeanUtils;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-@Path("/usuarios2")
-public class Usuarios2 extends ServiceFacade<Usuario> {
+@Path("/usuarios")
+public class Usuarios extends ServiceFacade<Usuario> {
 
-    public Usuarios2() {
+    public Usuarios() {
         super(new ManagerUsuario());
     }
 

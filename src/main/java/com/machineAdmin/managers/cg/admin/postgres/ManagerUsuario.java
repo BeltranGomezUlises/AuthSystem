@@ -20,56 +20,78 @@ import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
 import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.admin.mongo.BinnacleAccess;
+import com.machineAdmin.entities.cg.admin.postgres.BitacoraContras;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
 import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
+import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
+import com.machineAdmin.models.cg.ModelRecoverCodeUser;
 import com.machineAdmin.utils.UtilsBinnacle;
 import com.machineAdmin.utils.UtilsConfig;
 import com.machineAdmin.utils.UtilsDate;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsJson;
+import com.machineAdmin.utils.UtilsMail;
+import com.machineAdmin.utils.UtilsSMS;
 import com.machineAdmin.utils.UtilsSecurity;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Random;
+import java.util.UUID;
+import org.apache.commons.mail.EmailException;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ManagerUsuario extends ManagerSQLFacade<Usuario> {
-
+    
     public ManagerUsuario() {
         super(new DaoUsuario());
     }
-
+    
     @Override
     public Usuario persist(Usuario entity) throws SQLPersistenceException, ConstraintException {
         try {
             entity.setContra(UtilsSecurity.cifrarMD5(entity.getContra()));
             return super.persist(entity); //To change body of generated methods, choose Tools | Templates. 
-        } catch (ConstraintException ex) {           
+        } catch (ConstraintException ex) {
             throw new ConstraintException(getMessageOfUniqueContraint(entity));
         } catch (SQLPersistenceException ex) {
             throw ex;
         }
     }
-
+    
     @Override
     public void update(Usuario entity) throws ConstraintException, SQLPersistenceException {
         try {
             entity.setContra(UtilsSecurity.cifrarMD5(entity.getContra()));
-            super.update(entity); 
-        } catch (ConstraintException ex) {           
+            super.update(entity);
+        } catch (ConstraintException ex) {
             throw new ConstraintException(getMessageOfUniqueContraint(entity));
         } catch (SQLPersistenceException ex) {
             throw ex;
         }
     }
+    
+    @Override
+    public void delete(Object id) throws Exception {
+        Usuario usuario = this.findOne(id);
+        usuario.setInhabilitado(Boolean.TRUE);
+        this.update(usuario);
+    }
 
-    
-    
+    @Override
+    public Usuario findOne(Object id) {          
+        return super.findOne(UUID.fromString(id.toString()));
+    }
+        
     /**
      * Metodo de login para autentificar usuarios
      *
@@ -82,30 +104,28 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario> {
      * @throws com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException
      */
     public Usuario login(Usuario usuarioAutenticando) throws UsuarioInexistenteException, ContraseñaIncorrectaException, UsuarioBlockeadoException, Exception {
-
-        Usuario loged = this.stream().filter(u -> {
-            switch (getUserIdentifierType(usuarioAutenticando.getNombre())) {
-                case MAIL:
-                    return u.getCorreo().equals(usuarioAutenticando.getNombre()) && u.getContra().equals(usuarioAutenticando.getContra());
-                case PHONE:
-                    return u.getTelefono().equals(usuarioAutenticando.getNombre()) && u.getContra().equals(usuarioAutenticando.getContra());
-                default:
-                    return u.getNombre().equals(usuarioAutenticando.getNombre()) && u.getContra().equals(usuarioAutenticando.getContra());
-            }
-        }).findFirst().get();
-
-        if (loged != null) {
-
+        try {
+            Usuario loged = this.stream().filter(u -> {
+                switch (getUserIdentifierType(usuarioAutenticando.getNombre())) {
+                    case MAIL:
+                        return u.getCorreo().equals(usuarioAutenticando.getNombre()) && u.getContra().equals(usuarioAutenticando.getContra());
+                    case PHONE:
+                        return u.getTelefono().equals(usuarioAutenticando.getNombre()) && u.getContra().equals(usuarioAutenticando.getContra());
+                    default:
+                        return u.getNombre().equals(usuarioAutenticando.getNombre()) && u.getContra().equals(usuarioAutenticando.getContra());
+                }
+            }).findFirst().get();
+            
             if (loged.getBloqueadoHastaFecha() != null) {
                 if (loged.getBloqueado() && loged.getBloqueadoHastaFecha().after(new Date())) {
                     throw new UsuarioBlockeadoException("Usuario bloqueado hasta " + UtilsDate.format_D_MM_YYYY_HH_MM(loged.getBloqueadoHastaFecha()));
                 }
             }
-            if (loged.getInhabilitado() != null) {
-                if (loged.getInhabilitado()) {
-                    throw new ContraseñaIncorrectaException("No se encontro un usuario con esa contraseña");
-                }
+            
+            if (loged.getInhabilitado()) {
+                throw new ContraseñaIncorrectaException("No se encontro un usuario con esa contraseña");
             }
+            
             loged.setNumeroIntentosLogin(0);
             this.update(loged);
 
@@ -114,29 +134,28 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario> {
                 BinnacleAccess access = new BinnacleAccess(loged.getId().toString());
                 UtilsBinnacle.bitacorizar("cg.bitacora.accesos", access);
             }).start();
-
+            
             return loged;
-        } else { //ver si el usuario existe y verificar número de intentos 
+            
+        } catch (NoSuchElementException e) {
+            //verificar si existe el usuario
             this.numberAttemptVerification(usuarioAutenticando);
             throw new ContraseñaIncorrectaException("No se encontro un usuario con esa contraseña");
         }
-
     }
-
+    
     public void logout(String token) throws IOException {
-        Usuario u = UtilsJson.jsonDeserialize(UtilsJWT.getBodyToken(token), Usuario.class);
-        BinnacleAccess exit = new BinnacleAccess(u.getId().toString());
+        BinnacleAccess exit = new BinnacleAccess(UtilsJWT.getBodyToken(token));
         UtilsBinnacle.bitacorizar("cg.bitacora.salidas", exit);
     }
-
+    
     private void numberAttemptVerification(Usuario usuario) throws UsuarioInexistenteException, UsuarioBlockeadoException, Exception {
+        try {
+            Usuario intentoLogin = this.stream().filter(u
+                    -> u.getCorreo().equals(usuario.getCorreo())
+                    || u.getNombre().equals(usuario.getNombre())
+                    || u.getTelefono().equals(usuario.getNombre())).findFirst().get();
 
-        Usuario intentoLogin = this.stream().filter(u
-                -> u.getCorreo().equals(usuario.getCorreo())
-                || u.getNombre().equals(usuario.getNombre())
-                || u.getTelefono().equals(usuario.getNombre())).findFirst().get();
-
-        if (intentoLogin != null) { //si es un usuario existente                                                                         
             //<editor-fold defaultstate="collapsed" desc="CRITERIOS DE VERIFICACION DE INTENTOS DE LOGIN"> 
 //             aumentar numero de intentos para bloqueo temporal si el lapso de tiempo es mayor al configurado 
 //             si el numero de intentos realizados es nulo, inicializar y actualizar 
@@ -174,11 +193,11 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario> {
                 e.printStackTrace();
                 throw e;
             }
-        } else {
+        } catch (NoSuchElementException e) {
             throw new UsuarioInexistenteException("La contraseña es incorrecta");
         }
     }
-
+    
     private String getMessageOfUniqueContraint(Usuario entity) {
         //buscar que atributo ya ocupado  
         String mensaje = "ya existen un usuario con el atributo";
@@ -194,7 +213,7 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario> {
         mensaje = mensaje.substring(0, mensaje.length() - 1);
         return mensaje;
     }
-
+    
     private userIdentifierType getUserIdentifierType(String userIdentifier) {
         if (userIdentifier.contains("@")) { //es un correo 
             return userIdentifierType.MAIL;
@@ -206,7 +225,73 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario> {
             }
         }
     }
-
+    
+    public ModelRecoverCodeUser enviarCodigo(String identifier) throws UsuarioInexistenteException,
+            ParametroInvalidoException, EmailException, MalformedURLException {
+        
+        Usuario usuarioARecuperar = null;
+        
+        try {
+            switch (getUserIdentifierType(identifier)) {
+                case MAIL:
+                    usuarioARecuperar = this.stream().filter(u -> u.getCorreo().equals(identifier)).findFirst().get();
+                    break;
+                case PHONE:
+                    usuarioARecuperar = this.stream().filter(u -> u.getTelefono().equals(identifier)).findFirst().get();
+                    break;
+                default:
+                    throw new ParametroInvalidoException("el identificador proporsionado no es váliodo. Debe de utilizar un correo electronico ó número de teléfono de 10 dígitos");
+            }
+            
+            Random r = new Random();
+            //generar codigo de 8 digitos aleatorios
+            String code = String.valueOf(r.nextInt(99));
+            code += String.valueOf(r.nextInt(99));
+            code += String.valueOf(r.nextInt(99));
+            code += String.valueOf(r.nextInt(99));
+            //enviar correo con codigo de recuperacion
+            switch (getUserIdentifierType(identifier)) {
+                case MAIL:
+                    UtilsMail.sendRecuperarContraseñaHTMLMail(identifier, usuarioARecuperar.getNombre(), code);
+                    break;
+                case PHONE:
+                    UtilsSMS.sendSMS(identifier, "Hola " + usuarioARecuperar.getNombre() + " su código de recuperacion de contraseña es: " + code);
+                    break;
+            }
+            ModelRecoverCodeUser model = new ModelRecoverCodeUser();
+            model.setCode(code);
+            model.setIdUser(usuarioARecuperar.getId().toString());
+            
+            return model;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new UsuarioInexistenteException("No se encontro usuario con el identificador proporsionado");
+        }
+    }
+    
+    public void resetPassword(String userId, String pass) throws Exception {
+        Usuario u = this.findOne(UUID.fromString(userId));
+        List<BitacoraContras> bitacoraContras = u.getBitacoraContrasList();
+        //obtener el numero maximo de contraseñas a guardar para impedir repeticion
+        int maxNumber = UtilsConfig.getMaxPasswordRecords();
+        // lastPassword.size() < maxNumber -> agregar pass actual al registro
+        // lastPassword.size() >= maxNumber -> resize de lastPassword con los ultimos maxNumber contraseñas
+        if (bitacoraContras.size() < maxNumber) {
+            bitacoraContras.add(new BitacoraContras(UUID.fromString(userId), pass)); //añadimos le passActual            
+        } else {
+            BitacoraContras[] newLastPasswords = new BitacoraContras[maxNumber];
+            for (int i = 1; i < maxNumber; i++) {
+                newLastPasswords[i - 1] = bitacoraContras.get(i);
+            }
+            newLastPasswords[maxNumber - 1] = new BitacoraContras(UUID.fromString(userId), pass); //añadir la final            
+            u.setBitacoraContrasList(Arrays.asList(newLastPasswords));
+        }
+        
+        u.setContra(UtilsSecurity.cifrarMD5(pass));
+        this.update(u);
+    }
+    
     private enum userIdentifierType {
         PHONE, MAIL, USER
     }

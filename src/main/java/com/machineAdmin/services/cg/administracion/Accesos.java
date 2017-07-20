@@ -15,6 +15,7 @@ import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.cg.ModelEncryptContent;
+import com.machineAdmin.models.cg.ModelRecoverCodeUser;
 import com.machineAdmin.models.cg.ModelUsuarioLogeado;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import static com.machineAdmin.services.cg.commons.ServiceFacade.*;
@@ -51,7 +52,7 @@ public class Accesos {
         ManagerUsuario managerUsuario = new ManagerUsuario();
         try {
             Usuario usuarioAutenticando = UtilsJson.jsonDeserialize(UtilsSecurity.decryptBase64ByPrivateKey(content.getContent()), Usuario.class);
-            //usuarioAutenticando.setPass(UtilsSecurity.cifrarMD5(usuarioAutenticando.));
+            usuarioAutenticando.setContra(UtilsSecurity.cifrarMD5(usuarioAutenticando.getContra()));
             Usuario usuarioLogeado = managerUsuario.login(usuarioAutenticando);
 
             ModelUsuarioLogeado modelUsuarioLogeado = new ModelUsuarioLogeado();
@@ -101,11 +102,11 @@ public class Accesos {
         Response res = new Response();
         try {
             ManagerUsuario managerUsuario = new ManagerUsuario();
-            ModelRecoverCodeUsuario recoverCode = managerUsuario.enviarCodigo(identifier);
+            ModelRecoverCodeUser recoverCode = managerUsuario.enviarCodigo(identifier);
             setOkResponse(res,
                     "El código para recuperar contraseña fué enviado a : " + identifier,
                     "token de verificacion de usuario, necesario para el siguiente servicio en la cabecera Authorization");
-            res.setMetaData(UtilsJWT.generateValidateUsuarioToken(recoverCode));
+            res.setMetaData(UtilsJWT.generateValidateUserToken(recoverCode));
         } catch (UsuarioInexistenteException ex) {
             setWarningResponse(res, ex.getMessage(), ex.getMessage());
         } catch (ParametroInvalidoException ex) {
