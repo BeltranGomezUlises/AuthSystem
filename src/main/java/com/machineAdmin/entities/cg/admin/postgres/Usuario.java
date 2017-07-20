@@ -17,14 +17,19 @@
 package com.machineAdmin.entities.cg.admin.postgres;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -35,32 +40,34 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.eclipse.persistence.annotations.Convert;
+import org.eclipse.persistence.annotations.Converter;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity
-@Table(name = "usuarios")
+@Table(name = "usuario")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Usuarios.findAll", query = "SELECT u FROM Usuarios u")
-    , @NamedQuery(name = "Usuarios.findByUsuario", query = "SELECT u FROM Usuarios u WHERE u.usuario = :usuario")
-    , @NamedQuery(name = "Usuarios.findByCorreo", query = "SELECT u FROM Usuarios u WHERE u.correo = :correo")
-    , @NamedQuery(name = "Usuarios.findByTelefono", query = "SELECT u FROM Usuarios u WHERE u.telefono = :telefono")
-    , @NamedQuery(name = "Usuarios.findByContra", query = "SELECT u FROM Usuarios u WHERE u.contra = :contra")
-    , @NamedQuery(name = "Usuarios.findByInhabilitado", query = "SELECT u FROM Usuarios u WHERE u.inhabilitado = :inhabilitado")
-    , @NamedQuery(name = "Usuarios.findByFechaUltimoIntentoLogin", query = "SELECT u FROM Usuarios u WHERE u.fechaUltimoIntentoLogin = :fechaUltimoIntentoLogin")
-    , @NamedQuery(name = "Usuarios.findByNumeroIntentosLogin", query = "SELECT u FROM Usuarios u WHERE u.numeroIntentosLogin = :numeroIntentosLogin")
-    , @NamedQuery(name = "Usuarios.findByBloqueado", query = "SELECT u FROM Usuarios u WHERE u.bloqueado = :bloqueado")
-    , @NamedQuery(name = "Usuarios.findByBloqueadoHastaFecha", query = "SELECT u FROM Usuarios u WHERE u.bloqueadoHastaFecha = :bloqueadoHastaFecha")
-    , @NamedQuery(name = "Usuarios.findById", query = "SELECT u FROM Usuarios u WHERE u.id = :id")})
-public class Usuarios implements Serializable {
+    @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u")
+    , @NamedQuery(name = "Usuario.findByNombre", query = "SELECT u FROM Usuario u WHERE u.nombre = :nombre")
+    , @NamedQuery(name = "Usuario.findByCorreo", query = "SELECT u FROM Usuario u WHERE u.correo = :correo")
+    , @NamedQuery(name = "Usuario.findByTelefono", query = "SELECT u FROM Usuario u WHERE u.telefono = :telefono")
+    , @NamedQuery(name = "Usuario.findByContra", query = "SELECT u FROM Usuario u WHERE u.contra = :contra")
+    , @NamedQuery(name = "Usuario.findByInhabilitado", query = "SELECT u FROM Usuario u WHERE u.inhabilitado = :inhabilitado")
+    , @NamedQuery(name = "Usuario.findByFechaUltimoIntentoLogin", query = "SELECT u FROM Usuario u WHERE u.fechaUltimoIntentoLogin = :fechaUltimoIntentoLogin")
+    , @NamedQuery(name = "Usuario.findByNumeroIntentosLogin", query = "SELECT u FROM Usuario u WHERE u.numeroIntentosLogin = :numeroIntentosLogin")
+    , @NamedQuery(name = "Usuario.findByBloqueado", query = "SELECT u FROM Usuario u WHERE u.bloqueado = :bloqueado")
+    , @NamedQuery(name = "Usuario.findByBloqueadoHastaFecha", query = "SELECT u FROM Usuario u WHERE u.bloqueadoHastaFecha = :bloqueadoHastaFecha")})
+@Converter(name="uuidConverter", converterClass=UUIDConverter.class)
+public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Size(max = 2147483647)
-    @Column(name = "usuario")
-    private String usuario;
+    @Column(name = "nombre")
+    private String nombre;
     @Size(max = 2147483647)
     @Column(name = "correo")
     private String correo;
@@ -85,28 +92,31 @@ public class Usuarios implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 2147483647)
     @Column(name = "id")
-    private String id;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuarios")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Convert("uuidConverter")    
+    private UUID id;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
     private List<BitacoraContras> bitacoraContrasList;
 
-    public Usuarios() {
+    public Usuario() {
+        //por que para bases de datos sql hay que inicializar Clases
+        id = UUID.randomUUID();
         bloqueado = false;
         inhabilitado = false;
-        numeroIntentosLogin = 0;        
+        numeroIntentosLogin = 0;
     }
 
-    public Usuarios(String id) {
+    public Usuario(UUID id) {
         this.id = id;
     }
 
-    public String getUsuario() {
-        return usuario;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public String getCorreo() {
@@ -173,11 +183,11 @@ public class Usuarios implements Serializable {
         this.bloqueadoHastaFecha = bloqueadoHastaFecha;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -201,10 +211,10 @@ public class Usuarios implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Usuarios)) {
+        if (!(object instanceof Usuario)) {
             return false;
         }
-        Usuarios other = (Usuarios) object;
+        Usuario other = (Usuario) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -213,11 +223,11 @@ public class Usuarios implements Serializable {
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.postgres.Usuarios[ id=" + id + " ]";
+        return "com.machineAdmin.entities.cg.admin.postgres.Usuario[ id=" + id + " ]";
     }
-
+        
     public void aumentarNumeroDeIntentosLogin() {
         this.numeroIntentosLogin++;
     }
-
+    
 }

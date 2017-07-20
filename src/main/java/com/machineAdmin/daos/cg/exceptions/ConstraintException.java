@@ -14,27 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.daos.cg.admin.postgres;
-
-import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.UsuarioJpaController;
-import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
-import com.machineAdmin.entities.cg.admin.postgres.Usuario;
-import com.machineAdmin.utils.UtilsDB;
-import java.util.UUID;
+package com.machineAdmin.daos.cg.exceptions;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoUsuario extends DaoSQLFacade<Usuario>{
+public class ConstraintException extends Exception{
 
-    public DaoUsuario() {
-        super(UtilsDB.getEMFactoryPostgres(), UsuarioJpaController.class, Usuario.class, "usuarios");
-    }
-
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return UUID.class;
+    public ConstraintException(String message) {
+        super(message);
     }
     
 }

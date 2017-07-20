@@ -6,8 +6,8 @@
 package com.machineAdmin.services.cg.administracion;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.machineAdmin.entities.cg.admin.mongo.User;
-import com.machineAdmin.managers.cg.admin.mongo.ManagerUser;
+import com.machineAdmin.entities.cg.admin.postgres.Usuario;
+import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
 import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
@@ -15,7 +15,6 @@ import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.cg.ModelEncryptContent;
-import com.machineAdmin.models.cg.ModelRecoverCodeUser;
 import com.machineAdmin.models.cg.ModelUsuarioLogeado;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import static com.machineAdmin.services.cg.commons.ServiceFacade.*;
@@ -37,35 +36,36 @@ import org.apache.commons.mail.EmailException;
 
 /**
  * servicios de accesos al sistema
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/accesos")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class Accesos{
+public class Accesos {
 
     @POST
     @Path("/login")
     public Response login(ModelEncryptContent content) {
         Response res = new Response();
-        ManagerUser managerUsuario = new ManagerUser();
+        ManagerUsuario managerUsuario = new ManagerUsuario();
         try {
-            User usuarioAutenticando = UtilsJson.jsonDeserialize(UtilsSecurity.decryptBase64ByPrivateKey(content.getContent()), User.class);
-            usuarioAutenticando.setPass(UtilsSecurity.cifrarMD5(usuarioAutenticando.getPass()));
-            User usuarioLogeado = managerUsuario.login(usuarioAutenticando);
+            Usuario usuarioAutenticando = UtilsJson.jsonDeserialize(UtilsSecurity.decryptBase64ByPrivateKey(content.getContent()), Usuario.class);
+            //usuarioAutenticando.setPass(UtilsSecurity.cifrarMD5(usuarioAutenticando.));
+            Usuario usuarioLogeado = managerUsuario.login(usuarioAutenticando);
 
             ModelUsuarioLogeado modelUsuarioLogeado = new ModelUsuarioLogeado();
 
             BeanUtils.copyProperties(modelUsuarioLogeado, usuarioLogeado);
 
             res.setData(modelUsuarioLogeado);
-            res.setMetaData(UtilsJWT.generateSessionToken(usuarioLogeado.getId()));
-            res.setMessage("Bienvenido " + usuarioLogeado.getUser());
-            res.setDevMessage("Token de sesion de usuario, necesario para las cabeceras de los demas servicios");           
+            res.setMetaData(UtilsJWT.generateSessionToken(usuarioLogeado.getId().toString()));
+            res.setMessage("Bienvenido " + usuarioLogeado.getNombre());
+            res.setDevMessage("Token de sesion de usuario, necesario para las cabeceras de los demas servicios");
         } catch (UsuarioInexistenteException | ContraseñaIncorrectaException e) {
-            setWarningResponse(res, "Usuario y/o contraseña incorrecto", "imposible inicio de sesión, por: " + e.getMessage());            
+            setWarningResponse(res, "Usuario y/o contraseña incorrecto", "imposible inicio de sesión, por: " + e.getMessage());
         } catch (UsuarioBlockeadoException ex) {
-            setWarningResponse(res, ex.getMessage(), "El Usuario está bloqueado temporalmente. Cause: " + ex.getMessage());            
+            setWarningResponse(res, ex.getMessage(), "El Usuario está bloqueado temporalmente. Cause: " + ex.getMessage());
         } catch (Exception ex) {
             setErrorResponse(res, ex);
         }
@@ -76,7 +76,7 @@ public class Accesos{
     @Path("/logout")
     public Response logout(@HeaderParam("Authorization") String token) {
         Response res = new Response();
-        ManagerUser managerUsuario = new ManagerUser();
+        ManagerUsuario managerUsuario = new ManagerUsuario();
         try {
             managerUsuario.logout(token);
             res.setMessage("Saliendo del sistema");
@@ -91,7 +91,7 @@ public class Accesos{
     @Path("/publicKey")
     public Response getPublicKey() {
         Response r = new Response();
-        setOkResponse(r, UtilsSecurity.getPublicKey(), "llave publica de cifrado RSA Base64");        
+        setOkResponse(r, UtilsSecurity.getPublicKey(), "llave publica de cifrado RSA Base64");
         return r;
     }
 
@@ -100,18 +100,18 @@ public class Accesos{
     public Response recoverCode(@PathParam("identifier") String identifier) {
         Response res = new Response();
         try {
-            ManagerUser managerUser = new ManagerUser();
-            ModelRecoverCodeUser recoverCode = managerUser.enviarCodigo(identifier);
-            setOkResponse(res, 
+            ManagerUsuario managerUsuario = new ManagerUsuario();
+            ModelRecoverCodeUsuario recoverCode = managerUsuario.enviarCodigo(identifier);
+            setOkResponse(res,
                     "El código para recuperar contraseña fué enviado a : " + identifier,
                     "token de verificacion de usuario, necesario para el siguiente servicio en la cabecera Authorization");
-            res.setMetaData(UtilsJWT.generateValidateUserToken(recoverCode));            
+            res.setMetaData(UtilsJWT.generateValidateUsuarioToken(recoverCode));
         } catch (UsuarioInexistenteException ex) {
-            setWarningResponse(res, ex.getMessage(), ex.getMessage());            
-        } catch (ParametroInvalidoException ex) {            
+            setWarningResponse(res, ex.getMessage(), ex.getMessage());
+        } catch (ParametroInvalidoException ex) {
             setWarningResponse(res, ex.getMessage(), "El parametro enviado no es correo ni numero de telefono");
         } catch (EmailException | MalformedURLException ex) {
-            setErrorResponse(res, ex, "No fue posible enviar el código de recuperación, intente mas tarde");                        
+            setErrorResponse(res, ex, "No fue posible enviar el código de recuperación, intente mas tarde");
         } catch (JsonProcessingException ex) {
             setErrorResponse(res, ex);
         }
@@ -126,7 +126,7 @@ public class Accesos{
             UtilsJWT.validateSessionToken(token);
             res.setMetaData(UtilsJWT.generateTokenResetPassword(token, code));
         } catch (IOException ex) {
-            setErrorResponse(res, ex, "No fué posible verificar el código proporsionado, intente mas tarde");                        
+            setErrorResponse(res, ex, "No fué posible verificar el código proporsionado, intente mas tarde");
         } catch (ParametroInvalidoException ex) {
             setWarningResponse(res, ex.getMessage());
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
@@ -144,8 +144,8 @@ public class Accesos{
             String userId = UtilsJWT.getBodyToken(tokenResetPassword);
             String pass = UtilsSecurity.decryptBase64ByPrivateKey(content.getContent());
 
-            ManagerUser managerUser = new ManagerUser();
-            managerUser.resetPassword(userId, pass);
+            ManagerUsuario managerUsuario = new ManagerUsuario();
+            managerUsuario.resetPassword(userId, pass);
 
             res.setMessage("La contraseña fué restablecida con éxito");
 

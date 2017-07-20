@@ -17,9 +17,11 @@
 package com.machineAdmin.entities.cg.admin.postgres;
 
 import java.io.Serializable;
+import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -32,9 +34,9 @@ public class BitacoraContrasPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 2147483647)
+    @Lob
     @Column(name = "usuario")
-    private String usuario;
+    private UUID usuario;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
@@ -44,16 +46,16 @@ public class BitacoraContrasPK implements Serializable {
     public BitacoraContrasPK() {
     }
 
-    public BitacoraContrasPK(String usuario, String contra) {
+    public BitacoraContrasPK(UUID usuario, String contra) {
         this.usuario = usuario;
         this.contra = contra;
     }
 
-    public String getUsuario() {
+    public UUID getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(String usuario) {
+    public void setUsuario(UUID usuario) {
         this.usuario = usuario;
     }
 
@@ -91,7 +93,7 @@ public class BitacoraContrasPK implements Serializable {
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.postgres.BitacoraContrasPK[ usuario=" + usuario + ", contra=" + contra + " ]";
+        return "com.machineAdmin.entities.cg.admin.postgres.BitacoraContrasPK[ usuario=" + usuario + ", contra=" + contra + " ]";
     }
     
 }

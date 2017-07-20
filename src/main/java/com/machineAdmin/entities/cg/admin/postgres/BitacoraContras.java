@@ -17,6 +17,7 @@
 package com.machineAdmin.entities.cg.admin.postgres;
 
 import java.io.Serializable;
+import java.util.UUID;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -35,7 +36,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "BitacoraContras.findAll", query = "SELECT b FROM BitacoraContras b")
-    , @NamedQuery(name = "BitacoraContras.findByUsuario", query = "SELECT b FROM BitacoraContras b WHERE b.bitacoraContrasPK.usuario = :usuario")
     , @NamedQuery(name = "BitacoraContras.findByContra", query = "SELECT b FROM BitacoraContras b WHERE b.bitacoraContrasPK.contra = :contra")})
 public class BitacoraContras implements Serializable {
 
@@ -44,7 +44,7 @@ public class BitacoraContras implements Serializable {
     protected BitacoraContrasPK bitacoraContrasPK;
     @JoinColumn(name = "usuario", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private Usuarios usuarios;
+    private Usuario usuario1;
 
     public BitacoraContras() {
     }
@@ -53,7 +53,7 @@ public class BitacoraContras implements Serializable {
         this.bitacoraContrasPK = bitacoraContrasPK;
     }
 
-    public BitacoraContras(String usuario, String contra) {
+    public BitacoraContras(UUID usuario, String contra) {
         this.bitacoraContrasPK = new BitacoraContrasPK(usuario, contra);
     }
 
@@ -65,12 +65,12 @@ public class BitacoraContras implements Serializable {
         this.bitacoraContrasPK = bitacoraContrasPK;
     }
 
-    public Usuarios getUsuarios() {
-        return usuarios;
+    public Usuario getUsuario1() {
+        return usuario1;
     }
 
-    public void setUsuarios(Usuarios usuarios) {
-        this.usuarios = usuarios;
+    public void setUsuario1(Usuario usuario1) {
+        this.usuario1 = usuario1;
     }
 
     @Override
@@ -95,7 +95,7 @@ public class BitacoraContras implements Serializable {
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.postgres.BitacoraContras[ bitacoraContrasPK=" + bitacoraContrasPK + " ]";
+        return "com.machineAdmin.entities.cg.admin.postgres.BitacoraContras[ bitacoraContrasPK=" + bitacoraContrasPK + " ]";
     }
     
 }

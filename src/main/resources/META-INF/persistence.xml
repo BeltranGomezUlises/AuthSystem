@@ -8,16 +8,18 @@
     <class>com.machineAdmin.entities.postgres.Sucursal</class>
     <class>com.machineAdmin.entities.cg.admin.postgres.BitacoraContras</class>
     <class>com.machineAdmin.entities.cg.admin.postgres.Usuarios</class>
+    <class>com.machineAdmin.entities.cg.admin.postgres.Test</class>
+    <class>com.machineAdmin.entities.cg.admin.postgres.Usuario</class>
     <properties>
       <!-- jdbc -->
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/cg"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://192.168.10.8:5532/cg"/>
       <property name="javax.persistence.jdbc.user" value="postgres"/>
-      <property name="javax.persistence.jdbc.password" value="2424"/>
-      <!--
-                <property name="eclipselink.ddl-generation" value="create-tables" />
-                <property name="eclipselink.ddl-generation.output-mode" value="database" />
-            -->
+      <property name="javax.persistence.jdbc.password" value="postgres.90Y9B8yh$"/>            
+            
+      <!-- eclipse link -->
+      <property name="eclipselink.ddl-generation" value="create-tables"/>
+      <property name="eclipselink.ddl-generation.output-mode" value="database"/>
     </properties>
   </persistence-unit>
 </persistence>

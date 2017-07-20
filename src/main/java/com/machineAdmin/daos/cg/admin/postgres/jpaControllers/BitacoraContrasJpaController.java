@@ -25,7 +25,7 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import com.machineAdmin.entities.cg.admin.postgres.Usuarios;
+import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -49,20 +49,20 @@ public class BitacoraContrasJpaController implements Serializable {
         if (bitacoraContras.getBitacoraContrasPK() == null) {
             bitacoraContras.setBitacoraContrasPK(new BitacoraContrasPK());
         }
-        bitacoraContras.getBitacoraContrasPK().setUsuario(bitacoraContras.getUsuarios().getId());
+        bitacoraContras.getBitacoraContrasPK().setUsuario(bitacoraContras.getUsuario1().getId());
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Usuarios usuarios = bitacoraContras.getUsuarios();
-            if (usuarios != null) {
-                usuarios = em.getReference(usuarios.getClass(), usuarios.getId());
-                bitacoraContras.setUsuarios(usuarios);
+            Usuario usuario1 = bitacoraContras.getUsuario1();
+            if (usuario1 != null) {
+                usuario1 = em.getReference(usuario1.getClass(), usuario1.getId());
+                bitacoraContras.setUsuario1(usuario1);
             }
             em.persist(bitacoraContras);
-            if (usuarios != null) {
-                usuarios.getBitacoraContrasList().add(bitacoraContras);
-                usuarios = em.merge(usuarios);
+            if (usuario1 != null) {
+                usuario1.getBitacoraContrasList().add(bitacoraContras);
+                usuario1 = em.merge(usuario1);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
@@ -78,26 +78,26 @@ public class BitacoraContrasJpaController implements Serializable {
     }
 
     public void edit(BitacoraContras bitacoraContras) throws NonexistentEntityException, Exception {
-        bitacoraContras.getBitacoraContrasPK().setUsuario(bitacoraContras.getUsuarios().getId());
+        bitacoraContras.getBitacoraContrasPK().setUsuario(bitacoraContras.getUsuario1().getId());
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             BitacoraContras persistentBitacoraContras = em.find(BitacoraContras.class, bitacoraContras.getBitacoraContrasPK());
-            Usuarios usuariosOld = persistentBitacoraContras.getUsuarios();
-            Usuarios usuariosNew = bitacoraContras.getUsuarios();
-            if (usuariosNew != null) {
-                usuariosNew = em.getReference(usuariosNew.getClass(), usuariosNew.getId());
-                bitacoraContras.setUsuarios(usuariosNew);
+            Usuario usuario1Old = persistentBitacoraContras.getUsuario1();
+            Usuario usuario1New = bitacoraContras.getUsuario1();
+            if (usuario1New != null) {
+                usuario1New = em.getReference(usuario1New.getClass(), usuario1New.getId());
+                bitacoraContras.setUsuario1(usuario1New);
             }
             bitacoraContras = em.merge(bitacoraContras);
-            if (usuariosOld != null && !usuariosOld.equals(usuariosNew)) {
-                usuariosOld.getBitacoraContrasList().remove(bitacoraContras);
-                usuariosOld = em.merge(usuariosOld);
+            if (usuario1Old != null && !usuario1Old.equals(usuario1New)) {
+                usuario1Old.getBitacoraContrasList().remove(bitacoraContras);
+                usuario1Old = em.merge(usuario1Old);
             }
-            if (usuariosNew != null && !usuariosNew.equals(usuariosOld)) {
-                usuariosNew.getBitacoraContrasList().add(bitacoraContras);
-                usuariosNew = em.merge(usuariosNew);
+            if (usuario1New != null && !usuario1New.equals(usuario1Old)) {
+                usuario1New.getBitacoraContrasList().add(bitacoraContras);
+                usuario1New = em.merge(usuario1New);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
@@ -128,10 +128,10 @@ public class BitacoraContrasJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The bitacoraContras with id " + id + " no longer exists.", enfe);
             }
-            Usuarios usuarios = bitacoraContras.getUsuarios();
-            if (usuarios != null) {
-                usuarios.getBitacoraContrasList().remove(bitacoraContras);
-                usuarios = em.merge(usuarios);
+            Usuario usuario1 = bitacoraContras.getUsuario1();
+            if (usuario1 != null) {
+                usuario1.getBitacoraContrasList().remove(bitacoraContras);
+                usuario1 = em.merge(usuario1);
             }
             em.remove(bitacoraContras);
             em.getTransaction().commit();

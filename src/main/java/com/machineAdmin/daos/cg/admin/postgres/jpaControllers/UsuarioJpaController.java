@@ -18,16 +18,16 @@ package com.machineAdmin.daos.cg.admin.postgres.jpaControllers;
 
 import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.exceptions.IllegalOrphanException;
 import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.exceptions.NonexistentEntityException;
-import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.exceptions.PreexistingEntityException;
 import java.io.Serializable;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContras;
-import com.machineAdmin.entities.cg.admin.postgres.Usuarios;
+import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -35,9 +35,9 @@ import javax.persistence.EntityManagerFactory;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class UsuariosJpaController implements Serializable {
+public class UsuarioJpaController implements Serializable {
 
-    public UsuariosJpaController(EntityManagerFactory emf) {
+    public UsuarioJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;
@@ -46,36 +46,31 @@ public class UsuariosJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Usuarios usuarios) throws PreexistingEntityException, Exception {
-        if (usuarios.getBitacoraContrasList() == null) {
-            usuarios.setBitacoraContrasList(new ArrayList<BitacoraContras>());
+    public void create(Usuario usuario) {
+        if (usuario.getBitacoraContrasList() == null) {
+            usuario.setBitacoraContrasList(new ArrayList<BitacoraContras>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             List<BitacoraContras> attachedBitacoraContrasList = new ArrayList<BitacoraContras>();
-            for (BitacoraContras bitacoraContrasListBitacoraContrasToAttach : usuarios.getBitacoraContrasList()) {
+            for (BitacoraContras bitacoraContrasListBitacoraContrasToAttach : usuario.getBitacoraContrasList()) {
                 bitacoraContrasListBitacoraContrasToAttach = em.getReference(bitacoraContrasListBitacoraContrasToAttach.getClass(), bitacoraContrasListBitacoraContrasToAttach.getBitacoraContrasPK());
                 attachedBitacoraContrasList.add(bitacoraContrasListBitacoraContrasToAttach);
             }
-            usuarios.setBitacoraContrasList(attachedBitacoraContrasList);
-            em.persist(usuarios);
-            for (BitacoraContras bitacoraContrasListBitacoraContras : usuarios.getBitacoraContrasList()) {
-                Usuarios oldUsuariosOfBitacoraContrasListBitacoraContras = bitacoraContrasListBitacoraContras.getUsuarios();
-                bitacoraContrasListBitacoraContras.setUsuarios(usuarios);
+            usuario.setBitacoraContrasList(attachedBitacoraContrasList);
+            em.persist(usuario);
+            for (BitacoraContras bitacoraContrasListBitacoraContras : usuario.getBitacoraContrasList()) {
+                Usuario oldUsuario1OfBitacoraContrasListBitacoraContras = bitacoraContrasListBitacoraContras.getUsuario1();
+                bitacoraContrasListBitacoraContras.setUsuario1(usuario);
                 bitacoraContrasListBitacoraContras = em.merge(bitacoraContrasListBitacoraContras);
-                if (oldUsuariosOfBitacoraContrasListBitacoraContras != null) {
-                    oldUsuariosOfBitacoraContrasListBitacoraContras.getBitacoraContrasList().remove(bitacoraContrasListBitacoraContras);
-                    oldUsuariosOfBitacoraContrasListBitacoraContras = em.merge(oldUsuariosOfBitacoraContrasListBitacoraContras);
+                if (oldUsuario1OfBitacoraContrasListBitacoraContras != null) {
+                    oldUsuario1OfBitacoraContrasListBitacoraContras.getBitacoraContrasList().remove(bitacoraContrasListBitacoraContras);
+                    oldUsuario1OfBitacoraContrasListBitacoraContras = em.merge(oldUsuario1OfBitacoraContrasListBitacoraContras);
                 }
             }
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (findUsuarios(usuarios.getId()) != null) {
-                throw new PreexistingEntityException("Usuarios " + usuarios + " already exists.", ex);
-            }
-            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -83,21 +78,21 @@ public class UsuariosJpaController implements Serializable {
         }
     }
 
-    public void edit(Usuarios usuarios) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(Usuario usuario) throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Usuarios persistentUsuarios = em.find(Usuarios.class, usuarios.getId());
-            List<BitacoraContras> bitacoraContrasListOld = persistentUsuarios.getBitacoraContrasList();
-            List<BitacoraContras> bitacoraContrasListNew = usuarios.getBitacoraContrasList();
+            Usuario persistentUsuario = em.find(Usuario.class, usuario.getId());
+            List<BitacoraContras> bitacoraContrasListOld = persistentUsuario.getBitacoraContrasList();
+            List<BitacoraContras> bitacoraContrasListNew = usuario.getBitacoraContrasList();
             List<String> illegalOrphanMessages = null;
             for (BitacoraContras bitacoraContrasListOldBitacoraContras : bitacoraContrasListOld) {
                 if (!bitacoraContrasListNew.contains(bitacoraContrasListOldBitacoraContras)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain BitacoraContras " + bitacoraContrasListOldBitacoraContras + " since its usuarios field is not nullable.");
+                    illegalOrphanMessages.add("You must retain BitacoraContras " + bitacoraContrasListOldBitacoraContras + " since its usuario1 field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -109,16 +104,16 @@ public class UsuariosJpaController implements Serializable {
                 attachedBitacoraContrasListNew.add(bitacoraContrasListNewBitacoraContrasToAttach);
             }
             bitacoraContrasListNew = attachedBitacoraContrasListNew;
-            usuarios.setBitacoraContrasList(bitacoraContrasListNew);
-            usuarios = em.merge(usuarios);
+            usuario.setBitacoraContrasList(bitacoraContrasListNew);
+            usuario = em.merge(usuario);
             for (BitacoraContras bitacoraContrasListNewBitacoraContras : bitacoraContrasListNew) {
                 if (!bitacoraContrasListOld.contains(bitacoraContrasListNewBitacoraContras)) {
-                    Usuarios oldUsuariosOfBitacoraContrasListNewBitacoraContras = bitacoraContrasListNewBitacoraContras.getUsuarios();
-                    bitacoraContrasListNewBitacoraContras.setUsuarios(usuarios);
+                    Usuario oldUsuario1OfBitacoraContrasListNewBitacoraContras = bitacoraContrasListNewBitacoraContras.getUsuario1();
+                    bitacoraContrasListNewBitacoraContras.setUsuario1(usuario);
                     bitacoraContrasListNewBitacoraContras = em.merge(bitacoraContrasListNewBitacoraContras);
-                    if (oldUsuariosOfBitacoraContrasListNewBitacoraContras != null && !oldUsuariosOfBitacoraContrasListNewBitacoraContras.equals(usuarios)) {
-                        oldUsuariosOfBitacoraContrasListNewBitacoraContras.getBitacoraContrasList().remove(bitacoraContrasListNewBitacoraContras);
-                        oldUsuariosOfBitacoraContrasListNewBitacoraContras = em.merge(oldUsuariosOfBitacoraContrasListNewBitacoraContras);
+                    if (oldUsuario1OfBitacoraContrasListNewBitacoraContras != null && !oldUsuario1OfBitacoraContrasListNewBitacoraContras.equals(usuario)) {
+                        oldUsuario1OfBitacoraContrasListNewBitacoraContras.getBitacoraContrasList().remove(bitacoraContrasListNewBitacoraContras);
+                        oldUsuario1OfBitacoraContrasListNewBitacoraContras = em.merge(oldUsuario1OfBitacoraContrasListNewBitacoraContras);
                     }
                 }
             }
@@ -126,9 +121,9 @@ public class UsuariosJpaController implements Serializable {
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                String id = usuarios.getId();
-                if (findUsuarios(id) == null) {
-                    throw new NonexistentEntityException("The usuarios with id " + id + " no longer exists.");
+                UUID id = usuario.getId();
+                if (findUsuario(id) == null) {
+                    throw new NonexistentEntityException("The usuario with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -139,30 +134,30 @@ public class UsuariosJpaController implements Serializable {
         }
     }
 
-    public void destroy(String id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(UUID id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Usuarios usuarios;
+            Usuario usuario;
             try {
-                usuarios = em.getReference(Usuarios.class, id);
-                usuarios.getId();
+                usuario = em.getReference(Usuario.class, id);
+                usuario.getId();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The usuarios with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The usuario with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            List<BitacoraContras> bitacoraContrasListOrphanCheck = usuarios.getBitacoraContrasList();
+            List<BitacoraContras> bitacoraContrasListOrphanCheck = usuario.getBitacoraContrasList();
             for (BitacoraContras bitacoraContrasListOrphanCheckBitacoraContras : bitacoraContrasListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Usuarios (" + usuarios + ") cannot be destroyed since the BitacoraContras " + bitacoraContrasListOrphanCheckBitacoraContras + " in its bitacoraContrasList field has a non-nullable usuarios field.");
+                illegalOrphanMessages.add("This Usuario (" + usuario + ") cannot be destroyed since the BitacoraContras " + bitacoraContrasListOrphanCheckBitacoraContras + " in its bitacoraContrasList field has a non-nullable usuario1 field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            em.remove(usuarios);
+            em.remove(usuario);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -171,19 +166,19 @@ public class UsuariosJpaController implements Serializable {
         }
     }
 
-    public List<Usuarios> findUsuariosEntities() {
-        return findUsuariosEntities(true, -1, -1);
+    public List<Usuario> findUsuarioEntities() {
+        return findUsuarioEntities(true, -1, -1);
     }
 
-    public List<Usuarios> findUsuariosEntities(int maxResults, int firstResult) {
-        return findUsuariosEntities(false, maxResults, firstResult);
+    public List<Usuario> findUsuarioEntities(int maxResults, int firstResult) {
+        return findUsuarioEntities(false, maxResults, firstResult);
     }
 
-    private List<Usuarios> findUsuariosEntities(boolean all, int maxResults, int firstResult) {
+    private List<Usuario> findUsuarioEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(Usuarios.class));
+            cq.select(cq.from(Usuario.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -195,20 +190,20 @@ public class UsuariosJpaController implements Serializable {
         }
     }
 
-    public Usuarios findUsuarios(String id) {
+    public Usuario findUsuario(UUID id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(Usuarios.class, id);
+            return em.find(Usuario.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int getUsuariosCount() {
+    public int getUsuarioCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Usuarios> rt = cq.from(Usuarios.class);
+            Root<Usuario> rt = cq.from(Usuario.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();

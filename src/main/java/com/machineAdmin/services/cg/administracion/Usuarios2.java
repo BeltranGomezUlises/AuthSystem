@@ -16,7 +16,11 @@
  */
 package com.machineAdmin.services.cg.administracion;
 
-import com.machineAdmin.entities.cg.admin.postgres.Usuarios;
+import com.machineAdmin.daos.postgres.jpaControllers.TestJpaController;
+import com.machineAdmin.daos.cg.exceptions.ConstraintException;
+import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
+import com.machineAdmin.entities.cg.admin.postgres.Test;
+import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
 import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
@@ -26,10 +30,10 @@ import com.machineAdmin.models.cg.ModelUsuarioLogeado;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
 import static com.machineAdmin.services.cg.commons.ServiceFacade.*;
+import com.machineAdmin.utils.UtilsDB;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsJson;
 import com.machineAdmin.utils.UtilsSecurity;
-import java.util.UUID;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -40,89 +44,105 @@ import org.apache.commons.beanutils.BeanUtils;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/usuarios2")
-public class Usuarios2 extends ServiceFacade<Usuarios>{
-    
+public class Usuarios2 extends ServiceFacade<Usuario> {
+
     public Usuarios2() {
         super(new ManagerUsuario());
     }
 
     @Override
-    public Response eliminar(String token, Usuarios t) {
-        return super.eliminar(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response eliminar(String token, Usuario t) {
+        return super.eliminar(token, t);
     }
 
     @Override
-    public Response modificar(String token, Usuarios t) {
-        return super.modificar(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response modificar(String token, Usuario t) {
+        return super.modificar(token, t);
     }
 
     @Override
-    public Response alta(String token, Usuarios t) {
-        return super.alta(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response alta(String token, Usuario t) {
+        return super.alta(token, t);
     }
 
     @Override
     public Response obtener(String token, String id) {
-        return super.obtener(token, id); //To change body of generated methods, choose Tools | Templates.
+        return super.obtener(token, id);
     }
 
     @Override
     public Response listar(String token) {
-        return super.listar(token); //To change body of generated methods, choose Tools | Templates.
+        return super.listar(token);
     }
-    
+
     @POST
     @Path("/login")
     public Response login(ModelEncryptContent content) {
         Response res = new Response();
         ManagerUsuario managerUsuario = new ManagerUsuario();
         try {
-            Usuarios usuarioAutenticando = UtilsJson.jsonDeserialize(UtilsSecurity.decryptBase64ByPrivateKey(content.getContent()), Usuarios.class);
+            Usuario usuarioAutenticando = UtilsJson.jsonDeserialize(UtilsSecurity.decryptBase64ByPrivateKey(content.getContent()), Usuario.class);
             usuarioAutenticando.setContra(UtilsSecurity.cifrarMD5(usuarioAutenticando.getContra()));
-            Usuarios usuarioLogeado = managerUsuario.login(usuarioAutenticando);
+            Usuario usuarioLogeado = managerUsuario.login(usuarioAutenticando);
 
             ModelUsuarioLogeado modelUsuarioLogeado = new ModelUsuarioLogeado();
 
             BeanUtils.copyProperties(modelUsuarioLogeado, usuarioLogeado);
 
             res.setData(modelUsuarioLogeado);
-            res.setMetaData(UtilsJWT.generateSessionToken(usuarioLogeado.getId()));
-            res.setMessage("Bienvenido " + usuarioLogeado.getUsuario());
-            res.setDevMessage("Token de sesion de usuario, necesario para las cabeceras de los demas servicios");           
+            res.setMetaData(UtilsJWT.generateSessionToken(usuarioLogeado.getId().toString()));
+            res.setMessage("Bienvenido " + usuarioLogeado.getNombre());
+            res.setDevMessage("Token de sesion de usuario, necesario para las cabeceras de los demas servicios");
         } catch (UsuarioInexistenteException | ContraseñaIncorrectaException e) {
-            setWarningResponse(res, "Usuario y/o contraseña incorrecto", "imposible inicio de sesión, por: " + e.getMessage());            
+            setWarningResponse(res, "Usuario y/o contraseña incorrecto", "imposible inicio de sesión, por: " + e.getMessage());
         } catch (UsuarioBlockeadoException ex) {
-            setWarningResponse(res, ex.getMessage(), "El Usuario está bloqueado temporalmente. Cause: " + ex.getMessage());            
+            setWarningResponse(res, ex.getMessage(), "El Usuario está bloqueado temporalmente. Cause: " + ex.getMessage());
         } catch (Exception ex) {
             ex.printStackTrace();
             setErrorResponse(res, ex);
         }
         return res;
     }
-    
+
     @GET
     @Path("/initUser")
-    public Response init(){
-        Response r = new Response();                        
-        
-        ManagerUsuario managerUsuario = new ManagerUsuario();
-        Usuarios u = new Usuarios();
-        u.setUsuario("ulises");
-        u.setContra("1234");
-        u.setCorreo("ubg700@gmail.com");
-        u.setId(UUID.randomUUID().toString());
-        u.setTelefono("6672118438");
-       
-        try {
+    public Response init() {
+        Response r = new Response();
+        try {                        
+            ManagerUsuario managerUsuario = new ManagerUsuario();
+            
+            Usuario u = new Usuario();
+            u.setNombre("ulises");
+            u.setContra("1234");
+            u.setCorreo("ubg700@gmail.com");
+            u.setTelefono("6672118438");
             
             managerUsuario.persist(u);
-            r.setData(u);
             
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            r.setData(u);            
+        } catch (SQLPersistenceException ex) {
+            setErrorResponse(r, ex);
+        } catch (ConstraintException ex) {
+            setWarningResponse(r, ex.getMessage(), ex.toString());
         }
-        
         return r;
     }
-            
+
+    @GET
+    @Path("/initTest")
+    public Response initTest() {
+        Response r = new Response();
+        try {
+            TestJpaController controller = new TestJpaController(UtilsDB.getEMFactoryPostgres());
+            Test t = new Test();
+            controller.create(t);
+
+            r.setData(t);
+        } catch (Exception ex) {
+            setErrorResponse(r, ex);
+            ex.printStackTrace();
+        }
+        return r;
+    }
+
 }

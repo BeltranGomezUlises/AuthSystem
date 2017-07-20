@@ -5,11 +5,13 @@
  */
 package com.machineAdmin.daos.cg.commons;
 
+import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Arrays;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -42,15 +44,23 @@ public abstract class DaoSQLFacade<E extends Serializable>{
         
     protected abstract Class<?> getIdAttributeType();
                
-    public void persist(E entity) throws SQLPersistenceException{                     
+    public void persist(E entity) throws SQLPersistenceException, ConstraintException{                     
         try {
             Method method = claseController.getMethod("create", claseEntity);
             Constructor constructor = claseController.getConstructor(EntityManagerFactory.class);
             Object t = constructor.newInstance(eMFactory);            
             method.setAccessible(true);
-            method.invoke(t,entity);            
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {            
-            throw new SQLPersistenceException("No fue posible persistir la entidad, cause: " + e.getMessage());
+            method.invoke(t,entity);             
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {                                                
+            String mensajeDeExcepcion = "No fue posible persistir la entidad, CAUSE: " + e.toString();            
+            Throwable t = e.getCause();                        
+            if (t != null) {
+                mensajeDeExcepcion += " CAUSE: " + t.toString();
+                if (t.toString().contains("duplicate key value")) {
+                    throw new ConstraintException(t.toString());
+                }                
+            }                                                
+            throw new SQLPersistenceException(mensajeDeExcepcion);
         }                        
     }
     
@@ -82,7 +92,7 @@ public abstract class DaoSQLFacade<E extends Serializable>{
         return Arrays.asList(entities);
     }
     
-    public void update(E entity) throws SQLPersistenceException{
+    public void update(E entity) throws SQLPersistenceException, ConstraintException{
         try {
             Method method = claseController.getMethod("edit", claseEntity);
             Constructor constructor = claseController.getConstructor(EntityManagerFactory.class);
@@ -90,7 +100,15 @@ public abstract class DaoSQLFacade<E extends Serializable>{
             method.setAccessible(true);
             method.invoke(t,entity);            
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            throw new SQLPersistenceException("No fue posible actualizar la entidad, cause: " + e.getMessage());
+            String mensajeDeExcepcion = "No fue posible actualizar la entidad, CAUSE: " + e.toString();            
+            Throwable t = e.getCause();                        
+            if (t != null) {
+                mensajeDeExcepcion += " CAUSE: " + t.toString();
+                if (t.toString().contains("duplicate key value")) {
+                    throw new ConstraintException(t.toString());
+                }                
+            }                                                
+            throw new SQLPersistenceException(mensajeDeExcepcion);            
         }          
     }
         

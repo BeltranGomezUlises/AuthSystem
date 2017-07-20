@@ -62,45 +62,7 @@ public class ManagerUser extends ManagerMongoFacade<User> {
      * com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException
      * @throws com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException
      */
-    public User login(User user) throws UsuarioInexistenteException, ContraseñaIncorrectaException, UsuarioBlockeadoException, Exception {
-        Query q = DBQuery.is("pass", user.getPass());
-        switch (getUserIdentifierType(user.getUser())) {
-            case MAIL:
-                q.is("mail", user.getUser());
-                break;
-            case PHONE:
-                q.is("phone", user.getUser());
-                break;
-            default:
-                q.is("user", user.getUser());
-        }
-        User loged = this.findOne(q);
-        if (loged != null) {
-            if (loged.getBlocked() != null) {
-                if (loged.getBlocked().isBlocked() && loged.getBlocked().getBlockedUntilDate().after(new Date())) {
-                    throw new UsuarioBlockeadoException("Usuario bloqueado hasta " + UtilsDate.format_D_MM_YYYY_HH_MM(loged.getBlocked().getBlockedUntilDate()));
-                }
-            }
-            if (loged.isInhabilitado()) {
-                throw new ContraseñaIncorrectaException("No se encontro un usuario con esa contraseña");
-            }
-            loged.setLoginAttempt(null);
-            this.update(loged);
-
-            //login exitoso, generar bitácora                                    
-            new Thread(() -> {
-                BinnacleAccess access = new BinnacleAccess(loged.getId());
-                UtilsBinnacle.bitacorizar("cg.bitacora.accesos", access);
-            }).start();
-
-            return loged;
-        } else { //ver si el usuario existe y verificar número de intentos
-            this.numberAttemptVerification(user);
-            throw new ContraseñaIncorrectaException("No se encontro un usuario con esa contraseña");
-        }
-
-    }
-
+    
     public void logout(String token) throws IOException {
         User u = UtilsJson.jsonDeserialize(UtilsJWT.getBodyToken(token), User.class);
         BinnacleAccess exit = new BinnacleAccess(u.getId());

@@ -6,6 +6,8 @@
 package com.machineAdmin.managers.cg.commons;
 
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
+import com.machineAdmin.daos.cg.exceptions.ConstraintException;
+import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +27,7 @@ public class ManagerSQLFacade<T extends Serializable> implements ManagerFacade<T
     }
 
     @Override
-    public T persist(T entity) throws Exception {
+    public T persist(T entity) throws SQLPersistenceException, ConstraintException {
         dao.persist(entity);
         return entity;
     }
@@ -58,7 +60,7 @@ public class ManagerSQLFacade<T extends Serializable> implements ManagerFacade<T
     }
 
     @Override
-    public void update(T entity) throws Exception {
+    public void update(T entity) throws SQLPersistenceException, ConstraintException {
         dao.update(entity);
     }
 
