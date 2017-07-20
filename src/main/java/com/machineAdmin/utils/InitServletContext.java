@@ -16,32 +16,20 @@
  */
 package com.machineAdmin.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.machineAdmin.daos.cg.admin.mongo.DaoConfig;
 import com.machineAdmin.daos.cg.admin.mongo.DaoConfigMail;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
-import com.machineAdmin.entities.cg.admin.mongo.AvailablePermission;
-import com.machineAdmin.entities.cg.admin.mongo.AvailablePermission.Seccion;
-import com.machineAdmin.entities.cg.admin.mongo.AvailablePermission.Seccion.Module;
-import com.machineAdmin.entities.cg.admin.mongo.AvailablePermission.Seccion.Module.Menu;
-import com.machineAdmin.entities.cg.admin.mongo.AvailablePermission.Seccion.Module.Menu.Action;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
-import com.machineAdmin.models.cg.enums.PermissionType;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import org.mongojack.DBQuery;
 import org.reflections.Reflections;
 
 /**
@@ -217,6 +205,7 @@ public class InitServletContext implements ServletContextListener {
         }
         //</editor-fold>                
 
+        //<editor-fold defaultstate="collapsed" desc="USER CONFIG DEFAULT">
         ManagerUsuario managerUsuario = new ManagerUsuario();
 
         Usuario usuarioDB = managerUsuario.findFirst();
@@ -228,6 +217,7 @@ public class InitServletContext implements ServletContextListener {
             usuarioDefault.setContra("1234");
             managerUsuario.persist(usuarioDefault);
         }
+        //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="GENERAL CONFIGS">
         CGConfig configuracionGeneral = daoConfig.findFirst();

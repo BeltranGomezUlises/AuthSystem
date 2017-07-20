@@ -17,7 +17,9 @@
 package com.machineAdmin.entities.cg.admin.postgres;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.UUID;
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -25,6 +27,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -36,25 +40,32 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "BitacoraContras.findAll", query = "SELECT b FROM BitacoraContras b")
-    , @NamedQuery(name = "BitacoraContras.findByContra", query = "SELECT b FROM BitacoraContras b WHERE b.bitacoraContrasPK.contra = :contra")})
+    , @NamedQuery(name = "BitacoraContras.findByContra", query = "SELECT b FROM BitacoraContras b WHERE b.bitacoraContrasPK.contra = :contra")
+    , @NamedQuery(name = "BitacoraContras.findByFechaAsiganada", query = "SELECT b FROM BitacoraContras b WHERE b.fechaAsiganada = :fechaAsiganada")})
 public class BitacoraContras implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected BitacoraContrasPK bitacoraContrasPK;
+    @Column(name = "fecha_asignada")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaAsiganada;
     @JoinColumn(name = "usuario", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Usuario usuario1;
 
     public BitacoraContras() {
+        fechaAsiganada = new Date();
     }
 
     public BitacoraContras(BitacoraContrasPK bitacoraContrasPK) {
         this.bitacoraContrasPK = bitacoraContrasPK;
+        fechaAsiganada = new Date();
     }
 
     public BitacoraContras(UUID usuario, String contra) {
         this.bitacoraContrasPK = new BitacoraContrasPK(usuario, contra);
+        fechaAsiganada = new Date();
     }
 
     public BitacoraContrasPK getBitacoraContrasPK() {
@@ -63,6 +74,14 @@ public class BitacoraContras implements Serializable {
 
     public void setBitacoraContrasPK(BitacoraContrasPK bitacoraContrasPK) {
         this.bitacoraContrasPK = bitacoraContrasPK;
+    }
+
+    public Date getFechaAsiganada() {
+        return fechaAsiganada;
+    }
+
+    public void setFechaAsiganada(Date fechaAsiganada) {
+        this.fechaAsiganada = fechaAsiganada;
     }
 
     public Usuario getUsuario1() {

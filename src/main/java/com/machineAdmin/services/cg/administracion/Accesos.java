@@ -92,7 +92,8 @@ public class Accesos {
     @Path("/publicKey")
     public Response getPublicKey() {
         Response r = new Response();
-        setOkResponse(r, UtilsSecurity.getPublicKey(), "llave publica de cifrado RSA Base64");
+        r.setMetaData(UtilsSecurity.getPublicKey());
+        setOkResponse(r, "llave publica de cifrado RSA Base64");
         return r;
     }
 
@@ -152,8 +153,10 @@ public class Accesos {
 
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
-        } catch (Exception ex) {
-            setErrorResponse(res, ex);
+        } catch (ParametroInvalidoException ex) {
+            setWarningResponse(res, "No puede ingresar un contraseña que ya fué utilizada, intente con otro por favor", ex.getMessage());
+        }catch(Exception e){
+            setErrorResponse(res, e, "No se logro actualizar la contraseña, consulte con su administrador del sistema");
         }
         return res;
     }

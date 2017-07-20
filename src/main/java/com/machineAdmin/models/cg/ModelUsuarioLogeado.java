@@ -20,16 +20,17 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * modelo de respuesta del usuario logeado
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ModelUsuarioLogeado {
 
     private String id;
-    private String user;
-    private String mail;
+    private String nombre;
+    private String correo;
     private Object permissions;
-    private String phone;
+    private String telefono;
 
     public String getId() {
         return id;
@@ -39,20 +40,20 @@ public class ModelUsuarioLogeado {
         this.id = id;
     }
 
-    public String getUser() {
-        return user;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public String getMail() {
-        return mail;
+    public String getCorreo() {
+        return correo;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
     public Object getPermissions() {
@@ -63,12 +64,12 @@ public class ModelUsuarioLogeado {
         this.permissions = permissions;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getTelefono() {
+        return telefono;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
 
 }

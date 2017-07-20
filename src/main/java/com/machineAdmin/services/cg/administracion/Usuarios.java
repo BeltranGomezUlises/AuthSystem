@@ -16,28 +16,11 @@
  */
 package com.machineAdmin.services.cg.administracion;
 
-import com.machineAdmin.daos.postgres.jpaControllers.TestJpaController;
-import com.machineAdmin.daos.cg.exceptions.ConstraintException;
-import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
-import com.machineAdmin.entities.cg.admin.postgres.Test;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
-import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
-import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
-import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
-import com.machineAdmin.models.cg.ModelEncryptContent;
-import com.machineAdmin.models.cg.ModelUsuarioLogeado;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
-import static com.machineAdmin.services.cg.commons.ServiceFacade.*;
-import com.machineAdmin.utils.UtilsDB;
-import com.machineAdmin.utils.UtilsJWT;
-import com.machineAdmin.utils.UtilsJson;
-import com.machineAdmin.utils.UtilsSecurity;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import org.apache.commons.beanutils.BeanUtils;
 
 /**
  *
@@ -74,75 +57,5 @@ public class Usuarios extends ServiceFacade<Usuario> {
     public Response listar(String token) {
         return super.listar(token);
     }
-
-    @POST
-    @Path("/login")
-    public Response login(ModelEncryptContent content) {
-        Response res = new Response();
-        ManagerUsuario managerUsuario = new ManagerUsuario();
-        try {
-            Usuario usuarioAutenticando = UtilsJson.jsonDeserialize(UtilsSecurity.decryptBase64ByPrivateKey(content.getContent()), Usuario.class);
-            usuarioAutenticando.setContra(UtilsSecurity.cifrarMD5(usuarioAutenticando.getContra()));
-            Usuario usuarioLogeado = managerUsuario.login(usuarioAutenticando);
-
-            ModelUsuarioLogeado modelUsuarioLogeado = new ModelUsuarioLogeado();
-
-            BeanUtils.copyProperties(modelUsuarioLogeado, usuarioLogeado);
-
-            res.setData(modelUsuarioLogeado);
-            res.setMetaData(UtilsJWT.generateSessionToken(usuarioLogeado.getId().toString()));
-            res.setMessage("Bienvenido " + usuarioLogeado.getNombre());
-            res.setDevMessage("Token de sesion de usuario, necesario para las cabeceras de los demas servicios");
-        } catch (UsuarioInexistenteException | ContraseñaIncorrectaException e) {
-            setWarningResponse(res, "Usuario y/o contraseña incorrecto", "imposible inicio de sesión, por: " + e.getMessage());
-        } catch (UsuarioBlockeadoException ex) {
-            setWarningResponse(res, ex.getMessage(), "El Usuario está bloqueado temporalmente. Cause: " + ex.getMessage());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            setErrorResponse(res, ex);
-        }
-        return res;
-    }
-
-    @GET
-    @Path("/initUser")
-    public Response init() {
-        Response r = new Response();
-        try {                        
-            ManagerUsuario managerUsuario = new ManagerUsuario();
-            
-            Usuario u = new Usuario();
-            u.setNombre("ulises");
-            u.setContra("1234");
-            u.setCorreo("ubg700@gmail.com");
-            u.setTelefono("6672118438");
-            
-            managerUsuario.persist(u);
-            
-            r.setData(u);            
-        } catch (SQLPersistenceException ex) {
-            setErrorResponse(r, ex);
-        } catch (ConstraintException ex) {
-            setWarningResponse(r, ex.getMessage(), ex.toString());
-        }
-        return r;
-    }
-
-    @GET
-    @Path("/initTest")
-    public Response initTest() {
-        Response r = new Response();
-        try {
-            TestJpaController controller = new TestJpaController(UtilsDB.getEMFactoryPostgres());
-            Test t = new Test();
-            controller.create(t);
-
-            r.setData(t);
-        } catch (Exception ex) {
-            setErrorResponse(r, ex);
-            ex.printStackTrace();
-        }
-        return r;
-    }
-
+   
 }

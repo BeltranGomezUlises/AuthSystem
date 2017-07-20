@@ -63,9 +63,9 @@ public class UtilsMail {
         
         HtmlEmail email = new HtmlEmail();
         email.setHostName(configMail.getHostName());
-        email.setSmtpPort(465);
+        email.setSmtpPort(configMail.getPort());
         email.setAuthentication(configMail.getAuth().getMail(), configMail.getAuth().getPass());
-        email.setSSL(true);
+        email.setSSL(configMail.isSsl());
         email.setFrom(configMail.getAuth().getMail());
         email.setSubject("Recuperar Contraseña");
         email.addTo(toMail);

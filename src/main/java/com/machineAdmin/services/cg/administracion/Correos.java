@@ -46,8 +46,5 @@ public class Correos extends ServiceFacade<ConfigMail>{
     public Response listar(String token) {
         return super.listar(token); //To change body of generated methods, choose Tools | Templates.
     }
-
-    
-    
-    
+            
 }
