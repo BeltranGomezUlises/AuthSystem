@@ -17,8 +17,6 @@
 package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
-import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.BitacoraContrasJpaController;
-import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.UsuarioJpaController;
 import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.admin.mongo.BinnacleAccess;
@@ -32,7 +30,6 @@ import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.cg.ModelRecoverCodeUser;
 import com.machineAdmin.utils.UtilsBinnacle;
 import com.machineAdmin.utils.UtilsConfig;
-import com.machineAdmin.utils.UtilsDB;
 import com.machineAdmin.utils.UtilsDate;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsMail;
@@ -163,7 +160,7 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario> {
                     || u.getTelefono().equals(usuario.getNombre())).findFirst().get();
 
             if (intentoLogin.getBloqueado()) {
-                throw new UsuarioBlockeadoException("El usuario fue blockeado por el número de intentos fallidos hasta " +  UtilsDate.format_D_MM_YYYY_HH_MM(intentoLogin.getBloqueadoHastaFecha()));
+                throw new UsuarioBlockeadoException("El usuario fue blockeado por el número de intentos fallidos hasta " + UtilsDate.format_D_MM_YYYY_HH_MM(intentoLogin.getBloqueadoHastaFecha()));
             }
             //<editor-fold defaultstate="collapsed" desc="CRITERIOS DE VERIFICACION DE INTENTOS DE LOGIN"> 
 //             aumentar numero de intentos para bloqueo temporal si el lapso de tiempo es mayor al configurado 
@@ -192,13 +189,13 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario> {
                     intentoLogin.setBloqueado(true);
                     intentoLogin.setBloqueadoHastaFecha(UtilsConfig.getDateUtilUserStillBlocked());
                     this.update(intentoLogin);
-                    throw new UsuarioBlockeadoException("El usuario fue blockeado por el número de intentos fallidos hasta " +  UtilsDate.format_D_MM_YYYY_HH_MM(intentoLogin.getBloqueadoHastaFecha()));
+                    throw new UsuarioBlockeadoException("El usuario fue blockeado por el número de intentos fallidos hasta " + UtilsDate.format_D_MM_YYYY_HH_MM(intentoLogin.getBloqueadoHastaFecha()));
                 } else {
                     this.update(intentoLogin);
                 }
             } catch (UsuarioBlockeadoException e) {
                 throw e;
-            } catch (Exception e) {                
+            } catch (Exception e) {
                 throw e;
             }
         } catch (NoSuchElementException e) {
@@ -294,7 +291,7 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario> {
 
         List<BitacoraContras> bitacoraContras = managerBitacoraContra.stream()
                 .filter(b -> b.getBitacoraContrasPK().getUsuario().equals(u.getId()))
-                .sorted((b1, b2) -> b1.getFechaAsiganada().compareTo(b2.getFechaAsiganada()))
+                .sorted((b1, b2) -> b1.getFechaAsignada().compareTo(b2.getFechaAsignada()))
                 .collect(toList());
 
         //obtener el numero maximo de contraseñas a guardar para impedir repeticion

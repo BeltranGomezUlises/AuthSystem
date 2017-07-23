@@ -23,8 +23,8 @@ import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.Converter;
 
@@ -34,7 +34,7 @@ import org.eclipse.persistence.annotations.Converter;
  */
 @Embeddable
 @Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
-public class BitacoraContrasPK implements Serializable {
+public class UsuariosPerfilPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
@@ -43,16 +43,16 @@ public class BitacoraContrasPK implements Serializable {
     private UUID usuario;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 2147483647)
-    @Column(name = "contra")
-    private String contra;
+    @Lob
+    @Column(name = "perfil")
+    private UUID perfil;
 
-    public BitacoraContrasPK() {
+    public UsuariosPerfilPK() {
     }
 
-    public BitacoraContrasPK(UUID usuario, String contra) {
+    public UsuariosPerfilPK(UUID usuario, UUID perfil) {
         this.usuario = usuario;
-        this.contra = contra;
+        this.perfil = perfil;
     }
 
     public UUID getUsuario() {
@@ -63,19 +63,19 @@ public class BitacoraContrasPK implements Serializable {
         this.usuario = usuario;
     }
 
-    public String getContra() {
-        return contra;
+    public UUID getPerfil() {
+        return perfil;
     }
 
-    public void setContra(String contra) {
-        this.contra = contra;
+    public void setPerfil(UUID perfil) {
+        this.perfil = perfil;
     }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 11 * hash + Objects.hashCode(this.usuario);
-        hash = 11 * hash + Objects.hashCode(this.contra);
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.usuario);
+        hash = 67 * hash + Objects.hashCode(this.perfil);
         return hash;
     }
 
@@ -90,19 +90,16 @@ public class BitacoraContrasPK implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final BitacoraContrasPK other = (BitacoraContrasPK) obj;
-        if (!Objects.equals(this.contra, other.contra)) {
-            return false;
-        }
+        final UsuariosPerfilPK other = (UsuariosPerfilPK) obj;
         if (!Objects.equals(this.usuario, other.usuario)) {
             return false;
         }
-        return true;
+        return Objects.equals(this.perfil, other.perfil);
     }
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.BitacoraContrasPK[ usuario=" + usuario + ", contra=" + contra + " ]";
+        return "com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfilPK[ usuario=" + usuario + ", perfil=" + perfil + " ]";
     }
 
 }

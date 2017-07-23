@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "BitacoraContras.findAll", query = "SELECT b FROM BitacoraContras b")
     , @NamedQuery(name = "BitacoraContras.findByContra", query = "SELECT b FROM BitacoraContras b WHERE b.bitacoraContrasPK.contra = :contra")
-    , @NamedQuery(name = "BitacoraContras.findByFechaAsiganada", query = "SELECT b FROM BitacoraContras b WHERE b.fechaAsiganada = :fechaAsiganada")})
+    , @NamedQuery(name = "BitacoraContras.findByFechaAsignada", query = "SELECT b FROM BitacoraContras b WHERE b.fechaAsignada = :fechaAsignada")})
 public class BitacoraContras implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -49,23 +49,20 @@ public class BitacoraContras implements Serializable {
     protected BitacoraContrasPK bitacoraContrasPK;
     @Column(name = "fecha_asignada")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaAsiganada;
+    private Date fechaAsignada;
     @JoinColumn(name = "usuario", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Usuario usuario1;
 
     public BitacoraContras() {
-        fechaAsiganada = new Date();
     }
 
     public BitacoraContras(BitacoraContrasPK bitacoraContrasPK) {
         this.bitacoraContrasPK = bitacoraContrasPK;
-        fechaAsiganada = new Date();
     }
 
     public BitacoraContras(UUID usuario, String contra) {
         this.bitacoraContrasPK = new BitacoraContrasPK(usuario, contra);
-        fechaAsiganada = new Date();
     }
 
     public BitacoraContrasPK getBitacoraContrasPK() {
@@ -76,12 +73,12 @@ public class BitacoraContras implements Serializable {
         this.bitacoraContrasPK = bitacoraContrasPK;
     }
 
-    public Date getFechaAsiganada() {
-        return fechaAsiganada;
+    public Date getFechaAsignada() {
+        return fechaAsignada;
     }
 
-    public void setFechaAsiganada(Date fechaAsiganada) {
-        this.fechaAsiganada = fechaAsiganada;
+    public void setFechaAsignada(Date fechaAsignada) {
+        this.fechaAsignada = fechaAsignada;
     }
 
     public Usuario getUsuario1() {
@@ -106,10 +103,7 @@ public class BitacoraContras implements Serializable {
             return false;
         }
         BitacoraContras other = (BitacoraContras) object;
-        if ((this.bitacoraContrasPK == null && other.bitacoraContrasPK != null) || (this.bitacoraContrasPK != null && !this.bitacoraContrasPK.equals(other.bitacoraContrasPK))) {
-            return false;
-        }
-        return true;
+        return !((this.bitacoraContrasPK == null && other.bitacoraContrasPK != null) || (this.bitacoraContrasPK != null && !this.bitacoraContrasPK.equals(other.bitacoraContrasPK)));
     }
 
     @Override

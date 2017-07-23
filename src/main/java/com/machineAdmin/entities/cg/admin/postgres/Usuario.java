@@ -21,13 +21,12 @@ import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -60,7 +59,7 @@ import org.eclipse.persistence.annotations.Converter;
     , @NamedQuery(name = "Usuario.findByNumeroIntentosLogin", query = "SELECT u FROM Usuario u WHERE u.numeroIntentosLogin = :numeroIntentosLogin")
     , @NamedQuery(name = "Usuario.findByBloqueado", query = "SELECT u FROM Usuario u WHERE u.bloqueado = :bloqueado")
     , @NamedQuery(name = "Usuario.findByBloqueadoHastaFecha", query = "SELECT u FROM Usuario u WHERE u.bloqueadoHastaFecha = :bloqueadoHastaFecha")})
-@Converter(name="uuidConverter", converterClass=UUIDConverter.class)
+@Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
 public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -91,19 +90,21 @@ public class Usuario implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
+    @Convert("uuidConverter")
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Convert("uuidConverter")    
     private UUID id;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
     private List<BitacoraContras> bitacoraContrasList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
+    private List<UsuariosPermisos> usuariosPermisosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
+    private List<UsuariosPerfil> usuariosPerfilList;
 
     public Usuario() {
-        //por que para bases de datos sql hay que inicializar Clases
-        id = UUID.randomUUID();
-        bloqueado = false;
-        inhabilitado = false;
-        numeroIntentosLogin = 0;
+        this.bloqueado = false;
+        this.inhabilitado = false;
+        this.id = UUID.randomUUID();
+        this.numeroIntentosLogin = 0;
     }
 
     public Usuario(UUID id) {
@@ -200,33 +201,55 @@ public class Usuario implements Serializable {
         this.bitacoraContrasList = bitacoraContrasList;
     }
 
+    @XmlTransient
+    @JsonIgnore
+    public List<UsuariosPermisos> getUsuariosPermisosList() {
+        return usuariosPermisosList;
+    }
+
+    public void setUsuariosPermisosList(List<UsuariosPermisos> usuariosPermisosList) {
+        this.usuariosPermisosList = usuariosPermisosList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<UsuariosPerfil> getUsuariosPerfilList() {
+        return usuariosPerfilList;
+    }
+
+    public void setUsuariosPerfilList(List<UsuariosPerfil> usuariosPerfilList) {
+        this.usuariosPerfilList = usuariosPerfilList;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Usuario)) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        Usuario other = (Usuario) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
-        return true;
+        final Usuario other = (Usuario) obj;
+        return Objects.equals(this.id, other.id);
     }
 
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.Usuario[ id=" + id + " ]";
     }
-        
+
     public void aumentarNumeroDeIntentosLogin() {
         this.numeroIntentosLogin++;
     }
-    
+
 }

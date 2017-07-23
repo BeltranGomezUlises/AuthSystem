@@ -34,7 +34,7 @@ import org.eclipse.persistence.annotations.Converter;
  */
 @Embeddable
 @Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
-public class BitacoraContrasPK implements Serializable {
+public class UsuariosPermisosPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
@@ -44,15 +44,15 @@ public class BitacoraContrasPK implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
-    @Column(name = "contra")
-    private String contra;
+    @Column(name = "permiso")
+    private String permiso;
 
-    public BitacoraContrasPK() {
+    public UsuariosPermisosPK() {
     }
 
-    public BitacoraContrasPK(UUID usuario, String contra) {
+    public UsuariosPermisosPK(UUID usuario, String permiso) {
         this.usuario = usuario;
-        this.contra = contra;
+        this.permiso = permiso;
     }
 
     public UUID getUsuario() {
@@ -63,19 +63,19 @@ public class BitacoraContrasPK implements Serializable {
         this.usuario = usuario;
     }
 
-    public String getContra() {
-        return contra;
+    public String getPermiso() {
+        return permiso;
     }
 
-    public void setContra(String contra) {
-        this.contra = contra;
+    public void setPermiso(String permiso) {
+        this.permiso = permiso;
     }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 11 * hash + Objects.hashCode(this.usuario);
-        hash = 11 * hash + Objects.hashCode(this.contra);
+        int hash = 5;
+        hash = 97 * hash + Objects.hashCode(this.usuario);
+        hash = 97 * hash + Objects.hashCode(this.permiso);
         return hash;
     }
 
@@ -90,19 +90,16 @@ public class BitacoraContrasPK implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final BitacoraContrasPK other = (BitacoraContrasPK) obj;
-        if (!Objects.equals(this.contra, other.contra)) {
+        final UsuariosPermisosPK other = (UsuariosPermisosPK) obj;
+        if (!Objects.equals(this.permiso, other.permiso)) {
             return false;
         }
-        if (!Objects.equals(this.usuario, other.usuario)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.usuario, other.usuario);
     }
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.BitacoraContrasPK[ usuario=" + usuario + ", contra=" + contra + " ]";
+        return "com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisosPK[ usuario=" + usuario + ", permiso=" + permiso + " ]";
     }
 
 }
