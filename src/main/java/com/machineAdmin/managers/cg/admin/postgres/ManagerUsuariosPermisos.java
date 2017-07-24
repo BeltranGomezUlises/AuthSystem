@@ -14,23 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.utils;
+package com.machineAdmin.managers.cg.admin.postgres;
 
-import com.machineAdmin.entities.cg.admin.postgres.Permiso;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerPermiso;
-import java.util.List;
-import static java.util.stream.Collectors.toList;
+import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPermisos;
+import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos;
+import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class UtilsPermissions {
+public class ManagerUsuariosPermisos extends ManagerSQLFacade<UsuariosPermisos>{
     
-   
-    public static List<Permiso> getAvailablePermissions(){
-        ManagerPermiso managerPermiso = new ManagerPermiso();
-        return managerPermiso.stream().collect(toList());                
+    public ManagerUsuariosPermisos() {
+        super(new DaoUsuariosPermisos());
     }
-   
+    
 }

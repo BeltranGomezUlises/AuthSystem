@@ -14,23 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.utils;
+package com.machineAdmin.daos.cg.admin.postgres;
 
-import com.machineAdmin.entities.cg.admin.postgres.Permiso;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerPermiso;
-import java.util.List;
-import static java.util.stream.Collectors.toList;
+import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.UsuariosPermisosJpaController;
+import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
+import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos;
+import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisosPK;
+import com.machineAdmin.utils.UtilsDB;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class UtilsPermissions {
-    
-   
-    public static List<Permiso> getAvailablePermissions(){
-        ManagerPermiso managerPermiso = new ManagerPermiso();
-        return managerPermiso.stream().collect(toList());                
+public class DaoUsuariosPermisos extends DaoSQLFacade<UsuariosPermisos>{
+
+    public DaoUsuariosPermisos() {
+        super(UtilsDB.getEMFactoryPostgres(), UsuariosPermisosJpaController.class, UsuariosPermisos.class, "usuariosPermisos");
     }
-   
+
+    @Override
+    protected Class<?> getIdAttributeType() {
+        return UsuariosPermisosPK.class;
+    }
+    
 }

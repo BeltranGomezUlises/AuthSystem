@@ -57,7 +57,7 @@ public abstract class DaoSQLFacade<E extends Serializable>{
             Throwable t = e.getCause();                        
             if (t != null) {
                 mensajeDeExcepcion += " CAUSE: " + t.toString();
-                if (t.toString().contains("duplicate key value")) {
+                if (t.toString().contains("duplicate key value") || t.toString().contains("already exists")) {
                     throw new ConstraintException(t.toString());
                 }                
             }                                                

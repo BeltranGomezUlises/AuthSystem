@@ -14,23 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.utils;
-
-import com.machineAdmin.entities.cg.admin.postgres.Permiso;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerPermiso;
-import java.util.List;
-import static java.util.stream.Collectors.toList;
+package com.machineAdmin.entities.cg.commons;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class UtilsPermissions {
-    
-   
-    public static List<Permiso> getAvailablePermissions(){
-        ManagerPermiso managerPermiso = new ManagerPermiso();
-        return managerPermiso.stream().collect(toList());                
-    }
-   
+public enum Profundidad {
+    TODOS, PROPIOS, PROPIOS_MAS_PERFILES
 }

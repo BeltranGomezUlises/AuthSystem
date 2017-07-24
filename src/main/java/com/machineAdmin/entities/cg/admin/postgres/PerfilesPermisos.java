@@ -16,11 +16,14 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import java.io.Serializable;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -44,10 +47,10 @@ public class PerfilesPermisos implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
-    protected PerfilesPermisosPK perfilesPermisosPK;
-    @Size(max = 2147483647)
+    protected PerfilesPermisosPK perfilesPermisosPK;    
     @Column(name = "profundidad")
-    private String profundidad;
+    @Enumerated(EnumType.STRING)
+    private Profundidad profundidad;
     @JoinColumn(name = "perfil", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Perfil perfil1;
@@ -74,11 +77,11 @@ public class PerfilesPermisos implements Serializable {
         this.perfilesPermisosPK = perfilesPermisosPK;
     }
 
-    public String getProfundidad() {
+    public Profundidad getProfundidad() {
         return profundidad;
     }
 
-    public void setProfundidad(String profundidad) {
+    public void setProfundidad(Profundidad profundidad) {
         this.profundidad = profundidad;
     }
 
