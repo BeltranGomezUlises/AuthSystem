@@ -30,6 +30,7 @@ import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos;
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.entities.cg.admin.postgres.Seccion;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
+import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos;
 import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerGrupoPerfil;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerMenu;
@@ -39,12 +40,14 @@ import com.machineAdmin.managers.cg.admin.postgres.ManagerPerfilesPermisos;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerPermiso;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerSeccion;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
+import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuariosPermisos;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -86,6 +89,7 @@ public class InitServletContext implements ServletContextListener {
         //<editor-fold defaultstate="collapsed" desc="DEFAULT PERMISSIONS CONFIG"> 
         this.initDBPermissions();
 
+        //<editor-fold defaultstate="collapsed" desc="Creacion del perfil Master">
         //crear perfil master
         ManagerPerfil managerPerfil = new ManagerPerfil();
 
@@ -96,7 +100,9 @@ public class InitServletContext implements ServletContextListener {
             perfilMaster.setDescripcion("Perfil de control total del sistema");
             managerPerfil.persist(perfilMaster);
         }
+        //</editor-fold>
 
+        //<editor-fold defaultstate="collapsed" desc="Creacion del grupo de perfiles">
         ManagerGrupoPerfil managerGrupoPerfil = new ManagerGrupoPerfil();
 
         GrupoPerfiles gp = managerGrupoPerfil.findFirst();
@@ -110,8 +116,10 @@ public class InitServletContext implements ServletContextListener {
             gp.setPerfilList(perfilesDelRol);
             managerGrupoPerfil.persist(gp);
         }
+        //</editor-fold>
 
-        //crear relacion de perfil con permisos disponibles        
+        //<editor-fold defaultstate="collapsed" desc="Asignacion de permisos al perfil">
+        //crear relacion de perfil con permisos disponibles
         ManagerPerfilesPermisos managerPerfilesPermisos = new ManagerPerfilesPermisos();
 
         //asignar permisos al perfil
@@ -126,8 +134,36 @@ public class InitServletContext implements ServletContextListener {
             }
 
         }
-
         //</editor-fold>
+                
+        //<editor-fold defaultstate="collapsed" desc="USER CONFIG DEFAULT">
+        ManagerUsuario managerUsuario = new ManagerUsuario();
+
+        Usuario usuarioDB = managerUsuario.findFirst();
+        if (usuarioDB == null) {
+            usuarioDB = new Usuario();
+            usuarioDB.setNombre("Administrador");
+            usuarioDB.setCorreo("ubg700@gmail.com");
+            usuarioDB.setTelefono("6671007264");
+            usuarioDB.setContra("1234");
+            managerUsuario.persist(usuarioDB);
+        }
+        //</editor-fold>        
+        ManagerUsuariosPermisos managerUsuariosPermisos = new ManagerUsuariosPermisos();
+        UsuariosPermisos usuariosPermisos;
+        for (Permiso existingPermission : UtilsPermissions.getExistingPermissions()) {
+            
+            usuariosPermisos = new UsuariosPermisos();
+            usuariosPermisos.setUsuario1(usuarioDB);
+            usuariosPermisos.setPermiso1(existingPermission);
+            usuariosPermisos.setProfundidad(Profundidad.TODOS);
+            
+            UsuariosPermisos checkDB = new UsuariosPermisos(usuarioDB.getId(), existingPermission.getId());            
+            if (!managerUsuariosPermisos.stream().anyMatch( up -> up.equals(checkDB))) {
+                managerUsuariosPermisos.persist(usuariosPermisos);
+            }                        
+        }
+                        
         //<editor-fold defaultstate="collapsed" desc="DEFAULT MAIL CONFIGS"> 
         DaoConfigMail daoMail = new DaoConfigMail();
         DaoConfig daoConfig = new DaoConfig();
@@ -145,21 +181,7 @@ public class InitServletContext implements ServletContextListener {
             System.out.println(mail);
         }
         //</editor-fold>                
-
-        //<editor-fold defaultstate="collapsed" desc="USER CONFIG DEFAULT">
-        ManagerUsuario managerUsuario = new ManagerUsuario();
-
-        Usuario usuarioDB = managerUsuario.findFirst();
-        if (usuarioDB == null) {
-            Usuario usuarioDefault = new Usuario();
-            usuarioDefault.setNombre("Administrador");
-            usuarioDefault.setCorreo("ubg700@gmail.com");
-            usuarioDefault.setTelefono("6671007264");
-            usuarioDefault.setContra("1234");
-            managerUsuario.persist(usuarioDefault);
-        }
-        //</editor-fold>
-
+        
         //<editor-fold defaultstate="collapsed" desc="GENERAL CONFIGS">
         CGConfig configuracionGeneral = daoConfig.findFirst();
 

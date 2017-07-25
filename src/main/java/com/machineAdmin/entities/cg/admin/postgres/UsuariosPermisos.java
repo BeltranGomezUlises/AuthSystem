@@ -16,12 +16,15 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import java.io.Serializable;
 import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -51,7 +54,8 @@ public class UsuariosPermisos implements Serializable {
     @NotNull
     @Size(min = 1, max = 2147483647)
     @Column(name = "profundidad")
-    private String profundidad;
+    @Enumerated(EnumType.STRING)
+    private Profundidad profundidad;
     @JoinColumn(name = "permiso", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Permiso permiso1;
@@ -66,7 +70,7 @@ public class UsuariosPermisos implements Serializable {
         this.usuariosPermisosPK = usuariosPermisosPK;
     }
 
-    public UsuariosPermisos(UsuariosPermisosPK usuariosPermisosPK, String profundidad) {
+    public UsuariosPermisos(UsuariosPermisosPK usuariosPermisosPK, Profundidad profundidad) {
         this.usuariosPermisosPK = usuariosPermisosPK;
         this.profundidad = profundidad;
     }
@@ -83,11 +87,11 @@ public class UsuariosPermisos implements Serializable {
         this.usuariosPermisosPK = usuariosPermisosPK;
     }
 
-    public String getProfundidad() {
+    public Profundidad getProfundidad() {
         return profundidad;
     }
 
-    public void setProfundidad(String profundidad) {
+    public void setProfundidad(Profundidad profundidad) {
         this.profundidad = profundidad;
     }
 
