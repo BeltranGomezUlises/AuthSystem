@@ -14,31 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.models.cg;
+package com.machineAdmin.managers.postgres;
+
+import com.machineAdmin.daos.postgres.DaoEjemplo;
+import com.machineAdmin.entities.postgres.Ejemplo;
+import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
 
 /**
- * modelo contenedor de usuario para asignar a perfil
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ModelAsignedUser {
+public class ManagerEjemplo extends ManagerSQLFacade<Ejemplo> {
 
-    private String userId;
-    private boolean heritage;
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public boolean isHeritage() {
-        return heritage;
-    }
-
-    public void setHeritage(boolean heritage) {
-        this.heritage = heritage;
+    public ManagerEjemplo() {
+        super(new DaoEjemplo());
     }
 
 }

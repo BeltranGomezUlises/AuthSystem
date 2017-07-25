@@ -14,17 +14,13 @@ import java.util.List;
  */
 public interface ManagerFacade<T> {
     
-    public T persist(T entity) throws Exception;
+    public T persist(T entity) throws Exception;    
     
-    public List<T> persistAll(List<T> entities) throws Exception;
+    public List<T> persistAll(List<T> entities) throws Exception;        
     
-    public List<T> persistAll(T... entities) throws Exception;        
-    
-    public void delete(Object id) throws Exception;
+    public void delete(Object id) throws Exception;       
     
     public void deleteAll(List<Object> ids) throws Exception;
-    
-    public void deleteAll(Object... ids) throws Exception;
     
     public void update(T entity) throws Exception;
         
@@ -36,6 +32,6 @@ public interface ManagerFacade<T> {
     
     public List<T> findAll(int max);
     
-    public long count();        
+    public long count();     
     
 }

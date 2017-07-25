@@ -25,7 +25,7 @@ import org.mongojack.JacksonDBCollection;
 public class UtilsBinnacle {
         
     public static void bitacorizar(String collectionName, Object objectToPersist){
-        JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getCollection(collectionName), Object.class, String.class);
+        JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection(collectionName), Object.class, String.class);
         coll.insert(objectToPersist);
     }        
             

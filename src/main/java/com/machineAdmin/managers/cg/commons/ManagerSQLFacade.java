@@ -20,7 +20,7 @@ import org.jinq.jpa.JPAJinqStream;
  */
 public class ManagerSQLFacade<T extends Serializable> implements ManagerFacade<T> {
 
-    private final DaoSQLFacade dao;
+    private final DaoSQLFacade<T> dao;
 
     public ManagerSQLFacade(DaoSQLFacade dao) {
         this.dao = dao;
@@ -34,28 +34,16 @@ public class ManagerSQLFacade<T extends Serializable> implements ManagerFacade<T
 
     @Override
     public List<T> persistAll(List<T> entities) throws Exception {
-        dao.persistAll(entities);
-        return entities;
-    }
-
-    @Override
-    public List<T> persistAll(T... entities) throws Exception {
-        dao.persistAll(entities);
-        return Arrays.asList(entities);
+        return dao.persistAll(entities);                
     }
 
     @Override
     public void delete(Object id) throws Exception {
         dao.delete(id);
-    }
+    }    
 
     @Override
-    public void deleteAll(List<Object> ids) throws Exception {
-        dao.deleteAll(ids);
-    }
-
-    @Override
-    public void deleteAll(Object... ids) throws Exception {
+    public void deleteAll(List<Object> ids) throws SQLPersistenceException, Exception{
         dao.deleteAll(ids);
     }
 

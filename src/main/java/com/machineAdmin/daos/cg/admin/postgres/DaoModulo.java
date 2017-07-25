@@ -28,7 +28,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoModulo extends DaoSQLFacade<Modulo>{
 
     public DaoModulo() {
-        super(UtilsDB.getEMFactoryPostgres(), ModuloJpaController.class, Modulo.class, "modulos");
+        super(UtilsDB.getEMFactoryCG(), ModuloJpaController.class, Modulo.class, "modulos");
     }
 
     @Override

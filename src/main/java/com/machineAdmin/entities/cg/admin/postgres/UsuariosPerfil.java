@@ -16,6 +16,7 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
@@ -39,6 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "UsuariosPerfil.findAll", query = "SELECT u FROM UsuariosPerfil u")
     , @NamedQuery(name = "UsuariosPerfil.findByHereda", query = "SELECT u FROM UsuariosPerfil u WHERE u.hereda = :hereda")})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UsuariosPerfil implements Serializable {
 
     private static final long serialVersionUID = 1L;

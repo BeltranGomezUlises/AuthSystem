@@ -14,27 +14,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.daos.cg.admin.postgres;
-
-import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.GrupoPerfilesJpaController;
-import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
-import com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles;
-import com.machineAdmin.utils.UtilsDB;
-import java.util.UUID;
+package com.machineAdmin.models.cg;
 
 /**
- *
+ * modelo de reseteo de contraseña
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoGrupoPerfiles extends DaoSQLFacade<GrupoPerfiles>{
+public class ModelReseteoContra {
+    
+    private String pass;
+    private String jwt;
 
-    public DaoGrupoPerfiles() {
-        super(UtilsDB.getEMFactoryCG(), GrupoPerfilesJpaController.class, GrupoPerfiles.class, "grupoPërfiles");
+    public String getPass() {
+        return pass;
     }
 
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return UUID.class;
+    public void setPass(String pass) {
+        this.pass = pass;
     }
+
+    public String getJwt() {
+        return jwt;
+    }
+
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
+    }    
     
 }

@@ -31,6 +31,7 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.Objects;
 
 /**
@@ -44,6 +45,7 @@ import java.util.Objects;
     @NamedQuery(name = "Seccion.findAll", query = "SELECT s FROM Seccion s")
     , @NamedQuery(name = "Seccion.findById", query = "SELECT s FROM Seccion s WHERE s.id = :id")
     , @NamedQuery(name = "Seccion.findByNombre", query = "SELECT s FROM Seccion s WHERE s.nombre = :nombre")})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Seccion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -82,8 +84,7 @@ public class Seccion implements Serializable {
         this.nombre = nombre;
     }
 
-    @XmlTransient
-    @JsonIgnore
+    @XmlTransient    
     public List<Modulo> getModuloList() {
         return moduloList;
     }

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
-import com.machineAdmin.models.cg.ModelRecoverCodeUser;
+import com.machineAdmin.models.cg.ModelCodigoRecuperacionUsuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -48,7 +48,7 @@ public class UtilsJWT {
         return builder.signWith(SignatureAlgorithm.HS512, STRING_KEY).compact();
     }
 
-    public static String generateValidateUserToken(ModelRecoverCodeUser model) throws JsonProcessingException {
+    public static String generateValidateUserToken(ModelCodigoRecuperacionUsuario model) throws JsonProcessingException {
         JwtBuilder builder = Jwts.builder();
         Calendar cal = new GregorianCalendar();        //calendario de tiempos                
         cal.add(Calendar.SECOND, UtilsConfig.getSecondsRecoverJwtExp());
@@ -64,7 +64,7 @@ public class UtilsJWT {
         cal.add(Calendar.SECOND, UtilsConfig.getSecondsRecoverJwtExp());
         builder.setExpiration(cal.getTime());
 
-        ModelRecoverCodeUser codeUser = UtilsJson.jsonDeserialize(UtilsJWT.getBodyToken(token), ModelRecoverCodeUser.class);
+        ModelCodigoRecuperacionUsuario codeUser = UtilsJson.jsonDeserialize(UtilsJWT.getBodyToken(token), ModelCodigoRecuperacionUsuario.class);
         if (!codeUser.getCode().equals(code)) {
             throw new ParametroInvalidoException("El código proporsionado no es válido");
         }

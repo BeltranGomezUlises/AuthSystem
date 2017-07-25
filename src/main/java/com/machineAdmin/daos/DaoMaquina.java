@@ -20,7 +20,7 @@ import com.machineAdmin.daos.cg.commons.DaoMongoFacade;
 import com.machineAdmin.entities.mongo.Maquina;
 
 /**
- *
+ * entidad de catalogo de maquina
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class DaoMaquina extends DaoMongoFacade<Maquina>{

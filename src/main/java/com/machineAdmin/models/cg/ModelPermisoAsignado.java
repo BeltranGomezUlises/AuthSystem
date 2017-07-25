@@ -16,23 +16,34 @@
  */
 package com.machineAdmin.models.cg;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.machineAdmin.entities.cg.commons.Profundidad;
+import com.machineAdmin.models.cg.enums.PermissionType;
+import java.util.Objects;
 
 /**
- * modelo para comunicar el id de un usuario
+ * modelo contenedor de la accion y la profundidad del permiso
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ModelUserId {
+public class ModelPermisoAsignado {
 
-    private String id;
+    private String permisoId;
+    private Profundidad profundidad;
 
-    public String getId() {
-        return id;
+    public String getPermisoId() {
+        return permisoId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setPermisoId(String permisoId) {
+        this.permisoId = permisoId;
+    }
+
+    public Profundidad getProfundidad() {
+        return profundidad;
+    }
+
+    public void setProfundidad(Profundidad profundidad) {
+        this.profundidad = profundidad;
     }
 
 }

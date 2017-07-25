@@ -27,7 +27,7 @@ import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
-import com.machineAdmin.models.cg.ModelRecoverCodeUser;
+import com.machineAdmin.models.cg.ModelCodigoRecuperacionUsuario;
 import com.machineAdmin.utils.UtilsBinnacle;
 import com.machineAdmin.utils.UtilsConfig;
 import com.machineAdmin.utils.UtilsDate;
@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
 import org.apache.commons.mail.EmailException;
 
@@ -231,7 +233,7 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario> {
         }
     }
 
-    public ModelRecoverCodeUser enviarCodigo(String identifier) throws UsuarioInexistenteException,
+    public ModelCodigoRecuperacionUsuario enviarCodigo(String identifier) throws UsuarioInexistenteException,
             ParametroInvalidoException, EmailException, MalformedURLException {
 
         Usuario usuarioARecuperar = null;
@@ -263,7 +265,7 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario> {
                     UtilsSMS.sendSMS(identifier, "Hola " + usuarioARecuperar.getNombre() + " su código de recuperacion de contraseña es: " + code);
                     break;
             }
-            ModelRecoverCodeUser model = new ModelRecoverCodeUser();
+            ModelCodigoRecuperacionUsuario model = new ModelCodigoRecuperacionUsuario();
             model.setCode(code);
             model.setIdUser(usuarioARecuperar.getId().toString());
 

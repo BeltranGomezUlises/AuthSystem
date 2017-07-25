@@ -17,7 +17,7 @@
 package com.machineAdmin.utils;
 
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
-import com.machineAdmin.models.cg.ModelSMSRescuePass;
+import com.machineAdmin.models.cg.ModelSMSRecuperacionContra;
 import com.sun.jersey.api.client.Client;
 import javax.ws.rs.core.MediaType;
 /**
@@ -26,20 +26,20 @@ import javax.ws.rs.core.MediaType;
  */
 public class UtilsSMS {        
     
-    public static ModelSMSRescuePass.ModelSMSRescuePassResponse sendSMS(String phoneNumber, String message){                                                
+    public static ModelSMSRecuperacionContra.ModelSMSRescuePassResponse sendSMS(String phoneNumber, String message){                                                
         CGConfig.SMSConfig config = UtilsConfig.getSMSConfig();        
-        ModelSMSRescuePass smsRescue = new ModelSMSRescuePass();
+        ModelSMSRecuperacionContra smsRescue = new ModelSMSRecuperacionContra();
         
         smsRescue.setDestino(phoneNumber);
         smsRescue.setMensaje(message);
         smsRescue.setEnvia(config.getDeviceImei());
         smsRescue.setUsuarioId(config.getUsuarioId());
                 
-        ModelSMSRescuePass.ModelSMSRescuePassResponse res = Client.create()
+        ModelSMSRecuperacionContra.ModelSMSRescuePassResponse res = Client.create()
                 .resource(config.getUri())
                 .accept(MediaType.APPLICATION_JSON)    
                 .type(MediaType.APPLICATION_JSON)
-                .post(ModelSMSRescuePass.ModelSMSRescuePassResponse.class, smsRescue);                
+                .post(ModelSMSRecuperacionContra.ModelSMSRescuePassResponse.class, smsRescue);                
         
         return res;
     }

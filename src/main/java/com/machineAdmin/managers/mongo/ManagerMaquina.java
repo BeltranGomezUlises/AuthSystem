@@ -14,27 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.daos.cg.admin.postgres;
+package com.machineAdmin.managers.mongo;
 
-import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.GrupoPerfilesJpaController;
-import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
-import com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles;
-import com.machineAdmin.utils.UtilsDB;
-import java.util.UUID;
+import com.machineAdmin.daos.DaoMaquina;
+import com.machineAdmin.entities.mongo.Maquina;
+import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoGrupoPerfiles extends DaoSQLFacade<GrupoPerfiles>{
+public class ManagerMaquina extends ManagerMongoFacade<Maquina> {
 
-    public DaoGrupoPerfiles() {
-        super(UtilsDB.getEMFactoryCG(), GrupoPerfilesJpaController.class, GrupoPerfiles.class, "grupoPërfiles");
+    public ManagerMaquina() {
+        super(new DaoMaquina());
     }
 
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return UUID.class;
-    }
-    
 }

@@ -29,7 +29,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoUsuariosPermisos extends DaoSQLFacade<UsuariosPermisos>{
 
     public DaoUsuariosPermisos() {
-        super(UtilsDB.getEMFactoryPostgres(), UsuariosPermisosJpaController.class, UsuariosPermisos.class, "usuariosPermisos");
+        super(UtilsDB.getEMFactoryCG(), UsuariosPermisosJpaController.class, UsuariosPermisos.class, "usuariosPermisos");
     }
 
     @Override

@@ -29,7 +29,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoBitacoraContra extends DaoSQLFacade<BitacoraContras>{
 
     public DaoBitacoraContra() {
-        super(UtilsDB.getEMFactoryPostgres(), BitacoraContrasJpaController.class, BitacoraContras.class, "bitacoraContras");
+        super(UtilsDB.getEMFactoryCG(), BitacoraContrasJpaController.class, BitacoraContras.class, "bitacoraContras");
     }
 
     @Override

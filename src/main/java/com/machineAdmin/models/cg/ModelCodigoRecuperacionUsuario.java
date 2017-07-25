@@ -16,31 +16,29 @@
  */
 package com.machineAdmin.models.cg;
 
-import java.util.List;
-
 /**
- * modelo para asignar permisos generico
+ * modelo contenedor de usuario y codigo de recuperacion
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ModelSetPermission {
+public class ModelCodigoRecuperacionUsuario {
 
-    private String id;
-    private List<ModelAsignedPermission> permissionsAsigned;
+    private String code;
+    private String idUser;
 
-    public String getId() {
-        return id;
+    public String getCode() {
+        return code;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public List<ModelAsignedPermission> getPermissionsAsigned() {
-        return permissionsAsigned;
+    public String getIdUser() {
+        return idUser;
     }
 
-    public void setPermissionsAsigned(List<ModelAsignedPermission> permissionsAsigned) {
-        this.permissionsAsigned = permissionsAsigned;
+    public void setIdUser(String idUser) {
+        this.idUser = idUser;
     }
 
 }

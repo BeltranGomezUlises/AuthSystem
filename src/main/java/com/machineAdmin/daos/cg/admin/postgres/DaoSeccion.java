@@ -28,7 +28,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoSeccion extends DaoSQLFacade<Seccion>{
 
     public DaoSeccion() {
-        super(UtilsDB.getEMFactoryPostgres(), SeccionJpaController.class, Seccion.class, "secciones");
+        super(UtilsDB.getEMFactoryCG(), SeccionJpaController.class, Seccion.class, "secciones");
     }
 
     @Override

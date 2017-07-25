@@ -57,6 +57,7 @@ public class ServiceFacade<T> {
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
         } catch (Exception e) {
+            e.printStackTrace();
             setErrorResponse(response, e);
         }
         return response;

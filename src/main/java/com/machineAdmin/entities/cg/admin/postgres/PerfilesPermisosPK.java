@@ -55,7 +55,7 @@ public class PerfilesPermisosPK implements Serializable {
         this.permiso = permiso;
     }
 
-    public Object getPerfil() {
+    public UUID getPerfil() {
         return perfil;
     }
 

@@ -1,25 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-  <persistence-unit name="postgres-unit" transaction-type="RESOURCE_LOCAL">
-    <class>com.machineAdmin.entities.postgres.Rol</class>
-    <class>com.machineAdmin.entities.postgres.Permiso</class>
-    <class>com.machineAdmin.entities.postgres.Usuario</class>
-    <class>com.machineAdmin.entities.postgres.Region</class>
-    <class>com.machineAdmin.entities.postgres.Sucursal</class>
-    <class>com.machineAdmin.entities.cg.admin.postgres.BitacoraContras</class>
-    <class>com.machineAdmin.entities.cg.admin.postgres.Usuarios</class>
-    <class>com.machineAdmin.entities.cg.admin.postgres.Test</class>
-    <class>com.machineAdmin.entities.cg.admin.postgres.Usuario</class>
-    <properties>
-      <!-- jdbc -->
-      <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://192.168.10.8:5532/cg"/>
-      <property name="javax.persistence.jdbc.user" value="postgres"/>
-      <property name="javax.persistence.jdbc.password" value="postgres.90Y9B8yh$"/>            
-            
-      <!-- eclipse link -->
-      <property name="eclipselink.ddl-generation" value="create-tables"/>
-      <property name="eclipselink.ddl-generation.output-mode" value="database"/>
-    </properties>
-  </persistence-unit>
+    <persistence-unit name="cg" transaction-type="RESOURCE_LOCAL">
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <class>com.machineAdmin.entities.cg.admin.postgres.BitacoraContras</class>
+        <class>com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles</class>
+        <class>com.machineAdmin.entities.cg.admin.postgres.Menu</class>
+        <class>com.machineAdmin.entities.cg.admin.postgres.Modulo</class>
+        <class>com.machineAdmin.entities.cg.admin.postgres.Perfil</class>
+        <class>com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos</class>
+        <class>com.machineAdmin.entities.cg.admin.postgres.Permiso</class>
+        <class>com.machineAdmin.entities.cg.admin.postgres.Seccion</class>
+        <class>com.machineAdmin.entities.cg.admin.postgres.Usuario</class>
+        <class>com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil</class>
+        <class>com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos</class>
+    
+        <properties>
+            <!-- jdbc -->
+            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://192.168.10.8:5532/cg"/>
+            <property name="javax.persistence.jdbc.user" value="postgres"/>
+            <property name="javax.persistence.jdbc.password" value="postgres.90Y9B8yh$"/>
+            <!-- eclipse link -->
+            <property name="eclipselink.ddl-generation" value="create-tables"/>
+            <property name="eclipselink.ddl-generation.output-mode" value="database"/>
+        </properties>
+    
+    </persistence-unit>
+  
+  
+    <persistence-unit name="machineAdmin" transaction-type="RESOURCE_LOCAL">
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <class>com.machineAdmin.entities.postgres.Ejemplo</class>
+        <properties>
+            <!-- jdbc -->
+            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://192.168.10.8:5532/machineAdmin"/>
+            <property name="javax.persistence.jdbc.user" value="postgres"/>
+            <property name="javax.persistence.jdbc.password" value="postgres.90Y9B8yh$"/>
+            <!-- eclipse link -->
+            <property name="eclipselink.ddl-generation" value="create-tables"/>
+            <property name="eclipselink.ddl-generation.output-mode" value="database"/>
+        </properties>
+    </persistence-unit>
 </persistence>

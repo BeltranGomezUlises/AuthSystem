@@ -22,7 +22,7 @@ public class DaoMongoFacade<T extends EntityMongo>{
 
     public DaoMongoFacade(String collectionName, Class<T> clazz) {
         this.collectionName = collectionName;
-        this.coll = JacksonDBCollection.wrap(UtilsDB.getCollection(collectionName), clazz, String.class);
+        this.coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection(collectionName), clazz, String.class);
     }
 
     public JacksonDBCollection<T, String> getCollection() {
@@ -31,13 +31,9 @@ public class DaoMongoFacade<T extends EntityMongo>{
 
     public T persist(T entity) {
         return coll.insert(entity).getSavedObject();
-    }
+    }    
 
     public List<T> persistAll(List<T> entities) {
-        return coll.insert(entities).getSavedObjects();
-    }
-
-    public List<T> persistAll(T... entities) {
         return coll.insert(entities).getSavedObjects();
     }
 
@@ -48,14 +44,9 @@ public class DaoMongoFacade<T extends EntityMongo>{
 
     public void delete(Query query) {
         coll.remove(query);
-    }
+    }   
 
-    public void deleteAll(List<Object> ids) {
-        Query q = DBQuery.in("_id", ids);
-        coll.remove(q);
-    }
-
-    public void deleteAll(Object... ids) {       
+    public void deleteAll(List<Object> ids) {       
         Query q = DBQuery.in("_id", ids);
         coll.remove(q);
     }

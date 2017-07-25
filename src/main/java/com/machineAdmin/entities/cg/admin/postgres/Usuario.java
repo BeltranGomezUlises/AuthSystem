@@ -17,6 +17,7 @@
 package com.machineAdmin.entities.cg.admin.postgres;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.io.Serializable;
 import java.util.Date;
@@ -60,6 +61,7 @@ import org.eclipse.persistence.annotations.Converter;
     , @NamedQuery(name = "Usuario.findByBloqueado", query = "SELECT u FROM Usuario u WHERE u.bloqueado = :bloqueado")
     , @NamedQuery(name = "Usuario.findByBloqueadoHastaFecha", query = "SELECT u FROM Usuario u WHERE u.bloqueadoHastaFecha = :bloqueadoHastaFecha")})
 @Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;

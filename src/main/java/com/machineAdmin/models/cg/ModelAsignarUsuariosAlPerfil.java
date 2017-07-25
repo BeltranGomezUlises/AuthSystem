@@ -16,17 +16,16 @@
  */
 package com.machineAdmin.models.cg;
 
-import com.machineAdmin.models.cg.enums.PermissionType;
-import java.util.Objects;
+import java.util.List;
 
 /**
- * modelo contenedor de la accion y la profundidad del permiso
+ * modelo para asignar usuarios a un perfil
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ModelAsignedPermission {
+public class ModelAsignarUsuariosAlPerfil {
 
     private String id;
-    private PermissionType type;
+    private List<ModelUsuarioAsignado> usuarios;
 
     public String getId() {
         return id;
@@ -36,34 +35,12 @@ public class ModelAsignedPermission {
         this.id = id;
     }
 
-    public PermissionType getType() {
-        return type;
+    public List<ModelUsuarioAsignado> getUsuarios() {
+        return usuarios;
     }
 
-    public void setType(PermissionType type) {
-        this.type = type;
+    public void setUsuarios(List<ModelUsuarioAsignado> usuarios) {
+        this.usuarios = usuarios;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 97 * hash + Objects.hashCode(this.id);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ModelAsignedPermission other = (ModelAsignedPermission) obj;
-        return Objects.equals(this.id, other.id);
-    }
-    
 }

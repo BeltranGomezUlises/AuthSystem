@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.machineAdmin.services.cg.administracion;
+package com.machineAdmin.services.cg.generales;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
@@ -14,8 +14,8 @@ import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
-import com.machineAdmin.models.cg.ModelEncryptContent;
-import com.machineAdmin.models.cg.ModelRecoverCodeUser;
+import com.machineAdmin.models.cg.ModelContenidoCifrado;
+import com.machineAdmin.models.cg.ModelCodigoRecuperacionUsuario;
 import com.machineAdmin.models.cg.ModelUsuarioLogeado;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import static com.machineAdmin.services.cg.commons.ServiceFacade.*;
@@ -47,7 +47,7 @@ public class Accesos {
 
     @POST
     @Path("/login")
-    public Response login(ModelEncryptContent content) {
+    public Response login(ModelContenidoCifrado content) {
         Response res = new Response();
         ManagerUsuario managerUsuario = new ManagerUsuario();
         try {
@@ -103,7 +103,7 @@ public class Accesos {
         Response res = new Response();
         try {
             ManagerUsuario managerUsuario = new ManagerUsuario();
-            ModelRecoverCodeUser recoverCode = managerUsuario.enviarCodigo(identifier);
+            ModelCodigoRecuperacionUsuario recoverCode = managerUsuario.enviarCodigo(identifier);
             setOkResponse(res,
                     "El código para recuperar contraseña fué enviado a : " + identifier,
                     "token de verificacion de usuario, necesario para el siguiente servicio en la cabecera Authorization");
@@ -139,7 +139,7 @@ public class Accesos {
 
     @POST
     @Path("/resetPassword")
-    public Response resetPassword(@HeaderParam("Authorization") String tokenResetPassword, ModelEncryptContent content) {
+    public Response resetPassword(@HeaderParam("Authorization") String tokenResetPassword, ModelContenidoCifrado content) {
         Response res = new Response();
         try {
             UtilsJWT.validateSessionToken(tokenResetPassword);

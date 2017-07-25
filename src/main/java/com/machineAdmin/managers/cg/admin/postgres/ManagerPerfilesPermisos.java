@@ -17,8 +17,17 @@
 package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoPerfilesPermisos;
+import com.machineAdmin.daos.cg.exceptions.ConstraintException;
+import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos;
+import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisosPK;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import com.machineAdmin.models.cg.ModelAsignarPermisosAlPerfil;
+import com.machineAdmin.models.cg.ModelPermisoAsignado;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import static java.util.stream.Collectors.toList;
 
 /**
  *
@@ -29,5 +38,33 @@ public class ManagerPerfilesPermisos extends ManagerSQLFacade<PerfilesPermisos>{
     public ManagerPerfilesPermisos() {
         super(new DaoPerfilesPermisos());
     }
+    
+    public void asignarPermisosAlPerfil(ModelAsignarPermisosAlPerfil model) throws SQLPersistenceException, ConstraintException, Exception{               
+        ManagerPerfil managerPerfil = new ManagerPerfil();
+        ManagerPermiso managerPermiso = new ManagerPermiso();
+              
+        //borrar las relaciones actuales                
+        List<Object> permisosDelPerfilPk = this.stream()
+                .filter( p -> p.getPerfilesPermisosPK().getPerfil().equals(UUID.fromString(model.getPerfilId())))
+                .map( p -> p.getPerfilesPermisosPK())
+                .collect(toList());
+        
+        this.deleteAll(permisosDelPerfilPk);
+        
+        List<PerfilesPermisos> perfilesPermisos = new ArrayList<>();
+        PerfilesPermisos perfilesPermisosRelacion;
+        //asignar las nuevas relaciones        
+        for (ModelPermisoAsignado permiso : model.getPermisos()) {
+            perfilesPermisosRelacion = new PerfilesPermisos();                                    
+            perfilesPermisosRelacion.setPerfil1(managerPerfil.findOne(UUID.fromString(model.getPerfilId())));
+            perfilesPermisosRelacion.setPermiso1(managerPermiso.findOne(permiso.getPermisoId()));
+            perfilesPermisosRelacion.setProfundidad(permiso.getProfundidad());                       
+            perfilesPermisos.add(perfilesPermisosRelacion);
+        }                                                   
+        this.persistAll(perfilesPermisos);
+        
+    }
+        
+    
     
 }

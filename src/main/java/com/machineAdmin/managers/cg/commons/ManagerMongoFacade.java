@@ -17,7 +17,7 @@ import org.mongojack.DBQuery.Query;
  */
 public class ManagerMongoFacade<T extends EntityMongo> implements ManagerFacade<T> {
 
-    protected DaoMongoFacade dao;
+    protected DaoMongoFacade<T> dao;
 
     public ManagerMongoFacade(DaoMongoFacade<T> dao){
         this.dao = dao;
@@ -27,15 +27,10 @@ public class ManagerMongoFacade<T extends EntityMongo> implements ManagerFacade<
     public T persist(T entity) throws Exception {
         
         return (T) dao.persist(entity);
-    }
+    }    
 
     @Override
     public List<T> persistAll(List<T> entities) throws Exception {
-        return dao.persistAll(entities);
-    }
-
-    @Override
-    public List<T> persistAll(T... entities) throws Exception {
         return dao.persistAll(entities);
     }
 
@@ -46,15 +41,10 @@ public class ManagerMongoFacade<T extends EntityMongo> implements ManagerFacade<
 
     public void delete(Query q) {
         dao.delete(q);
-    }
+    }    
 
     @Override
     public void deleteAll(List<Object> ids) throws Exception {
-        dao.deleteAll(ids);
-    }
-
-    @Override
-    public void deleteAll(Object... ids) throws Exception {
         dao.deleteAll(ids);
     }
 
@@ -130,6 +120,10 @@ public class ManagerMongoFacade<T extends EntityMongo> implements ManagerFacade<
     @Override
     public T findFirst() {
        return (T) dao.findFirst();
+    }
+    
+    public DaoMongoFacade<T> getDao(){
+        return dao;
     }
 
 }

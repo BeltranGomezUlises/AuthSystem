@@ -14,20 +14,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.managers;
+package com.machineAdmin.services.cg.generales;
 
-import com.machineAdmin.daos.DaoMaquina;
-import com.machineAdmin.entities.mongo.Maquina;
-import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
+import com.machineAdmin.managers.cg.admin.postgres.ManagerSeccion;
+import com.machineAdmin.models.cg.responsesCG.Response;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerMaquina extends ManagerMongoFacade<Maquina> {
-
-    public ManagerMaquina() {
-        super(new DaoMaquina());
+@Path("/permisos")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class Permisos {
+    
+    @GET
+    @Path("/disponibles")
+    public Response getPermisosDisponibles(){
+        Response res = new Response();        
+        try {
+            ManagerSeccion managerSeccion = new ManagerSeccion();
+            res.setData(managerSeccion.findAll());            
+        } catch (Exception e) {
+        }                                
+        return res;        
     }
-
 }

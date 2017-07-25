@@ -34,6 +34,7 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.Objects;
 
 /**
@@ -47,6 +48,7 @@ import java.util.Objects;
     @NamedQuery(name = "Permiso.findAll", query = "SELECT p FROM Permiso p")
     , @NamedQuery(name = "Permiso.findById", query = "SELECT p FROM Permiso p WHERE p.id = :id")
     , @NamedQuery(name = "Permiso.findByNombre", query = "SELECT p FROM Permiso p WHERE p.nombre = :nombre")})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Permiso implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -110,6 +112,7 @@ public class Permiso implements Serializable {
         this.usuariosPermisosList = usuariosPermisosList;
     }
 
+    @JsonIgnore
     public Menu getMenu() {
         return menu;
     }

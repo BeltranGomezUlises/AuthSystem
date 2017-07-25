@@ -16,31 +16,29 @@
  */
 package com.machineAdmin.models.cg;
 
-import java.util.List;
-
 /**
- * modelo para asignar usuarios a un perfil
+ * modelo contenedor de perfil y herencia de permisos
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ModelSetUsuariosToProfile {
+public class ModelPerfilYHereda {
 
-    private String id;
-    private List<ModelAsignedUser> usuarios;
+    private String perfilId;
+    private boolean hereda;
 
-    public String getId() {
-        return id;
+    public String getPerfilId() {
+        return perfilId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setPerfilId(String profileId) {
+        this.perfilId = profileId;
     }
 
-    public List<ModelAsignedUser> getUsuarios() {
-        return usuarios;
+    public boolean isHereda() {
+        return hereda;
     }
 
-    public void setUsuarios(List<ModelAsignedUser> usuarios) {
-        this.usuarios = usuarios;
+    public void setHereda(boolean heritage) {
+        this.hereda = heritage;
     }
 
 }

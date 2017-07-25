@@ -17,28 +17,28 @@
 package com.machineAdmin.models.cg;
 
 /**
- * modelo de reseteo de contraseña
+ * modelo contenedor de usuario para asignar a perfil
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ModelResetPassword {
-    
-    private String pass;
-    private String jwt;
+public class ModelUsuarioAsignado {
 
-    public String getPass() {
-        return pass;
+    private String userId;
+    private boolean heritage;
+
+    public String getUserId() {
+        return userId;
     }
 
-    public void setPass(String pass) {
-        this.pass = pass;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getJwt() {
-        return jwt;
+    public boolean isHeritage() {
+        return heritage;
     }
 
-    public void setJwt(String jwt) {
-        this.jwt = jwt;
-    }    
-    
+    public void setHeritage(boolean heritage) {
+        this.heritage = heritage;
+    }
+
 }

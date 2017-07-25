@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 ulises
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,28 +17,22 @@
 package com.machineAdmin.models.cg;
 
 /**
- * modelo contenedor de usuario y codigo de recuperacion
+ * modelo de comunicacion de contenido cirado (login y reset password)
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ModelRecoverCodeUser {
+public class ModelContenidoCifrado {
 
-    private String code;
-    private String idUser;
+    private String content;
 
-    public String getCode() {
-        return code;
+    public ModelContenidoCifrado() {
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public String getContent() {
+        return content;
     }
 
-    public String getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(String idUser) {
-        this.idUser = idUser;
+    public void setContent(String content) {
+        this.content = content;
     }
 
 }

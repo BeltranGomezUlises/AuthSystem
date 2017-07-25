@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.services.backoffice.maquinitas;
+package com.machineAdmin.services.backoffice.ejemplo;
 
-import com.machineAdmin.entities.mongo.Maquina;
-import com.machineAdmin.managers.mongo.ManagerMaquina;
+import com.machineAdmin.entities.postgres.Ejemplo;
+import com.machineAdmin.managers.postgres.ManagerEjemplo;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
 import javax.ws.rs.Path;
@@ -26,36 +26,37 @@ import javax.ws.rs.Path;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-@Path("/maquinitas")
-public class Maquinitas extends ServiceFacade<Maquina>{
+@Path("/ejemplos")
+public class Ejemplos extends ServiceFacade<Ejemplo>{
     
-    public Maquinitas() {
-        super(new ManagerMaquina());
+    public Ejemplos() {
+        super(new ManagerEjemplo());
     }
 
     @Override
-    public Response eliminar(String token, Maquina t) {
-        return super.eliminar(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response eliminar(String token, Ejemplo t) {
+        return super.eliminar(token, t);
     }
 
     @Override
-    public Response modificar(String token, Maquina t) {
-        return super.modificar(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response modificar(String token, Ejemplo t) {
+        return super.modificar(token, t);
     }
 
     @Override
-    public Response alta(String token, Maquina t) {
-        return super.alta(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response alta(String token, Ejemplo t) {
+        return super.alta(token, t);
     }
 
     @Override
     public Response obtener(String token, String id) {
-        return super.obtener(token, id); //To change body of generated methods, choose Tools | Templates.
+        return super.obtener(token, id);
     }
 
     @Override
     public Response listar(String token) {
-        return super.listar(token); //To change body of generated methods, choose Tools | Templates.
+        return super.listar(token);
     }
-           
+    
+    
 }

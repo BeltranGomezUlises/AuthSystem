@@ -26,9 +26,8 @@ import static java.util.stream.Collectors.toList;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class UtilsPermissions {
-    
-   
-    public static List<Permiso> getAvailablePermissions(){
+       
+    public static List<Permiso> getExistingPermissions(){
         ManagerPermiso managerPermiso = new ManagerPermiso();
         return managerPermiso.stream().collect(toList());                
     }

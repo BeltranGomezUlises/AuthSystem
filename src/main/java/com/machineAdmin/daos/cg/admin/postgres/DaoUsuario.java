@@ -29,7 +29,7 @@ import java.util.UUID;
 public class DaoUsuario extends DaoSQLFacade<Usuario>{
 
     public DaoUsuario() {
-        super(UtilsDB.getEMFactoryPostgres(), UsuarioJpaController.class, Usuario.class, "usuarios");
+        super(UtilsDB.getEMFactoryCG(), UsuarioJpaController.class, Usuario.class, "usuarios");
     }
 
     @Override

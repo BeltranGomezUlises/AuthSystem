@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 ulises
+ * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,23 +16,31 @@
  */
 package com.machineAdmin.models.cg;
 
+import java.util.List;
+
 /**
- * modelo de comunicacion de contenido cirado (login y reset password)
+ * modelo para asignar permisos generico
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ModelEncryptContent {
+public class ModelAsignarPermisos {
 
-    private String content;
+    private String id;
+    private List<ModelPermisoAsignado> permissionsAsigned;
 
-    public ModelEncryptContent() {
+    public String getId() {
+        return id;
     }
 
-    public String getContent() {
-        return content;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public List<ModelPermisoAsignado> getPermissionsAsigned() {
+        return permissionsAsigned;
+    }
+
+    public void setPermissionsAsigned(List<ModelPermisoAsignado> permissionsAsigned) {
+        this.permissionsAsigned = permissionsAsigned;
     }
 
 }

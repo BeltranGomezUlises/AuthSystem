@@ -29,7 +29,7 @@ import java.util.UUID;
 public class DaoPerfil extends DaoSQLFacade<Perfil>{
 
     public DaoPerfil() {
-        super(UtilsDB.getEMFactoryPostgres(), PerfilJpaController.class, Perfil.class, "perfiles");
+        super(UtilsDB.getEMFactoryCG(), PerfilJpaController.class, Perfil.class, "perfiles");
     }
 
     @Override

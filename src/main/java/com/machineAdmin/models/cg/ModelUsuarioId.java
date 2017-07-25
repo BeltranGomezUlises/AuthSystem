@@ -16,29 +16,23 @@
  */
 package com.machineAdmin.models.cg;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
- * modelo contenedor de perfil y herencia de permisos
+ * modelo para comunicar el id de un usuario
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ModelProfileAndHeritage {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ModelUsuarioId {
 
-    private String perfilId;
-    private boolean hereda;
+    private String id;
 
-    public String getPerfilId() {
-        return perfilId;
+    public String getId() {
+        return id;
     }
 
-    public void setPerfilId(String profileId) {
-        this.perfilId = profileId;
-    }
-
-    public boolean isHereda() {
-        return hereda;
-    }
-
-    public void setHereda(boolean heritage) {
-        this.hereda = heritage;
+    public void setId(String id) {
+        this.id = id;
     }
 
 }

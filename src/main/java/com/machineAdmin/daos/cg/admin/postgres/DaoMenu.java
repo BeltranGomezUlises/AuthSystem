@@ -28,7 +28,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoMenu extends DaoSQLFacade<Menu>{
 
     public DaoMenu() {
-        super(UtilsDB.getEMFactoryPostgres(), MenuJpaController.class, Menu.class, "menus");
+        super(UtilsDB.getEMFactoryCG(), MenuJpaController.class, Menu.class, "menus");
     }
 
     @Override

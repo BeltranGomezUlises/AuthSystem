@@ -23,7 +23,7 @@ import java.util.Date;
  * modelo de mensaje para proveedor de SMS
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ModelSMSRescuePass {
+public class ModelSMSRecuperacionContra {
 
     private String mensaje;
     private String tipo;
@@ -31,7 +31,7 @@ public class ModelSMSRescuePass {
     private String envia;
     private String usuarioId;
 
-    public ModelSMSRescuePass() {
+    public ModelSMSRecuperacionContra() {
         this.tipo = "SMS";
     }
 
@@ -75,7 +75,7 @@ public class ModelSMSRescuePass {
         this.usuarioId = usuarioId;
     }
 
-    public static class ModelSMSRescuePassResponse extends ModelSMSRescuePass {
+    public static class ModelSMSRescuePassResponse extends ModelSMSRecuperacionContra {
 
         @JsonProperty("__v")
         private int v;

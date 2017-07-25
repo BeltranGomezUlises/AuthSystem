@@ -17,8 +17,8 @@
 package com.machineAdmin.entities.cg.admin.mongo;
 
 import com.machineAdmin.entities.cg.commons.EntityMongo;
-import com.machineAdmin.models.cg.ModelAsignedPermission;
-import com.machineAdmin.models.cg.ModelAsignedUser;
+import com.machineAdmin.models.cg.ModelPermisoAsignado;
+import com.machineAdmin.models.cg.ModelUsuarioAsignado;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +30,8 @@ import java.util.List;
 public class Profile extends EntityMongo {
 
     private String name;
-    private List<ModelAsignedUser> users;
-    private List<ModelAsignedPermission> permisos;
+    private List<ModelUsuarioAsignado> users;
+    private List<ModelPermisoAsignado> permisos;
 
     public Profile() {
         users = new ArrayList<>();
@@ -42,11 +42,11 @@ public class Profile extends EntityMongo {
         this.name = name;
     }
 
-    public List<ModelAsignedPermission> getPermisos() {
+    public List<ModelPermisoAsignado> getPermisos() {
         return permisos;
     }
 
-    public void setPermisos(List<ModelAsignedPermission> permisos) {
+    public void setPermisos(List<ModelPermisoAsignado> permisos) {
         this.permisos = permisos;
     }
 
@@ -58,11 +58,11 @@ public class Profile extends EntityMongo {
         this.name = name;
     }
 
-    public List<ModelAsignedUser> getUsers() {
+    public List<ModelUsuarioAsignado> getUsers() {
         return users;
     }
 
-    public void setUsers(List<ModelAsignedUser> users) {
+    public void setUsers(List<ModelUsuarioAsignado> users) {
         this.users = users;
     }
 

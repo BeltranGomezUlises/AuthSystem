@@ -18,12 +18,11 @@ package com.machineAdmin.utils;
 
 import com.machineAdmin.daos.cg.admin.mongo.DaoConfig;
 import com.machineAdmin.daos.cg.admin.mongo.DaoConfigMail;
-import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
-import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.PerfilesPermisosJpaController;
 import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
+import com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles;
 import com.machineAdmin.entities.cg.admin.postgres.Menu;
 import com.machineAdmin.entities.cg.admin.postgres.Modulo;
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
@@ -32,6 +31,7 @@ import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.entities.cg.admin.postgres.Seccion;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.entities.cg.commons.Profundidad;
+import com.machineAdmin.managers.cg.admin.postgres.ManagerGrupoPerfil;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerMenu;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerModulo;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerPerfil;
@@ -51,8 +51,6 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import org.jinq.jpa.JinqJPAStreamProvider;
-import org.jinq.orm.stream.JinqStream;
 import org.reflections.Reflections;
 
 /**
@@ -96,15 +94,28 @@ public class InitServletContext implements ServletContextListener {
             perfilMaster = new Perfil();
             perfilMaster.setNombre("Master");
             perfilMaster.setDescripcion("Perfil de control total del sistema");
-
             managerPerfil.persist(perfilMaster);
+        }
+
+        ManagerGrupoPerfil managerGrupoPerfil = new ManagerGrupoPerfil();
+
+        GrupoPerfiles gp = managerGrupoPerfil.findFirst();
+        if (gp != null) {
+            gp = new GrupoPerfiles();
+            gp.setNombre("Administradores del sistema");
+            gp.setDescripcoin("Este grupo de roles puede administrar las configuraciones del sistemas, ademas de poder realizar las operaciones de negocio de toda la aplicacion");
+
+            List<Perfil> perfilesDelRol = new ArrayList<>();
+            perfilesDelRol.add(perfilMaster);
+            gp.setPerfilList(perfilesDelRol);
+            managerGrupoPerfil.persist(gp);
         }
 
         //crear relacion de perfil con permisos disponibles        
         ManagerPerfilesPermisos managerPerfilesPermisos = new ManagerPerfilesPermisos();
 
         //asignar permisos al perfil
-        for (Permiso permiso : UtilsPermissions.getAvailablePermissions()) {
+        for (Permiso permiso : UtilsPermissions.getExistingPermissions()) {
             PerfilesPermisos perfilPermisoRelacion = new PerfilesPermisos(perfilMaster.getId(), permiso.getId());
 
             if (!managerPerfilesPermisos.stream().anyMatch(pp -> pp.equals(perfilPermisoRelacion))) { // si no existe la relacion
@@ -241,7 +252,7 @@ public class InitServletContext implements ServletContextListener {
                         .collect(toList());
                 //<editor-fold defaultstate="collapsed" desc="MODULOS">
                 for (String nombreModulo : modulosNombres) {
-                    if (nombreModulo.equals("commons")) { //omitir paquete commons
+                    if (nombreModulo.equals("commons") || nombreModulo.equals("generales")) { //omitir paquete commons
                         continue;
                     }
                     try {
@@ -265,7 +276,7 @@ public class InitServletContext implements ServletContextListener {
                                 Menu menu = managerMenu.findOne(packageClassName);
                                 if (menu == null) {
                                     menu = new Menu(packageClassName);
-                                    menu.setNombre(menusName);
+                                    menu.setNombre(this.generatePublicMenuName(menusName));
                                     menu.setModulo(module);
                                     managerMenu.persist(menu);
                                 }
@@ -300,7 +311,7 @@ public class InitServletContext implements ServletContextListener {
                                             }
 
                                         } catch (ConstraintException | SQLPersistenceException ex) {
-                                            Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, e);
+                                            Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
                                         }
                                     }
                                 } catch (ClassNotFoundException ex) {
@@ -329,6 +340,18 @@ public class InitServletContext implements ServletContextListener {
         Set<Class<? extends ServiceFacade>> subtypes = reflections.getSubTypesOf(ServiceFacade.class);
 
         return subtypes.stream().map(c -> c.getSimpleName()).collect(toList());
+    }
+
+    private String generatePublicMenuName(String menuName) {
+        String res = "" + menuName.charAt(0);
+        for (int i = 1; i < menuName.length(); i++) {
+            if (Character.isUpperCase(menuName.charAt(i))) {
+                res += " " + menuName.charAt(i);
+            } else {
+                res += menuName.charAt(i);
+            }
+        }
+        return res;
     }
 
 }

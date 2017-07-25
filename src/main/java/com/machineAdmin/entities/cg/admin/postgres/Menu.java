@@ -33,6 +33,7 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  *
@@ -45,6 +46,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
     @NamedQuery(name = "Menu.findAll", query = "SELECT m FROM Menu m")
     , @NamedQuery(name = "Menu.findById", query = "SELECT m FROM Menu m WHERE m.id = :id")
     , @NamedQuery(name = "Menu.findByNombre", query = "SELECT m FROM Menu m WHERE m.nombre = :nombre")})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Menu implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -86,8 +88,7 @@ public class Menu implements Serializable {
         this.nombre = nombre;
     }
 
-    @XmlTransient
-    @JsonIgnore
+    @XmlTransient    
     public List<Permiso> getPermisoList() {
         return permisoList;
     }
@@ -96,6 +97,7 @@ public class Menu implements Serializable {
         this.permisoList = permisoList;
     }
 
+    @JsonIgnore
     public Modulo getModulo() {
         return modulo;
     }
