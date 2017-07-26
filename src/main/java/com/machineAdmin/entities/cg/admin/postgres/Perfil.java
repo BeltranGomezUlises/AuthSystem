@@ -30,8 +30,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.util.Objects;
@@ -45,7 +45,7 @@ import org.eclipse.persistence.annotations.Converter;
  */
 @Entity
 @Table(name = "perfil")
-@XmlRootElement
+
 @NamedQueries({
     @NamedQuery(name = "Perfil.findAll", query = "SELECT p FROM Perfil p")
     , @NamedQuery(name = "Perfil.findByNombre", query = "SELECT p FROM Perfil p WHERE p.nombre = :nombre")
@@ -105,7 +105,7 @@ public class Perfil implements Serializable {
         this.descripcion = descripcion;
     }
 
-    @XmlTransient
+    
     @JsonIgnore
     public List<GrupoPerfiles> getGrupoPerfilesList() {
         return grupoPerfilesList;
@@ -115,7 +115,7 @@ public class Perfil implements Serializable {
         this.grupoPerfilesList = grupoPerfilesList;
     }
 
-    @XmlTransient
+    
     @JsonIgnore
     public List<PerfilesPermisos> getPerfilesPermisosList() {
         return perfilesPermisosList;
@@ -125,7 +125,7 @@ public class Perfil implements Serializable {
         this.perfilesPermisosList = perfilesPermisosList;
     }
 
-    @XmlTransient
+    
     @JsonIgnore
     public List<UsuariosPerfil> getUsuariosPerfilList() {
         return usuariosPerfilList;

@@ -30,8 +30,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.machineAdmin.entities.cg.commons.UUIDConverter;
@@ -46,7 +44,6 @@ import org.eclipse.persistence.annotations.Converter;
  */
 @Entity
 @Table(name = "grupo_perfiles")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "GrupoPerfiles.findAll", query = "SELECT g FROM GrupoPerfiles g")
     , @NamedQuery(name = "GrupoPerfiles.findByNombre", query = "SELECT g FROM GrupoPerfiles g WHERE g.nombre = :nombre")
@@ -105,8 +102,7 @@ public class GrupoPerfiles implements Serializable {
     public void setDescripcoin(String descripcoin) {
         this.descripcoin = descripcoin;
     }
-
-    @XmlTransient
+    
     @JsonIgnore
     public List<Perfil> getPerfilList() {
         return perfilList;

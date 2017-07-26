@@ -18,9 +18,22 @@ package com.machineAdmin.services.cg.administracion;
 
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
+import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuariosPerfil;
+import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuariosPermisos;
+import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
+import com.machineAdmin.models.cg.ModelAsignarPerfilesAlUsuario;
+import com.machineAdmin.models.cg.ModelAsignarPermisos;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
+import static com.machineAdmin.services.cg.commons.ServiceFacade.setErrorResponse;
+import static com.machineAdmin.services.cg.commons.ServiceFacade.setInvalidTokenResponse;
+import com.machineAdmin.utils.UtilsJWT;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 /**
  *
@@ -57,5 +70,70 @@ public class Usuarios extends ServiceFacade<Usuario> {
     public Response listar(String token) {
         return super.listar(token);
     }
-   
+
+    /**
+     * asigna los permisos al usuario reemplazando los que tenia por los nuevos
+     * proporsionados
+     *
+     * @param token token de sesion
+     * @param modelo modelo generico para relacionar los permisos al usuario
+     * @return modelo response generico
+     */
+    @POST
+    @Path("/asignarPermisos")
+    public Response asignarPermisos(@HeaderParam("Authorization") String token, ModelAsignarPermisos modelo) {
+        Response res = new Response();
+        try {
+            UtilsJWT.validateSessionToken(token);
+            ManagerUsuariosPermisos managerUsuariosPermisos = new ManagerUsuariosPermisos();
+            managerUsuariosPermisos.asignarPermisos(modelo);
+            setOkResponse(res, "Los permisos fuerons asignados al usuario con éxito", "se asignaron los permisos al usuario");
+        } catch (TokenExpiradoException | TokenInvalidoException e) {
+            setInvalidTokenResponse(res);
+        } catch (Exception ex) {
+            setErrorResponse(res, ex);
+        }
+        return res;
+    }
+
+    /**
+     * asigna los perfiles al usuario reemplazando los que tenia por los nuevos
+     * proporsionados
+     *
+     * @param token token de sesion
+     * @param modelo modelo generico para relacionar los permisos al usuario
+     * @return modelo response generico
+     */
+    @POST
+    @Path("/asignarPerfiles")
+    public Response asignarPerfiles(@HeaderParam("Authorization") String token, ModelAsignarPerfilesAlUsuario modelo) {
+        Response res = new Response();
+        try {
+            UtilsJWT.validateSessionToken(token);
+            ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();
+            managerUsuariosPerfil.asignarPerfilesAlUsuario(modelo);
+            setOkResponse(res, "Los permisos fuerons asignados al usuario con éxito", "se asignaron los permisos al usuario");
+        } catch (TokenExpiradoException | TokenInvalidoException e) {
+            setInvalidTokenResponse(res);
+        } catch (Exception ex) {
+            setErrorResponse(res, ex);
+        }
+        return res;
+    }
+
+    @GET
+    @Path("/permisos/{userId}")
+    public Response obtenerPermisosUsuario(@HeaderParam("Authorization") String token, @PathParam("userId") String userId) {
+        Response res = new Response();
+        try {
+            UtilsJWT.validateSessionToken(token);
+            
+            
+            
+        } catch (TokenExpiradoException | TokenInvalidoException e) {
+            
+        }
+        return res;
+    }
+
 }

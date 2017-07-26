@@ -18,7 +18,14 @@ package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPermisos;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos;
+import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisosPK;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import com.machineAdmin.models.cg.ModelAsignarPermisos;
+import com.machineAdmin.models.cg.ModelPermisoAsignado;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import static java.util.stream.Collectors.toList;
 
 /**
  *
@@ -29,5 +36,24 @@ public class ManagerUsuariosPermisos extends ManagerSQLFacade<UsuariosPermisos>{
     public ManagerUsuariosPermisos() {
         super(new DaoUsuariosPermisos());
     }
+    
+    public void asignarPermisos(ModelAsignarPermisos model) throws Exception{
+        //aliminar los actuales de ese usuario
+        List<Object> usuariosPermisosPk = this.stream()
+                .filter( up -> up.getUsuariosPermisosPK().getUsuario().equals(UUID.fromString(model.getId())))
+                .map( up -> up.getUsuariosPermisosPK())
+                .collect(toList());
+        
+        this.deleteAll(usuariosPermisosPk);
+        //insertar los nuevos
+        List<UsuariosPermisos> usuariosPermisos = new ArrayList<>();
+        for (ModelPermisoAsignado permiso : model.getPermisos()) {
+            UsuariosPermisos usuariosPermisosRelacion = new UsuariosPermisos(UUID.fromString(model.getId()), permiso.getId());
+            usuariosPermisosRelacion.setProfundidad(permiso.getProfundidad());            
+            usuariosPermisos.add(usuariosPermisosRelacion);
+        }
+        this.persistAll(usuariosPermisos);                
+    }
+    
     
 }

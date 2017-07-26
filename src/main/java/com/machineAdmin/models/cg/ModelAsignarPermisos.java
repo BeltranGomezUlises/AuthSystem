@@ -20,12 +20,13 @@ import java.util.List;
 
 /**
  * modelo para asignar permisos generico
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ModelAsignarPermisos {
 
     private String id;
-    private List<ModelPermisoAsignado> permissionsAsigned;
+    private List<ModelPermisoAsignado> permisos;
 
     public String getId() {
         return id;
@@ -35,12 +36,12 @@ public class ModelAsignarPermisos {
         this.id = id;
     }
 
-    public List<ModelPermisoAsignado> getPermissionsAsigned() {
-        return permissionsAsigned;
+    public List<ModelPermisoAsignado> getPermisos() {
+        return permisos;
     }
 
-    public void setPermissionsAsigned(List<ModelPermisoAsignado> permissionsAsigned) {
-        this.permissionsAsigned = permissionsAsigned;
+    public void setPermisos(List<ModelPermisoAsignado> permisos) {
+        this.permisos = permisos;
     }
 
 }

@@ -18,11 +18,9 @@ package com.machineAdmin.services.cg.administracion;
 
 import com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerGrupoPerfil;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerPerfilesPermisos;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlGrupoPerfil;
-import com.machineAdmin.models.cg.ModelAsignarPermisosAlPerfil;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
 import static com.machineAdmin.services.cg.commons.ServiceFacade.setErrorResponse;
@@ -69,17 +67,14 @@ public class GruposPerfiles extends ServiceFacade<GrupoPerfiles>{
     }
  
  
-    @Path("asignarPerfiles")
+    @Path("/asignarPerfiles")
     @POST
     public Response asignarPerfiles(@HeaderParam("Authorization") String token, ModelAsignarPerfilesAlGrupoPerfil modelo){
         Response res = new Response();       
         try {
             UtilsJWT.validateSessionToken(token);
-            ManagerGrupoPerfil grupoPerfil = new ManagerGrupoPerfil();
-            
-            
-//            ManagerPerfilesPermisos managerPerfilesPermisos = new ManagerPerfilesPermisos();
-//            managerPerfilesPermisos.asignarPermisosAlPerfil(modelo);
+            ManagerGrupoPerfil managerGrupoPerfil = new ManagerGrupoPerfil();                        
+            managerGrupoPerfil.asignarPerfiles(modelo);            
             res.setMessage("Los Permisos fuéron asignados al perfil con éxito");
             res.setDevMessage("Permisos asignado al perfil");
         }catch (TokenExpiradoException | TokenInvalidoException ex) {

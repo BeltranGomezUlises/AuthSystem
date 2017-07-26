@@ -30,8 +30,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -41,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  */
 @Entity
 @Table(name = "menu")
-@XmlRootElement
+
 @NamedQueries({
     @NamedQuery(name = "Menu.findAll", query = "SELECT m FROM Menu m")
     , @NamedQuery(name = "Menu.findById", query = "SELECT m FROM Menu m WHERE m.id = :id")
@@ -88,7 +88,7 @@ public class Menu implements Serializable {
         this.nombre = nombre;
     }
 
-    @XmlTransient    
+        
     public List<Permiso> getPermisoList() {
         return permisoList;
     }

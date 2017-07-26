@@ -23,7 +23,6 @@ import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.Converter;
@@ -43,7 +42,7 @@ public class UsuariosPerfilPK implements Serializable {
     private UUID usuario;
     @Basic(optional = false)
     @NotNull
-    @Lob
+    @Convert("uuidConverter")
     @Column(name = "perfil")
     private UUID perfil;
 

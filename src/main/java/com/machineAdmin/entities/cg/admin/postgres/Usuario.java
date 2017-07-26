@@ -37,8 +37,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.Converter;
 
@@ -48,7 +48,7 @@ import org.eclipse.persistence.annotations.Converter;
  */
 @Entity
 @Table(name = "usuario")
-@XmlRootElement
+
 @NamedQueries({
     @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u")
     , @NamedQuery(name = "Usuario.findByNombre", query = "SELECT u FROM Usuario u WHERE u.nombre = :nombre")
@@ -193,7 +193,7 @@ public class Usuario implements Serializable {
         this.id = id;
     }
 
-    @XmlTransient
+    
     @JsonIgnore
     public List<BitacoraContras> getBitacoraContrasList() {
         return bitacoraContrasList;
@@ -203,7 +203,7 @@ public class Usuario implements Serializable {
         this.bitacoraContrasList = bitacoraContrasList;
     }
 
-    @XmlTransient
+    
     @JsonIgnore
     public List<UsuariosPermisos> getUsuariosPermisosList() {
         return usuariosPermisosList;
@@ -213,7 +213,7 @@ public class Usuario implements Serializable {
         this.usuariosPermisosList = usuariosPermisosList;
     }
 
-    @XmlTransient
+    
     @JsonIgnore
     public List<UsuariosPerfil> getUsuariosPerfilList() {
         return usuariosPerfilList;

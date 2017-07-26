@@ -1,5 +1,7 @@
 package com.machineAdmin.services.cg.commons;
 
+import com.machineAdmin.daos.cg.exceptions.ConstraintException;
+import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.managers.cg.commons.ManagerFacade;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
@@ -25,13 +27,20 @@ import javax.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class ServiceFacade<T> {
-    
+
     ManagerFacade<T> manager;
-    
+
     public ServiceFacade(ManagerFacade<T> manager) {
         this.manager = manager;
     }
-    
+
+    /**
+     * proporciona el listado de las entidades de esta clase servicio
+     *
+     * @param token token de sesion
+     * @return reponse, con su campo data asignado con una lista de las
+     * entidades de esta clase servicio
+     */
     @GET
     public Response listar(@HeaderParam("Authorization") String token) {
         Response response = new Response();
@@ -45,7 +54,15 @@ public class ServiceFacade<T> {
         }
         return response;
     }
-    
+
+    /**
+     * obtiene una entidad en particular por su identificador de esta clase
+     * servicio
+     *
+     * @param token token de sesion
+     * @param id identificador de la entidad buscada
+     * @return response, con su campo data asignado con la entidad buscada
+     */
     @GET
     @Path("/{id}")
     public Response obtener(@HeaderParam("Authorization") String token, @PathParam("id") String id) {
@@ -57,12 +74,18 @@ public class ServiceFacade<T> {
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
         } catch (Exception e) {
-            e.printStackTrace();
             setErrorResponse(response, e);
         }
         return response;
     }
-    
+
+    /**
+     * persiste la entidad de esta clase servicio en base de datos
+     *
+     * @param token token de sesion
+     * @param t entidad a persistir en base de datos
+     * @return response con el estatus y el mensaje
+     */
     @POST
     public Response alta(@HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
@@ -76,7 +99,15 @@ public class ServiceFacade<T> {
         }
         return response;
     }
-    
+
+    /**
+     * actualiza la entidad proporsionada a su equivalente en base de datos,
+     * tomando como referencia su identificador
+     *
+     * @param token token de sesion
+     * @param t entidad con los datos actualizados
+     * @return Response, en data asignado con la entidad que se actualizó
+     */
     @PUT
     public Response modificar(@HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
@@ -92,7 +123,14 @@ public class ServiceFacade<T> {
         }
         return response;
     }
-    
+
+    /**
+     * eliminar la entidad proporsionada
+     *
+     * @param token token de sesion
+     * @param t entidad proporsionada
+     * @return
+     */
     @DELETE
     public Response eliminar(@HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
@@ -108,7 +146,13 @@ public class ServiceFacade<T> {
         }
         return response;
     }
-    
+
+    /**
+     * asigna al modelo response, la pila de causas del error de la exception e
+     *
+     * @param response response a asignar la pila de causas
+     * @param e la exception lanzada
+     */
     public static final void setCauseMessage(Response response, Throwable e) {
         String anterior = response.getMeta().getDevMessage();
         if (anterior == null) {
@@ -120,55 +164,119 @@ public class ServiceFacade<T> {
             setCauseMessage(response, e.getCause());
         }
     }
-    
+
+    /**
+     * asigna a response el estatus y el mensaje de un token invalido, se
+     * utiliza cuando se lanzá una exception de tipo TokenInvalidoException
+     *
+     * @param response res
+     */
     public static final void setInvalidTokenResponse(Response response) {
         response.setStatus(Status.WARNING);
         response.setDevMessage("Token inválido");
     }
-    
+
+    /**
+     * asignar a response el estatus WARNING y los mensajes proporcionados
+     *
+     * @param res modelo response generico a asignar valores
+     * @param message mensaje para el usuario
+     * @param devMessage mensaje para el desarrollador
+     */
     public static final void setWarningResponse(Response res, String message, String devMessage) {
         res.setStatus(Status.WARNING);
         res.setMessage(message);
         res.setDevMessage(devMessage);
     }
-    
+
+    /**
+     * asignar a response el estatus WARNING y el mensaje proporsionado
+     *
+     * @param res modelo response generico a asignar valores
+     * @param devMessage mensaje para el desarrollador
+     */
     public static final void setWarningResponse(Response res, String devMessage) {
         res.setStatus(Status.WARNING);
         res.setDevMessage(devMessage);
     }
-    
+
+    /**
+     * asignar a response el estatus ERROR y el mensaje proporsionado para el
+     * usuario
+     *
+     * @param res modelo response generico a asignar valores
+     * @param err exception lanzada
+     * @param message mensaje para el usuario
+     */
     public static final void setErrorResponse(Response res, Throwable err, String message) {
         res.setStatus(Status.ERROR);
         setCauseMessage(res, err);
         res.setMessage(message);
     }
-    
+
+    /**
+     * asignar a response el estatus ERROR asi como un mensaje generico
+     *
+     * @param res modelo response generico a asignar valores
+     * @param err exception lanzada
+     */
     public static final void setErrorResponse(Response res, Throwable err) {
         res.setStatus(Status.ERROR);
         res.setMessage("Existió un error de programación, consultar con el administrador del sistema");
         setCauseMessage(res, err);
-        
+
     }
-    
+
+    /**
+     * asigna a response el estatus OK y los mensajes proporcionados
+     *
+     * @param res modelo response generico
+     * @param message
+     * @param devMessage
+     */
     public static final void setOkResponse(Response res, String message, String devMessage) {
         res.setStatus(Status.OK);
         res.setMessage(message);
         res.setDevMessage(devMessage);
     }
-    
+
+    /**
+     * asigna a response el estatus OK mas los mensajes proporcionados, ademas
+     * de poner en metadata el objeto data proporsionado
+     *
+     * @param res
+     * @param data
+     * @param message
+     * @param devMessage
+     */
     public static final void setOkResponse(Response res, Object data, String message, String devMessage) {
         res.setStatus(Status.OK);
         res.setData(data);
         res.setMessage(message);
         res.setDevMessage(devMessage);
     }
-    
+
+    /**
+     * asignar a response el estatus OK, el metadata y un mensaje para el
+     * desarrollador
+     *
+     * @param res
+     * @param data
+     * @param devMessage
+     */
     public static final void setOkResponse(Response res, Object data, String devMessage) {
         res.setStatus(Status.OK);
         res.setData(data);
         res.setDevMessage(devMessage);
     }
-    
+
+    /**
+     * asigna solo le estatus OK a response y le añade el mensaje para el
+     * desarrollador
+     *
+     * @param res
+     * @param devMessage
+     */
     public static final void setOkResponse(Response res, String devMessage) {
         res.setStatus(Status.OK);
         res.setDevMessage(devMessage);

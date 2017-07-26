@@ -21,8 +21,7 @@ import com.machineAdmin.managers.cg.admin.postgres.ManagerPerfil;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerPerfilesPermisos;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
-import com.machineAdmin.models.cg.ModelAsignarPerfilesAlGrupoPerfil;
-import com.machineAdmin.models.cg.ModelAsignarPermisosAlPerfil;
+import com.machineAdmin.models.cg.ModelAsignarPermisos;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
 import static com.machineAdmin.services.cg.commons.ServiceFacade.setInvalidTokenResponse;
@@ -69,7 +68,7 @@ public class Perfiles extends ServiceFacade<Perfil>{
        
     @POST
     @Path("/asignarPermisos")
-    public Response asignarPermisos(@HeaderParam("Authorization") String token, ModelAsignarPermisosAlPerfil modelo){
+    public Response asignarPermisos(@HeaderParam("Authorization") String token, ModelAsignarPermisos modelo){
         Response res = new Response();       
         try {
             UtilsJWT.validateSessionToken(token);

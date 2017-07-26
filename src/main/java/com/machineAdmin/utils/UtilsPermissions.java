@@ -32,4 +32,8 @@ public class UtilsPermissions {
         return managerPermiso.stream().collect(toList());                
     }
    
+//    public static List getPermissionUsers(){
+//        
+//    }
+    
 }

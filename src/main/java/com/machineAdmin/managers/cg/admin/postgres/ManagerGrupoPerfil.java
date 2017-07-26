@@ -17,8 +17,15 @@
 package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoGrupoPerfiles;
+import com.machineAdmin.daos.cg.exceptions.ConstraintException;
+import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles;
+import com.machineAdmin.entities.cg.admin.postgres.Perfil;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import com.machineAdmin.models.cg.ModelAsignarPerfilesAlGrupoPerfil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -30,4 +37,13 @@ public class ManagerGrupoPerfil extends ManagerSQLFacade<GrupoPerfiles>{
         super(new DaoGrupoPerfiles());
     }
     
+    public void asignarPerfiles(ModelAsignarPerfilesAlGrupoPerfil model) throws SQLPersistenceException, ConstraintException{
+        GrupoPerfiles gp = this.findOne(UUID.fromString(model.getGrupoPerfilId()));       
+        ManagerPerfil managerPerfil = new ManagerPerfil();
+        List<Perfil> perfiles = new ArrayList<>();
+        model.getPerfilesIds().forEach( pId -> perfiles.add(managerPerfil.findOne(UUID.fromString(pId))));        
+        gp.setPerfilList(perfiles);
+        this.update(gp);                
+    }
+                
 }

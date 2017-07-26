@@ -14,33 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.models.cg;
+package com.machineAdmin.daos.cg.admin.postgres;
 
-import java.util.List;
+import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.UsuariosPerfilJpaController;
+import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
+import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil;
+import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfilPK;
+import com.machineAdmin.utils.UtilsDB;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ModelAsignarPermisosAlPerfil {
+public class DaoUsuariosPerfil extends DaoSQLFacade<UsuariosPerfil>{
 
-    private String perfilId;
-    private List<ModelPermisoAsignado> permisos;
-
-    public String getPerfilId() {
-        return perfilId;
+    public DaoUsuariosPerfil() {
+        super(UtilsDB.getEMFactoryCG(), UsuariosPerfilJpaController.class, UsuariosPerfil.class, "usuariosPerfiles");
     }
 
-    public void setPerfilId(String perfilId) {
-        this.perfilId = perfilId;
+    @Override
+    protected Class<?> getIdAttributeType() {
+        return UsuariosPerfilPK.class;
     }
-
-    public List<ModelPermisoAsignado> getPermisos() {
-        return permisos;
-    }
-
-    public void setPermisos(List<ModelPermisoAsignado> permisos) {
-        this.permisos = permisos;
-    }
-
+    
 }

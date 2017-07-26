@@ -17,8 +17,6 @@
 package com.machineAdmin.models.cg;
 
 import com.machineAdmin.entities.cg.commons.Profundidad;
-import com.machineAdmin.models.cg.enums.PermissionType;
-import java.util.Objects;
 
 /**
  * modelo contenedor de la accion y la profundidad del permiso
@@ -27,15 +25,15 @@ import java.util.Objects;
  */
 public class ModelPermisoAsignado {
 
-    private String permisoId;
+    private String id;
     private Profundidad profundidad;
 
-    public String getPermisoId() {
-        return permisoId;
+    public String getId() {
+        return id;
     }
 
-    public void setPermisoId(String permisoId) {
-        this.permisoId = permisoId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Profundidad getProfundidad() {
