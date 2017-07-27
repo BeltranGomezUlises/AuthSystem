@@ -340,7 +340,7 @@ public class InitServletContext implements ServletContextListener {
 
                                             if (permiso == null) {
                                                 permiso = new Permiso(permisoId);
-                                                permiso.setNombre(method.getName());
+                                                permiso.setNombre(generatePublicMenuName(method.getName()));
                                                 permisos.add(permiso);
                                                 permiso.setMenu(menu);
 
@@ -380,7 +380,7 @@ public class InitServletContext implements ServletContextListener {
     }
 
     private String generatePublicMenuName(String menuName) {
-        String res = "" + menuName.charAt(0);
+        String res = "" + Character.toUpperCase(menuName.charAt(0));
         for (int i = 1; i < menuName.length(); i++) {
             if (Character.isUpperCase(menuName.charAt(i))) {
                 res += " " + menuName.charAt(i);

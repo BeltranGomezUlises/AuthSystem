@@ -18,6 +18,7 @@ package com.machineAdmin.utils;
 
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerPermiso;
+import com.machineAdmin.managers.cg.admin.postgres.ManagerSeccion;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
 
@@ -32,8 +33,11 @@ public class UtilsPermissions {
         return managerPermiso.stream().collect(toList());                
     }
    
-//    public static List getPermissionUsers(){
-//        
-//    }
+    
+    public static List getPermissionUsers(String userId){
+        ManagerSeccion managerSeccion = new ManagerSeccion();        
+        List lista = managerSeccion.findAll();                        
+        return lista;
+    }
     
 }

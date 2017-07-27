@@ -18,9 +18,11 @@ package com.machineAdmin.services.cg.generales;
 
 import com.machineAdmin.managers.cg.admin.postgres.ManagerSeccion;
 import com.machineAdmin.models.cg.responsesCG.Response;
+import com.machineAdmin.utils.UtilsPermissions;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -42,6 +44,18 @@ public class Permisos {
             res.setData(managerSeccion.findAll());            
         } catch (Exception e) {
         }                                
+        return res;        
+    }
+    
+    
+    @GET
+    @Path("/{userId}")
+    public Response pemisosUsuario(@PathParam("userId") String usuario){
+        Response res = new Response();
+        try {            
+            res.setData(UtilsPermissions.getPermissionUsers(usuario));
+        } catch (Exception e) {
+        }        
         return res;        
     }
 }
