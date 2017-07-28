@@ -30,10 +30,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.machineAdmin.entities.cg.commons.IEntity;
 
 /**
  *
@@ -41,13 +40,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  */
 @Entity
 @Table(name = "modulo")
-
 @NamedQueries({
     @NamedQuery(name = "Modulo.findAll", query = "SELECT m FROM Modulo m")
     , @NamedQuery(name = "Modulo.findById", query = "SELECT m FROM Modulo m WHERE m.id = :id")
     , @NamedQuery(name = "Modulo.findByNombre", query = "SELECT m FROM Modulo m WHERE m.nombre = :nombre")})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Modulo implements Serializable {
+public class Modulo implements Serializable, IEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -72,6 +70,7 @@ public class Modulo implements Serializable {
         this.id = id;
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -88,7 +87,6 @@ public class Modulo implements Serializable {
         this.nombre = nombre;
     }
 
-        
     public List<Menu> getMenuList() {
         return menuList;
     }
@@ -120,15 +118,12 @@ public class Modulo implements Serializable {
             return false;
         }
         Modulo other = (Modulo) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.Modulo[ id=" + id + " ]";
     }
-    
+
 }

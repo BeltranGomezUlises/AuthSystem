@@ -16,7 +16,6 @@
  */
 package com.machineAdmin.daos.cg.admin.postgres;
 
-import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.MenuJpaController;
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.Menu;
 import com.machineAdmin.utils.UtilsDB;
@@ -28,12 +27,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoMenu extends DaoSQLFacade<Menu>{
 
     public DaoMenu() {
-        super(UtilsDB.getEMFactoryCG(), MenuJpaController.class, Menu.class, "menus");
+        super(UtilsDB.getEMFactoryCG(), Menu.class, "menus");
     }
 
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return String.class;
-    }
-    
 }

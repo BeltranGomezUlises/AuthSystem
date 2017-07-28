@@ -35,6 +35,7 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.machineAdmin.entities.cg.commons.IEntity;
 import java.util.Objects;
 
 /**
@@ -49,7 +50,7 @@ import java.util.Objects;
     , @NamedQuery(name = "Permiso.findById", query = "SELECT p FROM Permiso p WHERE p.id = :id")
     , @NamedQuery(name = "Permiso.findByNombre", query = "SELECT p FROM Permiso p WHERE p.nombre = :nombre")})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Permiso implements Serializable {
+public class Permiso implements Serializable, IEntity{
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -76,6 +77,7 @@ public class Permiso implements Serializable {
         this.id = id;
     }
 
+    @Override
     public String getId() {
         return id;
     }

@@ -17,27 +17,61 @@
 package com.machineAdmin.utils;
 
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
+import com.machineAdmin.managers.cg.admin.postgres.ManagerPerfilesPermisos;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerPermiso;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerSeccion;
+import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuariosPermisos;
+import com.machineAdmin.models.cg.ModelPermisoAsignado;
 import java.util.List;
+import java.util.UUID;
 import static java.util.stream.Collectors.toList;
 
 /**
- *
+ * clase utileria de metodos relacionados con permisos
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class UtilsPermissions {
-       
-    public static List<Permiso> getExistingPermissions(){
+
+    /**
+     * sirve para obtener los permisos existentes disponibles en el sistem
+     * @return  lista de permisos existentes
+     */
+    public static List<Permiso> getExistingPermissions() {
         ManagerPermiso managerPermiso = new ManagerPermiso();
-        return managerPermiso.stream().collect(toList());                
+        return managerPermiso.stream().collect(toList());
     }
-   
-    
-    public static List getPermissionUsers(String userId){
-        ManagerSeccion managerSeccion = new ManagerSeccion();        
-        List lista = managerSeccion.findAll();                        
-        return lista;
+
+    /**
+     * genera una lista de los permisos que un usuario tiene asignados con su profundidad de acceso
+     * @param userId id del usuario a obtener sus permisos
+     * @return lista modelos con id de permiso y profundidad
+     */
+    public static List<ModelPermisoAsignado> permisosAsignadosAUsuario(String userId) {
+        ManagerUsuariosPermisos managerUsuariosPermisos = new ManagerUsuariosPermisos();
+        return managerUsuariosPermisos.stream()
+                .filter(up -> up.getUsuariosPermisosPK().getUsuario().equals(UUID.fromString(userId)))
+                .map(up -> {
+                    ModelPermisoAsignado asignado = new ModelPermisoAsignado();
+                    asignado.setId(up.getUsuariosPermisosPK().getPermiso());
+                    asignado.setProfundidad(up.getProfundidad());
+                    return asignado;
+                }).collect(toList());
     }
-    
+
+    /**
+     * genera una lista de los permisos que un perfil tiene asignados con su profundidad de acceso
+     * @param perfilId id del perfil a obtener sus permisos
+     * @return lista modelos con id de permiso y profundidad
+     */
+    public static List<ModelPermisoAsignado> permisosAsignadosAPerfil(String perfilId) {
+        ManagerPerfilesPermisos managerPerfilesPermisos = new ManagerPerfilesPermisos();
+        return managerPerfilesPermisos.stream()
+                .filter(pp -> pp.getPerfilesPermisosPK().getPerfil().equals(UUID.fromString(perfilId)))
+                .map(pp -> {
+                    ModelPermisoAsignado asignado = new ModelPermisoAsignado();
+                    asignado.setId(pp.getPerfilesPermisosPK().getPermiso());
+                    asignado.setProfundidad(pp.getProfundidad());
+                    return asignado;
+                }).collect(toList());
+    }
+
 }

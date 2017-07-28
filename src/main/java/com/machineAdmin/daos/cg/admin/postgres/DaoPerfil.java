@@ -16,11 +16,9 @@
  */
 package com.machineAdmin.daos.cg.admin.postgres;
 
-import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.PerfilJpaController;
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
 import com.machineAdmin.utils.UtilsDB;
-import java.util.UUID;
 
 /**
  *
@@ -29,12 +27,7 @@ import java.util.UUID;
 public class DaoPerfil extends DaoSQLFacade<Perfil>{
 
     public DaoPerfil() {
-        super(UtilsDB.getEMFactoryCG(), PerfilJpaController.class, Perfil.class, "perfiles");
+        super(UtilsDB.getEMFactoryCG(), Perfil.class, "perfiles");
     }
 
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return UUID.class;
-    }
-    
 }

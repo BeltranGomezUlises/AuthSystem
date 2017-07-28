@@ -35,8 +35,8 @@ import javax.ws.rs.Path;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/gruposPerfiles")
-public class GruposPerfiles extends ServiceFacade<GrupoPerfiles>{
-    
+public class GruposPerfiles extends ServiceFacade<GrupoPerfiles> {
+
     public GruposPerfiles() {
         super(new ManagerGrupoPerfil());
     }
@@ -65,25 +65,33 @@ public class GruposPerfiles extends ServiceFacade<GrupoPerfiles>{
     public Response listar(String token) {
         return super.listar(token); //To change body of generated methods, choose Tools | Templates.
     }
- 
- 
+
+    /**
+     * sirve para asignar a un grupo de perfiles, una lista de perfiles para
+     * agruparlos
+     *
+     * @param token token de sesion
+     * @param modelo modelos contenedor para asignar perfiles, debe contener el
+     * id del grupo perfil y la lista de ids de los perfiles a agrupar
+     * @return retorna mensaje de éxito
+     */
     @Path("/asignarPerfiles")
     @POST
-    public Response asignarPerfiles(@HeaderParam("Authorization") String token, ModelAsignarPerfilesAlGrupoPerfil modelo){
-        Response res = new Response();       
+    public Response asignarPerfiles(@HeaderParam("Authorization") String token, ModelAsignarPerfilesAlGrupoPerfil modelo) {
+        Response res = new Response();
         try {
             UtilsJWT.validateSessionToken(token);
-            ManagerGrupoPerfil managerGrupoPerfil = new ManagerGrupoPerfil();                        
-            managerGrupoPerfil.asignarPerfiles(modelo);            
+            ManagerGrupoPerfil managerGrupoPerfil = new ManagerGrupoPerfil();
+            managerGrupoPerfil.asignarPerfiles(modelo);
             res.setMessage("Los Permisos fuéron asignados al perfil con éxito");
             res.setDevMessage("Permisos asignado al perfil");
-        }catch (TokenExpiradoException | TokenInvalidoException ex) {
+        } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(res);
-        }  catch(Exception e){
+        } catch (Exception e) {
             setErrorResponse(res, e);
         }
         return res;
-        
+
     }
-    
+
 }

@@ -14,26 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.daos.postgres;
+package com.machineAdmin.entities.cg.commons;
 
-import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
-import com.machineAdmin.daos.postgres.jpaControllers.EjemploJpaController;
-import com.machineAdmin.entities.postgres.Ejemplo;
-import com.machineAdmin.utils.UtilsDB;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
- * entidad de ejemplo de uso de una unidad de persistencia distinta a la CG
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoEjemplo extends DaoSQLFacade<Ejemplo>{
-
-    public DaoEjemplo() {
-        super(UtilsDB.getEMFactoryMachineAdmin(), EjemploJpaController.class, Ejemplo.class, "ejemplo");
-    }
-
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return Integer.class;
-    }
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public interface IEntity {
+    
+    public Object getId();
     
 }

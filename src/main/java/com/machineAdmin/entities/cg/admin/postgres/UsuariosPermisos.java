@@ -16,6 +16,7 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
+import com.machineAdmin.entities.cg.commons.IEntity;
 import com.machineAdmin.entities.cg.commons.Profundidad;
 import java.io.Serializable;
 import java.util.UUID;
@@ -45,7 +46,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "UsuariosPermisos.findAll", query = "SELECT u FROM UsuariosPermisos u")
     , @NamedQuery(name = "UsuariosPermisos.findByPermiso", query = "SELECT u FROM UsuariosPermisos u WHERE u.usuariosPermisosPK.permiso = :permiso")
     , @NamedQuery(name = "UsuariosPermisos.findByProfundidad", query = "SELECT u FROM UsuariosPermisos u WHERE u.profundidad = :profundidad")})
-public class UsuariosPermisos implements Serializable {
+public class UsuariosPermisos implements Serializable, IEntity {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -131,6 +132,11 @@ public class UsuariosPermisos implements Serializable {
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos[ usuariosPermisosPK=" + usuariosPermisosPK + " ]";
+    }
+
+    @Override
+    public Object getId() {
+        return usuariosPermisosPK;
     }
     
 }

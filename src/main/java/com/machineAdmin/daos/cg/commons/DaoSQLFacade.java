@@ -7,11 +7,10 @@ package com.machineAdmin.daos.cg.commons;
 
 import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
-import java.io.Serializable;
+import com.machineAdmin.entities.cg.commons.IEntity;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -23,35 +22,30 @@ import org.jinq.jpa.JinqJPAStreamProvider;
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
- * @param <E> Entidad JPA a utilizar por el controlador C JPA respaldado de
+ * @param <T> Entidad JPA a utilizar por el controlador C JPA respaldado de
  * DaoSQLFacade
  */
-public abstract class DaoSQLFacade<E extends Serializable> {
+public class DaoSQLFacade<T extends IEntity> {
 
-    private final Class<?> claseController;
-    private final Class<E> claseEntity;
+    private final Class<T> claseEntity;
     private final EntityManagerFactory eMFactory;
     private final JinqJPAStreamProvider streams;
     private final String binnacleName;
 
-    public DaoSQLFacade(EntityManagerFactory eMFactory, Class<?> claseController, Class<E> claseEntity, String binnacleName) {
+    public DaoSQLFacade(EntityManagerFactory eMFactory, Class<T> claseEntity, String binnacleName) {
         this.eMFactory = eMFactory;
-        this.claseController = claseController;
         this.claseEntity = claseEntity;
         this.binnacleName = binnacleName;
         streams = new JinqJPAStreamProvider(eMFactory);
-    }
+    }    
 
-    protected abstract Class<?> getIdAttributeType();
-
-    public void persist(E entity) throws SQLPersistenceException, ConstraintException {
+    public void persist(T entity) throws SQLPersistenceException, ConstraintException {
+        EntityManager em = this.getEM();
         try {
-            Method method = claseController.getMethod("create", claseEntity);
-            Constructor constructor = claseController.getConstructor(EntityManagerFactory.class);
-            Object t = constructor.newInstance(eMFactory);
-            method.setAccessible(true);
-            method.invoke(t, entity);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
+            em.getTransaction().begin();
+            em.persist(entity);
+            em.getTransaction().commit();
+        } catch (Exception e) {
             String mensajeDeExcepcion = "No fue posible persistir la entidad, CAUSE: " + e.toString();
             Throwable t = e.getCause();
             if (t != null) {
@@ -61,14 +55,18 @@ public abstract class DaoSQLFacade<E extends Serializable> {
                 }
             }
             throw new SQLPersistenceException(mensajeDeExcepcion);
+        } finally {
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
-    public List<E> persistAll(List<E> entities) throws ConstraintException, SQLPersistenceException {
+    public List<T> persistAll(List<T> entities) throws ConstraintException, SQLPersistenceException {
         EntityManager em = this.getEM();
         try {
             em.getTransaction().begin();
-            for (E entity : entities) {
+            for (T entity : entities) {
                 em.persist(entity);
             }
             em.getTransaction().commit();
@@ -91,14 +89,17 @@ public abstract class DaoSQLFacade<E extends Serializable> {
     }
 
     public void delete(Object id) throws SQLPersistenceException {
+        EntityManager em = this.getEM();
         try {
-            Method method = claseController.getMethod("destroy", this.getIdAttributeType());
-            Constructor constructor = claseController.getConstructor(EntityManagerFactory.class);
-            Object t = constructor.newInstance(eMFactory);
-            method.setAccessible(true);
-            method.invoke(t, id);
-        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            throw new SQLPersistenceException("No fue posible eliminar la entidad, cause: " + e.getMessage());
+            em.getTransaction().begin();
+            em.remove(em.getReference(claseEntity, id));
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
@@ -119,27 +120,22 @@ public abstract class DaoSQLFacade<E extends Serializable> {
         }
     }
 
-    public void update(E entity) throws SQLPersistenceException, ConstraintException {
+    public void update(T entity) throws SQLPersistenceException, ConstraintException {
+        EntityManager em = this.getEM();
         try {
-            Method method = claseController.getMethod("edit", claseEntity);
-            Constructor constructor = claseController.getConstructor(EntityManagerFactory.class);
-            Object t = constructor.newInstance(eMFactory);
-            method.setAccessible(true);
-            method.invoke(t, entity);
-        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            String mensajeDeExcepcion = "No fue posible actualizar la entidad, CAUSE: " + e.toString();
-            Throwable t = e.getCause();
-            if (t != null) {
-                mensajeDeExcepcion += " CAUSE: " + t.toString();
-                if (t.toString().contains("duplicate key value")) {
-                    throw new ConstraintException(t.toString());
-                }
+            em.getTransaction().begin();
+            em.merge(entity);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (em != null) {
+                em.close();
             }
-            throw new SQLPersistenceException(mensajeDeExcepcion);
         }
     }
 
-    public E findFirst() {
+    public T findFirst() {
         try {
             return findAll(false, 1, 0).get(0);
         } catch (Exception e) {
@@ -147,31 +143,23 @@ public abstract class DaoSQLFacade<E extends Serializable> {
         }
     }
 
-    public E findOne(Object id) {
-        if (getIdAttributeType() != id.getClass()) {
-            if (getIdAttributeType() == Integer.class) {
-                id = Integer.valueOf(id.toString());
-            }
-            if (getIdAttributeType() == Long.class) {
-                id = Long.valueOf(id.toString());
-            }
-        }
+    public T findOne(Object id) {    
         return getEM().find(claseEntity, id);
     }
 
-    public List<E> findAll(int max) {
+    public List<T> findAll(int max) {
         return findAll(false, max, 0);
     }
 
-    public List<E> findAll() {
+    public List<T> findAll() {
         return findAll(true, -1, -1);
     }
 
-    public List<E> findAll(int maxResults, int firstResult) {
+    public List<T> findAll(int maxResults, int firstResult) {
         return findAll(false, maxResults, firstResult);
     }
 
-    private List<E> findAll(boolean all, int maxResults, int firstResult) {
+    private List<T> findAll(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEM();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
@@ -208,8 +196,9 @@ public abstract class DaoSQLFacade<E extends Serializable> {
         return binnacleName;
     }
 
-    public JPAJinqStream<E> stream() {
+    public JPAJinqStream<T> stream() {
         return new JinqJPAStreamProvider(eMFactory).streamAll(eMFactory.createEntityManager(), claseEntity);
     }
-
+   
+    
 }

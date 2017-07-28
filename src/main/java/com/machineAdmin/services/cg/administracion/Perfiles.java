@@ -26,12 +26,15 @@ import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
 import static com.machineAdmin.services.cg.commons.ServiceFacade.setInvalidTokenResponse;
 import com.machineAdmin.utils.UtilsJWT;
+import com.machineAdmin.utils.UtilsPermissions;
+import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 /**
- *
+ * servicios de administracion de perfiles
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/perfiles")
@@ -83,5 +86,22 @@ public class Perfiles extends ServiceFacade<Perfil>{
         }
         return res;
     }
-       
+ 
+    @GET
+    @Path("/permisos/{perfilId}")
+    public Response obtenerPermisos(@HeaderParam("Authorization") String token, @PathParam("perfilId") String perfilId){
+        Response res = new Response();       
+        try {
+            UtilsJWT.validateSessionToken(token);
+            res.setData(UtilsPermissions.permisosAsignadosAPerfil(perfilId));
+            
+        }catch (TokenExpiradoException | TokenInvalidoException ex) {
+            setInvalidTokenResponse(res);
+        }  catch(Exception e){
+            setErrorResponse(res, e);
+        }
+        return res;
+    }
+ 
+    
 }

@@ -16,7 +16,6 @@
  */
 package com.machineAdmin.daos.cg.admin.postgres;
 
-import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.PerfilesPermisosJpaController;
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos;
 import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisosPK;
@@ -31,12 +30,7 @@ import javax.persistence.EntityManager;
 public class DaoPerfilesPermisos extends DaoSQLFacade<PerfilesPermisos> {
 
     public DaoPerfilesPermisos() {
-        super(UtilsDB.getEMFactoryCG(), PerfilesPermisosJpaController.class, PerfilesPermisos.class, "perfilesPermisos");
-    }
-
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return PerfilesPermisosPK.class;
+        super(UtilsDB.getEMFactoryCG(), PerfilesPermisos.class, "perfilesPermisos");
     }
 
     public void borrarRelaciones(List<PerfilesPermisosPK> pks) {

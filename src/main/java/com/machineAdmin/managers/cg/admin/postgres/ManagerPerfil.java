@@ -29,5 +29,5 @@ public class ManagerPerfil extends ManagerSQLFacade<Perfil>{
     public ManagerPerfil() {
         super(new DaoPerfil());
     }
-    
+
 }

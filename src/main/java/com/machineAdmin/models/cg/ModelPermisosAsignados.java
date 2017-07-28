@@ -16,7 +16,7 @@
  */
 package com.machineAdmin.models.cg;
 
-import com.machineAdmin.models.cg.enums.PermissionType;
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import java.util.List;
 
 /**
@@ -152,7 +152,7 @@ public class ModelPermisosAsignados {
 
                     private String name;
                     private String id;
-                    private PermissionType types;
+                    private Profundidad types;
 
                     public String getName() {
                         return name;
@@ -170,11 +170,11 @@ public class ModelPermisosAsignados {
                         this.id = id;
                     }
 
-                    public PermissionType getTypes() {
+                    public Profundidad getTypes() {
                         return types;
                     }
 
-                    public void setTypes(PermissionType types) {
+                    public void setTypes(Profundidad types) {
                         this.types = types;
                     }
 

@@ -45,6 +45,13 @@ import org.apache.commons.mail.EmailException;
 @Produces(MediaType.APPLICATION_JSON)
 public class Accesos {
 
+    /**
+     * servicio de login del sistema
+     *
+     * @param content debera contener la cadena cifrada con el usuario y contra
+     * a logear
+     * @return en data: el usuario logeado, en metadata: el token de sesion
+     */
     @POST
     @Path("/login")
     public Response login(ModelContenidoCifrado content) {
@@ -73,6 +80,12 @@ public class Accesos {
         return res;
     }
 
+    /**
+     * servicio para registrar las salidas del usuario del sistema
+     *
+     * @param token token de sesion
+     * @return solo retorna los mensajes de despedida del sistema
+     */
     @GET
     @Path("/logout")
     public Response logout(@HeaderParam("Authorization") String token) {
@@ -88,6 +101,11 @@ public class Accesos {
         return res;
     }
 
+    /**
+     * servicio publico para obtener la clave publica de cifrado RSA
+     *
+     * @return retorna en metada la clave publica
+     */
     @GET
     @Path("/publicKey")
     public Response getPublicKey() {
@@ -97,6 +115,15 @@ public class Accesos {
         return r;
     }
 
+    /**
+     * sirve para enviar codigo de recuperacion a el destino (correo o telefono
+     * celular)
+     *
+     * @param identifier correo electrónico ó número de teléfono celular a
+     * enviar el código de recuperación
+     * @return retorna el token de verificacion, necesario para poder obtener el
+     * token de reseteo de contraseña
+     */
     @GET
     @Path("/recoverCode/{identifier}")
     public Response recoverCode(@PathParam("identifier") String identifier) {
@@ -120,6 +147,15 @@ public class Accesos {
         return res;
     }
 
+    /**
+     * sirve para autenticar el usuario que quiere recuperar su contraseña, es
+     * necesario proporcionar el token de verificacion y el codigo obtenido
+     * desde el medio (correo o telefono)
+     *
+     * @param token token de verificación
+     * @param code código obtenido por correo o telefono
+     * @return retorna el token de reseteo
+     */
     @GET
     @Path("/tokenResetPassword/{code}")
     public Response getTokenReset(@HeaderParam("Authorization") String token, @PathParam("code") String code) {
@@ -137,6 +173,12 @@ public class Accesos {
         return res;
     }
 
+    /**
+     * sirve para restablece la contraseña de un usuario
+     * @param tokenResetPassword token de reseteo de contraseña
+     * @param content contenido cifrado con la clave publica con le texto de la nueva contraseña a asignar
+     * @return retorna mensaje de exito
+     */
     @POST
     @Path("/resetPassword")
     public Response resetPassword(@HeaderParam("Authorization") String tokenResetPassword, ModelContenidoCifrado content) {
@@ -155,7 +197,7 @@ public class Accesos {
             setInvalidTokenResponse(res);
         } catch (ParametroInvalidoException ex) {
             setWarningResponse(res, "No puede ingresar un contraseña que ya fué utilizada, intente con otro por favor", ex.getMessage());
-        }catch(Exception e){
+        } catch (Exception e) {
             setErrorResponse(res, e, "No se logro actualizar la contraseña, consulte con su administrador del sistema");
         }
         return res;

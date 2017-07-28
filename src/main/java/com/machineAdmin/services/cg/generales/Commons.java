@@ -23,12 +23,20 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 public class Commons {
 
+    /**
+     * sirve para obtener la hora actual del servidor
+     * @return modelo dateclass que contiene la hora actual del servidor
+     */
     @GET
     @Path("/serverDate")
     public DateClass serverDate() {
         return new DateClass();
     }
 
+    /**
+     * sirve para obtener las configuraciones generales del sistema
+     * @return contenedor de configuraciones generales
+     */
     @GET
     @Path("/getConfig")
     public CGConfig getConfig(){

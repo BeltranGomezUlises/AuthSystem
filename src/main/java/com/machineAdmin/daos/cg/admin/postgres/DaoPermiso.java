@@ -16,7 +16,6 @@
  */
 package com.machineAdmin.daos.cg.admin.postgres;
 
-import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.PermisoJpaController;
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.utils.UtilsDB;
@@ -28,12 +27,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoPermiso extends DaoSQLFacade<Permiso> {
 
     public DaoPermiso() {
-        super(UtilsDB.getEMFactoryCG(), PermisoJpaController.class, Permiso.class, "permisos");
+        super(UtilsDB.getEMFactoryCG(), Permiso.class, "permisos");
     }
 
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return String.class;
-    }
-    
 }

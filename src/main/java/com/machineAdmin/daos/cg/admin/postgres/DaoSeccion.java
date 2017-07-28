@@ -16,7 +16,6 @@
  */
 package com.machineAdmin.daos.cg.admin.postgres;
 
-import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.SeccionJpaController;
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.Seccion;
 import com.machineAdmin.utils.UtilsDB;
@@ -28,12 +27,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoSeccion extends DaoSQLFacade<Seccion>{
 
     public DaoSeccion() {
-        super(UtilsDB.getEMFactoryCG(), SeccionJpaController.class, Seccion.class, "secciones");
+        super(UtilsDB.getEMFactoryCG(),Seccion.class, "secciones");
     }
 
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return String.class;
-    }
-    
 }

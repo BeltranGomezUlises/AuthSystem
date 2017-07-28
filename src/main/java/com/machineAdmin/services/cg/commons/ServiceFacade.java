@@ -2,6 +2,7 @@ package com.machineAdmin.services.cg.commons;
 
 import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
+import com.machineAdmin.entities.cg.commons.IEntity;
 import com.machineAdmin.managers.cg.commons.ManagerFacade;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
@@ -26,7 +27,7 @@ import javax.ws.rs.core.MediaType;
  */
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class ServiceFacade<T> {
+public class ServiceFacade<T extends IEntity> {
 
     ManagerFacade<T> manager;
 
@@ -136,8 +137,7 @@ public class ServiceFacade<T> {
         Response response = new Response();
         try {
             UtilsJWT.validateSessionToken(token);
-            manager.delete(t);
-            response.setData(t);
+            manager.delete(t.getId());            
             response.setMessage("Entidad eliminada");
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);

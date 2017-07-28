@@ -16,25 +16,18 @@
  */
 package com.machineAdmin.daos.cg.admin.postgres;
 
-import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.BitacoraContrasJpaController;
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContras;
-import com.machineAdmin.entities.cg.admin.postgres.BitacoraContrasPK;
 import com.machineAdmin.utils.UtilsDB;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoBitacoraContra extends DaoSQLFacade<BitacoraContras>{
+public class DaoBitacoraContra extends DaoSQLFacade<BitacoraContras> {
 
     public DaoBitacoraContra() {
-        super(UtilsDB.getEMFactoryCG(), BitacoraContrasJpaController.class, BitacoraContras.class, "bitacoraContras");
+        super(UtilsDB.getEMFactoryCG(), BitacoraContras.class, "bitacoraContras");
     }
 
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return BitacoraContrasPK.class;
-    }
-    
 }

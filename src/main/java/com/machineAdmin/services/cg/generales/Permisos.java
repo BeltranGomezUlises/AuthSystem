@@ -16,17 +16,23 @@
  */
 package com.machineAdmin.services.cg.generales;
 
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerSeccion;
+import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.utils.UtilsPermissions;
+import static com.machineAdmin.services.cg.commons.ServiceFacade.*;
+import com.machineAdmin.utils.UtilsJWT;
+import java.util.Arrays;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 /**
+ * servicios relacionados con los permisos del sistema en general
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
@@ -34,28 +40,44 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class Permisos {
-    
+
+    /**
+     * sirve para obtener la lista de todos los permisos que pueden ser
+     * asignados a un usuario o perfil
+     *
+     * @param token token de sesion
+     * @return retorna en data modelo "Seccion"
+     */
     @GET
     @Path("/disponibles")
-    public Response getPermisosDisponibles(){
-        Response res = new Response();        
-        try {
-            ManagerSeccion managerSeccion = new ManagerSeccion();
-            res.setData(managerSeccion.findAll());            
-        } catch (Exception e) {
-        }                                
-        return res;        
-    }
-    
-    
-    @GET
-    @Path("/{userId}")
-    public Response pemisosUsuario(@PathParam("userId") String usuario){
+    public Response getPermisosDisponibles(@HeaderParam("Authorization") String token) {
         Response res = new Response();
-        try {            
-            res.setData(UtilsPermissions.getPermissionUsers(usuario));
-        } catch (Exception e) {
-        }        
-        return res;        
+        try {
+            UtilsJWT.validateSessionToken(token);
+            ManagerSeccion managerSeccion = new ManagerSeccion();
+            res.setData(managerSeccion.findAll());
+        } catch (TokenExpiradoException | TokenInvalidoException e) {
+            setInvalidTokenResponse(res);
+        } catch (Exception ex) {
+            setErrorResponse(res, ex);
+        }
+        return res;
     }
+
+    @GET
+    @Path("/profundidades")
+    public Response getProfundidades(@HeaderParam("Authorization") String token){
+        Response res = new Response();
+        try {
+            UtilsJWT.validateSessionToken(token);            
+            res.setData(Profundidad.values());
+            res.setDevMessage("profundidades disponibles para los permisos");
+        } catch (TokenExpiradoException | TokenInvalidoException e) {
+            setInvalidTokenResponse(res);
+        } catch (Exception ex) {
+            setErrorResponse(res, ex);
+        }
+        return res;
+    }
+    
 }

@@ -29,6 +29,7 @@ import com.machineAdmin.services.cg.commons.ServiceFacade;
 import static com.machineAdmin.services.cg.commons.ServiceFacade.setErrorResponse;
 import static com.machineAdmin.services.cg.commons.ServiceFacade.setInvalidTokenResponse;
 import com.machineAdmin.utils.UtilsJWT;
+import com.machineAdmin.utils.UtilsPermissions;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -120,20 +121,26 @@ public class Usuarios extends ServiceFacade<Usuario> {
         }
         return res;
     }
-
+    
+    /**
+     * sirve para obtener la lista de permisos asignados al usuario junto a su profundidad de acceso
+     * @param token token de sesion
+     * @param usuario id de usuario a obtener permisos
+     * @return retorna en data, la lista de servicios asignados al usuario
+     */
     @GET
     @Path("/permisos/{userId}")
-    public Response obtenerPermisosUsuario(@HeaderParam("Authorization") String token, @PathParam("userId") String userId) {
+    public Response obtenerPermisosAsignados(@HeaderParam("Authorization") String token, @PathParam("userId") String usuario){
         Response res = new Response();
-        try {
+        try {            
             UtilsJWT.validateSessionToken(token);
-            
-            
-            
+            res.setData(UtilsPermissions.permisosAsignadosAUsuario(usuario));
+            res.setDevMessage("permisos que el usuario tiene asignado");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
-            
-        }
-        return res;
+            setInvalidTokenResponse(res);
+        } catch(Exception ex){
+            setErrorResponse(res, ex);  
+        }        
+        return res;        
     }
-
 }

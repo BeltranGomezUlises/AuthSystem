@@ -24,8 +24,6 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(com.machineAdmin.services.backoffice.ejemplo.Ejemplos.class);
-        resources.add(com.machineAdmin.services.backoffice.maquinitas.Maquinitas.class);
         resources.add(com.machineAdmin.services.cg.administracion.Correos.class);
         resources.add(com.machineAdmin.services.cg.administracion.GruposPerfiles.class);
         resources.add(com.machineAdmin.services.cg.administracion.Perfiles.class);

@@ -17,6 +17,7 @@
 package com.machineAdmin.entities.cg.admin.postgres;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.machineAdmin.entities.cg.commons.IEntity;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
@@ -40,7 +41,7 @@ import javax.persistence.Table;
     @NamedQuery(name = "UsuariosPerfil.findAll", query = "SELECT u FROM UsuariosPerfil u")
     , @NamedQuery(name = "UsuariosPerfil.findByHereda", query = "SELECT u FROM UsuariosPerfil u WHERE u.hereda = :hereda")})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UsuariosPerfil implements Serializable {
+public class UsuariosPerfil implements Serializable, IEntity {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -123,6 +124,11 @@ public class UsuariosPerfil implements Serializable {
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil[ usuariosPerfilPK=" + usuariosPerfilPK + " ]";
+    }
+
+    @Override
+    public Object getId() {
+        return usuariosPerfilPK;
     }
 
 }

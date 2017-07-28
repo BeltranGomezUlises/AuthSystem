@@ -28,10 +28,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.machineAdmin.entities.cg.commons.IEntity;
 import java.util.Objects;
 
 /**
@@ -46,7 +44,7 @@ import java.util.Objects;
     , @NamedQuery(name = "Seccion.findById", query = "SELECT s FROM Seccion s WHERE s.id = :id")
     , @NamedQuery(name = "Seccion.findByNombre", query = "SELECT s FROM Seccion s WHERE s.nombre = :nombre")})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Seccion implements Serializable {
+public class Seccion implements Serializable, IEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -68,6 +66,7 @@ public class Seccion implements Serializable {
         this.id = id;
     }
 
+    @Override
     public String getId() {
         return id;
     }

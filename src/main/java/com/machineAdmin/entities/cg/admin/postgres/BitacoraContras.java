@@ -17,6 +17,7 @@
 package com.machineAdmin.entities.cg.admin.postgres;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.machineAdmin.entities.cg.commons.IEntity;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
@@ -42,7 +43,7 @@ import javax.persistence.TemporalType;
     , @NamedQuery(name = "BitacoraContras.findByContra", query = "SELECT b FROM BitacoraContras b WHERE b.bitacoraContrasPK.contra = :contra")
     , @NamedQuery(name = "BitacoraContras.findByFechaAsignada", query = "SELECT b FROM BitacoraContras b WHERE b.fechaAsignada = :fechaAsignada")})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BitacoraContras implements Serializable {
+public class BitacoraContras implements Serializable, IEntity {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -109,6 +110,11 @@ public class BitacoraContras implements Serializable {
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.BitacoraContras[ bitacoraContrasPK=" + bitacoraContrasPK + " ]";
+    }
+
+    @Override
+    public Object getId() {
+        return bitacoraContrasPK;
     }
     
 }

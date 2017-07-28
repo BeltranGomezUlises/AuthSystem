@@ -16,7 +16,6 @@
  */
 package com.machineAdmin.daos.cg.admin.postgres;
 
-import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.UsuarioJpaController;
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.utils.UtilsDB;
@@ -29,12 +28,7 @@ import java.util.UUID;
 public class DaoUsuario extends DaoSQLFacade<Usuario>{
 
     public DaoUsuario() {
-        super(UtilsDB.getEMFactoryCG(), UsuarioJpaController.class, Usuario.class, "usuarios");
+        super(UtilsDB.getEMFactoryCG(),Usuario.class, "usuarios");
     }
 
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return UUID.class;
-    }
-    
 }

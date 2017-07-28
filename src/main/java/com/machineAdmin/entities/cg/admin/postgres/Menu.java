@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -31,9 +30,10 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.machineAdmin.entities.cg.commons.IEntity;
+import javax.persistence.Entity;
 
 /**
  *
@@ -47,7 +47,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
     , @NamedQuery(name = "Menu.findById", query = "SELECT m FROM Menu m WHERE m.id = :id")
     , @NamedQuery(name = "Menu.findByNombre", query = "SELECT m FROM Menu m WHERE m.nombre = :nombre")})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Menu implements Serializable {
+public class Menu implements Serializable, IEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -72,6 +72,7 @@ public class Menu implements Serializable {
         this.id = id;
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -88,7 +89,6 @@ public class Menu implements Serializable {
         this.nombre = nombre;
     }
 
-        
     public List<Permiso> getPermisoList() {
         return permisoList;
     }

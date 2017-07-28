@@ -16,7 +16,6 @@
  */
 package com.machineAdmin.daos.cg.admin.postgres;
 
-import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.ModuloJpaController;
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.Modulo;
 import com.machineAdmin.utils.UtilsDB;
@@ -28,12 +27,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoModulo extends DaoSQLFacade<Modulo>{
 
     public DaoModulo() {
-        super(UtilsDB.getEMFactoryCG(), ModuloJpaController.class, Modulo.class, "modulos");
+        super(UtilsDB.getEMFactoryCG(), Modulo.class, "modulos");
     }
 
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return String.class;
-    }
-    
 }

@@ -8,8 +8,7 @@ package com.machineAdmin.managers.cg.commons;
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
-import java.io.Serializable;
-import java.util.Arrays;
+import com.machineAdmin.entities.cg.commons.IEntity;
 import java.util.List;
 import org.jinq.jpa.JPAJinqStream;
 
@@ -18,7 +17,7 @@ import org.jinq.jpa.JPAJinqStream;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T>
  */
-public class ManagerSQLFacade<T extends Serializable> implements ManagerFacade<T> {
+public class ManagerSQLFacade<T extends IEntity> implements ManagerFacade<T> {
 
     private final DaoSQLFacade<T> dao;
 

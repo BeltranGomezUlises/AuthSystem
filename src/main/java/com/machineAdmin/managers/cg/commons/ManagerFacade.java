@@ -5,6 +5,7 @@
  */
 package com.machineAdmin.managers.cg.commons;
 
+import com.machineAdmin.entities.cg.commons.IEntity;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> class entity used to restrict the class of use
  */
-public interface ManagerFacade<T> {
+public interface ManagerFacade<T extends IEntity> {
     
     public T persist(T entity) throws Exception;    
     

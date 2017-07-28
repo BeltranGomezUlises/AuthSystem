@@ -32,6 +32,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.machineAdmin.entities.cg.commons.IEntity;
 import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.util.Objects;
 import java.util.UUID;
@@ -50,7 +51,7 @@ import org.eclipse.persistence.annotations.Converter;
     , @NamedQuery(name = "GrupoPerfiles.findByDescripcoin", query = "SELECT g FROM GrupoPerfiles g WHERE g.descripcoin = :descripcoin")})
 @Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GrupoPerfiles implements Serializable {
+public class GrupoPerfiles implements Serializable, IEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -79,6 +80,7 @@ public class GrupoPerfiles implements Serializable {
         this.id = id;
     }
 
+    @Override
     public UUID getId() {
         return id;
     }

@@ -33,6 +33,7 @@ import javax.validation.constraints.Size;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.machineAdmin.entities.cg.commons.IEntity;
 import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.util.Objects;
 import java.util.UUID;
@@ -51,7 +52,7 @@ import org.eclipse.persistence.annotations.Converter;
     , @NamedQuery(name = "Perfil.findByNombre", query = "SELECT p FROM Perfil p WHERE p.nombre = :nombre")
     , @NamedQuery(name = "Perfil.findByDescripcion", query = "SELECT p FROM Perfil p WHERE p.descripcion = :descripcion")})
 @Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
-public class Perfil implements Serializable {
+public class Perfil implements Serializable, IEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -81,6 +82,7 @@ public class Perfil implements Serializable {
         this.id = id;
     }
 
+    @Override
     public UUID getId() {
         return id;
     }

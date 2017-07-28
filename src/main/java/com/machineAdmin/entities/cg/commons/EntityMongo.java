@@ -14,13 +14,13 @@ import org.mongojack.ObjectId;
  * clase padre de entidades de mongo
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class EntityMongo{
+public class EntityMongo implements IEntity{
                 
     @ObjectId
     @JsonProperty("_id")
     protected String id;
 
+    @Override
     public String getId() {
         return id;
     }

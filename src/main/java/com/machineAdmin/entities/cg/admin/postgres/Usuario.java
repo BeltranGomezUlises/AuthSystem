@@ -17,7 +17,7 @@
 package com.machineAdmin.entities.cg.admin.postgres;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.machineAdmin.entities.cg.commons.IEntity;
 import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.io.Serializable;
 import java.util.Date;
@@ -48,7 +48,6 @@ import org.eclipse.persistence.annotations.Converter;
  */
 @Entity
 @Table(name = "usuario")
-
 @NamedQueries({
     @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u")
     , @NamedQuery(name = "Usuario.findByNombre", query = "SELECT u FROM Usuario u WHERE u.nombre = :nombre")
@@ -61,8 +60,7 @@ import org.eclipse.persistence.annotations.Converter;
     , @NamedQuery(name = "Usuario.findByBloqueado", query = "SELECT u FROM Usuario u WHERE u.bloqueado = :bloqueado")
     , @NamedQuery(name = "Usuario.findByBloqueadoHastaFecha", query = "SELECT u FROM Usuario u WHERE u.bloqueadoHastaFecha = :bloqueadoHastaFecha")})
 @Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
-//@JsonInclude(JsonInclude.Include.NON_NULL)
-public class Usuario implements Serializable {
+public class Usuario implements Serializable, IEntity {
 
     private static final long serialVersionUID = 1L;
     @Size(max = 2147483647)
@@ -185,6 +183,7 @@ public class Usuario implements Serializable {
         this.bloqueadoHastaFecha = bloqueadoHastaFecha;
     }
 
+    @Override
     public UUID getId() {
         return id;
     }

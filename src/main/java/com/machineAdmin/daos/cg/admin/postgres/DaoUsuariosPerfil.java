@@ -16,10 +16,8 @@
  */
 package com.machineAdmin.daos.cg.admin.postgres;
 
-import com.machineAdmin.daos.cg.admin.postgres.jpaControllers.UsuariosPerfilJpaController;
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil;
-import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfilPK;
 import com.machineAdmin.utils.UtilsDB;
 
 /**
@@ -29,12 +27,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoUsuariosPerfil extends DaoSQLFacade<UsuariosPerfil>{
 
     public DaoUsuariosPerfil() {
-        super(UtilsDB.getEMFactoryCG(), UsuariosPerfilJpaController.class, UsuariosPerfil.class, "usuariosPerfiles");
+        super(UtilsDB.getEMFactoryCG(), UsuariosPerfil.class, "usuariosPerfiles");
     }
-
-    @Override
-    protected Class<?> getIdAttributeType() {
-        return UsuariosPerfilPK.class;
-    }
-    
+ 
 }
