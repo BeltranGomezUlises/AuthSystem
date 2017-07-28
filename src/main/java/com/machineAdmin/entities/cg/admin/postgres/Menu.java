@@ -41,7 +41,6 @@ import javax.persistence.Entity;
  */
 @Entity
 @Table(name = "menu")
-
 @NamedQueries({
     @NamedQuery(name = "Menu.findAll", query = "SELECT m FROM Menu m")
     , @NamedQuery(name = "Menu.findById", query = "SELECT m FROM Menu m WHERE m.id = :id")

@@ -26,6 +26,7 @@ import com.machineAdmin.services.cg.commons.ServiceFacade;
 import static com.machineAdmin.services.cg.commons.ServiceFacade.setErrorResponse;
 import static com.machineAdmin.services.cg.commons.ServiceFacade.setInvalidTokenResponse;
 import com.machineAdmin.utils.UtilsJWT;
+import java.util.UUID;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -35,7 +36,7 @@ import javax.ws.rs.Path;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/gruposPerfiles")
-public class GruposPerfiles extends ServiceFacade<GrupoPerfiles> {
+public class GruposPerfiles extends ServiceFacade<GrupoPerfiles, UUID> {
 
     public GruposPerfiles() {
         super(new ManagerGrupoPerfil());

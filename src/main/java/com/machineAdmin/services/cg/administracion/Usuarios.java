@@ -30,6 +30,7 @@ import static com.machineAdmin.services.cg.commons.ServiceFacade.setErrorRespons
 import static com.machineAdmin.services.cg.commons.ServiceFacade.setInvalidTokenResponse;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsPermissions;
+import java.util.UUID;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -37,11 +38,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
- *
+ * servicios de administracion de usuarios del sistema
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/usuarios")
-public class Usuarios extends ServiceFacade<Usuario> {
+public class Usuarios extends ServiceFacade<Usuario, UUID> {
 
     public Usuarios() {
         super(new ManagerUsuario());
@@ -126,7 +127,7 @@ public class Usuarios extends ServiceFacade<Usuario> {
      * sirve para obtener la lista de permisos asignados al usuario junto a su profundidad de acceso
      * @param token token de sesion
      * @param usuario id de usuario a obtener permisos
-     * @return retorna en data, la lista de servicios asignados al usuario
+     * @return retorna en data, la lista de permisos asignados al usuario
      */
     @GET
     @Path("/permisos/{userId}")
@@ -135,6 +136,31 @@ public class Usuarios extends ServiceFacade<Usuario> {
         try {            
             UtilsJWT.validateSessionToken(token);
             res.setData(UtilsPermissions.permisosAsignadosAUsuario(usuario));
+            res.setDevMessage("permisos que el usuario tiene asignado");
+        } catch (TokenExpiradoException | TokenInvalidoException e) {
+            setInvalidTokenResponse(res);
+        } catch(Exception ex){
+            setErrorResponse(res, ex);  
+        }        
+        return res;        
+    }
+    
+    /**
+     * sirve para obtener la lista de perfiles asignados al usuario
+     * @param token token de sesion
+     * @param usuario id de usuario a obtener sus perfiles
+     * @return retorna en data, la lista de perfiles asignados al usuario
+     */
+    @GET
+    @Path("/perfiles/{userId}")
+    public Response obtenerPerfilesAsignados(@HeaderParam("Authorization") String token, @PathParam("userId") String usuario){
+        Response res = new Response();
+        try {            
+            UtilsJWT.validateSessionToken(token);
+            ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();
+            
+            
+            
             res.setDevMessage("permisos que el usuario tiene asignado");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);

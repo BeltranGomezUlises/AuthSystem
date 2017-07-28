@@ -16,10 +16,8 @@
  */
 package com.machineAdmin.utils;
 
-import com.machineAdmin.daos.cg.admin.mongo.DaoConfig;
+import com.machineAdmin.daos.cg.admin.mongo.DaoCGConfig;
 import com.machineAdmin.daos.cg.admin.mongo.DaoConfigMail;
-import com.machineAdmin.daos.cg.exceptions.ConstraintException;
-import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
 import com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles;
@@ -152,9 +150,7 @@ public class InitServletContext implements ServletContextListener {
         //<editor-fold defaultstate="collapsed" desc="Asignacion de perfil al usuario">
         ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();
         if (managerUsuariosPerfil.findFirst() == null) {
-            UsuariosPerfil usuariosPerfil = new UsuariosPerfil();
-            usuariosPerfil.setPerfil1(perfilMaster);
-            usuariosPerfil.setUsuario1(usuarioDB);
+            UsuariosPerfil usuariosPerfil = new UsuariosPerfil(usuarioDB.getId(), perfilMaster.getId());
             usuariosPerfil.setHereda(true);
             managerUsuariosPerfil.persist(usuariosPerfil);
         }
@@ -165,9 +161,7 @@ public class InitServletContext implements ServletContextListener {
         UsuariosPermisos usuariosPermisos;
         for (Permiso existingPermission : UtilsPermissions.getExistingPermissions()) {
 
-            usuariosPermisos = new UsuariosPermisos();
-            usuariosPermisos.setUsuario1(usuarioDB);
-            usuariosPermisos.setPermiso1(existingPermission);
+            usuariosPermisos = new UsuariosPermisos(usuarioDB.getId(), existingPermission.getId());
             usuariosPermisos.setProfundidad(Profundidad.TODOS);
 
             UsuariosPermisos checkDB = new UsuariosPermisos(usuarioDB.getId(), existingPermission.getId());
@@ -179,7 +173,7 @@ public class InitServletContext implements ServletContextListener {
 
         //<editor-fold defaultstate="collapsed" desc="Creacion de correo por default"> 
         DaoConfigMail daoMail = new DaoConfigMail();
-        DaoConfig daoConfig = new DaoConfig();
+        DaoCGConfig daoConfig = new DaoCGConfig();
         ConfigMail mail = daoMail.findFirst();
         if (mail == null) {
             mail = new ConfigMail();
@@ -346,25 +340,25 @@ public class InitServletContext implements ServletContextListener {
                                                 managerPermiso.persist(permiso);
                                             }
 
-                                        } catch (ConstraintException | SQLPersistenceException ex) {
+                                        } catch (Exception ex) {
                                             Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
                                         }
                                     }
-                                } catch (ClassNotFoundException ex) {
+                                } catch (Exception ex) {
                                     Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
                                 }
                                 //</editor-fold>
-                            } catch (SQLPersistenceException | ConstraintException ex) {
+                            } catch (Exception ex) {
                                 Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
                         //</editor-fold>                                                
-                    } catch (SQLPersistenceException | ConstraintException ex) {
+                    } catch (Exception ex) {
                         Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
                 //</editor-fold>
-            } catch (SQLPersistenceException | ConstraintException ex) {
+            } catch (Exception ex) {
                 Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
             }
             //</editor-fold>

@@ -31,7 +31,7 @@ import java.util.UUID;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerGrupoPerfil extends ManagerSQLFacade<GrupoPerfiles>{
+public class ManagerGrupoPerfil extends ManagerSQLFacade<GrupoPerfiles, UUID>{
     
     public ManagerGrupoPerfil() {
         super(new DaoGrupoPerfiles());

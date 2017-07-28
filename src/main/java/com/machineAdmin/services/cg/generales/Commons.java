@@ -5,8 +5,6 @@
  */
 package com.machineAdmin.services.cg.generales;
 
-import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
-import com.machineAdmin.utils.UtilsConfig;
 import com.machineAdmin.utils.UtilsDate.DateClass;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -15,7 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 /**
- *
+ * servicios comunes para toma de referencias
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/commons")
@@ -32,15 +30,5 @@ public class Commons {
     public DateClass serverDate() {
         return new DateClass();
     }
-
-    /**
-     * sirve para obtener las configuraciones generales del sistema
-     * @return contenedor de configuraciones generales
-     */
-    @GET
-    @Path("/getConfig")
-    public CGConfig getConfig(){
-        return UtilsConfig.getCGConfig();
-    }
-    
+        
 }

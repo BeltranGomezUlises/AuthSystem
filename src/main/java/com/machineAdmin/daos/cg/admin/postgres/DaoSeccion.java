@@ -24,10 +24,10 @@ import com.machineAdmin.utils.UtilsDB;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoSeccion extends DaoSQLFacade<Seccion>{
+public class DaoSeccion extends DaoSQLFacade<Seccion, String>{
 
     public DaoSeccion() {
-        super(UtilsDB.getEMFactoryCG(),Seccion.class, "secciones");
+        super(UtilsDB.getEMFactoryCG(),Seccion.class, String.class, "secciones");
     }
 
 }

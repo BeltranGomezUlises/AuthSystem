@@ -8,10 +8,8 @@ package com.machineAdmin.daos.cg.commons;
 import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.commons.IEntity;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
+import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
@@ -24,37 +22,43 @@ import org.jinq.jpa.JinqJPAStreamProvider;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> Entidad JPA a utilizar por el controlador C JPA respaldado de
  * DaoSQLFacade
+ * @param <K> Tipo de dato de la llave primaria de la entidad
  */
-public class DaoSQLFacade<T extends IEntity> {
+public abstract class DaoSQLFacade<T extends IEntity, K> {
 
     private final Class<T> claseEntity;
+    private final Class<K> clasePK;
     private final EntityManagerFactory eMFactory;
     private final JinqJPAStreamProvider streams;
     private final String binnacleName;
 
-    public DaoSQLFacade(EntityManagerFactory eMFactory, Class<T> claseEntity, String binnacleName) {
+    public DaoSQLFacade(EntityManagerFactory eMFactory, Class<T> claseEntity, Class<K> clasePk, String binnacleName) {
         this.eMFactory = eMFactory;
         this.claseEntity = claseEntity;
+        this.clasePK = clasePk;
         this.binnacleName = binnacleName;
         streams = new JinqJPAStreamProvider(eMFactory);
-    }    
+    }
 
-    public void persist(T entity) throws SQLPersistenceException, ConstraintException {
+    public void persist(T entity) throws Exception{
         EntityManager em = this.getEM();
         try {
             em.getTransaction().begin();
             em.persist(entity);
             em.getTransaction().commit();
         } catch (Exception e) {
-            String mensajeDeExcepcion = "No fue posible persistir la entidad, CAUSE: " + e.toString();
-            Throwable t = e.getCause();
-            if (t != null) {
-                mensajeDeExcepcion += " CAUSE: " + t.toString();
-                if (t.toString().contains("duplicate key value") || t.toString().contains("already exists")) {
-                    throw new ConstraintException(t.toString());
-                }
-            }
-            throw new SQLPersistenceException(mensajeDeExcepcion);
+            e.printStackTrace();
+            throw e;            
+//            String mensajeDeExcepcion = "No fue posible persistir la entidad, CAUSE: " + e.toString();
+//            Throwable t = e.getCause();
+//            if (t != null) {
+//                mensajeDeExcepcion += " CAUSE: " + t.toString();
+//                if (t.toString().contains("duplicate key value") || t.toString().contains("already exists")) {
+//                    throw new ConstraintException(t.toString());
+//                }
+//            }
+//            throw new SQLPersistenceException(mensajeDeExcepcion);
+            
         } finally {
             if (em != null) {
                 em.close();
@@ -62,7 +66,7 @@ public class DaoSQLFacade<T extends IEntity> {
         }
     }
 
-    public List<T> persistAll(List<T> entities) throws ConstraintException, SQLPersistenceException {
+    public List<T> persistAll(List<T> entities) {
         EntityManager em = this.getEM();
         try {
             em.getTransaction().begin();
@@ -71,15 +75,16 @@ public class DaoSQLFacade<T extends IEntity> {
             }
             em.getTransaction().commit();
         } catch (Exception e) {
-            String mensajeDeExcepcion = "No fue posible persistir la entidad, CAUSE: " + e.toString();
-            Throwable t = e.getCause();
-            if (t != null) {
-                mensajeDeExcepcion += " CAUSE: " + t.toString();
-                if (t.toString().contains("duplicate key value") || t.toString().contains("already exists")) {
-                    throw new ConstraintException(t.toString());
-                }
-            }
-            throw new SQLPersistenceException(mensajeDeExcepcion);
+            throw e;
+//            String mensajeDeExcepcion = "No fue posible persistir la entidad, CAUSE: " + e.toString();
+//            Throwable t = e.getCause();
+//            if (t != null) {
+//                mensajeDeExcepcion += " CAUSE: " + t.toString();
+//                if (t.toString().contains("duplicate key value") || t.toString().contains("already exists")) {
+//                    throw new ConstraintException(t.toString());
+//                }
+//            }
+//            throw new SQLPersistenceException(mensajeDeExcepcion);
         } finally {
             if (em != null) {
                 em.close();
@@ -88,7 +93,7 @@ public class DaoSQLFacade<T extends IEntity> {
         return entities;
     }
 
-    public void delete(Object id) throws SQLPersistenceException {
+    public void delete(K id) throws SQLPersistenceException {
         EntityManager em = this.getEM();
         try {
             em.getTransaction().begin();
@@ -103,7 +108,7 @@ public class DaoSQLFacade<T extends IEntity> {
         }
     }
 
-    public void deleteAll(List<Object> ids) throws Exception {
+    public void deleteAll(List<K> ids) throws Exception {
         EntityManager em = this.getEM();
         try {
             em.getTransaction().begin();
@@ -143,7 +148,7 @@ public class DaoSQLFacade<T extends IEntity> {
         }
     }
 
-    public T findOne(Object id) {    
+    public T findOne(K id) {
         return getEM().find(claseEntity, id);
     }
 
@@ -199,6 +204,19 @@ public class DaoSQLFacade<T extends IEntity> {
     public JPAJinqStream<T> stream() {
         return new JinqJPAStreamProvider(eMFactory).streamAll(eMFactory.createEntityManager(), claseEntity);
     }
-   
-    
+
+    public K stringToPK(String s) {
+        if (clasePK.getName().equals(Integer.class.getName())) {
+            return (K) Integer.valueOf(s);
+        } else {
+            if (clasePK.getName().equals(Long.class.getName())) {
+                return (K) Long.valueOf(s);
+            } else {
+                if (clasePK.getName().equals(UUID.class.getName())) {
+                    return (K) UUID.fromString(s);
+                }
+            }
+        }
+        return (K) s;
+    }
 }

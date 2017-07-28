@@ -18,16 +18,17 @@ package com.machineAdmin.daos.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil;
+import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfilPK;
 import com.machineAdmin.utils.UtilsDB;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoUsuariosPerfil extends DaoSQLFacade<UsuariosPerfil>{
+public class DaoUsuariosPerfil extends DaoSQLFacade<UsuariosPerfil, UsuariosPerfilPK>{
 
     public DaoUsuariosPerfil() {
-        super(UtilsDB.getEMFactoryCG(), UsuariosPerfil.class, "usuariosPerfiles");
+        super(UtilsDB.getEMFactoryCG(), UsuariosPerfil.class, UsuariosPerfilPK.class, "usuariosPerfiles");
     }
- 
+
 }

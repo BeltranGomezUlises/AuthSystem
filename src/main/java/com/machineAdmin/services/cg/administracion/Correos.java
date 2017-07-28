@@ -16,7 +16,7 @@ import javax.ws.rs.Path;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/correos")
-public class Correos extends ServiceFacade<ConfigMail>{
+public class Correos extends ServiceFacade<ConfigMail, Object>{
     
     public Correos() {
         super(new ManagerConfigMail());

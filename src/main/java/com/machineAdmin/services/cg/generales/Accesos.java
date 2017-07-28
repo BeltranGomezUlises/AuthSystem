@@ -21,6 +21,7 @@ import com.machineAdmin.models.cg.responsesCG.Response;
 import static com.machineAdmin.services.cg.commons.ServiceFacade.*;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsJson;
+import com.machineAdmin.utils.UtilsPermissions;
 import com.machineAdmin.utils.UtilsSecurity;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -63,7 +64,8 @@ public class Accesos {
             Usuario usuarioLogeado = managerUsuario.login(usuarioAutenticando);
 
             ModelUsuarioLogeado modelUsuarioLogeado = new ModelUsuarioLogeado();
-
+            modelUsuarioLogeado.setPermissions(UtilsPermissions.permisosAsignadosAUsuario(usuarioLogeado.getId().toString()));
+            
             BeanUtils.copyProperties(modelUsuarioLogeado, usuarioLogeado);
 
             res.setData(modelUsuarioLogeado);

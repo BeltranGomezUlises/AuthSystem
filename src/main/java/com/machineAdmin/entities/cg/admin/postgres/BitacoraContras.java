@@ -116,5 +116,5 @@ public class BitacoraContras implements Serializable, IEntity {
     public Object getId() {
         return bitacoraContrasPK;
     }
-    
+
 }

@@ -24,10 +24,10 @@ import com.machineAdmin.utils.UtilsDB;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoMenu extends DaoSQLFacade<Menu>{
+public class DaoMenu extends DaoSQLFacade<Menu, String>{
 
     public DaoMenu() {
-        super(UtilsDB.getEMFactoryCG(), Menu.class, "menus");
+        super(UtilsDB.getEMFactoryCG(), Menu.class, String.class, "menus");
     }
 
 }

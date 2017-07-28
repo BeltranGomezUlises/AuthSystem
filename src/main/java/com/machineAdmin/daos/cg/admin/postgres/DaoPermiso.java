@@ -24,10 +24,10 @@ import com.machineAdmin.utils.UtilsDB;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoPermiso extends DaoSQLFacade<Permiso> {
+public class DaoPermiso extends DaoSQLFacade<Permiso, String> {
 
     public DaoPermiso() {
-        super(UtilsDB.getEMFactoryCG(), Permiso.class, "permisos");
+        super(UtilsDB.getEMFactoryCG(), Permiso.class, String.class, "permisos");
     }
 
 }

@@ -20,6 +20,7 @@ import com.machineAdmin.daos.cg.admin.postgres.DaoPerfilesPermisos;
 import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos;
+import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisosPK;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
 import com.machineAdmin.models.cg.ModelPermisoAsignado;
@@ -32,7 +33,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerPerfilesPermisos extends ManagerSQLFacade<PerfilesPermisos>{
+public class ManagerPerfilesPermisos extends ManagerSQLFacade<PerfilesPermisos, PerfilesPermisosPK>{
     
     public ManagerPerfilesPermisos() {
         super(new DaoPerfilesPermisos());
@@ -43,7 +44,7 @@ public class ManagerPerfilesPermisos extends ManagerSQLFacade<PerfilesPermisos>{
         ManagerPermiso managerPermiso = new ManagerPermiso();
               
         //borrar las relaciones actuales                
-        List<Object> permisosDelPerfilPk = this.stream()
+        List<PerfilesPermisosPK> permisosDelPerfilPk = this.stream()
                 .filter( p -> p.getPerfilesPermisosPK().getPerfil().equals(UUID.fromString(model.getId())))
                 .map( p -> p.getPerfilesPermisosPK())
                 .collect(toList());

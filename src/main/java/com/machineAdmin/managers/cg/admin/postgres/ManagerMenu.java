@@ -24,7 +24,7 @@ import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerMenu extends ManagerSQLFacade<Menu>{
+public class ManagerMenu extends ManagerSQLFacade<Menu, String>{
     
     public ManagerMenu() {
         super(new DaoMenu());

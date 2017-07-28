@@ -31,7 +31,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerUsuariosPermisos extends ManagerSQLFacade<UsuariosPermisos>{
+public class ManagerUsuariosPermisos extends ManagerSQLFacade<UsuariosPermisos, UsuariosPermisosPK>{
     
     public ManagerUsuariosPermisos() {
         super(new DaoUsuariosPermisos());
@@ -39,7 +39,7 @@ public class ManagerUsuariosPermisos extends ManagerSQLFacade<UsuariosPermisos>{
     
     public void asignarPermisos(ModelAsignarPermisos model) throws Exception{
         //aliminar los actuales de ese usuario
-        List<Object> usuariosPermisosPk = this.stream()
+        List<UsuariosPermisosPK> usuariosPermisosPk = this.stream()
                 .filter( up -> up.getUsuariosPermisosPK().getUsuario().equals(UUID.fromString(model.getId())))
                 .map( up -> up.getUsuariosPermisosPK())
                 .collect(toList());

@@ -35,15 +35,12 @@ import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsMail;
 import com.machineAdmin.utils.UtilsSMS;
 import com.machineAdmin.utils.UtilsSecurity;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
 import org.apache.commons.mail.EmailException;
 
@@ -51,31 +48,27 @@ import org.apache.commons.mail.EmailException;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerUsuario extends ManagerSQLFacade<Usuario> {
+public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
 
     public ManagerUsuario() {
         super(new DaoUsuario());
     }
 
     @Override
-    public Usuario persist(Usuario entity) throws SQLPersistenceException, ConstraintException {
-        try {
-            entity.setContra(UtilsSecurity.cifrarMD5(entity.getContra()));
-            Usuario persisted = super.persist(entity);
+    public Usuario persist(Usuario entity) throws Exception {
 
-            //bitacorizar la contraseña
-            BitacoraContras bc = new BitacoraContras(persisted.getId(), persisted.getContra());
-            bc.setUsuario1(persisted);
+        entity.setContra(UtilsSecurity.cifrarMD5(entity.getContra()));
+        Usuario persisted = super.persist(entity);
 
-            ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra();
-            managerBitacoraContra.persist(bc);
+        //bitacorizar la contraseña
+        BitacoraContras bc = new BitacoraContras(persisted.getId(), persisted.getContra());
+        bc.setUsuario1(persisted);
 
-            return persisted; //To change body of generated methods, choose Tools | Templates. 
-        } catch (ConstraintException ex) {
-            throw new ConstraintException(getMessageOfUniqueContraint(entity));
-        } catch (SQLPersistenceException ex) {
-            throw ex;
-        }
+        ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra();
+        managerBitacoraContra.persist(bc);
+
+        return persisted; //To change body of generated methods, choose Tools | Templates. 
+
     }
 
     @Override
@@ -90,15 +83,10 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario> {
     }
 
     @Override
-    public void delete(Object id) throws Exception {
+    public void delete(UUID id) throws Exception {
         Usuario usuario = this.findOne(id);
         usuario.setInhabilitado(Boolean.TRUE);
         this.update(usuario);
-    }
-
-    @Override
-    public Usuario findOne(Object id) {
-        return super.findOne(UUID.fromString(id.toString()));
     }
 
     /**
@@ -149,7 +137,7 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario> {
         }
     }
 
-    public void logout(String token) throws IOException {
+    public void logout(String token) {
         BinnacleAccess exit = new BinnacleAccess(UtilsJWT.getBodyToken(token));
         UtilsBinnacle.bitacorizar("cg.bitacora.salidas", exit);
     }

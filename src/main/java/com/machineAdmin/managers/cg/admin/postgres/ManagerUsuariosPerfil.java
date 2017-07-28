@@ -18,6 +18,7 @@ package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPerfil;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil;
+import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfilPK;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlUsuario;
 import com.machineAdmin.models.cg.ModelPerfilYHereda;
@@ -30,7 +31,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerUsuariosPerfil extends  ManagerSQLFacade<UsuariosPerfil>{
+public class ManagerUsuariosPerfil extends  ManagerSQLFacade<UsuariosPerfil, UsuariosPerfilPK>{
     
     public ManagerUsuariosPerfil() {
         super(new DaoUsuariosPerfil());
@@ -38,7 +39,7 @@ public class ManagerUsuariosPerfil extends  ManagerSQLFacade<UsuariosPerfil>{
 
     public void asignarPerfilesAlUsuario(ModelAsignarPerfilesAlUsuario modelo) throws Exception {
         //remover los perfiles actuales
-        List<Object> idsActuales = this.stream()
+        List<UsuariosPerfilPK> idsActuales = this.stream()
                 .filter( up -> up.getUsuariosPerfilPK().getUsuario().equals(UUID.fromString(modelo.getUserId())))
                 .map( up-> up.getUsuariosPerfilPK())
                 .collect(toList());

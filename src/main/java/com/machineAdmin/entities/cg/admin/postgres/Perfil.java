@@ -31,7 +31,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.machineAdmin.entities.cg.commons.IEntity;
 import com.machineAdmin.entities.cg.commons.UUIDConverter;
@@ -46,7 +45,6 @@ import org.eclipse.persistence.annotations.Converter;
  */
 @Entity
 @Table(name = "perfil")
-
 @NamedQueries({
     @NamedQuery(name = "Perfil.findAll", query = "SELECT p FROM Perfil p")
     , @NamedQuery(name = "Perfil.findByNombre", query = "SELECT p FROM Perfil p WHERE p.nombre = :nombre")
@@ -75,7 +73,7 @@ public class Perfil implements Serializable, IEntity {
     private List<UsuariosPerfil> usuariosPerfilList;
 
     public Perfil() {
-        this.id = UUID.randomUUID();        
+        this.id = UUID.randomUUID();
     }
 
     public Perfil(UUID id) {
@@ -107,7 +105,6 @@ public class Perfil implements Serializable, IEntity {
         this.descripcion = descripcion;
     }
 
-    
     @JsonIgnore
     public List<GrupoPerfiles> getGrupoPerfilesList() {
         return grupoPerfilesList;
@@ -117,7 +114,6 @@ public class Perfil implements Serializable, IEntity {
         this.grupoPerfilesList = grupoPerfilesList;
     }
 
-    
     @JsonIgnore
     public List<PerfilesPermisos> getPerfilesPermisosList() {
         return perfilesPermisosList;
@@ -127,7 +123,6 @@ public class Perfil implements Serializable, IEntity {
         this.perfilesPermisosList = perfilesPermisosList;
     }
 
-    
     @JsonIgnore
     public List<UsuariosPerfil> getUsuariosPerfilList() {
         return usuariosPerfilList;

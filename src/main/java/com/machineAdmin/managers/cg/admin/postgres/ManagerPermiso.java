@@ -24,7 +24,7 @@ import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerPermiso extends ManagerSQLFacade<Permiso>{
+public class ManagerPermiso extends ManagerSQLFacade<Permiso, String>{
     
     public ManagerPermiso() {
         super(new DaoPermiso());

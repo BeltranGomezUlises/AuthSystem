@@ -14,21 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.daos.cg.admin.postgres;
+package com.machineAdmin.managers.cg.admin.mongo;
 
-import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
-import com.machineAdmin.entities.cg.admin.postgres.Usuario;
-import com.machineAdmin.utils.UtilsDB;
-import java.util.UUID;
+import com.machineAdmin.daos.cg.admin.mongo.DaoCGConfig;
+import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
+import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoUsuario extends DaoSQLFacade<Usuario, UUID>{
-
-    public DaoUsuario() {
-        super(UtilsDB.getEMFactoryCG(),Usuario.class, UUID.class, "usuarios");
+public class ManagerCGConfig extends ManagerMongoFacade<CGConfig> {
+    
+    public ManagerCGConfig() {
+        super(new DaoCGConfig());
     }
-
+    
 }

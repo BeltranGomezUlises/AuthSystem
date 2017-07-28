@@ -24,7 +24,7 @@ import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerModulo extends ManagerSQLFacade<Modulo>{
+public class ManagerModulo extends ManagerSQLFacade<Modulo, String>{
     
     public ManagerModulo() {
         super(new DaoModulo());

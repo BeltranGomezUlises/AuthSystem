@@ -15,34 +15,35 @@ import org.jinq.jpa.JPAJinqStream;
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
- * @param <T>
+ * @param <T> Entidad a manejar
+ * @param <K> Tipo de dato de llave primaria de la entidad
  */
-public class ManagerSQLFacade<T extends IEntity> implements ManagerFacade<T> {
+public class ManagerSQLFacade<T extends IEntity, K> implements ManagerFacade<T, K>{
 
-    private final DaoSQLFacade<T> dao;
+    private final DaoSQLFacade<T, K> dao;
 
     public ManagerSQLFacade(DaoSQLFacade dao) {
         this.dao = dao;
     }
 
     @Override
-    public T persist(T entity) throws SQLPersistenceException, ConstraintException {
+    public T persist(T entity) throws Exception {
         dao.persist(entity);
         return entity;
     }
 
     @Override
     public List<T> persistAll(List<T> entities) throws Exception {
-        return dao.persistAll(entities);                
+        return dao.persistAll(entities);
     }
 
     @Override
-    public void delete(Object id) throws Exception {
+    public void delete(K id) throws Exception {
         dao.delete(id);
-    }    
+    }
 
     @Override
-    public void deleteAll(List<Object> ids) throws SQLPersistenceException, Exception{
+    public void deleteAll(List<K> ids) throws SQLPersistenceException, Exception {
         dao.deleteAll(ids);
     }
 
@@ -52,7 +53,7 @@ public class ManagerSQLFacade<T extends IEntity> implements ManagerFacade<T> {
     }
 
     @Override
-    public T findOne(Object id) {
+    public T findOne(K id) {
         return (T) dao.findOne(id);
     }
 
@@ -75,9 +76,14 @@ public class ManagerSQLFacade<T extends IEntity> implements ManagerFacade<T> {
     public T findFirst() {
         return (T) dao.findFirst();
     }
-    
-    public JPAJinqStream<T> stream(){
+
+    public JPAJinqStream<T> stream() {
         return dao.stream();
     }
-    
+
+    @Override
+    public K stringToKey(String s) {
+        return dao.stringToPK(s);
+    }
+
 }

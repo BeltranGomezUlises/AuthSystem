@@ -30,8 +30,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
-
 
 /**
  *
@@ -39,7 +37,6 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "perfiles_permisos")
-
 @NamedQueries({
     @NamedQuery(name = "PerfilesPermisos.findAll", query = "SELECT p FROM PerfilesPermisos p")
     , @NamedQuery(name = "PerfilesPermisos.findByPermiso", query = "SELECT p FROM PerfilesPermisos p WHERE p.perfilesPermisosPK.permiso = :permiso")
@@ -48,7 +45,7 @@ public class PerfilesPermisos implements Serializable, IEntity {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
-    protected PerfilesPermisosPK perfilesPermisosPK;    
+    protected PerfilesPermisosPK perfilesPermisosPK;
     @Column(name = "profundidad")
     @Enumerated(EnumType.STRING)
     private Profundidad profundidad;
@@ -128,5 +125,5 @@ public class PerfilesPermisos implements Serializable, IEntity {
     public Object getId() {
         return perfilesPermisosPK;
     }
-    
+
 }

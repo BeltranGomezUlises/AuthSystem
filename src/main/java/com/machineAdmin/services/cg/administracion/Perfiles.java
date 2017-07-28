@@ -27,6 +27,7 @@ import com.machineAdmin.services.cg.commons.ServiceFacade;
 import static com.machineAdmin.services.cg.commons.ServiceFacade.setInvalidTokenResponse;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsPermissions;
+import java.util.UUID;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -38,7 +39,7 @@ import javax.ws.rs.PathParam;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/perfiles")
-public class Perfiles extends ServiceFacade<Perfil>{
+public class Perfiles extends ServiceFacade<Perfil, UUID>{
     
     public Perfiles() {
         super(new ManagerPerfil());

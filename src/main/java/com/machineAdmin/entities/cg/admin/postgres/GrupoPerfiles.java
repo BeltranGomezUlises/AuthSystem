@@ -104,7 +104,7 @@ public class GrupoPerfiles implements Serializable, IEntity {
     public void setDescripcoin(String descripcoin) {
         this.descripcoin = descripcoin;
     }
-    
+
     @JsonIgnore
     public List<Perfil> getPerfilList() {
         return perfilList;

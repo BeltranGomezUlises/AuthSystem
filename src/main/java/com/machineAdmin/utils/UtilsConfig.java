@@ -16,7 +16,7 @@
  */
 package com.machineAdmin.utils;
 
-import com.machineAdmin.daos.cg.admin.mongo.DaoConfig;
+import com.machineAdmin.daos.cg.admin.mongo.DaoCGConfig;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig.AccessConfig;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig.SMSConfig;
@@ -32,7 +32,7 @@ import java.util.GregorianCalendar;
  */
 public class UtilsConfig {
         
-    private static final DaoConfig DAO = new DaoConfig();
+    private static final DaoCGConfig DAO = new DaoCGConfig();
 
     public static int getSecondsSessionJwtExp() {
         return DAO.findFirst().getJwtConfig().getSecondsSessionJwtExp();

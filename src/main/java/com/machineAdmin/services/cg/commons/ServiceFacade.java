@@ -1,7 +1,5 @@
 package com.machineAdmin.services.cg.commons;
 
-import com.machineAdmin.daos.cg.exceptions.ConstraintException;
-import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.commons.IEntity;
 import com.machineAdmin.managers.cg.commons.ManagerFacade;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
@@ -24,14 +22,15 @@ import javax.ws.rs.core.MediaType;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> is a Entity that workw with de manager
+ * @param <K> tipo de dato del identificador de la entidad manejada
  */
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class ServiceFacade<T extends IEntity> {
+public class ServiceFacade<T extends IEntity, K> {
 
-    ManagerFacade<T> manager;
+    ManagerFacade<T, K> manager;
 
-    public ServiceFacade(ManagerFacade<T> manager) {
+    public ServiceFacade(ManagerFacade<T, K> manager) {
         this.manager = manager;
     }
 
@@ -70,7 +69,7 @@ public class ServiceFacade<T extends IEntity> {
         Response response = new Response();
         try {
             UtilsJWT.validateSessionToken(token);
-            response.setData(manager.findOne(id));
+            response.setData(manager.findOne(manager.stringToKey(id)));
             response.setMessage("Entidad encontrada");
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
@@ -137,7 +136,7 @@ public class ServiceFacade<T extends IEntity> {
         Response response = new Response();
         try {
             UtilsJWT.validateSessionToken(token);
-            manager.delete(t.getId());            
+            manager.delete((K) t.getId());
             response.setMessage("Entidad eliminada");
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);

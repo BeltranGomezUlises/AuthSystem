@@ -19,16 +19,16 @@ package com.machineAdmin.daos.cg.admin.postgres;
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles;
 import com.machineAdmin.utils.UtilsDB;
+import java.util.UUID;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoGrupoPerfiles extends DaoSQLFacade<GrupoPerfiles>{
+public class DaoGrupoPerfiles extends DaoSQLFacade<GrupoPerfiles, UUID>{
 
     public DaoGrupoPerfiles() {
-        super(UtilsDB.getEMFactoryCG(), GrupoPerfiles.class, "grupoPërfiles");
+        super(UtilsDB.getEMFactoryCG(), GrupoPerfiles.class, UUID.class, "grupoPërfiles");
     }
 
-  
 }

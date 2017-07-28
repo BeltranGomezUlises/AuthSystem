@@ -44,7 +44,6 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "permiso")
-
 @NamedQueries({
     @NamedQuery(name = "Permiso.findAll", query = "SELECT p FROM Permiso p")
     , @NamedQuery(name = "Permiso.findById", query = "SELECT p FROM Permiso p WHERE p.id = :id")

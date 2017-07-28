@@ -20,40 +20,15 @@ import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos;
 import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisosPK;
 import com.machineAdmin.utils.UtilsDB;
-import java.util.List;
-import javax.persistence.EntityManager;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoPerfilesPermisos extends DaoSQLFacade<PerfilesPermisos> {
+public class DaoPerfilesPermisos extends DaoSQLFacade<PerfilesPermisos, PerfilesPermisosPK> {
 
     public DaoPerfilesPermisos() {
-        super(UtilsDB.getEMFactoryCG(), PerfilesPermisos.class, "perfilesPermisos");
+        super(UtilsDB.getEMFactoryCG(), PerfilesPermisos.class, PerfilesPermisosPK.class, "perfilesPermisos");
     }
-
-    public void borrarRelaciones(List<PerfilesPermisosPK> pks) {
-        EntityManager em = this.getEM();
-        try {
-            em.getTransaction().begin();
-            PerfilesPermisos perfilesPermisos;
-
-            for (PerfilesPermisosPK pk : pks) {
-                perfilesPermisos = em.getReference(PerfilesPermisos.class, pk);                
-                em.remove(perfilesPermisos);
-            }
-
-            em.getTransaction().commit();
-        } finally {
-            if (em != null) {
-                em.close();
-            }
-        }
-//        this.getEM().createQuery("DELETE FROM PerfilesPermisos t WHERE t.perfilesPermisosPK = :pk")
-//                .setParameter("pk", pk)
-//                .executeUpdate();
-
-    }  
-
+   
 }

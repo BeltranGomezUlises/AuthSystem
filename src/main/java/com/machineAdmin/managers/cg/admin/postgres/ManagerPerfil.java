@@ -19,12 +19,13 @@ package com.machineAdmin.managers.cg.admin.postgres;
 import com.machineAdmin.daos.cg.admin.postgres.DaoPerfil;
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import java.util.UUID;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerPerfil extends ManagerSQLFacade<Perfil>{
+public class ManagerPerfil extends ManagerSQLFacade<Perfil, UUID>{
     
     public ManagerPerfil() {
         super(new DaoPerfil());

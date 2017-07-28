@@ -18,13 +18,14 @@ package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoBitacoraContra;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContras;
+import com.machineAdmin.entities.cg.admin.postgres.BitacoraContrasPK;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerBitacoraContra extends ManagerSQLFacade<BitacoraContras>{
+public class ManagerBitacoraContra extends ManagerSQLFacade<BitacoraContras, BitacoraContrasPK>{
     
     public ManagerBitacoraContra() {
         super(new DaoBitacoraContra());

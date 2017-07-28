@@ -37,8 +37,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-
 import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.Converter;
 
@@ -192,7 +190,6 @@ public class Usuario implements Serializable, IEntity {
         this.id = id;
     }
 
-    
     @JsonIgnore
     public List<BitacoraContras> getBitacoraContrasList() {
         return bitacoraContrasList;
@@ -202,7 +199,6 @@ public class Usuario implements Serializable, IEntity {
         this.bitacoraContrasList = bitacoraContrasList;
     }
 
-    
     @JsonIgnore
     public List<UsuariosPermisos> getUsuariosPermisosList() {
         return usuariosPermisosList;
@@ -212,7 +208,6 @@ public class Usuario implements Serializable, IEntity {
         this.usuariosPermisosList = usuariosPermisosList;
     }
 
-    
     @JsonIgnore
     public List<UsuariosPerfil> getUsuariosPerfilList() {
         return usuariosPerfilList;

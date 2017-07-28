@@ -24,7 +24,7 @@ import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerSeccion extends ManagerSQLFacade<Seccion> {
+public class ManagerSeccion extends ManagerSQLFacade<Seccion, String> {
     
     public ManagerSeccion() {
         super(new DaoSeccion());
