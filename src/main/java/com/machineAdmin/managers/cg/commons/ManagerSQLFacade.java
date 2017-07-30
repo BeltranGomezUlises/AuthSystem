@@ -9,7 +9,10 @@ import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.commons.IEntity;
+import com.machineAdmin.managers.cg.exceptions.UsuarioNoAsignadoException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
 import org.jinq.jpa.JPAJinqStream;
 
@@ -19,7 +22,7 @@ import org.jinq.jpa.JPAJinqStream;
  * @param <T> Entidad a manejar
  * @param <K> Tipo de dato de llave primaria de la entidad
  */
-public abstract class ManagerSQLFacade<T extends IEntity, K> extends ManagerFacade<T, K>{
+public abstract class ManagerSQLFacade<T extends IEntity, K> extends ManagerFacade<T, K> {
 
     private final DaoSQLFacade<T, K> dao;
 
@@ -27,8 +30,8 @@ public abstract class ManagerSQLFacade<T extends IEntity, K> extends ManagerFaca
         super(usuario);
         this.dao = dao;
     }
-    
-    public ManagerSQLFacade(DaoSQLFacade dao){
+
+    public ManagerSQLFacade(DaoSQLFacade dao) {
         super();
         this.dao = dao;
     }
@@ -36,41 +39,67 @@ public abstract class ManagerSQLFacade<T extends IEntity, K> extends ManagerFaca
     @Override
     public T persist(T entity) throws Exception {
         dao.persist(entity);
-        this.bitacorizar("alta",this.obtenerModeloBitacorizar(entity));
+        try {
+            this.bitacorizar("alta", this.obtenerModeloBitacorizar(entity));
+        } catch (UsuarioNoAsignadoException ex) {
+            Logger.getLogger(ManagerSQLFacade.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return entity;
     }
 
     @Override
     public List<T> persistAll(List<T> entities) throws Exception {
         List<T> ts = dao.persistAll(entities);
-        ts.parallelStream().forEach( t -> this.obtenerModeloBitacorizar(t));
+        try {
+            ts.parallelStream().forEach(t -> this.obtenerModeloBitacorizar(t));
+        } catch (Exception ex) {
+            Logger.getLogger(ManagerSQLFacade.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return ts;
     }
 
     @Override
     public void delete(K id) throws Exception {
         T t = dao.findOne(id);
-        dao.delete(id);        
-        this.bitacorizar("eliminar", this.obtenerModeloBitacorizar(t));                
+        dao.delete(id);
+        try {
+            this.bitacorizar("eliminar", this.obtenerModeloBitacorizar(t));    
+        } catch (UsuarioNoAsignadoException ex) {
+            Logger.getLogger(ManagerSQLFacade.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 
     @Override
     public void deleteAll(List<K> ids) throws SQLPersistenceException, Exception {
-        List<T> ts = dao.stream().filter((T t) -> ids.contains((K) t.getId())).collect(toList());        
+        List<T> ts = dao.stream().filter((T t) -> ids.contains((K) t.getId())).collect(toList());
         dao.deleteAll(ids);
-        ts.parallelStream().forEach( t -> this.obtenerModeloBitacorizar(t));
+        try {
+            ts.parallelStream().forEach(t -> this.obtenerModeloBitacorizar(t));
+        } catch (Exception e) {
+            Logger.getLogger(ManagerSQLFacade.class.getName()).log(Level.SEVERE, null, e);
+        }
+        
     }
 
     @Override
-    public void update(T entity) throws SQLPersistenceException, ConstraintException {        
-        dao.update(entity);
-        this.bitacorizar("actualizar", this.obtenerModeloBitacorizar(entity));
+    public void update(T entity) throws SQLPersistenceException, ConstraintException {
+        dao.update(entity);        
+        try {
+            this.bitacorizar("actualizar", this.obtenerModeloBitacorizar(entity));
+        } catch (UsuarioNoAsignadoException ex) {
+            Logger.getLogger(ManagerSQLFacade.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
     public T findOne(K id) {
         T t = (T) dao.findOne(id);
-        this.bitacorizar("obtener", this.obtenerModeloBitacorizar(t));
+        try {
+            this.bitacorizar("obtener", this.obtenerModeloBitacorizar(t));
+        } catch (UsuarioNoAsignadoException ex) {
+            Logger.getLogger(ManagerSQLFacade.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return t;
     }
 
@@ -101,6 +130,6 @@ public abstract class ManagerSQLFacade<T extends IEntity, K> extends ManagerFaca
     @Override
     public K stringToKey(String s) {
         return dao.stringToPK(s);
-    }   
-            
+    }
+
 }

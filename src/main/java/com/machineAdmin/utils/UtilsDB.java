@@ -56,7 +56,7 @@ public class UtilsDB {
         
     
     /**
-     * fabricas y provedores
+     * fabricas y proveedores
      * @return 
      */
     public static EntityManagerFactory getEMFactoryCG() {

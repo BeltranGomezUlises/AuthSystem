@@ -18,9 +18,7 @@ package com.machineAdmin.utils;
 
 import com.machineAdmin.daos.cg.admin.mongo.DaoCGConfig;
 import com.machineAdmin.daos.cg.admin.mongo.DaoConfigMail;
-import com.machineAdmin.daos.cg.admin.postgres.DaoMenu;
-import com.machineAdmin.daos.cg.admin.postgres.DaoModulo;
-import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
+import com.machineAdmin.daos.cg.admin.postgres.DaoGrupoPerfiles;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
 import com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles;
@@ -34,16 +32,15 @@ import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos;
 import com.machineAdmin.entities.cg.commons.Profundidad;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerGrupoPerfil;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerMenu;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerModulo;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerPerfil;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerPerfilesPermisos;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerPermiso;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerSeccion;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuariosPerfil;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuariosPermisos;
+import com.machineAdmin.daos.cg.admin.postgres.DaoMenu;
+import com.machineAdmin.daos.cg.admin.postgres.DaoModulo;
+import com.machineAdmin.daos.cg.admin.postgres.DaoPerfil;
+import com.machineAdmin.daos.cg.admin.postgres.DaoPerfilesPermisos;
+import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
+import com.machineAdmin.daos.cg.admin.postgres.DaoSeccion;
+import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
+import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPerfil;
+import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPermisos;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -92,21 +89,21 @@ public class InitServletContext implements ServletContextListener {
 
         //<editor-fold defaultstate="collapsed" desc="Creacion del perfil Master">
         //crear perfil master
-        ManagerPerfil managerPerfil = new ManagerPerfil();
+        DaoPerfil daoPerfil = new DaoPerfil();
 
-        Perfil perfilMaster = managerPerfil.findFirst();
+        Perfil perfilMaster = daoPerfil.findFirst();
         if (perfilMaster == null) {
             perfilMaster = new Perfil();
             perfilMaster.setNombre("Master");
             perfilMaster.setDescripcion("Perfil de control total del sistema");
-            managerPerfil.persist(perfilMaster);
+            daoPerfil.persist(perfilMaster);
         }
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="Creacion del grupo de perfiles">
-        ManagerGrupoPerfil managerGrupoPerfil = new ManagerGrupoPerfil();
+        DaoGrupoPerfiles daoGrupoPerfil = new DaoGrupoPerfiles();
 
-        GrupoPerfiles gp = managerGrupoPerfil.findFirst();
+        GrupoPerfiles gp = daoGrupoPerfil.findFirst();
         if (gp == null) {
             gp = new GrupoPerfiles();
             gp.setNombre("Administradores del sistema");
@@ -115,52 +112,53 @@ public class InitServletContext implements ServletContextListener {
             List<Perfil> perfilesDelRol = new ArrayList<>();
             perfilesDelRol.add(perfilMaster);
             gp.setPerfilList(perfilesDelRol);
-            managerGrupoPerfil.persist(gp);
+            daoGrupoPerfil.persist(gp);
         }
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="Asignacion de permisos al perfil">
         //crear relacion de perfil con permisos disponibles
-        ManagerPerfilesPermisos managerPerfilesPermisos = new ManagerPerfilesPermisos();
+        DaoPerfilesPermisos daoPerfilesPermisos = new DaoPerfilesPermisos();
         //asignar permisos al perfil
         for (Permiso permiso : UtilsPermissions.getExistingPermissions()) {
             PerfilesPermisos perfilPermisoRelacion = new PerfilesPermisos(perfilMaster.getId(), permiso.getId());
 
-            if (!managerPerfilesPermisos.stream().anyMatch(pp -> pp.equals(perfilPermisoRelacion))) { // si no existe la relacion
+            if (!daoPerfilesPermisos.stream().anyMatch(pp -> pp.equals(perfilPermisoRelacion))) { // si no existe la relacion
                 perfilPermisoRelacion.setPerfil1(perfilMaster);
                 perfilPermisoRelacion.setPermiso1(permiso);
                 perfilPermisoRelacion.setProfundidad(Profundidad.TODOS);
-                managerPerfilesPermisos.persist(perfilPermisoRelacion);
+                daoPerfilesPermisos.persist(perfilPermisoRelacion);
             }
 
         }
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="Creacion de usuario default master">
-        ManagerUsuario managerUsuario = new ManagerUsuario();
+        DaoUsuario daoUsuario = new DaoUsuario();
 
-        Usuario usuarioDB = managerUsuario.findFirst();
+        Usuario usuarioDB = daoUsuario.findFirst();
         if (usuarioDB == null) {
             usuarioDB = new Usuario();
             usuarioDB.setNombre("Administrador");
             usuarioDB.setCorreo("ubg700@gmail.com");
             usuarioDB.setTelefono("6671007264");
             usuarioDB.setContra("1234");
-            managerUsuario.persist(usuarioDB);
+            daoUsuario.persist(usuarioDB);
         }
         //</editor-fold>        
 
         //<editor-fold defaultstate="collapsed" desc="Asignacion de perfil al usuario">
-        ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();
-        if (managerUsuariosPerfil.findFirst() == null) {
+        DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
+        if (daoUsuariosPerfil.findFirst() == null) {
             UsuariosPerfil usuariosPerfil = new UsuariosPerfil(usuarioDB.getId(), perfilMaster.getId());
             usuariosPerfil.setHereda(true);
-            managerUsuariosPerfil.persist(usuariosPerfil);
+            daoUsuariosPerfil.persist(usuariosPerfil);
         }
 
         //</editor-fold>
+        
         //<editor-fold defaultstate="collapsed" desc="Asignaion de permisos al usuario">
-        ManagerUsuariosPermisos managerUsuariosPermisos = new ManagerUsuariosPermisos();
+        DaoUsuariosPermisos daoUsuariosPermisos = new DaoUsuariosPermisos();
         UsuariosPermisos usuariosPermisos;
         for (Permiso existingPermission : UtilsPermissions.getExistingPermissions()) {
 
@@ -168,8 +166,8 @@ public class InitServletContext implements ServletContextListener {
             usuariosPermisos.setProfundidad(Profundidad.TODOS);
 
             UsuariosPermisos checkDB = new UsuariosPermisos(usuarioDB.getId(), existingPermission.getId());
-            if (!managerUsuariosPermisos.stream().anyMatch(up -> up.equals(checkDB))) {
-                managerUsuariosPermisos.persist(usuariosPermisos);
+            if (!daoUsuariosPermisos.stream().anyMatch(up -> up.equals(checkDB))) {
+                daoUsuariosPermisos.persist(usuariosPermisos);
             }
         }
         //</editor-fold>
@@ -251,7 +249,7 @@ public class InitServletContext implements ServletContextListener {
         DaoMenu daoMenu = new DaoMenu();        
         DaoModulo daoModulo = new DaoModulo();
         
-        ManagerSeccion managerSeccion = new ManagerSeccion();
+        DaoSeccion daoSeccion = new DaoSeccion();
 
         Package[] paquetes = Package.getPackages();
         List<String> paquetesServicios = Arrays.stream(paquetes)
@@ -268,11 +266,11 @@ public class InitServletContext implements ServletContextListener {
             try {
                 String packageSeccionName = PACKAGE_SERVICES + "." + nombreSeccion;
 
-                Seccion seccion = managerSeccion.findOne(packageSeccionName);
+                Seccion seccion = daoSeccion.findOne(packageSeccionName);
                 if (seccion == null) {
                     seccion = new Seccion(packageSeccionName);
                     seccion.setNombre(nombreSeccion);
-                    managerSeccion.persist(seccion);
+                    daoSeccion.persist(seccion);
                 }
 
                 List<String> modulosPackageNombre = Arrays.stream(paquetes)

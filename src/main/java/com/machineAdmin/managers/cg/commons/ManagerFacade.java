@@ -8,6 +8,7 @@ package com.machineAdmin.managers.cg.commons;
 import com.machineAdmin.entities.cg.commons.IEntity;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
+import com.machineAdmin.managers.cg.exceptions.UsuarioNoAsignadoException;
 import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 import com.machineAdmin.utils.UtilsBitacora;
 import com.machineAdmin.utils.UtilsJWT;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 public abstract class ManagerFacade<T extends IEntity, K> {
 
-    private String usuario;
+    protected String usuario;
 
     public ManagerFacade(String usuario) {
         this.usuario = usuario;
@@ -88,8 +89,9 @@ public abstract class ManagerFacade<T extends IEntity, K> {
      *
      * @param id identificador de la entidad
      * @return entidad de la base de datos
+     * @throws java.lang.Exception
      */
-    public abstract T findOne(K id);
+    public abstract T findOne(K id) throws Exception;
 
     /**
      * busca la primer entidad existente en base de datos
@@ -131,9 +133,12 @@ public abstract class ManagerFacade<T extends IEntity, K> {
 
     public abstract ModelBitacoraGenerica obtenerModeloBitacorizar(T entity);
 
-    public void bitacorizar(String accion, ModelBitacoraGenerica model) {
+    public void bitacorizar(String accion, ModelBitacoraGenerica model) throws UsuarioNoAsignadoException {
         if (model != null) {
-            UtilsBitacora.bitacorizar(usuario, accion, model.getCollectionName(), model.getObjectToPersist());
+            if (usuario != null) {
+                UtilsBitacora.bitacorizar(usuario, accion, model.getCollectionName(), model.getObjectToPersist());
+            }
+            throw new UsuarioNoAsignadoException();
         }
     }
 
@@ -142,5 +147,5 @@ public abstract class ManagerFacade<T extends IEntity, K> {
     public void setToken(String token) throws TokenInvalidoException, TokenExpiradoException {       
         this.setUsuario(UtilsJWT.getBodyToken(token));
     }
-
+   
 }
