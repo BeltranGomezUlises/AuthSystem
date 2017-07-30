@@ -28,7 +28,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoPerfilesPermisos extends DaoSQLFacade<PerfilesPermisos, PerfilesPermisosPK> {
 
     public DaoPerfilesPermisos() {
-        super(UtilsDB.getEMFactoryCG(), PerfilesPermisos.class, PerfilesPermisosPK.class, "perfilesPermisos");
+        super(UtilsDB.getEMFactoryCG(), PerfilesPermisos.class, PerfilesPermisosPK.class);
     }
    
 }

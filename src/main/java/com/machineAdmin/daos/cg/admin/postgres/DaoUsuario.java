@@ -28,7 +28,7 @@ import java.util.UUID;
 public class DaoUsuario extends DaoSQLFacade<Usuario, UUID>{
 
     public DaoUsuario() {
-        super(UtilsDB.getEMFactoryCG(),Usuario.class, UUID.class, "usuarios");
+        super(UtilsDB.getEMFactoryCG(),Usuario.class, UUID.class);
     }
 
 }

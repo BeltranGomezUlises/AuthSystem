@@ -190,7 +190,7 @@ public class Accesos {
             String userId = UtilsJWT.getBodyToken(tokenResetPassword);
             String pass = UtilsSecurity.decryptBase64ByPrivateKey(content.getContent());
 
-            ManagerUsuario managerUsuario = new ManagerUsuario();
+            ManagerUsuario managerUsuario = new ManagerUsuario(userId);
             managerUsuario.resetPassword(userId, pass);
 
             res.setMessage("La contraseña fué restablecida con éxito");

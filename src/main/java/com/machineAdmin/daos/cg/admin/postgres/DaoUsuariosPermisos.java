@@ -28,7 +28,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoUsuariosPermisos extends DaoSQLFacade<UsuariosPermisos, UsuariosPermisosPK>{
 
     public DaoUsuariosPermisos() {
-        super(UtilsDB.getEMFactoryCG(), UsuariosPermisos.class, UsuariosPermisosPK.class, "usuariosPermisos");
+        super(UtilsDB.getEMFactoryCG(), UsuariosPermisos.class, UsuariosPermisosPK.class);
     }
 
 }

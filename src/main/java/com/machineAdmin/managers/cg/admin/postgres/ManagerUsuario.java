@@ -19,16 +19,19 @@ package com.machineAdmin.managers.cg.admin.postgres;
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
 import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
-import com.machineAdmin.entities.cg.admin.mongo.BinnacleAccess;
+import com.machineAdmin.entities.cg.admin.mongo.BitacoraAcceso;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContras;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
 import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
+import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
+import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 import com.machineAdmin.models.cg.ModelCodigoRecuperacionUsuario;
-import com.machineAdmin.utils.UtilsBinnacle;
+import com.machineAdmin.utils.UtilsBitacora;
 import com.machineAdmin.utils.UtilsConfig;
 import com.machineAdmin.utils.UtilsDate;
 import com.machineAdmin.utils.UtilsJWT;
@@ -50,6 +53,10 @@ import org.apache.commons.mail.EmailException;
  */
 public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
 
+    public ManagerUsuario(String usuario) {
+        super(usuario, new DaoUsuario());
+    }
+    
     public ManagerUsuario() {
         super(new DaoUsuario());
     }
@@ -64,7 +71,7 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
         BitacoraContras bc = new BitacoraContras(persisted.getId(), persisted.getContra());
         bc.setUsuario1(persisted);
 
-        ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra();
+        ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra(this.getUsuario());
         managerBitacoraContra.persist(bc);
 
         return persisted; //To change body of generated methods, choose Tools | Templates. 
@@ -101,7 +108,7 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
      * @throws com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException
      */
     public Usuario login(Usuario usuarioAutenticando) throws UsuarioInexistenteException, ContraseñaIncorrectaException, UsuarioBlockeadoException, Exception {
-        try {
+        try {            
             Usuario loged = this.stream().filter(u -> {
                 switch (getUserIdentifierType(usuarioAutenticando.getNombre())) {
                     case MAIL:
@@ -123,11 +130,7 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
             this.update(loged);
 
             //login exitoso, generar bitácora                                     
-            new Thread(() -> {
-                BinnacleAccess access = new BinnacleAccess(loged.getId().toString());
-                UtilsBinnacle.bitacorizar("cg.bitacora.accesos", access);
-            }).start();
-
+            UtilsBitacora.bitacorizarLogIn(loged.getId().toString());
             return loged;
 
         } catch (NoSuchElementException e) {
@@ -137,9 +140,8 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
         }
     }
 
-    public void logout(String token) {
-        BinnacleAccess exit = new BinnacleAccess(UtilsJWT.getBodyToken(token));
-        UtilsBinnacle.bitacorizar("cg.bitacora.salidas", exit);
+    public void logout(String token) throws TokenInvalidoException, TokenExpiradoException {
+        UtilsBitacora.bitacorizarLogOut(UtilsJWT.getBodyToken(token));
     }
 
     private void numberAttemptVerification(Usuario usuario) throws UsuarioInexistenteException, UsuarioBlockeadoException, Exception {
@@ -267,14 +269,14 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
     public void resetPassword(String userId, String pass) throws Exception {
         pass = UtilsSecurity.cifrarMD5(pass);
 
-        ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra();
+        ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra(userId);
         BitacoraContras bitacoraContra = new BitacoraContras(UUID.fromString(userId), pass);
 
         if (managerBitacoraContra.stream().anyMatch(e -> e.equals(bitacoraContra))) {
             throw new ParametroInvalidoException("La contraseña que esta ingresando ya fué utilizada, intente con otra");
         }
 
-        ManagerUsuario managerUsuario = new ManagerUsuario();
+        ManagerUsuario managerUsuario = new ManagerUsuario(userId);
         Usuario u = this.findOne(UUID.fromString(userId));
         u.setContra(pass);
         managerUsuario.update(u);
@@ -302,4 +304,17 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
     private enum userIdentifierType {
         PHONE, MAIL, USER
     }
+
+    @Override
+    public ModelBitacoraGenerica obtenerModeloBitacorizar(Usuario entity) {
+        return new ModelBitacoraGenerica(this.getBitacoraCollectionName(), entity.getNombre());
+    }
+
+    @Override
+    protected String getBitacoraCollectionName() {
+        return "usuarios";
+    }
+    
+    
+       
 }

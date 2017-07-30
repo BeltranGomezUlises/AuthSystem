@@ -19,6 +19,7 @@ package com.machineAdmin.managers.cg.admin.postgres;
 import com.machineAdmin.daos.cg.admin.postgres.DaoPerfil;
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 import java.util.UUID;
 
 /**
@@ -27,8 +28,23 @@ import java.util.UUID;
  */
 public class ManagerPerfil extends ManagerSQLFacade<Perfil, UUID>{
     
+    public ManagerPerfil(String usuario) {
+        super(usuario, new DaoPerfil());
+    }
+    
     public ManagerPerfil() {
         super(new DaoPerfil());
     }
 
+    @Override
+    public ModelBitacoraGenerica obtenerModeloBitacorizar(Perfil entity) {
+        return new ModelBitacoraGenerica(this.getBitacoraCollectionName(), entity.getNombre());
+    }
+
+    @Override
+    protected String getBitacoraCollectionName() {
+        return "perfiles";
+    }
+
+    
 }

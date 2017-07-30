@@ -28,7 +28,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoBitacoraContra extends DaoSQLFacade<BitacoraContras, BitacoraContrasPK> {
 
     public DaoBitacoraContra() {
-        super(UtilsDB.getEMFactoryCG(), BitacoraContras.class, BitacoraContrasPK.class,  "bitacoraContras");
+        super(UtilsDB.getEMFactoryCG(), BitacoraContras.class, BitacoraContrasPK.class);
     }
 
 }

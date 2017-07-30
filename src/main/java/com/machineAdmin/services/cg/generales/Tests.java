@@ -52,34 +52,34 @@ public class Tests {
     public Response explotarServidor() {
         Response r = new Response();
 
-        ManagerUsuario managerUsuario = new ManagerUsuario();        
-        Usuario u;
-        for (int i = 0; i < 1000000; i++) {
-            try {
-                u = new Usuario();
-                u.setNombre(UUID.randomUUID().toString());
-                u.setCorreo(UUID.randomUUID().toString());
-                u.setContra(UUID.randomUUID().toString());
-                
-                managerUsuario.persist(u);
-                
-                //persistir una relacion de usuarios con permisos
-                
-                ManagerUsuariosPermisos managerUsuariosPermisos = new ManagerUsuariosPermisos();
-                List<UsuariosPermisos> usuariosPermisoses = new ArrayList<>(100);
-                UsuariosPermisos usuariosPermisos;
-                for (Permiso existingPermission : UtilsPermissions.getExistingPermissions()) {
-                    usuariosPermisos = new UsuariosPermisos(u.getId(), existingPermission.getId());
-                    usuariosPermisos.setProfundidad(Profundidad.PROPIOS);
-                    usuariosPermisoses.add(usuariosPermisos);
-                }
-                                
-                managerUsuariosPermisos.persistAll(usuariosPermisoses);
-            } catch (Exception ex) {
-                ServiceFacade.setErrorResponse(r, ex);
-                Logger.getLogger(Tests.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+//        ManagerUsuario managerUsuario = new ManagerUsuario();        
+//        Usuario u;
+//        for (int i = 0; i < 1000000; i++) {
+//            try {
+//                u = new Usuario();
+//                u.setNombre(UUID.randomUUID().toString());
+//                u.setCorreo(UUID.randomUUID().toString());
+//                u.setContra(UUID.randomUUID().toString());
+//                
+//                managerUsuario.persist(u);
+//                
+//                //persistir una relacion de usuarios con permisos
+//                
+//                ManagerUsuariosPermisos managerUsuariosPermisos = new ManagerUsuariosPermisos();
+//                List<UsuariosPermisos> usuariosPermisoses = new ArrayList<>(100);
+//                UsuariosPermisos usuariosPermisos;
+//                for (Permiso existingPermission : UtilsPermissions.getExistingPermissions()) {
+//                    usuariosPermisos = new UsuariosPermisos(u.getId(), existingPermission.getId());
+//                    usuariosPermisos.setProfundidad(Profundidad.PROPIOS);
+//                    usuariosPermisoses.add(usuariosPermisos);
+//                }
+//                                
+//                managerUsuariosPermisos.persistAll(usuariosPermisoses);
+//            } catch (Exception ex) {
+//                ServiceFacade.setErrorResponse(r, ex);
+//                Logger.getLogger(Tests.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
 
         return r;
     }

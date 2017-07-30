@@ -19,15 +19,26 @@ package com.machineAdmin.managers.cg.admin.postgres;
 import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerPermiso extends ManagerSQLFacade<Permiso, String>{
-    
-    public ManagerPermiso() {
-        super(new DaoPermiso());
+public class ManagerPermiso extends ManagerSQLFacade<Permiso, String> {
+
+    public ManagerPermiso(String usuario) {
+        super(usuario, new DaoPermiso());
     }
-    
+
+    @Override
+    public ModelBitacoraGenerica obtenerModeloBitacorizar(Permiso entity) {
+        return null;
+    }
+
+    @Override
+    protected String getBitacoraCollectionName() {
+        return null;
+    }
+
 }

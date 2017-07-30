@@ -14,46 +14,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.entities.cg.admin.mongo;
-
-import com.machineAdmin.entities.cg.commons.EntityMongo;
-import java.util.Date;
+package com.machineAdmin.models.cg;
 
 /**
- * modelo de registro de bitacoras
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
- * 
  */
-public class BinnacleAccess extends EntityMongo {
-    
-    private Date accessDate;    
-    private String userId;
+public class ModelBitacoraGenerica {
 
-    public BinnacleAccess(Date accessDate, String userId) {
-        this.accessDate = accessDate;
-        this.userId = userId;
+    private String collectionName;
+    private Object objectToPersist;
+
+    public ModelBitacoraGenerica(String collectionName, Object objectToPersist) {
+        this.collectionName = collectionName;
+        this.objectToPersist = objectToPersist;
     }
 
-    public BinnacleAccess(String userId) {
-        this.accessDate = new Date();
-        this.userId = userId;
+    public String getCollectionName() {
+        return collectionName;
     }
 
-    
-    public Date getAccessDate() {
-        return accessDate;
+    public void setCollectionName(String collectionName) {
+        this.collectionName = collectionName;
     }
 
-    public void setAccessDate(Date accessDate) {
-        this.accessDate = accessDate;
+    public Object getObjectToPersist() {
+        return objectToPersist;
     }
 
-    public String getUserId() {
-        return userId;
+    public void setObjectToPersist(Object objectToPersist) {
+        this.objectToPersist = objectToPersist;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-            
 }

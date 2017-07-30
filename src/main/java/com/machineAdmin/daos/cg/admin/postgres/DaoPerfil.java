@@ -28,7 +28,7 @@ import java.util.UUID;
 public class DaoPerfil extends DaoSQLFacade<Perfil, UUID>{
 
     public DaoPerfil() {
-        super(UtilsDB.getEMFactoryCG(), Perfil.class, UUID.class, "perfiles");
+        super(UtilsDB.getEMFactoryCG(), Perfil.class, UUID.class);
     }
 
 }

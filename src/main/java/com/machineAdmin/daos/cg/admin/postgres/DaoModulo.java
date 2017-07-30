@@ -27,7 +27,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoModulo extends DaoSQLFacade<Modulo, String>{
 
     public DaoModulo() {
-        super(UtilsDB.getEMFactoryCG(), Modulo.class, String.class, "modulos");
+        super(UtilsDB.getEMFactoryCG(), Modulo.class, String.class);
     }
 
 }

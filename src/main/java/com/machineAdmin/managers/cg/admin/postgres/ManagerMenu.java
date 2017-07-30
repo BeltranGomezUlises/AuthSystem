@@ -19,6 +19,7 @@ package com.machineAdmin.managers.cg.admin.postgres;
 import com.machineAdmin.daos.cg.admin.postgres.DaoMenu;
 import com.machineAdmin.entities.cg.admin.postgres.Menu;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 
 /**
  *
@@ -26,8 +27,19 @@ import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
  */
 public class ManagerMenu extends ManagerSQLFacade<Menu, String>{
     
-    public ManagerMenu() {
-        super(new DaoMenu());
+    public ManagerMenu(String usuario) {
+        super(usuario, new DaoMenu());
+    }
+
+    @Override
+    public ModelBitacoraGenerica obtenerModeloBitacorizar(Menu entity) {
+        return null;
+    }
+
+    @Override
+    protected String getBitacoraCollectionName() {
+        return null;
     }
     
+   
 }

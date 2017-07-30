@@ -14,19 +14,46 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.utils;
+package com.machineAdmin.entities.cg.admin.mongo;
 
-import org.mongojack.JacksonDBCollection;
+import com.machineAdmin.entities.cg.commons.EntityMongo;
+import java.util.Date;
 
 /**
+ * modelo de registro de bitacoras
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ *
  */
-public class UtilsBinnacle {
-        
-    public static void bitacorizar(String collectionName, Object objectToPersist){
-        JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection(collectionName), Object.class, String.class);
-        coll.insert(objectToPersist);
-    }        
-            
+public class BitacoraAcceso extends EntityMongo {
+
+    private Date fecha;
+    private String usuario;
+
+    public BitacoraAcceso(Date fecha, String usuario) {
+        this.fecha = fecha;
+        this.usuario = usuario;
+    }
+
+    public BitacoraAcceso(String usuario) {
+        this.fecha = new Date();
+        this.usuario = usuario;
+    }
+
+    public Date getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
 }

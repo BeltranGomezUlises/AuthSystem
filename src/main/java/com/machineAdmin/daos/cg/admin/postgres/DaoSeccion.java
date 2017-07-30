@@ -27,7 +27,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoSeccion extends DaoSQLFacade<Seccion, String>{
 
     public DaoSeccion() {
-        super(UtilsDB.getEMFactoryCG(),Seccion.class, String.class, "secciones");
+        super(UtilsDB.getEMFactoryCG(),Seccion.class, String.class);
     }
 
 }

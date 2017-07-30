@@ -28,7 +28,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoUsuariosPerfil extends DaoSQLFacade<UsuariosPerfil, UsuariosPerfilPK>{
 
     public DaoUsuariosPerfil() {
-        super(UtilsDB.getEMFactoryCG(), UsuariosPerfil.class, UsuariosPerfilPK.class, "usuariosPerfiles");
+        super(UtilsDB.getEMFactoryCG(), UsuariosPerfil.class, UsuariosPerfilPK.class);
     }
 
 }

@@ -23,6 +23,7 @@ import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos;
 import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisosPK;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
+import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 import com.machineAdmin.models.cg.ModelPermisoAsignado;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,13 +36,17 @@ import static java.util.stream.Collectors.toList;
  */
 public class ManagerPerfilesPermisos extends ManagerSQLFacade<PerfilesPermisos, PerfilesPermisosPK>{
     
+    public ManagerPerfilesPermisos(String usuario) {
+        super(usuario, new DaoPerfilesPermisos());
+    }
+    
     public ManagerPerfilesPermisos() {
         super(new DaoPerfilesPermisos());
     }
     
     public void asignarPermisosAlPerfil(ModelAsignarPermisos model) throws SQLPersistenceException, ConstraintException, Exception{               
-        ManagerPerfil managerPerfil = new ManagerPerfil();
-        ManagerPermiso managerPermiso = new ManagerPermiso();
+        ManagerPerfil managerPerfil = new ManagerPerfil(this.getUsuario());
+        ManagerPermiso managerPermiso = new ManagerPermiso(this.getUsuario());
               
         //borrar las relaciones actuales                
         List<PerfilesPermisosPK> permisosDelPerfilPk = this.stream()
@@ -62,7 +67,16 @@ public class ManagerPerfilesPermisos extends ManagerSQLFacade<PerfilesPermisos, 
         this.persistAll(perfilesPermisos);
         
     }
-        
-    
+
+    @Override
+    public ModelBitacoraGenerica obtenerModeloBitacorizar(PerfilesPermisos entity) {
+        return null;
+    }
+
+    @Override
+    protected String getBitacoraCollectionName() {
+        return null;
+    }
+           
     
 }

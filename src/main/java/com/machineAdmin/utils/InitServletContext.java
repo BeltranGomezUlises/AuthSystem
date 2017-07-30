@@ -18,6 +18,9 @@ package com.machineAdmin.utils;
 
 import com.machineAdmin.daos.cg.admin.mongo.DaoCGConfig;
 import com.machineAdmin.daos.cg.admin.mongo.DaoConfigMail;
+import com.machineAdmin.daos.cg.admin.postgres.DaoMenu;
+import com.machineAdmin.daos.cg.admin.postgres.DaoModulo;
+import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
 import com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles;
@@ -243,10 +246,11 @@ public class InitServletContext implements ServletContextListener {
      */
     private void initDBPermissions() {
         //ESTRUCTURA DE ORGANIZACION DE SECCIONES
-        // com.{nombre negocio}.services.{seccion}.{modulo}.{menu}
-        ManagerPermiso managerPermiso = new ManagerPermiso();
-        ManagerMenu managerMenu = new ManagerMenu();
-        ManagerModulo managerModulo = new ManagerModulo();
+        // com.{nombre negocio}.services.{seccion}.{modulo}.{menu}        
+        DaoPermiso daoPermiso = new DaoPermiso();        
+        DaoMenu daoMenu = new DaoMenu();        
+        DaoModulo daoModulo = new DaoModulo();
+        
         ManagerSeccion managerSeccion = new ManagerSeccion();
 
         Package[] paquetes = Package.getPackages();
@@ -288,12 +292,12 @@ public class InitServletContext implements ServletContextListener {
                     try {
                         String packageModuleName = packageSeccionName + "." + nombreModulo;
 
-                        Modulo module = managerModulo.findOne(packageModuleName);
+                        Modulo module = daoModulo.findOne(packageModuleName);
                         if (module == null) {
                             module = new Modulo(packageModuleName);
                             module.setNombre(nombreModulo);
                             module.setSeccion(seccion);
-                            managerModulo.persist(module);
+                            daoModulo.persist(module);
                         }
 
                         List<String> menusNames = getClasesSimpleNameFromPackage2(packageModuleName);
@@ -303,12 +307,12 @@ public class InitServletContext implements ServletContextListener {
                             try {
                                 String packageClassName = packageModuleName + "." + menusName;
 
-                                Menu menu = managerMenu.findOne(packageClassName);
+                                Menu menu = daoMenu.findOne(packageClassName);
                                 if (menu == null) {
                                     menu = new Menu(packageClassName);
                                     menu.setNombre(this.generatePublicMenuName(menusName));
                                     menu.setModulo(module);
-                                    managerMenu.persist(menu);
+                                    daoMenu.persist(menu);
                                 }
 
                                 //<editor-fold defaultstate="collapsed" desc="ACCIONES">
@@ -329,7 +333,7 @@ public class InitServletContext implements ServletContextListener {
                                             }
 
                                             String permisoId = menu.getId() + "." + method.getName();
-                                            Permiso permiso = managerPermiso.findOne(permisoId);
+                                            Permiso permiso = daoPermiso.findOne(permisoId);
 
                                             if (permiso == null) {
                                                 permiso = new Permiso(permisoId);
@@ -337,7 +341,7 @@ public class InitServletContext implements ServletContextListener {
                                                 permisos.add(permiso);
                                                 permiso.setMenu(menu);
 
-                                                managerPermiso.persist(permiso);
+                                                daoPermiso.persist(permiso);
                                             }
 
                                         } catch (Exception ex) {

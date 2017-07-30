@@ -20,15 +20,26 @@ import com.machineAdmin.daos.cg.admin.postgres.DaoBitacoraContra;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContras;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContrasPK;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerBitacoraContra extends ManagerSQLFacade<BitacoraContras, BitacoraContrasPK>{
-    
-    public ManagerBitacoraContra() {
-        super(new DaoBitacoraContra());
+public class ManagerBitacoraContra extends ManagerSQLFacade<BitacoraContras, BitacoraContrasPK> {
+
+    public ManagerBitacoraContra(String usuario) {
+        super(usuario, new DaoBitacoraContra());
     }
-    
+
+    @Override
+    public ModelBitacoraGenerica obtenerModeloBitacorizar(BitacoraContras entity) {
+        return null;
+    }
+
+    @Override
+    protected String getBitacoraCollectionName() {
+        return null;
+    }
+
 }

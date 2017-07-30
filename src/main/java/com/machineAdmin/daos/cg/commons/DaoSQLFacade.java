@@ -30,13 +30,11 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
     private final Class<K> clasePK;
     private final EntityManagerFactory eMFactory;
     private final JinqJPAStreamProvider streams;
-    private final String binnacleName;
 
-    public DaoSQLFacade(EntityManagerFactory eMFactory, Class<T> claseEntity, Class<K> clasePk, String binnacleName) {
+    public DaoSQLFacade(EntityManagerFactory eMFactory, Class<T> claseEntity, Class<K> clasePk) {
         this.eMFactory = eMFactory;
         this.claseEntity = claseEntity;
         this.clasePK = clasePk;
-        this.binnacleName = binnacleName;
         streams = new JinqJPAStreamProvider(eMFactory);
     }
 
@@ -195,10 +193,6 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
 
     protected Query createQuery(String query) {
         return this.getEM().createQuery(query);
-    }
-
-    public String getBinnacleName() {
-        return binnacleName;
     }
 
     public JPAJinqStream<T> stream() {

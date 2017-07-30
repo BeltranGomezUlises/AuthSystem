@@ -19,6 +19,7 @@ package com.machineAdmin.managers.cg.admin.postgres;
 import com.machineAdmin.daos.cg.admin.postgres.DaoModulo;
 import com.machineAdmin.entities.cg.admin.postgres.Modulo;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 
 /**
  *
@@ -26,8 +27,19 @@ import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
  */
 public class ManagerModulo extends ManagerSQLFacade<Modulo, String>{
     
-    public ManagerModulo() {
-        super(new DaoModulo());
+    public ManagerModulo(String usuario) {
+        super(usuario, new DaoModulo());
     }
+
+    @Override
+    public ModelBitacoraGenerica obtenerModeloBitacorizar(Modulo entity) {
+        return null;
+    }
+
+    @Override
+    protected String getBitacoraCollectionName() {
+        return null;
+    }
+    
     
 }

@@ -16,6 +16,7 @@
  */
 package com.machineAdmin.utils;
 
+import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerPerfilesPermisos;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerPermiso;
@@ -36,8 +37,8 @@ public class UtilsPermissions {
      * @return  lista de permisos existentes
      */
     public static List<Permiso> getExistingPermissions() {
-        ManagerPermiso managerPermiso = new ManagerPermiso();
-        return managerPermiso.stream().collect(toList());
+        DaoPermiso dao = new DaoPermiso();        
+        return dao.stream().collect(toList());
     }
 
     /**

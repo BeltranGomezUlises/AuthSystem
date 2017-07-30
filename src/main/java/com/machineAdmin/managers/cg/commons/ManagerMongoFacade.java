@@ -7,7 +7,10 @@ package com.machineAdmin.managers.cg.commons;
 
 import com.machineAdmin.daos.cg.commons.DaoMongoFacade;
 import com.machineAdmin.entities.cg.commons.EntityMongo;
+import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
+import org.mongojack.DBQuery;
 import org.mongojack.DBQuery.Query;
 
 /**
@@ -15,60 +18,82 @@ import org.mongojack.DBQuery.Query;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> is an entity
  */
-public class ManagerMongoFacade<T extends EntityMongo> implements ManagerFacade<T, Object> {
+public abstract class ManagerMongoFacade<T extends EntityMongo> extends ManagerFacade<T, Object> {
 
     /**
      * objeto de acceso a datos
      */
     protected DaoMongoFacade<T> dao;
 
-    public ManagerMongoFacade(DaoMongoFacade<T> dao) {
+    public ManagerMongoFacade(String usuario, DaoMongoFacade<T> dao) {
+        super(usuario);
+        this.dao = dao;
+    }
+    
+    public ManagerMongoFacade(DaoMongoFacade<T> dao){
+        super();
         this.dao = dao;
     }
     
     @Override
-    public T persist(T entity) throws Exception {
-        return (T) dao.persist(entity);
+    public T persist(T entity) throws Exception {              
+        T t = (T) dao.persist(entity);
+        this.bitacorizar("alta", this.obtenerModeloBitacorizar(entity));
+        return t;
     }
     
     @Override
-    public List<T> persistAll(List<T> entities) throws Exception {
-        return dao.persistAll(entities);
+    public List<T> persistAll(List<T> entities) throws Exception {        
+        List<T> ts = dao.persistAll(entities);
+        ts.parallelStream().forEach( t -> this.bitacorizar("alta", this.obtenerModeloBitacorizar(t)));
+        return ts;
     }
    
     @Override
-    public void delete(Object id) throws Exception {
+    public void delete(Object id) throws Exception {        
         dao.delete(id);
+        this.bitacorizar("eliminar", this.obtenerModeloBitacorizar(this.findOne(id)));
     }
 
     public void delete(Query q) {
-        dao.delete(q);
+        List<T> ts = this.findAll(q);        
+        dao.deleteAll(ts.stream().map(t -> t.getId()).collect(toList()));        
+        ts.parallelStream().forEach( t -> this.bitacorizar("eliminar", this.obtenerModeloBitacorizar(t)));                                 
     }
 
     @Override
-    public void deleteAll(List<Object> ids) throws Exception {
+    public void deleteAll(List<Object> ids) throws Exception {    
+        List<T> ts = this.findAll(DBQuery.in("_id", ids));
         dao.deleteAll(ids);
+        ts.parallelStream().forEach( t -> this.bitacorizar("eliminar", this.obtenerModeloBitacorizar(t)));                                 
     }
 
     @Override
-    public void update(T entity) throws Exception {
+    public void update(T entity) throws Exception {        
         dao.update(entity);
+        this.bitacorizar("actualizar", this.obtenerModeloBitacorizar(entity));        
     }
 
-    public List<T> update(Query q, T t) {
-        return dao.update(q, t);
+    public void update(Query q, T t) {
+        List<T> ts = this.findAll(q);        
+        dao.update(q, t);
+        ts.parallelStream().forEach( ts1 -> this.bitacorizar("actualizar", this.obtenerModeloBitacorizar(ts1)));                                         
     }
 
     @Override
     public T findOne(Object id) {
-        return (T) dao.findOne(id);
+        T t = (T) dao.findOne(id);
+        this.bitacorizar("obtener", this.obtenerModeloBitacorizar(t));
+        return t;
     }
 
     public T findOne(Query q) {
-        return (T) dao.findOne(q);
+        T t = (T) dao.findOne(q);
+        this.bitacorizar("obtener", this.obtenerModeloBitacorizar(t));
+        return t;
     }
 
-    public T findOne(Query q, String... attributesProjection) {
+    public T findOne(Query q, String... attributesProjection) {        
         return (T) dao.findOne(q, attributesProjection);
     }
 
@@ -131,6 +156,7 @@ public class ManagerMongoFacade<T extends EntityMongo> implements ManagerFacade<
     @Override
     public Object stringToKey(String s) {
         return s;
-    }
-
+    }   
+        
 }
+

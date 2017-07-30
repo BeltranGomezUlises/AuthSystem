@@ -19,15 +19,30 @@ package com.machineAdmin.managers.cg.admin.postgres;
 import com.machineAdmin.daos.cg.admin.postgres.DaoSeccion;
 import com.machineAdmin.entities.cg.admin.postgres.Seccion;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ManagerSeccion extends ManagerSQLFacade<Seccion, String> {
-    
+
+    public ManagerSeccion(String usuario) {
+        super(usuario, new DaoSeccion());
+    }
+
     public ManagerSeccion() {
         super(new DaoSeccion());
     }
-    
+
+    @Override
+    public ModelBitacoraGenerica obtenerModeloBitacorizar(Seccion entity) {
+        return null;
+    }
+
+    @Override
+    protected String getBitacoraCollectionName() {
+        return null;
+    }
+
 }

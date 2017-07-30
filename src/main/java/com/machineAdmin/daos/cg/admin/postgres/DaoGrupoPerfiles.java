@@ -28,7 +28,7 @@ import java.util.UUID;
 public class DaoGrupoPerfiles extends DaoSQLFacade<GrupoPerfiles, UUID>{
 
     public DaoGrupoPerfiles() {
-        super(UtilsDB.getEMFactoryCG(), GrupoPerfiles.class, UUID.class, "grupoPërfiles");
+        super(UtilsDB.getEMFactoryCG(), GrupoPerfiles.class, UUID.class);
     }
 
 }

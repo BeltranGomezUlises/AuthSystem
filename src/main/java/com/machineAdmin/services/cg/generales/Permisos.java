@@ -52,8 +52,8 @@ public class Permisos {
     public Response getPermisosDisponibles(@HeaderParam("Authorization") String token) {
         Response res = new Response();
         try {
-            UtilsJWT.validateSessionToken(token);
             ManagerSeccion managerSeccion = new ManagerSeccion();
+            managerSeccion.setToken(token);
             res.setData(managerSeccion.findAll());
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
@@ -73,8 +73,6 @@ public class Permisos {
             res.setDevMessage("profundidades disponibles para los permisos");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
-        } catch (Exception ex) {
-            setErrorResponse(res, ex);
         }
         return res;
     }

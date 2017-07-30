@@ -19,6 +19,7 @@ package com.machineAdmin.managers.cg.admin.mongo;
 import com.machineAdmin.daos.cg.admin.mongo.DaoCGConfig;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
+import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 
 /**
  *
@@ -26,8 +27,20 @@ import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
  */
 public class ManagerCGConfig extends ManagerMongoFacade<CGConfig> {
     
-    public ManagerCGConfig() {
-        super(new DaoCGConfig());
+    public ManagerCGConfig(String usuario) {
+        super(usuario, new DaoCGConfig());
     }
+
+    @Override
+    public ModelBitacoraGenerica obtenerModeloBitacorizar(CGConfig entity) {
+        return null;
+    }
+
+    @Override
+    protected String getBitacoraCollectionName() {
+        return null;
+    }
+
+    
     
 }

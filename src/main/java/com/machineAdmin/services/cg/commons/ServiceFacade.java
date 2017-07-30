@@ -28,9 +28,17 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 public class ServiceFacade<T extends IEntity, K> {
 
-    ManagerFacade<T, K> manager;
+    private ManagerFacade<T, K> manager;
 
     public ServiceFacade(ManagerFacade<T, K> manager) {
+        this.manager = manager;
+    }
+
+    public ManagerFacade<T, K> getManager() {
+        return manager;
+    }
+
+    public void setManager(ManagerFacade<T, K> manager) {
         this.manager = manager;
     }
 
@@ -45,7 +53,7 @@ public class ServiceFacade<T extends IEntity, K> {
     public Response listar(@HeaderParam("Authorization") String token) {
         Response response = new Response();
         try {
-            UtilsJWT.validateSessionToken(token);
+            this.manager.setToken(token);            
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(response);
@@ -68,7 +76,7 @@ public class ServiceFacade<T extends IEntity, K> {
     public Response obtener(@HeaderParam("Authorization") String token, @PathParam("id") String id) {
         Response response = new Response();
         try {
-            UtilsJWT.validateSessionToken(token);
+            this.manager.setToken(token);  
             response.setData(manager.findOne(manager.stringToKey(id)));
             response.setMessage("Entidad encontrada");
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
@@ -90,6 +98,7 @@ public class ServiceFacade<T extends IEntity, K> {
     public Response alta(@HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
         try {
+            this.manager.setToken(token);  
             response.setData(manager.persist(t));
             response.setMessage("Entidad persistida");
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
@@ -112,7 +121,7 @@ public class ServiceFacade<T extends IEntity, K> {
     public Response modificar(@HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
         try {
-            UtilsJWT.validateSessionToken(token);
+            this.manager.setToken(token);  
             manager.update(t);
             response.setData(t);
             response.setMessage("Entidad actualizada");
@@ -135,7 +144,7 @@ public class ServiceFacade<T extends IEntity, K> {
     public Response eliminar(@HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
         try {
-            UtilsJWT.validateSessionToken(token);
+            this.manager.setToken(token);  
             manager.delete((K) t.getId());
             response.setMessage("Entidad eliminada");
         } catch (TokenExpiradoException | TokenInvalidoException ex) {

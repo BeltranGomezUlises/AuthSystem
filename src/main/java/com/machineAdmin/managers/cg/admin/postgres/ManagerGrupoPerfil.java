@@ -23,6 +23,7 @@ import com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles;
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlGrupoPerfil;
+import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -31,19 +32,35 @@ import java.util.UUID;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerGrupoPerfil extends ManagerSQLFacade<GrupoPerfiles, UUID>{
+public class ManagerGrupoPerfil extends ManagerSQLFacade<GrupoPerfiles, UUID> {
+
+    public ManagerGrupoPerfil(String usuario) {
+        super(usuario, new DaoGrupoPerfiles());
+    }
     
     public ManagerGrupoPerfil() {
         super(new DaoGrupoPerfiles());
     }
-    
-    public void asignarPerfiles(ModelAsignarPerfilesAlGrupoPerfil model) throws SQLPersistenceException, ConstraintException{
-        GrupoPerfiles gp = this.findOne(UUID.fromString(model.getGrupoPerfilId()));       
-        ManagerPerfil managerPerfil = new ManagerPerfil();
+
+    public void asignarPerfiles(ModelAsignarPerfilesAlGrupoPerfil model) throws SQLPersistenceException, ConstraintException {
+        GrupoPerfiles gp = this.findOne(UUID.fromString(model.getGrupoPerfilId()));
+        ManagerPerfil managerPerfil = new ManagerPerfil(this.getUsuario());
         List<Perfil> perfiles = new ArrayList<>();
-        model.getPerfilesIds().forEach( pId -> perfiles.add(managerPerfil.findOne(UUID.fromString(pId))));        
+        model.getPerfilesIds().forEach(pId -> perfiles.add(managerPerfil.findOne(UUID.fromString(pId))));
         gp.setPerfilList(perfiles);
-        this.update(gp);                
+        this.update(gp);
     }
-                
+
+    @Override
+    public ModelBitacoraGenerica obtenerModeloBitacorizar(GrupoPerfiles entity) {
+        return new ModelBitacoraGenerica(this.getBitacoraCollectionName(), entity);
+    }
+
+    @Override
+    protected String getBitacoraCollectionName() {
+        return "gruposPerfiles";
+    }
+    
+    
+
 }

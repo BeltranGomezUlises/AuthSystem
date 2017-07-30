@@ -36,7 +36,7 @@ import javax.ws.rs.Path;
 public class Configuraciones extends ServiceFacade<CGConfig, Object>{
     
     public Configuraciones() {
-        super(new ManagerCGConfig());
+        super(new ManagerCGConfig(null));
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.commons.IEntity;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
 import org.jinq.jpa.JPAJinqStream;
 
 /**
@@ -18,43 +19,59 @@ import org.jinq.jpa.JPAJinqStream;
  * @param <T> Entidad a manejar
  * @param <K> Tipo de dato de llave primaria de la entidad
  */
-public class ManagerSQLFacade<T extends IEntity, K> implements ManagerFacade<T, K>{
+public abstract class ManagerSQLFacade<T extends IEntity, K> extends ManagerFacade<T, K>{
 
     private final DaoSQLFacade<T, K> dao;
 
-    public ManagerSQLFacade(DaoSQLFacade dao) {
+    public ManagerSQLFacade(String usuario, DaoSQLFacade dao) {
+        super(usuario);
+        this.dao = dao;
+    }
+    
+    public ManagerSQLFacade(DaoSQLFacade dao){
+        super();
         this.dao = dao;
     }
 
     @Override
     public T persist(T entity) throws Exception {
         dao.persist(entity);
+        this.bitacorizar("alta",this.obtenerModeloBitacorizar(entity));
         return entity;
     }
 
     @Override
     public List<T> persistAll(List<T> entities) throws Exception {
-        return dao.persistAll(entities);
+        List<T> ts = dao.persistAll(entities);
+        ts.parallelStream().forEach( t -> this.obtenerModeloBitacorizar(t));
+        return ts;
     }
 
     @Override
     public void delete(K id) throws Exception {
-        dao.delete(id);
+        T t = dao.findOne(id);
+        dao.delete(id);        
+        this.bitacorizar("eliminar", this.obtenerModeloBitacorizar(t));                
     }
 
     @Override
     public void deleteAll(List<K> ids) throws SQLPersistenceException, Exception {
+        List<T> ts = dao.stream().filter((T t) -> ids.contains((K) t.getId())).collect(toList());        
         dao.deleteAll(ids);
+        ts.parallelStream().forEach( t -> this.obtenerModeloBitacorizar(t));
     }
 
     @Override
-    public void update(T entity) throws SQLPersistenceException, ConstraintException {
+    public void update(T entity) throws SQLPersistenceException, ConstraintException {        
         dao.update(entity);
+        this.bitacorizar("actualizar", this.obtenerModeloBitacorizar(entity));
     }
 
     @Override
     public T findOne(K id) {
-        return (T) dao.findOne(id);
+        T t = (T) dao.findOne(id);
+        this.bitacorizar("obtener", this.obtenerModeloBitacorizar(t));
+        return t;
     }
 
     @Override
@@ -84,6 +101,6 @@ public class ManagerSQLFacade<T extends IEntity, K> implements ManagerFacade<T, 
     @Override
     public K stringToKey(String s) {
         return dao.stringToPK(s);
-    }
-
+    }   
+            
 }

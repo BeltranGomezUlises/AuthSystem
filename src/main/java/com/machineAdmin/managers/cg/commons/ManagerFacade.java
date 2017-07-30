@@ -6,6 +6,11 @@
 package com.machineAdmin.managers.cg.commons;
 
 import com.machineAdmin.entities.cg.commons.IEntity;
+import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
+import com.machineAdmin.models.cg.ModelBitacoraGenerica;
+import com.machineAdmin.utils.UtilsBitacora;
+import com.machineAdmin.utils.UtilsJWT;
 import java.util.List;
 
 /**
@@ -14,8 +19,25 @@ import java.util.List;
  * @param <T> class entity used to restrict the class of use
  * @param <K>
  */
-public interface ManagerFacade<T extends IEntity, K> {
+public abstract class ManagerFacade<T extends IEntity, K> {
 
+    private String usuario;
+
+    public ManagerFacade(String usuario) {
+        this.usuario = usuario;
+    }
+    
+    public ManagerFacade(){
+        
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }    
+    
+    private void setUsuario(String usuario){
+        this.usuario = usuario;
+    }
     /**
      * metodo para persistir la entidad a base de datos
      *
@@ -23,7 +45,7 @@ public interface ManagerFacade<T extends IEntity, K> {
      * @return la entidad persistida con su _id
      * @throws Exception si existió un problema al intertar persistir
      */
-    public T persist(T entity) throws Exception;
+    public abstract T persist(T entity) throws Exception;
 
     /**
      * metodo para persistir todas las entidades proporsioadas en base de datos
@@ -32,7 +54,7 @@ public interface ManagerFacade<T extends IEntity, K> {
      * @return la lista de entidades persistidas con su propiedad _id
      * @throws Exception si existió un problema la intentar persistir
      */
-    public List<T> persistAll(List<T> entities) throws Exception;
+    public abstract List<T> persistAll(List<T> entities) throws Exception;
 
     /**
      * remueve de base de datos la entidad que corresponda al id proporsionado
@@ -40,7 +62,7 @@ public interface ManagerFacade<T extends IEntity, K> {
      * @param id propiedad que identifia al objeto
      * @throws Exception
      */
-    public void delete(K id) throws Exception;
+    public abstract void delete(K id) throws Exception;
 
     /**
      * remueve de base de datos las entidades que su propiedad id corresponda
@@ -49,7 +71,7 @@ public interface ManagerFacade<T extends IEntity, K> {
      * @param ids lista de identificadores de las entidades
      * @throws Exception si existió algún problema al intentar remover
      */
-    public void deleteAll(List<K> ids) throws Exception;
+    public abstract void deleteAll(List<K> ids) throws Exception;
 
     /**
      * reemplaza la entidad proporsionada por la existente en base de datos que
@@ -59,7 +81,7 @@ public interface ManagerFacade<T extends IEntity, K> {
      * datos
      * @throws Exception si exitió un problema al actualizar
      */
-    public void update(T entity) throws Exception;
+    public abstract void update(T entity) throws Exception;
 
     /**
      * busca la entidad correspondiente al identificador proporsionado
@@ -67,21 +89,21 @@ public interface ManagerFacade<T extends IEntity, K> {
      * @param id identificador de la entidad
      * @return entidad de la base de datos
      */
-    public T findOne(K id);
+    public abstract T findOne(K id);
 
     /**
      * busca la primer entidad existente en base de datos
      *
      * @return la entidad manejada en primer posición en base de datos
      */
-    public T findFirst();
+    public abstract T findFirst();
 
     /**
      * busca todas las entidades existentes en base de datos
      *
      * @return lista con las entidades manejadas que existen en base de datos
      */
-    public List<T> findAll();
+    public abstract List<T> findAll();
 
     /**
      * busca todas las entidades existentes en base de datos con un numero
@@ -90,19 +112,35 @@ public interface ManagerFacade<T extends IEntity, K> {
      * @param max numero maximo de entidades a tomar de base de datos
      * @return lista con las entidades manejadas que existen en base de datos
      */
-    public List<T> findAll(int max);
+    public abstract List<T> findAll(int max);
 
     /**
      * cuenta las entidades manejadas
+     *
      * @return numero de entidades existentes en base de datos
      */
-    public long count();
+    public abstract long count();
 
     /**
      * transforma un String s a el tipo de datos del identificador de la entidad
+     *
      * @param s cadena a trasformar
      * @return K, objeto del tipo de dato del identificador de la entidad
      */
-    public K stringToKey(String s);
+    public abstract K stringToKey(String s);
+
+    public abstract ModelBitacoraGenerica obtenerModeloBitacorizar(T entity);
+
+    public void bitacorizar(String accion, ModelBitacoraGenerica model) {
+        if (model != null) {
+            UtilsBitacora.bitacorizar(usuario, accion, model.getCollectionName(), model.getObjectToPersist());
+        }
+    }
+
+    protected abstract String getBitacoraCollectionName();
+
+    public void setToken(String token) throws TokenInvalidoException, TokenExpiradoException {       
+        this.setUsuario(UtilsJWT.getBodyToken(token));
+    }
 
 }
