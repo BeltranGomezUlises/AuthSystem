@@ -41,6 +41,7 @@ import com.machineAdmin.daos.cg.admin.postgres.DaoSeccion;
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPerfil;
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPermisos;
+import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -142,7 +143,7 @@ public class InitServletContext implements ServletContextListener {
             usuarioDB.setNombre("Administrador");
             usuarioDB.setCorreo("ubg700@gmail.com");
             usuarioDB.setTelefono("6671007264");
-            usuarioDB.setContra("1234");
+            usuarioDB.setContra(UtilsSecurity.cifrarMD5("1234"));
             daoUsuario.persist(usuarioDB);
         }
         //</editor-fold>        
@@ -156,7 +157,6 @@ public class InitServletContext implements ServletContextListener {
         }
 
         //</editor-fold>
-        
         //<editor-fold defaultstate="collapsed" desc="Asignaion de permisos al usuario">
         DaoUsuariosPermisos daoUsuariosPermisos = new DaoUsuariosPermisos();
         UsuariosPermisos usuariosPermisos;
@@ -245,10 +245,10 @@ public class InitServletContext implements ServletContextListener {
     private void initDBPermissions() {
         //ESTRUCTURA DE ORGANIZACION DE SECCIONES
         // com.{nombre negocio}.services.{seccion}.{modulo}.{menu}        
-        DaoPermiso daoPermiso = new DaoPermiso();        
-        DaoMenu daoMenu = new DaoMenu();        
+        DaoPermiso daoPermiso = new DaoPermiso();
+        DaoMenu daoMenu = new DaoMenu();
         DaoModulo daoModulo = new DaoModulo();
-        
+
         DaoSeccion daoSeccion = new DaoSeccion();
 
         Package[] paquetes = Package.getPackages();
@@ -262,6 +262,11 @@ public class InitServletContext implements ServletContextListener {
                 .map(seccion -> seccion.split("\\.")[3])
                 .collect(Collectors.toSet());
 
+        //para obtener los secciones, modulos, menus y permisos actuales
+        List<Permiso> permisosActuales = new ArrayList<>();
+        List<Modulo> modulosActuales = new ArrayList<>();
+        List<Menu> menusActuales = new ArrayList<>();
+        List<Seccion> seccionesActuales = new ArrayList<>();
         for (String nombreSeccion : nombreSecciones) {
             try {
                 String packageSeccionName = PACKAGE_SERVICES + "." + nombreSeccion;
@@ -272,6 +277,7 @@ public class InitServletContext implements ServletContextListener {
                     seccion.setNombre(nombreSeccion);
                     daoSeccion.persist(seccion);
                 }
+                seccionesActuales.add(seccion);
 
                 List<String> modulosPackageNombre = Arrays.stream(paquetes)
                         .map(p -> p.getName())
@@ -282,7 +288,7 @@ public class InitServletContext implements ServletContextListener {
                         .filter(packageName -> !packageName.endsWith(nombreSeccion))
                         .map(n -> n.split("\\.")[4])
                         .collect(toList());
-                //<editor-fold defaultstate="collapsed" desc="MODULOS">
+                //<editor-fold defaultstate="collapsed" desc="MODULOS">                
                 for (String nombreModulo : modulosNombres) {
                     if (nombreModulo.equals("commons") || nombreModulo.equals("generales")) { //omitir paquete commons
                         continue;
@@ -298,9 +304,10 @@ public class InitServletContext implements ServletContextListener {
                             daoModulo.persist(module);
                         }
 
+                        modulosActuales.add(module);
                         List<String> menusNames = getClasesSimpleNameFromPackage2(packageModuleName);
 
-                        //<editor-fold defaultstate="collapsed" desc="MENUS">
+                        //<editor-fold defaultstate="collapsed" desc="MENUS">                        
                         for (String menusName : menusNames) {
                             try {
                                 String packageClassName = packageModuleName + "." + menusName;
@@ -312,8 +319,8 @@ public class InitServletContext implements ServletContextListener {
                                     menu.setModulo(module);
                                     daoMenu.persist(menu);
                                 }
-
-                                //<editor-fold defaultstate="collapsed" desc="ACCIONES">
+                                menusActuales.add(menu);
+                                //<editor-fold defaultstate="collapsed" desc="PERMISOS">
                                 List<Permiso> permisos = new ArrayList<>();
                                 try {
                                     Class<?> clase = Class.forName(packageClassName);
@@ -336,12 +343,11 @@ public class InitServletContext implements ServletContextListener {
                                             if (permiso == null) {
                                                 permiso = new Permiso(permisoId);
                                                 permiso.setNombre(generatePublicMenuName(method.getName()));
-                                                permisos.add(permiso);
                                                 permiso.setMenu(menu);
-
                                                 daoPermiso.persist(permiso);
                                             }
-
+                                            permisos.add(permiso);
+                                            permisosActuales.add(permiso);
                                         } catch (Exception ex) {
                                             Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
                                         }
@@ -365,6 +371,47 @@ public class InitServletContext implements ServletContextListener {
             }
             //</editor-fold>
         }
+
+        //verificar que no existan secciones, modulos, menus y permisos en base de datos, que no esten en los actuales generados
+        //permisos
+        List<Permiso> permisosEnDB = daoPermiso.findAll();
+        permisosEnDB.stream().filter((p) -> (!permisosActuales.contains(p))).forEach((p) -> {
+            try {
+                daoPermiso.delete(p.getId());
+            } catch (SQLPersistenceException ex) {
+                Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        //menus
+        List<Menu> menusEnDB = daoMenu.findAll();
+        menusEnDB.stream().filter((m) -> (!menusActuales.contains(m))).forEach((m) -> {
+            try {
+                daoMenu.delete(m.getId());
+            } catch (SQLPersistenceException ex) {
+                Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        
+        //modulos
+        List<Modulo> modulosEnDB = daoModulo.findAll();
+        modulosEnDB.stream().filter((m) -> (!modulosActuales.contains(m))).forEach((m) -> {
+            try {
+                daoModulo.delete(m.getId());
+            } catch (SQLPersistenceException ex) {
+                Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        
+        //verificar secciones
+        List<Seccion> seccionesEnDB = daoSeccion.findAll();
+        seccionesEnDB.stream().filter((seccion) -> (!seccionesActuales.contains(seccion))).forEach((seccion) -> {
+            try {
+                daoSeccion.delete(seccion.getId());
+            } catch (SQLPersistenceException ex) {
+                Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+             
     }
 
     private List<String> getClasesSimpleNameFromPackage2(String packageName) {

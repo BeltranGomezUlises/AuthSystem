@@ -7,6 +7,7 @@ package com.machineAdmin.services.cg.generales;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
+import com.machineAdmin.managers.cg.admin.postgres.ManagerSeccion;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
 import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
@@ -65,7 +66,7 @@ public class Accesos {
 
             ModelUsuarioLogeado modelUsuarioLogeado = new ModelUsuarioLogeado();
             modelUsuarioLogeado.setPermissions(UtilsPermissions.permisosAsignadosAUsuario(usuarioLogeado.getId().toString()));
-            
+
             BeanUtils.copyProperties(modelUsuarioLogeado, usuarioLogeado);
 
             res.setData(modelUsuarioLogeado);
@@ -177,8 +178,10 @@ public class Accesos {
 
     /**
      * sirve para restablece la contraseña de un usuario
+     *
      * @param tokenResetPassword token de reseteo de contraseña
-     * @param content contenido cifrado con la clave publica con le texto de la nueva contraseña a asignar
+     * @param content contenido cifrado con la clave publica con le texto de la
+     * nueva contraseña a asignar
      * @return retorna mensaje de exito
      */
     @POST
@@ -201,6 +204,23 @@ public class Accesos {
             setWarningResponse(res, "No puede ingresar un contraseña que ya fué utilizada, intente con otro por favor", ex.getMessage());
         } catch (Exception e) {
             setErrorResponse(res, e, "No se logro actualizar la contraseña, consulte con su administrador del sistema");
+        }
+        return res;
+    }
+
+    @GET
+    @Path("/secciones")
+    public Response getSecciones(@HeaderParam("Authorization") String tokenSession) {
+        Response res = new Response();
+        try {
+            ManagerSeccion managerSeccion = new ManagerSeccion();
+            managerSeccion.setToken(tokenSession);
+            res.setData(managerSeccion.findAll());
+            res.setDevMessage("Secciones, modulos, menus y acciones del sistema en general");
+        } catch (TokenExpiradoException | TokenInvalidoException e) {
+            setInvalidTokenResponse(res);
+        } catch (Exception e) {
+            setErrorResponse(res, e);
         }
         return res;
     }

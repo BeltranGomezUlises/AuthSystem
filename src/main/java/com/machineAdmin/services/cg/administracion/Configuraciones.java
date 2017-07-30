@@ -43,24 +43,5 @@ public class Configuraciones extends ServiceFacade<CGConfig, Object>{
     public Response modificar(String token, CGConfig t) {
         return super.modificar(token, t);
     }
-    
-    /**
-     * sirve para obtener las configuraciones generales del sistema
-     * @param token
-     * @return contenedor de configuraciones generales
-     */
-    @Path("/generales")
-    @GET    
-    public Response getConfigGenerales(@HeaderParam("Authorization") String token){
-        Response res = new Response();
-        try {            
-            UtilsJWT.validateSessionToken(token);
-            res.setData(UtilsConfig.getCGConfig());
-        } catch (TokenExpiradoException | TokenInvalidoException e) {
-            setInvalidTokenResponse(res);
-        } catch (Exception e) {
-            setErrorResponse(res, e);
-        }        
-        return res;
-    }
+       
 }

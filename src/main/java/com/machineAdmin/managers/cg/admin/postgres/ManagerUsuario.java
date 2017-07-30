@@ -108,8 +108,9 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
      * @throws com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException
      */
     public Usuario login(Usuario usuarioAutenticando) throws UsuarioInexistenteException, ContraseñaIncorrectaException, UsuarioBlockeadoException, Exception {
-        try {            
-            Usuario loged = this.stream().filter(u -> {
+        try {    
+            DaoUsuario daoUsuario = new DaoUsuario();
+            Usuario loged = daoUsuario.stream().filter(u -> {
                 switch (getUserIdentifierType(usuarioAutenticando.getNombre())) {
                     case MAIL:
                         return u.getCorreo().equals(usuarioAutenticando.getNombre()) && u.getContra().equals(usuarioAutenticando.getContra());
@@ -127,7 +128,7 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
             }
 
             loged.setNumeroIntentosLogin(0);
-            this.update(loged);
+            daoUsuario.update(loged);
 
             //login exitoso, generar bitácora                                     
             UtilsBitacora.bitacorizarLogIn(loged.getId().toString());
