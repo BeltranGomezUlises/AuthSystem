@@ -17,6 +17,7 @@
 package com.machineAdmin.entities.cg.admin.postgres;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.machineAdmin.entities.cg.commons.EntitySQL;
 import com.machineAdmin.entities.cg.commons.IEntity;
 import java.io.Serializable;
 import java.util.Objects;
@@ -41,7 +42,7 @@ import javax.persistence.Table;
     @NamedQuery(name = "UsuariosPerfil.findAll", query = "SELECT u FROM UsuariosPerfil u")
     , @NamedQuery(name = "UsuariosPerfil.findByHereda", query = "SELECT u FROM UsuariosPerfil u WHERE u.hereda = :hereda")})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UsuariosPerfil implements Serializable, IEntity {
+public class UsuariosPerfil extends EntitySQL implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -129,6 +130,16 @@ public class UsuariosPerfil implements Serializable, IEntity {
     @Override
     public Object getId() {
         return usuariosPerfilPK;
+    }
+
+    @Override
+    public UUID getUsuarioCreador() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setUsuarioCreador(UUID usuarioCreador) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

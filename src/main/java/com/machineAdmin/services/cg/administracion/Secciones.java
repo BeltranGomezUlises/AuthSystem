@@ -14,35 +14,48 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.managers.cg.admin.postgres;
+package com.machineAdmin.services.cg.administracion;
 
-import com.machineAdmin.daos.cg.admin.postgres.DaoSeccion;
 import com.machineAdmin.entities.cg.admin.postgres.Seccion;
-import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
-import com.machineAdmin.models.cg.ModelBitacoraGenerica;
+import com.machineAdmin.managers.cg.admin.postgres.ManagerSeccion;
+import com.machineAdmin.models.cg.responsesCG.Response;
+import com.machineAdmin.services.cg.commons.ServiceFacade;
+import javax.ws.rs.Path;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerSeccion extends ManagerSQLFacade<Seccion, String> {
+@Path("/secciones")
+public class Secciones extends ServiceFacade<Seccion, String> {
 
-    public ManagerSeccion(String usuario) {
-        super(usuario, new DaoSeccion());
-    }
-
-    public ManagerSeccion() {
-        super(new DaoSeccion());
+    public Secciones() {
+        super(new ManagerSeccion());
     }
 
     @Override
-    public ModelBitacoraGenerica getModeloBitacorizar(Seccion entity) {        
-        return null;
+    public Response eliminar(String token, Seccion t) {
+        return super.eliminar(token, t);
     }
 
     @Override
-    protected String getBitacoraCollectionName() {
-        return null;
+    public Response modificar(String token, Seccion t) {
+        return super.modificar(token, t);
+    }
+
+    @Override
+    public Response alta(String token, Seccion t) {
+        return super.alta(token, t);
+    }
+
+    @Override
+    public Response obtener(String token, String id) {
+        return super.obtener(token, id);
+    }
+
+    @Override
+    public Response listar(String token) {
+        return super.listar(token);
     }
 
 }

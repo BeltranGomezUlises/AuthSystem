@@ -32,7 +32,7 @@ public class ManagerMenu extends ManagerSQLFacade<Menu, String>{
     }
 
     @Override
-    public ModelBitacoraGenerica obtenerModeloBitacorizar(Menu entity) {
+    public ModelBitacoraGenerica getModeloBitacorizar(Menu entity) {
         return null;
     }
 

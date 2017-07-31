@@ -18,7 +18,6 @@ package com.machineAdmin.services.cg.administracion;
 
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerPerfil;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerPerfilesPermisos;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
@@ -69,15 +68,16 @@ public class Perfiles extends ServiceFacade<Perfil, UUID>{
     public Response listar(String token) {
         return super.listar(token); //To change body of generated methods, choose Tools | Templates.
     }
-       
+   
+    
     @POST
     @Path("/asignarPermisos")
     public Response asignarPermisos(@HeaderParam("Authorization") String token, ModelAsignarPermisos modelo){
         Response res = new Response();       
         try {
             UtilsJWT.validateSessionToken(token);
-            ManagerPerfilesPermisos managerPerfilesPermisos = new ManagerPerfilesPermisos();
-            managerPerfilesPermisos.asignarPermisosAlPerfil(modelo);
+//            ManagerPerfilesPermisos managerPerfilesPermisos = new ManagerPerfilesPermisos();
+  //          managerPerfilesPermisos.asignarPermisosAlPerfil(modelo);
             res.setMessage("Los Permisos fuéron asignados al perfil con éxito");
             res.setDevMessage("Permisos asignado al perfil");
         }catch (TokenExpiradoException | TokenInvalidoException ex) {

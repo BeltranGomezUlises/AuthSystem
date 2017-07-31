@@ -64,7 +64,7 @@ public class ManagerUsuariosPerfil extends  ManagerSQLFacade<UsuariosPerfil, Usu
     }
 
     @Override
-    public ModelBitacoraGenerica obtenerModeloBitacorizar(UsuariosPerfil entity) {
+    public ModelBitacoraGenerica getModeloBitacorizar(UsuariosPerfil entity) {
         return null;
     }
 

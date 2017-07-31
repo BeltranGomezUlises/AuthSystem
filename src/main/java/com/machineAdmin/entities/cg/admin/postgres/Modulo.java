@@ -32,7 +32,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.machineAdmin.entities.cg.commons.IEntity;
+import com.machineAdmin.entities.cg.commons.EntitySQL;
+import java.util.UUID;
 
 /**
  *
@@ -45,7 +46,7 @@ import com.machineAdmin.entities.cg.commons.IEntity;
     , @NamedQuery(name = "Modulo.findById", query = "SELECT m FROM Modulo m WHERE m.id = :id")
     , @NamedQuery(name = "Modulo.findByNombre", query = "SELECT m FROM Modulo m WHERE m.nombre = :nombre")})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Modulo implements Serializable, IEntity {
+public class Modulo extends EntitySQL implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -124,6 +125,16 @@ public class Modulo implements Serializable, IEntity {
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.Modulo[ id=" + id + " ]";
+    }
+
+    @Override
+    public UUID getUsuarioCreador() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setUsuarioCreador(UUID usuarioCreador) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

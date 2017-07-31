@@ -52,7 +52,7 @@ public class ManagerGrupoPerfil extends ManagerSQLFacade<GrupoPerfiles, UUID> {
     }
 
     @Override
-    public ModelBitacoraGenerica obtenerModeloBitacorizar(GrupoPerfiles entity) {
+    public ModelBitacoraGenerica getModeloBitacorizar(GrupoPerfiles entity) {                
         return new ModelBitacoraGenerica(this.getBitacoraCollectionName(), entity);
     }
 

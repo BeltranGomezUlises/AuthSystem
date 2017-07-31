@@ -25,28 +25,24 @@ import com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles;
 import com.machineAdmin.entities.cg.admin.postgres.Menu;
 import com.machineAdmin.entities.cg.admin.postgres.Modulo;
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
-import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos;
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.entities.cg.admin.postgres.Seccion;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil;
-import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos;
-import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.daos.cg.admin.postgres.DaoMenu;
 import com.machineAdmin.daos.cg.admin.postgres.DaoModulo;
 import com.machineAdmin.daos.cg.admin.postgres.DaoPerfil;
-import com.machineAdmin.daos.cg.admin.postgres.DaoPerfilesPermisos;
 import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
 import com.machineAdmin.daos.cg.admin.postgres.DaoSeccion;
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPerfil;
-import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPermisos;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -88,19 +84,41 @@ public class InitServletContext implements ServletContextListener {
 
         this.initDBPermissions();
 
+        //<editor-fold defaultstate="collapsed" desc="Creacion de usuario default master">
+        DaoUsuario daoUsuario = new DaoUsuario();
+
+        Usuario usuarioDB;
+        try {
+            usuarioDB = daoUsuario.stream().where(u -> u.getNombre().equals("Administrador")).findFirst().get();
+        } catch (NoSuchElementException e) {
+            usuarioDB = new Usuario();
+            usuarioDB.setNombre("Administrador");
+            usuarioDB.setCorreo("ubg700@gmail.com");
+            usuarioDB.setTelefono("6671007264");
+            usuarioDB.setContra(UtilsSecurity.cifrarMD5("1234"));
+            daoUsuario.persist(usuarioDB);
+
+            usuarioDB.setUsuarioCreador(usuarioDB.getId());
+            daoUsuario.update(usuarioDB);
+        }
+
+        //</editor-fold>  
         //<editor-fold defaultstate="collapsed" desc="Creacion del perfil Master">
         //crear perfil master
         DaoPerfil daoPerfil = new DaoPerfil();
 
-        Perfil perfilMaster = daoPerfil.findFirst();
-        if (perfilMaster == null) {
+        Perfil perfilMaster;
+        try {
+            perfilMaster = daoPerfil.stream().where(p -> p.getNombre().equals("Master")).findFirst().get();
+        } catch (NoSuchElementException e) {
             perfilMaster = new Perfil();
             perfilMaster.setNombre("Master");
             perfilMaster.setDescripcion("Perfil de control total del sistema");
+            perfilMaster.setUsuarioCreador(usuarioDB.getId());
             daoPerfil.persist(perfilMaster);
         }
-        //</editor-fold>
 
+        //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="Creacion del grupo de perfiles">
         DaoGrupoPerfiles daoGrupoPerfil = new DaoGrupoPerfiles();
 
@@ -108,45 +126,24 @@ public class InitServletContext implements ServletContextListener {
         if (gp == null) {
             gp = new GrupoPerfiles();
             gp.setNombre("Administradores del sistema");
-            gp.setDescripcoin("Este grupo de roles puede administrar las configuraciones del sistemas, ademas de poder realizar las operaciones de negocio de toda la aplicacion");
+            gp.setDescripcion("Este grupo de roles puede administrar las configuraciones del sistemas, ademas de poder realizar las operaciones de negocio de toda la aplicacion");
 
             List<Perfil> perfilesDelRol = new ArrayList<>();
             perfilesDelRol.add(perfilMaster);
             gp.setPerfilList(perfilesDelRol);
+            gp.setUsuarioCreador(usuarioDB.getId());
             daoGrupoPerfil.persist(gp);
         }
         //</editor-fold>
 
-        //<editor-fold defaultstate="collapsed" desc="Asignacion de permisos al perfil">
-        //crear relacion de perfil con permisos disponibles
-        DaoPerfilesPermisos daoPerfilesPermisos = new DaoPerfilesPermisos();
-        //asignar permisos al perfil
+        //<editor-fold defaultstate="collapsed" desc="Asignacion de permisos al perfil">                                
         for (Permiso permiso : UtilsPermissions.getExistingPermissions()) {
-            PerfilesPermisos perfilPermisoRelacion = new PerfilesPermisos(perfilMaster.getId(), permiso.getId());
-
-            if (!daoPerfilesPermisos.stream().anyMatch(pp -> pp.equals(perfilPermisoRelacion))) { // si no existe la relacion
-                perfilPermisoRelacion.setPerfil1(perfilMaster);
-                perfilPermisoRelacion.setPermiso1(permiso);
-                perfilPermisoRelacion.setProfundidad(Profundidad.TODOS);
-                daoPerfilesPermisos.persist(perfilPermisoRelacion);
+            if (!perfilMaster.getPermisoList().contains(permiso)) {
+                perfilMaster.getPermisoList().add(permiso);
             }
-
         }
+        daoPerfil.update(perfilMaster);
         //</editor-fold>
-
-        //<editor-fold defaultstate="collapsed" desc="Creacion de usuario default master">
-        DaoUsuario daoUsuario = new DaoUsuario();
-
-        Usuario usuarioDB = daoUsuario.findFirst();
-        if (usuarioDB == null) {
-            usuarioDB = new Usuario();
-            usuarioDB.setNombre("Administrador");
-            usuarioDB.setCorreo("ubg700@gmail.com");
-            usuarioDB.setTelefono("6671007264");
-            usuarioDB.setContra(UtilsSecurity.cifrarMD5("1234"));
-            daoUsuario.persist(usuarioDB);
-        }
-        //</editor-fold>        
 
         //<editor-fold defaultstate="collapsed" desc="Asignacion de perfil al usuario">
         DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
@@ -158,18 +155,12 @@ public class InitServletContext implements ServletContextListener {
 
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="Asignaion de permisos al usuario">
-        DaoUsuariosPermisos daoUsuariosPermisos = new DaoUsuariosPermisos();
-        UsuariosPermisos usuariosPermisos;
         for (Permiso existingPermission : UtilsPermissions.getExistingPermissions()) {
-
-            usuariosPermisos = new UsuariosPermisos(usuarioDB.getId(), existingPermission.getId());
-            usuariosPermisos.setProfundidad(Profundidad.TODOS);
-
-            UsuariosPermisos checkDB = new UsuariosPermisos(usuarioDB.getId(), existingPermission.getId());
-            if (!daoUsuariosPermisos.stream().anyMatch(up -> up.equals(checkDB))) {
-                daoUsuariosPermisos.persist(usuariosPermisos);
+            if (!usuarioDB.getPermisoList().contains(existingPermission)) {
+                usuarioDB.getPermisoList().add(existingPermission);
             }
         }
+        daoUsuario.update(usuarioDB);
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="Creacion de correo por default"> 
@@ -178,7 +169,7 @@ public class InitServletContext implements ServletContextListener {
         ConfigMail mail = daoMail.findFirst();
         if (mail == null) {
             mail = new ConfigMail();
-            ConfigMail.AuthMail authMail = new ConfigMail.AuthMail("usuariosexpertos@gmail.com", "90Y8Byh$");
+            ConfigMail.AuthMail authMail = new ConfigMail.AuthMail("usuariosexpertos@gmail.com", "usuarios$1234");
             mail.setAuth(authMail);
             mail.setHostName("smtp.googlemail.com");
             mail.setPort(465);
@@ -391,7 +382,7 @@ public class InitServletContext implements ServletContextListener {
                 Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-        
+
         //modulos
         List<Modulo> modulosEnDB = daoModulo.findAll();
         modulosEnDB.stream().filter((m) -> (!modulosActuales.contains(m))).forEach((m) -> {
@@ -401,7 +392,7 @@ public class InitServletContext implements ServletContextListener {
                 Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-        
+
         //verificar secciones
         List<Seccion> seccionesEnDB = daoSeccion.findAll();
         seccionesEnDB.stream().filter((seccion) -> (!seccionesActuales.contains(seccion))).forEach((seccion) -> {
@@ -411,7 +402,7 @@ public class InitServletContext implements ServletContextListener {
                 Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-             
+
     }
 
     private List<String> getClasesSimpleNameFromPackage2(String packageName) {

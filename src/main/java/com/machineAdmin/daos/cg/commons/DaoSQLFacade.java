@@ -7,6 +7,7 @@ package com.machineAdmin.daos.cg.commons;
 
 import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
+import com.machineAdmin.entities.cg.commons.EntitySQL;
 import com.machineAdmin.entities.cg.commons.IEntity;
 import java.util.List;
 import java.util.UUID;
@@ -24,7 +25,7 @@ import org.jinq.jpa.JinqJPAStreamProvider;
  * DaoSQLFacade
  * @param <K> Tipo de dato de la llave primaria de la entidad
  */
-public abstract class DaoSQLFacade<T extends IEntity, K> {
+public abstract class DaoSQLFacade<T extends EntitySQL, K> {
 
     private final Class<T> claseEntity;
     private final Class<K> clasePK;
@@ -38,25 +39,14 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
         streams = new JinqJPAStreamProvider(eMFactory);
     }
 
-    public void persist(T entity) throws Exception{
+    public void persist(T entity) throws Exception {
         EntityManager em = this.getEM();
         try {
             em.getTransaction().begin();
             em.persist(entity);
             em.getTransaction().commit();
         } catch (Exception e) {
-            e.printStackTrace();
-            throw e;            
-//            String mensajeDeExcepcion = "No fue posible persistir la entidad, CAUSE: " + e.toString();
-//            Throwable t = e.getCause();
-//            if (t != null) {
-//                mensajeDeExcepcion += " CAUSE: " + t.toString();
-//                if (t.toString().contains("duplicate key value") || t.toString().contains("already exists")) {
-//                    throw new ConstraintException(t.toString());
-//                }
-//            }
-//            throw new SQLPersistenceException(mensajeDeExcepcion);
-            
+            throw e;
         } finally {
             if (em != null) {
                 em.close();
@@ -74,15 +64,6 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
             em.getTransaction().commit();
         } catch (Exception e) {
             throw e;
-//            String mensajeDeExcepcion = "No fue posible persistir la entidad, CAUSE: " + e.toString();
-//            Throwable t = e.getCause();
-//            if (t != null) {
-//                mensajeDeExcepcion += " CAUSE: " + t.toString();
-//                if (t.toString().contains("duplicate key value") || t.toString().contains("already exists")) {
-//                    throw new ConstraintException(t.toString());
-//                }
-//            }
-//            throw new SQLPersistenceException(mensajeDeExcepcion);
         } finally {
             if (em != null) {
                 em.close();

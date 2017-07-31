@@ -27,7 +27,7 @@ import org.mongojack.JacksonDBCollection;
 public class UtilsBitacora {    
 
     public static void bitacorizar(String usuario, String accion, String collectionName, Object objectToPersist) {                        
-        JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection(collectionName), Object.class, String.class);
+        JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection( "bitacora." + collectionName), Object.class, String.class);
         coll.insert(new ModeloBitacora(usuario, accion, objectToPersist));
     }
 

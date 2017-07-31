@@ -131,7 +131,7 @@ public abstract class ManagerFacade<T extends IEntity, K> {
      */
     public abstract K stringToKey(String s);
 
-    public abstract ModelBitacoraGenerica obtenerModeloBitacorizar(T entity);
+    public abstract ModelBitacoraGenerica getModeloBitacorizar(T entity);
 
     public void bitacorizar(String accion, ModelBitacoraGenerica model) throws UsuarioNoAsignadoException {
         if (model != null) {

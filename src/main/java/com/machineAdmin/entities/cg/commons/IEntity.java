@@ -23,8 +23,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public interface IEntity {
-    
-    public Object getId();
-    
+public abstract class IEntity {
+     
+    public abstract Object getId();
+                
 }

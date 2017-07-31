@@ -17,9 +17,10 @@
 package com.machineAdmin.entities.cg.admin.postgres;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.machineAdmin.entities.cg.commons.IEntity;
+import com.machineAdmin.entities.cg.commons.EntitySQL;
 import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +30,10 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -58,9 +63,20 @@ import org.eclipse.persistence.annotations.Converter;
     , @NamedQuery(name = "Usuario.findByBloqueado", query = "SELECT u FROM Usuario u WHERE u.bloqueado = :bloqueado")
     , @NamedQuery(name = "Usuario.findByBloqueadoHastaFecha", query = "SELECT u FROM Usuario u WHERE u.bloqueadoHastaFecha = :bloqueadoHastaFecha")})
 @Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
-public class Usuario implements Serializable, IEntity {
+public class Usuario extends EntitySQL implements Serializable {
+
+    @Lob
+    @Convert("uuidConverter")
+    @Column(name = "usuario_creador")
+    private UUID usuarioCreador;
 
     private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Convert("uuidConverter")
+    @Column(name = "id")
+    private UUID id;
     @Size(max = 2147483647)
     @Column(name = "nombre")
     private String nombre;
@@ -85,16 +101,13 @@ public class Usuario implements Serializable, IEntity {
     @Column(name = "bloqueado_hasta_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date bloqueadoHastaFecha;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Convert("uuidConverter")
-    @Column(name = "id")
-    private UUID id;
+    @JoinTable(name = "usuarios_permisos", joinColumns = {
+        @JoinColumn(name = "usuario", referencedColumnName = "id")}, inverseJoinColumns = {
+        @JoinColumn(name = "permiso", referencedColumnName = "id")})
+    @ManyToMany(mappedBy = "usuarioList")
+    private List<Permiso> permisoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
     private List<BitacoraContras> bitacoraContrasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
-    private List<UsuariosPermisos> usuariosPermisosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
     private List<UsuariosPerfil> usuariosPerfilList;
 
@@ -103,6 +116,7 @@ public class Usuario implements Serializable, IEntity {
         this.inhabilitado = false;
         this.id = UUID.randomUUID();
         this.numeroIntentosLogin = 0;
+        this.permisoList = new ArrayList<>();
     }
 
     public Usuario(UUID id) {
@@ -200,15 +214,6 @@ public class Usuario implements Serializable, IEntity {
     }
 
     @JsonIgnore
-    public List<UsuariosPermisos> getUsuariosPermisosList() {
-        return usuariosPermisosList;
-    }
-
-    public void setUsuariosPermisosList(List<UsuariosPermisos> usuariosPermisosList) {
-        this.usuariosPermisosList = usuariosPermisosList;
-    }
-
-    @JsonIgnore
     public List<UsuariosPerfil> getUsuariosPerfilList() {
         return usuariosPerfilList;
     }
@@ -232,7 +237,7 @@ public class Usuario implements Serializable, IEntity {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (this.getClass() != obj.getClass()) {
             return false;
         }
         final Usuario other = (Usuario) obj;
@@ -246,6 +251,24 @@ public class Usuario implements Serializable, IEntity {
 
     public void aumentarNumeroDeIntentosLogin() {
         this.numeroIntentosLogin++;
+    }
+
+    @Override
+    public UUID getUsuarioCreador() {
+        return this.usuarioCreador;
+    }
+
+    @Override
+    public void setUsuarioCreador(UUID usuarioCreador) {
+        this.usuarioCreador = usuarioCreador;
+    }
+
+    public List<Permiso> getPermisoList() {
+        return permisoList;
+    }
+
+    public void setPermisoList(List<Permiso> permisoList) {
+        this.permisoList = permisoList;
     }
 
 }

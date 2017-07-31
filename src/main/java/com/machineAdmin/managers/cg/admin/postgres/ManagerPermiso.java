@@ -32,7 +32,7 @@ public class ManagerPermiso extends ManagerSQLFacade<Permiso, String> {
     }
 
     @Override
-    public ModelBitacoraGenerica obtenerModeloBitacorizar(Permiso entity) {
+    public ModelBitacoraGenerica getModeloBitacorizar(Permiso entity) {
         return null;
     }
 

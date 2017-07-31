@@ -16,12 +16,12 @@
  */
 package com.machineAdmin.utils;
 
+import com.machineAdmin.daos.cg.admin.postgres.DaoPerfil;
 import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
+import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
+import com.machineAdmin.entities.cg.admin.postgres.Perfil;
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerPerfilesPermisos;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerPermiso;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuariosPermisos;
-import com.machineAdmin.models.cg.ModelPermisoAsignado;
+import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import java.util.List;
 import java.util.UUID;
 import static java.util.stream.Collectors.toList;
@@ -46,16 +46,10 @@ public class UtilsPermissions {
      * @param userId id del usuario a obtener sus permisos
      * @return lista modelos con id de permiso y profundidad
      */
-    public static List<ModelPermisoAsignado> permisosAsignadosAUsuario(String userId) {
-        ManagerUsuariosPermisos managerUsuariosPermisos = new ManagerUsuariosPermisos();
-        return managerUsuariosPermisos.stream()
-                .filter(up -> up.getUsuariosPermisosPK().getUsuario().equals(UUID.fromString(userId)))
-                .map(up -> {
-                    ModelPermisoAsignado asignado = new ModelPermisoAsignado();
-                    asignado.setId(up.getUsuariosPermisosPK().getPermiso());
-                    asignado.setProfundidad(up.getProfundidad());
-                    return asignado;
-                }).collect(toList());
+    public static List<Permiso> permisosAsignadosAUsuario(String userId) {
+        DaoUsuario dao = new DaoUsuario();        
+        Usuario usuario = dao.findOne(UUID.fromString(userId));
+        return usuario.getPermisoList();        
     }
 
     /**
@@ -63,16 +57,10 @@ public class UtilsPermissions {
      * @param perfilId id del perfil a obtener sus permisos
      * @return lista modelos con id de permiso y profundidad
      */
-    public static List<ModelPermisoAsignado> permisosAsignadosAPerfil(String perfilId) {
-        ManagerPerfilesPermisos managerPerfilesPermisos = new ManagerPerfilesPermisos();
-        return managerPerfilesPermisos.stream()
-                .filter(pp -> pp.getPerfilesPermisosPK().getPerfil().equals(UUID.fromString(perfilId)))
-                .map(pp -> {
-                    ModelPermisoAsignado asignado = new ModelPermisoAsignado();
-                    asignado.setId(pp.getPerfilesPermisosPK().getPermiso());
-                    asignado.setProfundidad(pp.getProfundidad());
-                    return asignado;
-                }).collect(toList());
+    public static List<Permiso> permisosAsignadosAPerfil(String perfilId) {
+       DaoPerfil dao = new DaoPerfil();
+       Perfil perfil = dao.findOne(UUID.fromString(perfilId));
+       return perfil.getPermisoList();
     }
 
 }

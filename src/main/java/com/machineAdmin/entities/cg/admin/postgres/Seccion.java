@@ -16,6 +16,7 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
+import com.machineAdmin.entities.cg.commons.EntitySQL;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -28,9 +29,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.machineAdmin.entities.cg.commons.IEntity;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  *
@@ -38,13 +38,11 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "seccion")
-
 @NamedQueries({
     @NamedQuery(name = "Seccion.findAll", query = "SELECT s FROM Seccion s")
     , @NamedQuery(name = "Seccion.findById", query = "SELECT s FROM Seccion s WHERE s.id = :id")
     , @NamedQuery(name = "Seccion.findByNombre", query = "SELECT s FROM Seccion s WHERE s.nombre = :nombre")})
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class Seccion implements Serializable, IEntity {
+public class Seccion extends EntitySQL implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -55,7 +53,8 @@ public class Seccion implements Serializable, IEntity {
     private String id;
     @Size(max = 2147483647)
     @Column(name = "nombre")
-    private String nombre;
+    private String nombre;   
+
     @OneToMany(mappedBy = "seccion")
     private List<Modulo> moduloList;
 
@@ -83,7 +82,6 @@ public class Seccion implements Serializable, IEntity {
         this.nombre = nombre;
     }
 
-        
     public List<Modulo> getModuloList() {
         return moduloList;
     }
@@ -117,6 +115,16 @@ public class Seccion implements Serializable, IEntity {
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.Seccion[ id=" + id + " ]";
+    }
+
+    @Override
+    public UUID getUsuarioCreador() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.   
+    }
+
+    @Override
+    public void setUsuarioCreador(UUID usuarioCreador) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.   
     }
 
 }

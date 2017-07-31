@@ -33,11 +33,11 @@ public class ServiceFacade<T extends IEntity, K> {
         this.manager = manager;
     }
 
-    public ManagerFacade<T, K> getManager() {
+    public final ManagerFacade<T, K> getManager() {
         return manager;
     }
 
-    public void setManager(ManagerFacade<T, K> manager) {
+    public final void setManager(ManagerFacade<T, K> manager) {
         this.manager = manager;
     }
 
@@ -52,7 +52,7 @@ public class ServiceFacade<T extends IEntity, K> {
     public Response listar(@HeaderParam("Authorization") String token) {
         Response response = new Response();
         try {
-            this.manager.setToken(token);            
+            this.manager.setToken(token);              
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(response);

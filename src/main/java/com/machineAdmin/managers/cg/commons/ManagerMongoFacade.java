@@ -8,7 +8,6 @@ package com.machineAdmin.managers.cg.commons;
 import com.machineAdmin.daos.cg.commons.DaoMongoFacade;
 import com.machineAdmin.entities.cg.commons.EntityMongo;
 import com.machineAdmin.managers.cg.exceptions.UsuarioNoAsignadoException;
-import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,10 +38,11 @@ public abstract class ManagerMongoFacade<T extends EntityMongo> extends ManagerF
     }
 
     @Override
-    public T persist(T entity) {
+    public T persist(T entity) {        
         T t = (T) dao.persist(entity);
         try {
-            this.bitacorizar("alta", this.obtenerModeloBitacorizar(entity));
+            entity.setUsuarioCreador(this.getUsuario());
+            this.bitacorizar("alta", this.getModeloBitacorizar(entity));
         } catch (UsuarioNoAsignadoException ex) {
             Logger.getLogger(ManagerMongoFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -54,7 +54,8 @@ public abstract class ManagerMongoFacade<T extends EntityMongo> extends ManagerF
         List<T> ts = dao.persistAll(entities);
         ts.parallelStream().forEach(t -> {
             try {
-                this.bitacorizar("alta", this.obtenerModeloBitacorizar(t));
+                t.setUsuarioCreador(this.getUsuario());
+                this.bitacorizar("alta", this.getModeloBitacorizar(t));
             } catch (UsuarioNoAsignadoException ex) {
                 Logger.getLogger(ManagerMongoFacade.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -66,7 +67,7 @@ public abstract class ManagerMongoFacade<T extends EntityMongo> extends ManagerF
     public void delete(Object id){
         dao.delete(id);
         try {
-            this.bitacorizar("eliminar", this.obtenerModeloBitacorizar(this.findOne(id)));
+            this.bitacorizar("eliminar", this.getModeloBitacorizar(this.findOne(id)));
         } catch (UsuarioNoAsignadoException ex) {
             Logger.getLogger(ManagerMongoFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -78,7 +79,7 @@ public abstract class ManagerMongoFacade<T extends EntityMongo> extends ManagerF
 
         ts.parallelStream().forEach(t -> {
             try {
-                this.bitacorizar("eliminar", this.obtenerModeloBitacorizar(t));
+                this.bitacorizar("eliminar", this.getModeloBitacorizar(t));
             } catch (UsuarioNoAsignadoException ex) {
                 Logger.getLogger(ManagerMongoFacade.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -91,7 +92,7 @@ public abstract class ManagerMongoFacade<T extends EntityMongo> extends ManagerF
         dao.deleteAll(ids);
         ts.parallelStream().forEach(t -> {
             try {
-                this.bitacorizar("eliminar", this.obtenerModeloBitacorizar(t));
+                this.bitacorizar("eliminar", this.getModeloBitacorizar(t));
             } catch (UsuarioNoAsignadoException ex) {
                 Logger.getLogger(ManagerMongoFacade.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -101,7 +102,7 @@ public abstract class ManagerMongoFacade<T extends EntityMongo> extends ManagerF
     @Override
     public void update(T entity) throws Exception {
         dao.update(entity);
-        this.bitacorizar("actualizar", this.obtenerModeloBitacorizar(entity));
+        this.bitacorizar("actualizar", this.getModeloBitacorizar(entity));
     }
 
     public void update(Query q, T t) {
@@ -109,7 +110,7 @@ public abstract class ManagerMongoFacade<T extends EntityMongo> extends ManagerF
         dao.update(q, t);
         ts.parallelStream().forEach(ts1 -> {
             try {
-                this.bitacorizar("actualizar", this.obtenerModeloBitacorizar(ts1));
+                this.bitacorizar("actualizar", this.getModeloBitacorizar(ts1));
             } catch (UsuarioNoAsignadoException ex) {
                 Logger.getLogger(ManagerMongoFacade.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -120,7 +121,7 @@ public abstract class ManagerMongoFacade<T extends EntityMongo> extends ManagerF
     public T findOne(Object id){
         T t = (T) dao.findOne(id);
         try {
-            this.bitacorizar("obtener", this.obtenerModeloBitacorizar(t));
+            this.bitacorizar("obtener", this.getModeloBitacorizar(t));
         } catch (UsuarioNoAsignadoException ex) {
             Logger.getLogger(ManagerMongoFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -130,7 +131,7 @@ public abstract class ManagerMongoFacade<T extends EntityMongo> extends ManagerF
     public T findOne(Query q) {
         T t = (T) dao.findOne(q);
         try {
-            this.bitacorizar("obtener", this.obtenerModeloBitacorizar(t));
+            this.bitacorizar("obtener", this.getModeloBitacorizar(t));
         } catch (UsuarioNoAsignadoException e) {
             Logger.getLogger(ManagerMongoFacade.class.getName()).log(Level.SEVERE, null, e);
         }

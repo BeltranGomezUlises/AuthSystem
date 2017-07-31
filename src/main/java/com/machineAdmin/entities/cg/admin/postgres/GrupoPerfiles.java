@@ -32,12 +32,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.machineAdmin.entities.cg.commons.IEntity;
-import com.machineAdmin.entities.cg.commons.UUIDConverter;
+import com.machineAdmin.entities.cg.commons.EntitySQL;
 import java.util.Objects;
 import java.util.UUID;
+import javax.persistence.Lob;
 import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Converter;
 
 /**
  *
@@ -48,10 +47,14 @@ import org.eclipse.persistence.annotations.Converter;
 @NamedQueries({
     @NamedQuery(name = "GrupoPerfiles.findAll", query = "SELECT g FROM GrupoPerfiles g")
     , @NamedQuery(name = "GrupoPerfiles.findByNombre", query = "SELECT g FROM GrupoPerfiles g WHERE g.nombre = :nombre")
-    , @NamedQuery(name = "GrupoPerfiles.findByDescripcoin", query = "SELECT g FROM GrupoPerfiles g WHERE g.descripcoin = :descripcoin")})
-@Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
+    , @NamedQuery(name = "GrupoPerfiles.findByDescripcoin", query = "SELECT g FROM GrupoPerfiles g WHERE g.descripcion = :descripcion")})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GrupoPerfiles implements Serializable, IEntity {
+public class GrupoPerfiles extends EntitySQL implements Serializable {
+
+    @Lob()
+    @Convert("uuidConverter")
+    @Column(name = "usuario_creador")
+    private UUID usuarioCreador;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -64,8 +67,8 @@ public class GrupoPerfiles implements Serializable, IEntity {
     @Column(name = "nombre")
     private String nombre;
     @Size(max = 2147483647)
-    @Column(name = "descripcoin")
-    private String descripcoin;
+    @Column(name = "descripcion")
+    private String descripcion;
     @JoinTable(name = "perfil_grupo_perfiles", joinColumns = {
         @JoinColumn(name = "grupo_perfiles", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "perfil", referencedColumnName = "id")})
@@ -97,12 +100,12 @@ public class GrupoPerfiles implements Serializable, IEntity {
         this.nombre = nombre;
     }
 
-    public String getDescripcoin() {
-        return descripcoin;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setDescripcoin(String descripcoin) {
-        this.descripcoin = descripcoin;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     @JsonIgnore
@@ -133,15 +136,22 @@ public class GrupoPerfiles implements Serializable, IEntity {
             return false;
         }
         final GrupoPerfiles other = (GrupoPerfiles) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.id, other.id);
     }
 
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles[ id=" + id + " ]";
+    }
+
+    @Override
+    public UUID getUsuarioCreador() {
+        return this.usuarioCreador;
+    }
+
+    @Override
+    public void setUsuarioCreador(UUID usuarioCreador) {
+        this.usuarioCreador = usuarioCreador;
     }
 
 }

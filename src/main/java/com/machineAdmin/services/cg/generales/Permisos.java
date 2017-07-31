@@ -54,7 +54,7 @@ public class Permisos {
         try {
             ManagerSeccion managerSeccion = new ManagerSeccion();
             managerSeccion.setToken(token);
-            res.setData(managerSeccion.findAll());
+            res.setData(managerSeccion.findAll());            
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
         } catch (Exception ex) {

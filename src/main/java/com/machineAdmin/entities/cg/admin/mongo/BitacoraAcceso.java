@@ -32,7 +32,7 @@ public class BitacoraAcceso extends EntityMongo {
 
     public BitacoraAcceso(Date fecha, String usuario) {
         this.fecha = fecha;
-        this.usuario = usuario;
+        this.usuario = usuario;       
     }
 
     public BitacoraAcceso(String usuario) {

@@ -5,20 +5,31 @@
  */
 package com.machineAdmin.entities.cg.commons;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
+import javax.persistence.Column;
 import org.mongojack.ObjectId;
 
 /**
  * clase padre de entidades de mongo
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class EntityMongo implements IEntity{
-                
+public class EntityMongo extends IEntity {
+
     @ObjectId
     @JsonProperty("_id")
     protected String id;
+
+    private String usuarioCreador;
+
+    public String getUsuarioCreador() {
+        return usuarioCreador;
+    }
+
+    public void setUsuarioCreador(String usuarioCreador) {        
+        this.usuarioCreador = usuarioCreador;
+    }
 
     @Override
     public String getId() {
@@ -53,6 +64,5 @@ public class EntityMongo implements IEntity{
         }
         return true;
     }
-    
-    
+
 }

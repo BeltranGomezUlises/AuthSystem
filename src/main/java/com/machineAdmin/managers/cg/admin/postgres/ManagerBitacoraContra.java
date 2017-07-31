@@ -33,7 +33,7 @@ public class ManagerBitacoraContra extends ManagerSQLFacade<BitacoraContras, Bit
     }
 
     @Override
-    public ModelBitacoraGenerica obtenerModeloBitacorizar(BitacoraContras entity) {
+    public ModelBitacoraGenerica getModeloBitacorizar(BitacoraContras entity) {
         return null;
     }
 

@@ -30,12 +30,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.machineAdmin.entities.cg.commons.IEntity;
+import com.machineAdmin.entities.cg.commons.EntitySQL;
 import com.machineAdmin.entities.cg.commons.UUIDConverter;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.Converter;
 
@@ -50,7 +53,12 @@ import org.eclipse.persistence.annotations.Converter;
     , @NamedQuery(name = "Perfil.findByNombre", query = "SELECT p FROM Perfil p WHERE p.nombre = :nombre")
     , @NamedQuery(name = "Perfil.findByDescripcion", query = "SELECT p FROM Perfil p WHERE p.descripcion = :descripcion")})
 @Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
-public class Perfil implements Serializable, IEntity {
+public class Perfil extends EntitySQL implements Serializable {
+
+    @Lob
+    @Convert("uuidConverter")
+    @Column(name = "usuario_creador")
+    private UUID usuarioCreador;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -65,15 +73,19 @@ public class Perfil implements Serializable, IEntity {
     @Size(max = 2147483647)
     @Column(name = "descripcion")
     private String descripcion;
+    @JoinTable(name = "perfiles_permisos", joinColumns = {
+        @JoinColumn(name = "perfil", referencedColumnName = "id")}, inverseJoinColumns = {
+        @JoinColumn(name = "permiso", referencedColumnName = "id")})
+    @ManyToMany
+    private List<Permiso> permisoList;
     @ManyToMany(mappedBy = "perfilList")
     private List<GrupoPerfiles> grupoPerfilesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "perfil1")
-    private List<PerfilesPermisos> perfilesPermisosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "perfil1")
     private List<UsuariosPerfil> usuariosPerfilList;
 
     public Perfil() {
         this.id = UUID.randomUUID();
+        this.permisoList = new ArrayList<>();
     }
 
     public Perfil(UUID id) {
@@ -115,15 +127,6 @@ public class Perfil implements Serializable, IEntity {
     }
 
     @JsonIgnore
-    public List<PerfilesPermisos> getPerfilesPermisosList() {
-        return perfilesPermisosList;
-    }
-
-    public void setPerfilesPermisosList(List<PerfilesPermisos> perfilesPermisosList) {
-        this.perfilesPermisosList = perfilesPermisosList;
-    }
-
-    @JsonIgnore
     public List<UsuariosPerfil> getUsuariosPerfilList() {
         return usuariosPerfilList;
     }
@@ -157,6 +160,24 @@ public class Perfil implements Serializable, IEntity {
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.Perfil[ id=" + id + " ]";
+    }
+
+    @Override
+    public UUID getUsuarioCreador() {
+        return this.usuarioCreador;
+    }
+
+    @Override
+    public void setUsuarioCreador(UUID usuarioCreador) {
+        this.usuarioCreador = usuarioCreador;
+    }
+
+    public List<Permiso> getPermisoList() {
+        return permisoList;
+    }
+
+    public void setPermisoList(List<Permiso> permisoList) {
+        this.permisoList = permisoList;
     }
 
 }

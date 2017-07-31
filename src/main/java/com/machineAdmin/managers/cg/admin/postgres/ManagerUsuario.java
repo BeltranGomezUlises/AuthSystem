@@ -27,6 +27,7 @@ import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
+import com.machineAdmin.managers.cg.exceptions.UserException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.cg.ModelBitacoraGenerica;
@@ -45,6 +46,7 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.UUID;
 import static java.util.stream.Collectors.toList;
+import javax.persistence.NoResultException;
 import org.apache.commons.mail.EmailException;
 
 /**
@@ -56,7 +58,7 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
     public ManagerUsuario(String usuario) {
         super(usuario, new DaoUsuario());
     }
-    
+
     public ManagerUsuario() {
         super(new DaoUsuario());
     }
@@ -65,17 +67,22 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
     public Usuario persist(Usuario entity) throws Exception {
 
         entity.setContra(UtilsSecurity.cifrarMD5(entity.getContra()));
-        Usuario persisted = super.persist(entity);
+        try {
+            Usuario persisted = super.persist(entity);
+            //bitacorizar la contraseña
+            BitacoraContras bc = new BitacoraContras(persisted.getId(), persisted.getContra());
+            bc.setUsuario1(persisted);
 
-        //bitacorizar la contraseña
-        BitacoraContras bc = new BitacoraContras(persisted.getId(), persisted.getContra());
-        bc.setUsuario1(persisted);
+            ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra(this.getUsuario());
+            managerBitacoraContra.persist(bc);
 
-        ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra(this.getUsuario());
-        managerBitacoraContra.persist(bc);
-
-        return persisted; //To change body of generated methods, choose Tools | Templates. 
-
+            return persisted;
+        } catch (Exception e) {
+            if (e.toString().contains("duplicate key value violates unique constraint")) {
+                throw new UserException.UsuarioYaExistente(getMessageOfUniqueContraint(entity));
+            }
+            throw e;
+        }
     }
 
     @Override
@@ -108,18 +115,23 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
      * @throws com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException
      */
     public Usuario login(Usuario usuarioAutenticando) throws UsuarioInexistenteException, ContraseñaIncorrectaException, UsuarioBlockeadoException, Exception {
-        try {    
-            DaoUsuario daoUsuario = new DaoUsuario();
-            Usuario loged = daoUsuario.stream().filter(u -> {
-                switch (getUserIdentifierType(usuarioAutenticando.getNombre())) {
-                    case MAIL:
-                        return u.getCorreo().equals(usuarioAutenticando.getNombre()) && u.getContra().equals(usuarioAutenticando.getContra());
-                    case PHONE:
-                        return u.getTelefono().equals(usuarioAutenticando.getNombre()) && u.getContra().equals(usuarioAutenticando.getContra());
-                    default:
-                        return u.getNombre().equals(usuarioAutenticando.getNombre()) && u.getContra().equals(usuarioAutenticando.getContra());
-                }
-            }).findFirst().get();
+        Usuario loged;
+        try {
+            DaoUsuario daoUsuario = new DaoUsuario();           
+            String identificador = usuarioAutenticando.getNombre();
+            String contraseña = usuarioAutenticando.getContra();
+            switch (getUserIdentifierType(usuarioAutenticando.getNombre())) {
+                case MAIL:
+                    loged = daoUsuario.stream().where(u -> u.getCorreo().equals(identificador) && u.getContra().equals(contraseña)).findFirst().get();
+                    break;
+                case PHONE:
+                    loged = daoUsuario.stream().where(u -> u.getTelefono().equals(identificador) && u.getContra().equals(contraseña)).findFirst().get();
+                    break;
+                default:
+                    loged = daoUsuario.stream().where(u -> u.getNombre().equals(identificador) && u.getContra().equals(contraseña)).findFirst().get();
+                    break;
+            }
+
             if (loged.getBloqueado() && loged.getBloqueadoHastaFecha().after(new Date())) {
                 throw new UsuarioBlockeadoException("Usuario bloqueado hasta " + UtilsDate.format_D_MM_YYYY_HH_MM(loged.getBloqueadoHastaFecha()));
             }
@@ -132,13 +144,12 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
 
             //login exitoso, generar bitácora                                     
             UtilsBitacora.bitacorizarLogIn(loged.getId().toString());
-            return loged;
-
         } catch (NoSuchElementException e) {
             //verificar si existe el usuario
             this.numberAttemptVerification(usuarioAutenticando);
             throw new ContraseñaIncorrectaException("No se encontro un usuario con esa contraseña");
         }
+        return loged;
     }
 
     public void logout(String token) throws TokenInvalidoException, TokenExpiradoException {
@@ -147,10 +158,12 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
 
     private void numberAttemptVerification(Usuario usuario) throws UsuarioInexistenteException, UsuarioBlockeadoException, Exception {
         try {
-            Usuario intentoLogin = this.stream().filter(u
-                    -> u.getCorreo().equals(usuario.getCorreo())
-                    || u.getNombre().equals(usuario.getNombre())
-                    || u.getTelefono().equals(usuario.getNombre())).findFirst().get();
+            String identi = usuario.getNombre();
+            
+            Usuario intentoLogin = this.stream().where(u
+                    -> u.getCorreo().equals(identi)
+                    || u.getNombre().equals(identi)
+                    || u.getTelefono().equals(identi)).findFirst().get();
 
             if (intentoLogin.getBloqueado()) {
                 throw new UsuarioBlockeadoException("El usuario fue blockeado por el número de intentos fallidos hasta " + UtilsDate.format_D_MM_YYYY_HH_MM(intentoLogin.getBloqueadoHastaFecha()));
@@ -307,7 +320,7 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
     }
 
     @Override
-    public ModelBitacoraGenerica obtenerModeloBitacorizar(Usuario entity) {
+    public ModelBitacoraGenerica getModeloBitacorizar(Usuario entity) {
         return new ModelBitacoraGenerica(this.getBitacoraCollectionName(), entity.getNombre());
     }
 
@@ -315,7 +328,5 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
     protected String getBitacoraCollectionName() {
         return "usuarios";
     }
-    
-    
-       
+
 }

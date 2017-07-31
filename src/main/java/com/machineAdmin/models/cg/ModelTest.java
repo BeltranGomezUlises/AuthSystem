@@ -14,21 +14,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.daos.cg.admin.postgres;
+package com.machineAdmin.models.cg;
 
-import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
-import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos;
-import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisosPK;
-import com.machineAdmin.utils.UtilsDB;
+import com.machineAdmin.entities.cg.commons.UUIDConverter;
+import java.util.UUID;
+import org.eclipse.persistence.annotations.Convert;
+import org.eclipse.persistence.annotations.Converter;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoPerfilesPermisos extends DaoSQLFacade<PerfilesPermisos, PerfilesPermisosPK> {
+@Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
+public class ModelTest {
+    @Convert("uuidConverter")
+    private UUID uuid;
+    private String string;
 
-    public DaoPerfilesPermisos() {
-        super(UtilsDB.getEMFactoryCG(), PerfilesPermisos.class, PerfilesPermisosPK.class);
+    public UUID getUuid() {
+        return uuid;
     }
-   
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getString() {
+        return string;
+    }
+
+    public void setString(String string) {
+        this.string = string;
+    }            
+    
 }

@@ -37,7 +37,7 @@ public class ManagerPerfil extends ManagerSQLFacade<Perfil, UUID>{
     }
 
     @Override
-    public ModelBitacoraGenerica obtenerModeloBitacorizar(Perfil entity) {
+    public ModelBitacoraGenerica getModeloBitacorizar(Perfil entity) {
         return new ModelBitacoraGenerica(this.getBitacoraCollectionName(), entity.getNombre());
     }
 

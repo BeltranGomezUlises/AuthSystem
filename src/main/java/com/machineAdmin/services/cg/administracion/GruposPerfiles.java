@@ -67,6 +67,7 @@ public class GruposPerfiles extends ServiceFacade<GrupoPerfiles, UUID> {
         return super.listar(token); //To change body of generated methods, choose Tools | Templates.
     }
 
+    
     /**
      * sirve para asignar a un grupo de perfiles, una lista de perfiles para
      * agruparlos

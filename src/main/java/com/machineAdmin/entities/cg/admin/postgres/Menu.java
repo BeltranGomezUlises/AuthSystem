@@ -32,7 +32,9 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.machineAdmin.entities.cg.commons.EntitySQL;
 import com.machineAdmin.entities.cg.commons.IEntity;
+import java.util.UUID;
 import javax.persistence.Entity;
 
 /**
@@ -46,7 +48,7 @@ import javax.persistence.Entity;
     , @NamedQuery(name = "Menu.findById", query = "SELECT m FROM Menu m WHERE m.id = :id")
     , @NamedQuery(name = "Menu.findByNombre", query = "SELECT m FROM Menu m WHERE m.nombre = :nombre")})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Menu implements Serializable, IEntity {
+public class Menu extends EntitySQL implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -125,6 +127,16 @@ public class Menu implements Serializable, IEntity {
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.Menu[ id=" + id + " ]";
+    }
+
+    @Override
+    public UUID getUsuarioCreador() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setUsuarioCreador(UUID usuarioCreador) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

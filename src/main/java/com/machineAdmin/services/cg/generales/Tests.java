@@ -16,24 +16,11 @@
  */
 package com.machineAdmin.services.cg.generales;
 
-import com.machineAdmin.daos.cg.exceptions.ConstraintException;
-import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
-import com.machineAdmin.entities.cg.admin.postgres.Permiso;
-import com.machineAdmin.entities.cg.admin.postgres.Usuario;
-import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos;
-import com.machineAdmin.entities.cg.commons.Profundidad;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuariosPermisos;
+import com.machineAdmin.models.cg.ModelTest;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.commons.ServiceFacade;
-import com.machineAdmin.utils.UtilsPermissions;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -82,5 +69,21 @@ public class Tests {
 //        }
 
         return r;
+    }
+    
+    @POST
+    @Path("/uuid")
+    public Response uuid(ModelTest test){        
+        Response res = new Response();
+        try {
+            
+            res.setData(test);
+            
+            
+            
+        } catch (Exception e) {
+            
+        }        
+        return res;        
     }
 }
