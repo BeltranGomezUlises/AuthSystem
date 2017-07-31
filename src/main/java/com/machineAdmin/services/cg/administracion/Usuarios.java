@@ -46,28 +46,33 @@ public class Usuarios extends ServiceFacade<Usuario, UUID> {
 
     public Usuarios() {
         super(new ManagerUsuario());
-    }
+    }   
 
     @Override
     public Response eliminar(String token, Usuario t) {
-        return super.eliminar(token, t);
+        return super.eliminar(token, t); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public Response modificar(String token, Usuario t) {
-        return super.modificar(token, t);
+        return super.modificar(token, t); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public Response alta(String token, Usuario t) {
-        return super.alta(token, t);
+        return super.alta(token, t); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public Response obtener(String token, String id) {
-        return super.obtener(token, id);
+        return super.obtener(token, id); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public Response listar(String token) {
+        return super.listar(token); //To change body of generated methods, choose Tools | Templates.
+    }
+    
     /**
      * asigna los permisos al usuario reemplazando los que tenia por los nuevos
      * proporsionados
@@ -140,28 +145,28 @@ public class Usuarios extends ServiceFacade<Usuario, UUID> {
         return res;        
     }
     
-//    /**
-//     * sirve para obtener la lista de perfiles asignados al usuario
-//     * @param token token de sesion
-//     * @param usuario id de usuario a obtener sus perfiles
-//     * @return retorna en data, la lista de perfiles asignados al usuario
-//     */
-//    @GET
-//    @Path("/perfiles/{userId}")
-//    public Response obtenerPerfilesAsignados(@HeaderParam("Authorization") String token, @PathParam("userId") String usuario){
-//        Response res = new Response();
-//        try {            
-//            UtilsJWT.validateSessionToken(token);
-//            ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();
-//            
-//            
-//            
-//            res.setDevMessage("permisos que el usuario tiene asignado");
-//        } catch (TokenExpiradoException | TokenInvalidoException e) {
-//            setInvalidTokenResponse(res);
-//        } catch(Exception ex){
-//            setErrorResponse(res, ex);  
-//        }        
-//        return res;        
-//    }
+    /**
+     * sirve para obtener la lista de perfiles asignados al usuario
+     * @param token token de sesion
+     * @param usuario id de usuario a obtener sus perfiles
+     * @return retorna en data, la lista de perfiles asignados al usuario
+     */
+    @GET
+    @Path("/perfiles/{userId}")
+    public Response obtenerPerfilesAsignados(@HeaderParam("Authorization") String token, @PathParam("userId") String usuario){
+        Response res = new Response();
+        try {            
+            UtilsJWT.validateSessionToken(token);
+            ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();
+            
+            
+            
+            res.setDevMessage("permisos que el usuario tiene asignado");
+        } catch (TokenExpiradoException | TokenInvalidoException e) {
+            setInvalidTokenResponse(res);
+        } catch(Exception ex){
+            setErrorResponse(res, ex);  
+        }        
+        return res;        
+    }
 }

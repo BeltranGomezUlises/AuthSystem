@@ -33,11 +33,11 @@ public class ServiceFacade<T extends IEntity, K> {
         this.manager = manager;
     }
 
-    public ManagerFacade<T, K> getManager() {
+    public final ManagerFacade<T, K> getManager() {
         return manager;
     }
 
-    public void setManager(ManagerFacade<T, K> manager) {
+    public final void setManager(ManagerFacade<T, K> manager) {
         this.manager = manager;
     }
 

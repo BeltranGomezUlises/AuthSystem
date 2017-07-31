@@ -47,6 +47,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -92,15 +93,17 @@ public class InitServletContext implements ServletContextListener {
         //crear perfil master
         DaoPerfil daoPerfil = new DaoPerfil();
 
-        Perfil perfilMaster = daoPerfil.findFirst();
-        if (perfilMaster == null) {
+        Perfil perfilMaster;
+        try {
+            perfilMaster = daoPerfil.stream().where(p -> p.getNombre().equals("Master")).findFirst().get();
+        } catch (NoSuchElementException e) {
             perfilMaster = new Perfil();
             perfilMaster.setNombre("Master");
             perfilMaster.setDescripcion("Perfil de control total del sistema");
             daoPerfil.persist(perfilMaster);
         }
-        //</editor-fold>
 
+        //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="Creacion del grupo de perfiles">
         DaoGrupoPerfiles daoGrupoPerfil = new DaoGrupoPerfiles();
 
@@ -137,8 +140,10 @@ public class InitServletContext implements ServletContextListener {
         //<editor-fold defaultstate="collapsed" desc="Creacion de usuario default master">
         DaoUsuario daoUsuario = new DaoUsuario();
 
-        Usuario usuarioDB = daoUsuario.findFirst();
-        if (usuarioDB == null) {
+        Usuario usuarioDB;
+        try {
+            usuarioDB = daoUsuario.stream().where(u -> u.getNombre().equals("Administrador")).findFirst().get();
+        } catch (NoSuchElementException e) {
             usuarioDB = new Usuario();
             usuarioDB.setNombre("Administrador");
             usuarioDB.setCorreo("ubg700@gmail.com");
@@ -146,8 +151,8 @@ public class InitServletContext implements ServletContextListener {
             usuarioDB.setContra(UtilsSecurity.cifrarMD5("1234"));
             daoUsuario.persist(usuarioDB);
         }
-        //</editor-fold>        
 
+        //</editor-fold>        
         //<editor-fold defaultstate="collapsed" desc="Asignacion de perfil al usuario">
         DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
         if (daoUsuariosPerfil.findFirst() == null) {
@@ -178,7 +183,7 @@ public class InitServletContext implements ServletContextListener {
         ConfigMail mail = daoMail.findFirst();
         if (mail == null) {
             mail = new ConfigMail();
-            ConfigMail.AuthMail authMail = new ConfigMail.AuthMail("usuariosexpertos@gmail.com", "90Y8Byh$");
+            ConfigMail.AuthMail authMail = new ConfigMail.AuthMail("usuariosexpertos@gmail.com", "usuarios$1234");
             mail.setAuth(authMail);
             mail.setHostName("smtp.googlemail.com");
             mail.setPort(465);
@@ -391,7 +396,7 @@ public class InitServletContext implements ServletContextListener {
                 Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-        
+
         //modulos
         List<Modulo> modulosEnDB = daoModulo.findAll();
         modulosEnDB.stream().filter((m) -> (!modulosActuales.contains(m))).forEach((m) -> {
@@ -401,7 +406,7 @@ public class InitServletContext implements ServletContextListener {
                 Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-        
+
         //verificar secciones
         List<Seccion> seccionesEnDB = daoSeccion.findAll();
         seccionesEnDB.stream().filter((seccion) -> (!seccionesActuales.contains(seccion))).forEach((seccion) -> {
@@ -411,7 +416,7 @@ public class InitServletContext implements ServletContextListener {
                 Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-             
+
     }
 
     private List<String> getClasesSimpleNameFromPackage2(String packageName) {

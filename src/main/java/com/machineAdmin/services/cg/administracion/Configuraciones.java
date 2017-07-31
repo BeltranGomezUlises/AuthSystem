@@ -18,14 +18,9 @@ package com.machineAdmin.services.cg.administracion;
 
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.managers.cg.admin.mongo.ManagerCGConfig;
-import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
-import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
+import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
-import com.machineAdmin.utils.UtilsConfig;
-import com.machineAdmin.utils.UtilsJWT;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 
 /**
@@ -40,8 +35,18 @@ public class Configuraciones extends ServiceFacade<CGConfig, Object>{
     }
 
     @Override
-    public Response modificar(String token, CGConfig t) {
-        return super.modificar(token, t);
+    public Response eliminar(String token, CGConfig t) {
+        return new Response(Status.WARNING, "Opción no disponible");
     }
-       
+
+    @Override
+    public Response alta(String token, CGConfig t) {
+        return new Response(Status.WARNING, "Opción no disponible");
+    }
+
+    @Override
+    public Response obtener(String token, String id) {
+        return new Response(Status.WARNING, "Opción no disponible");
+    }
+
 }

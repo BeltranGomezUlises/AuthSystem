@@ -69,7 +69,8 @@ public class Perfiles extends ServiceFacade<Perfil, UUID>{
     public Response listar(String token) {
         return super.listar(token); //To change body of generated methods, choose Tools | Templates.
     }
-       
+   
+    
     @POST
     @Path("/asignarPermisos")
     public Response asignarPermisos(@HeaderParam("Authorization") String token, ModelAsignarPermisos modelo){
