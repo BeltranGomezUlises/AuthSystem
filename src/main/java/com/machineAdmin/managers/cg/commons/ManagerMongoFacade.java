@@ -7,10 +7,7 @@ package com.machineAdmin.managers.cg.commons;
 
 import com.machineAdmin.daos.cg.commons.DaoMongoFacade;
 import com.machineAdmin.entities.cg.commons.EntityMongo;
-import com.machineAdmin.managers.cg.exceptions.UsuarioNoAsignadoException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
 import org.mongojack.DBQuery;
 import org.mongojack.DBQuery.Query;
@@ -38,13 +35,13 @@ public abstract class ManagerMongoFacade<T extends EntityMongo> extends ManagerF
     }
 
     @Override
-    public T persist(T entity) {        
+    public T persist(T entity) {
         T t = (T) dao.persist(entity);
         try {
             entity.setUsuarioCreador(this.getUsuario());
-            this.bitacorizar("alta", this.getModeloBitacorizar(entity));
-        } catch (UsuarioNoAsignadoException ex) {
-            Logger.getLogger(ManagerMongoFacade.class.getName()).log(Level.SEVERE, null, ex);
+            this.bitacorizar("alta", this.modeloBitacorizar(entity));
+        } catch (UnsupportedOperationException ex) {
+            //para omitir que esta entidad no soporta bitacoras
         }
         return t;
     }
@@ -55,75 +52,67 @@ public abstract class ManagerMongoFacade<T extends EntityMongo> extends ManagerF
         ts.parallelStream().forEach(t -> {
             try {
                 t.setUsuarioCreador(this.getUsuario());
-                this.bitacorizar("alta", this.getModeloBitacorizar(t));
-            } catch (UsuarioNoAsignadoException ex) {
-                Logger.getLogger(ManagerMongoFacade.class.getName()).log(Level.SEVERE, null, ex);
+                this.bitacorizar("alta", this.modeloBitacorizar(t));
+            } catch (UnsupportedOperationException ex) {
+                //para omitir que esta entidad no soporta bitacoras
             }
         });
         return ts;
     }
 
     @Override
-    public void delete(Object id){
+    public void delete(Object id) {
         dao.delete(id);
         try {
-            this.bitacorizar("eliminar", this.getModeloBitacorizar(this.findOne(id)));
-        } catch (UsuarioNoAsignadoException ex) {
-            Logger.getLogger(ManagerMongoFacade.class.getName()).log(Level.SEVERE, null, ex);
+            this.bitacorizar("eliminar", this.modeloBitacorizar(this.findOne(id)));
+        } catch (UnsupportedOperationException ex) {
+            //para omitir que esta entidad no soporta bitacoras
         }
     }
 
     public void delete(Query q) {
         List<T> ts = this.findAll(q);
         dao.deleteAll(ts.stream().map(t -> t.getId()).collect(toList()));
-
-        ts.parallelStream().forEach(t -> {
-            try {
-                this.bitacorizar("eliminar", this.getModeloBitacorizar(t));
-            } catch (UsuarioNoAsignadoException ex) {
-                Logger.getLogger(ManagerMongoFacade.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
+        try {
+            ts.parallelStream().forEach(t -> this.bitacorizar("eliminar", this.modeloBitacorizar(t)));
+        } catch (Exception e) {
+            //para omitir que esta entidad no soporta bitacoras
+        }
     }
 
     @Override
     public void deleteAll(List<Object> ids) throws Exception {
         List<T> ts = this.findAll(DBQuery.in("_id", ids));
         dao.deleteAll(ids);
-        ts.parallelStream().forEach(t -> {
-            try {
-                this.bitacorizar("eliminar", this.getModeloBitacorizar(t));
-            } catch (UsuarioNoAsignadoException ex) {
-                Logger.getLogger(ManagerMongoFacade.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
+        try {
+            ts.parallelStream().forEach(t -> this.bitacorizar("eliminar", this.modeloBitacorizar(t)));
+        } catch (Exception e) {
+        }
+
     }
 
     @Override
     public void update(T entity) throws Exception {
         dao.update(entity);
-        this.bitacorizar("actualizar", this.getModeloBitacorizar(entity));
+        this.bitacorizar("actualizar", this.modeloBitacorizar(entity));
     }
 
     public void update(Query q, T t) {
         List<T> ts = this.findAll(q);
         dao.update(q, t);
-        ts.parallelStream().forEach(ts1 -> {
-            try {
-                this.bitacorizar("actualizar", this.getModeloBitacorizar(ts1));
-            } catch (UsuarioNoAsignadoException ex) {
-                Logger.getLogger(ManagerMongoFacade.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
+        try {
+            ts.parallelStream().forEach(ts1 -> this.bitacorizar("actualizar", this.modeloBitacorizar(ts1)));
+        } catch (Exception e) {
+        }
     }
 
     @Override
-    public T findOne(Object id){
+    public T findOne(Object id) {
         T t = (T) dao.findOne(id);
         try {
-            this.bitacorizar("obtener", this.getModeloBitacorizar(t));
-        } catch (UsuarioNoAsignadoException ex) {
-            Logger.getLogger(ManagerMongoFacade.class.getName()).log(Level.SEVERE, null, ex);
+            this.bitacorizar("obtener", this.modeloBitacorizar(t));
+        } catch (UnsupportedOperationException ex) {
+            //para omitir que esta entidad no soporta bitacoras
         }
         return t;
     }
@@ -131,9 +120,9 @@ public abstract class ManagerMongoFacade<T extends EntityMongo> extends ManagerF
     public T findOne(Query q) {
         T t = (T) dao.findOne(q);
         try {
-            this.bitacorizar("obtener", this.getModeloBitacorizar(t));
-        } catch (UsuarioNoAsignadoException e) {
-            Logger.getLogger(ManagerMongoFacade.class.getName()).log(Level.SEVERE, null, e);
+            this.bitacorizar("obtener", this.modeloBitacorizar(t));
+        } catch (UnsupportedOperationException e) {
+            //para omitir que esta entidad no soporta bitacoras
         }
         return t;
     }

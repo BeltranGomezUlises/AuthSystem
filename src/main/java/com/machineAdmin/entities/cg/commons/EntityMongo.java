@@ -7,7 +7,6 @@ package com.machineAdmin.entities.cg.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
-import javax.persistence.Column;
 import org.mongojack.ObjectId;
 
 /**

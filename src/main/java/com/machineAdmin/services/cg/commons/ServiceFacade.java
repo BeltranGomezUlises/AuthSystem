@@ -52,7 +52,13 @@ public class ServiceFacade<T extends IEntity, K> {
     public Response listar(@HeaderParam("Authorization") String token) {
         Response response = new Response();
         try {
-            this.manager.setToken(token);              
+            this.manager.setToken(token); 
+            
+            StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+            for (StackTraceElement stackTraceElement : stack) {
+                System.out.println(stackTraceElement);
+            }
+            
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(response);

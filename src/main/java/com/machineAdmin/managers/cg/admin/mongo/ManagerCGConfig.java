@@ -32,12 +32,12 @@ public class ManagerCGConfig extends ManagerMongoFacade<CGConfig> {
     }
 
     @Override
-    public ModelBitacoraGenerica getModeloBitacorizar(CGConfig entity) {
+    public ModelBitacoraGenerica modeloBitacorizar(CGConfig entity) {
         return null;
     }
 
     @Override
-    protected String getBitacoraCollectionName() {
+    protected String bitacoraCollectionName() {
         return null;
     }
         

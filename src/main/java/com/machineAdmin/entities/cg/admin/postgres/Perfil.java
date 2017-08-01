@@ -31,7 +31,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.machineAdmin.entities.cg.commons.EntitySQL;
+import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
 import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -53,7 +53,7 @@ import org.eclipse.persistence.annotations.Converter;
     , @NamedQuery(name = "Perfil.findByNombre", query = "SELECT p FROM Perfil p WHERE p.nombre = :nombre")
     , @NamedQuery(name = "Perfil.findByDescripcion", query = "SELECT p FROM Perfil p WHERE p.descripcion = :descripcion")})
 @Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
-public class Perfil extends EntitySQL implements Serializable {
+public class Perfil extends EntitySQLCatalog implements Serializable {
 
     @Lob
     @Convert("uuidConverter")
@@ -172,6 +172,7 @@ public class Perfil extends EntitySQL implements Serializable {
         this.usuarioCreador = usuarioCreador;
     }
 
+    @JsonIgnore
     public List<Permiso> getPermisoList() {
         return permisoList;
     }

@@ -33,8 +33,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.machineAdmin.entities.cg.commons.EntitySQL;
 import java.util.Objects;
-import java.util.UUID;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
 /**
@@ -64,11 +62,8 @@ public class Permiso extends EntitySQL implements Serializable {
     @ManyToOne
     private Menu menu;
     @ManyToMany(mappedBy = "permisoList")
-    private List<Perfil> perfilList;
-    @JoinTable(name = "usuarios_permisos", joinColumns = {
-        @JoinColumn(name = "permiso", referencedColumnName = "id")}, inverseJoinColumns = {
-        @JoinColumn(name = "usuario", referencedColumnName = "id")})
-    @ManyToMany
+    private List<Perfil> perfilList;    
+    @ManyToMany(mappedBy = "permisoList")
     private List<Usuario> usuarioList;
 
     public Permiso() {
@@ -129,16 +124,6 @@ public class Permiso extends EntitySQL implements Serializable {
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.Permiso[ id=" + id + " ]";
-    }
-
-    @Override
-    public UUID getUsuarioCreador() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setUsuarioCreador(UUID usuarioCreador) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @JsonIgnore

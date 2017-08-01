@@ -13,6 +13,8 @@ import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 import com.machineAdmin.utils.UtilsBitacora;
 import com.machineAdmin.utils.UtilsJWT;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -24,14 +26,14 @@ public abstract class ManagerFacade<T extends IEntity, K> {
 
     protected String usuario;
 
-    public ManagerFacade(String usuario) {
+    public ManagerFacade(String usuario) {        
         this.usuario = usuario;
     }
     
     public ManagerFacade(){
         
-    }
-
+    }  
+    
     public String getUsuario() {
         return usuario;
     }    
@@ -131,21 +133,17 @@ public abstract class ManagerFacade<T extends IEntity, K> {
      */
     public abstract K stringToKey(String s);
 
-    public abstract ModelBitacoraGenerica getModeloBitacorizar(T entity);
+    public abstract ModelBitacoraGenerica modeloBitacorizar(T entity);
 
-    public void bitacorizar(String accion, ModelBitacoraGenerica model) throws UsuarioNoAsignadoException {
-        if (model != null) {
-            if (usuario != null) {
-                UtilsBitacora.bitacorizar(usuario, accion, model.getCollectionName(), model.getObjectToPersist());
-            }
-            throw new UsuarioNoAsignadoException();
-        }
-    }
-
-    protected abstract String getBitacoraCollectionName();
+    protected abstract String bitacoraCollectionName();
 
     public void setToken(String token) throws TokenInvalidoException, TokenExpiradoException {       
         this.setUsuario(UtilsJWT.getBodyToken(token));
     }
-   
+    
+    public void bitacorizar(String accion, ModelBitacoraGenerica model) {
+        if (usuario != null) {
+            UtilsBitacora.bitacorizar(usuario, accion, model.getCollectionName(), model.getObjectToPersist());
+        }                                                                             
+    }
 }

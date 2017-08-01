@@ -116,15 +116,5 @@ public class BitacoraContras extends EntitySQL implements Serializable {
     public Object getId() {
         return bitacoraContrasPK;
     }
-
-    @Override
-    public UUID getUsuarioCreador() {
-        throw new UnsupportedOperationException("Not supported yet."); 
-    }
-
-    @Override
-    public void setUsuarioCreador(UUID usuarioCreador) {
-        throw new UnsupportedOperationException("Not supported yet."); 
-    }
-
+ 
 }

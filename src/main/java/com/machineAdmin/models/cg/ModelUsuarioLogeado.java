@@ -29,7 +29,7 @@ public class ModelUsuarioLogeado {
     private String id;
     private String nombre;
     private String correo;
-    private Object permissions;
+    private Object permisos;
     private String telefono;
 
     public String getId() {
@@ -56,12 +56,12 @@ public class ModelUsuarioLogeado {
         this.correo = correo;
     }
 
-    public Object getPermissions() {
-        return permissions;
+    public Object getPermisos() {
+        return permisos;
     }
 
-    public void setPermissions(Object permissions) {
-        this.permissions = permissions;
+    public void setPermisos(Object permisos) {
+        this.permisos = permisos;
     }
 
     public String getTelefono() {

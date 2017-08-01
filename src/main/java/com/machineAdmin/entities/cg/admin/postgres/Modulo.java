@@ -33,6 +33,7 @@ import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.machineAdmin.entities.cg.commons.EntitySQL;
+import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
 import java.util.UUID;
 
 /**
@@ -126,15 +127,5 @@ public class Modulo extends EntitySQL implements Serializable {
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.Modulo[ id=" + id + " ]";
     }
-
-    @Override
-    public UUID getUsuarioCreador() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setUsuarioCreador(UUID usuarioCreador) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    
 }

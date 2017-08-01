@@ -17,6 +17,7 @@
 package com.machineAdmin.entities.cg.admin.postgres;
 
 import com.machineAdmin.entities.cg.commons.EntitySQL;
+import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -115,16 +116,6 @@ public class Seccion extends EntitySQL implements Serializable {
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.Seccion[ id=" + id + " ]";
-    }
-
-    @Override
-    public UUID getUsuarioCreador() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.   
-    }
-
-    @Override
-    public void setUsuarioCreador(UUID usuarioCreador) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.   
     }
 
 }

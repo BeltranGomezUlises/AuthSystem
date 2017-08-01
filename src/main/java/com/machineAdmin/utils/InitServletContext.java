@@ -75,7 +75,7 @@ public class InitServletContext implements ServletContextListener {
     }
 
     /**
-     * inicio de configuracion del sistema en base de datos
+     * inicio de configuración del sistema en base de datos
      *
      * @throws Exception
      */
@@ -103,6 +103,7 @@ public class InitServletContext implements ServletContextListener {
         }
 
         //</editor-fold>  
+        
         //<editor-fold defaultstate="collapsed" desc="Creacion del perfil Master">
         //crear perfil master
         DaoPerfil daoPerfil = new DaoPerfil();
@@ -119,6 +120,7 @@ public class InitServletContext implements ServletContextListener {
         }
 
         //</editor-fold>
+        
         //<editor-fold defaultstate="collapsed" desc="Creacion del grupo de perfiles">
         DaoGrupoPerfiles daoGrupoPerfil = new DaoGrupoPerfiles();
 
@@ -136,7 +138,7 @@ public class InitServletContext implements ServletContextListener {
         }
         //</editor-fold>
 
-        //<editor-fold defaultstate="collapsed" desc="Asignacion de permisos al perfil">                                
+        //<editor-fold defaultstate="collapsed" desc="Asignacion de permisos al perfil">                                                
         for (Permiso permiso : UtilsPermissions.getExistingPermissions()) {
             if (!perfilMaster.getPermisoList().contains(permiso)) {
                 perfilMaster.getPermisoList().add(permiso);
@@ -154,6 +156,7 @@ public class InitServletContext implements ServletContextListener {
         }
 
         //</editor-fold>
+        
         //<editor-fold defaultstate="collapsed" desc="Asignaion de permisos al usuario">
         for (Permiso existingPermission : UtilsPermissions.getExistingPermissions()) {
             if (!usuarioDB.getPermisoList().contains(existingPermission)) {

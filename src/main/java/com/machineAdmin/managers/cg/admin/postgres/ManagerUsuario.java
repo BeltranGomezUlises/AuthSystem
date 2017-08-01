@@ -16,13 +16,14 @@
  */
 package com.machineAdmin.managers.cg.admin.postgres;
 
+import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
 import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
-import com.machineAdmin.entities.cg.admin.mongo.BitacoraAcceso;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContras;
+import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
-import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import com.machineAdmin.managers.cg.commons.ManagerSQLCatalogFacade;
 import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
@@ -30,6 +31,7 @@ import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.UserException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
+import com.machineAdmin.models.cg.ModelAsignarPermisos;
 import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 import com.machineAdmin.models.cg.ModelCodigoRecuperacionUsuario;
 import com.machineAdmin.utils.UtilsBitacora;
@@ -40,20 +42,20 @@ import com.machineAdmin.utils.UtilsMail;
 import com.machineAdmin.utils.UtilsSMS;
 import com.machineAdmin.utils.UtilsSecurity;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.UUID;
 import static java.util.stream.Collectors.toList;
-import javax.persistence.NoResultException;
 import org.apache.commons.mail.EmailException;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
+public class ManagerUsuario extends ManagerSQLCatalogFacade<Usuario, UUID> {
 
     public ManagerUsuario(String usuario) {
         super(usuario, new DaoUsuario());
@@ -98,9 +100,9 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
 
     @Override
     public void delete(UUID id) throws Exception {
-        Usuario usuario = this.findOne(id);
-        usuario.setInhabilitado(Boolean.TRUE);
-        this.update(usuario);
+        Usuario u = this.findOne(id);
+        u.setInhabilitado(Boolean.TRUE);
+        this.update(u);
     }
 
     /**
@@ -291,7 +293,7 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
         }
 
         ManagerUsuario managerUsuario = new ManagerUsuario(userId);
-        Usuario u = this.findOne(UUID.fromString(userId));
+        Usuario u = dao.findOne(UUID.fromString(userId));
         u.setContra(pass);
         managerUsuario.update(u);
 
@@ -315,17 +317,30 @@ public class ManagerUsuario extends ManagerSQLFacade<Usuario, UUID> {
         }
     }
 
+    public void asignarPermisos(ModelAsignarPermisos modelo) throws ConstraintException, SQLPersistenceException {
+        Usuario u = dao.findOne(modelo.getId());
+        List<Permiso> permisosNuevos = new ArrayList<>();
+        
+        DaoPermiso daoPermiso = new DaoPermiso();        
+        modelo.getPermisosIds().forEach((permisoId) -> {
+            permisosNuevos.add(daoPermiso.findOne(permisoId));
+        });        
+        
+        u.setPermisoList(permisosNuevos);                                
+        dao.update(u);                
+    }
+
     private enum userIdentifierType {
         PHONE, MAIL, USER
     }
 
     @Override
-    public ModelBitacoraGenerica getModeloBitacorizar(Usuario entity) {
-        return new ModelBitacoraGenerica(this.getBitacoraCollectionName(), entity.getNombre());
+    public ModelBitacoraGenerica modeloBitacorizar(Usuario entity) {
+        return new ModelBitacoraGenerica(this.bitacoraCollectionName(), entity.getNombre());
     }
 
     @Override
-    protected String getBitacoraCollectionName() {
+    protected String bitacoraCollectionName() {
         return "usuarios";
     }
 

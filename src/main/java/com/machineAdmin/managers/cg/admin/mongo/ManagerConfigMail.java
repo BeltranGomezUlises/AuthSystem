@@ -25,12 +25,12 @@ public class ManagerConfigMail extends ManagerMongoFacade<ConfigMail> {
     }
 
     @Override
-    public ModelBitacoraGenerica getModeloBitacorizar(ConfigMail entity) {        
-        return new ModelBitacoraGenerica(this.getBitacoraCollectionName(), entity.getAuth().getMail());
+    public ModelBitacoraGenerica modeloBitacorizar(ConfigMail entity) {        
+        return new ModelBitacoraGenerica(this.bitacoraCollectionName(), entity.getAuth().getMail());
     }
 
     @Override
-    protected String getBitacoraCollectionName() {
+    protected String bitacoraCollectionName() {
         return "correosConfiguracion";
     }
         

@@ -69,15 +69,21 @@ public class Perfiles extends ServiceFacade<Perfil, UUID>{
         return super.listar(token); //To change body of generated methods, choose Tools | Templates.
     }
    
-    
+    /**
+     * asigna los permisos al perfil reemplazando los que tenia por los nuevos
+     * proporsionados    
+     * @param token token de sesion
+     * @param modelo modelo contenedor del perfil y la lista de permisos a asignar
+     * @return sin data
+     */
     @POST
     @Path("/asignarPermisos")
     public Response asignarPermisos(@HeaderParam("Authorization") String token, ModelAsignarPermisos modelo){
         Response res = new Response();       
-        try {
-            UtilsJWT.validateSessionToken(token);
-//            ManagerPerfilesPermisos managerPerfilesPermisos = new ManagerPerfilesPermisos();
-  //          managerPerfilesPermisos.asignarPermisosAlPerfil(modelo);
+        try {                        
+            ManagerPerfil managerPerfil = new ManagerPerfil();
+            managerPerfil.setToken(token);
+            managerPerfil.asignarPermisos(modelo);
             res.setMessage("Los Permisos fuéron asignados al perfil con éxito");
             res.setDevMessage("Permisos asignado al perfil");
         }catch (TokenExpiradoException | TokenInvalidoException ex) {
@@ -88,14 +94,20 @@ public class Perfiles extends ServiceFacade<Perfil, UUID>{
         return res;
     }
  
+    
+    /**
+     * servicio para obtener la lista de los permisos que tiene asignado un perfil
+     * @param token token de sesion
+     * @param perfilId id del perfil del cual buscar sus permisos
+     * @return en data, la lista de permisos a obtener
+     */
     @GET
     @Path("/permisos/{perfilId}")
     public Response obtenerPermisos(@HeaderParam("Authorization") String token, @PathParam("perfilId") String perfilId){
         Response res = new Response();       
         try {
             UtilsJWT.validateSessionToken(token);
-            res.setData(UtilsPermissions.permisosAsignadosAPerfil(perfilId));
-            
+            res.setData(UtilsPermissions.permisosAsignadosAPerfil(perfilId));            
         }catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(res);
         }  catch(Exception e){

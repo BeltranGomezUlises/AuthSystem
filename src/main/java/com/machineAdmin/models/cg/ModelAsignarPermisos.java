@@ -17,6 +17,7 @@
 package com.machineAdmin.models.cg;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * modelo para asignar permisos generico
@@ -25,23 +26,23 @@ import java.util.List;
  */
 public class ModelAsignarPermisos {
 
-    private String id;
-    private List<ModelPermisoAsignado> permisos;
+    private UUID id;
+    private List<String> permisosIds;
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public List<ModelPermisoAsignado> getPermisos() {
-        return permisos;
+    public List<String> getPermisosIds() {
+        return permisosIds;
     }
 
-    public void setPermisos(List<ModelPermisoAsignado> permisos) {
-        this.permisos = permisos;
+    public void setPermisosIds(List<String> permisosIds) {
+        this.permisosIds = permisosIds;
     }
 
 }

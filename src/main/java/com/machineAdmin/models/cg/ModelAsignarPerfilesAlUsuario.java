@@ -17,21 +17,23 @@
 package com.machineAdmin.models.cg;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * modelo para asignar permisos a un usuario
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ModelAsignarPerfilesAlUsuario {
 
-    private String userId;
+    private UUID userId;
     private List<ModelPerfilYHereda> perfiles;
 
-    public String getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 

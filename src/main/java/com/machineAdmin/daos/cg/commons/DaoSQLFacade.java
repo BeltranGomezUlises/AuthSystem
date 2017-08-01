@@ -7,7 +7,6 @@ package com.machineAdmin.daos.cg.commons;
 
 import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
-import com.machineAdmin.entities.cg.commons.EntitySQL;
 import com.machineAdmin.entities.cg.commons.IEntity;
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +24,7 @@ import org.jinq.jpa.JinqJPAStreamProvider;
  * DaoSQLFacade
  * @param <K> Tipo de dato de la llave primaria de la entidad
  */
-public abstract class DaoSQLFacade<T extends EntitySQL, K> {
+public abstract class DaoSQLFacade<T extends IEntity, K> {
 
     private final Class<T> claseEntity;
     private final Class<K> clasePK;
@@ -177,7 +176,9 @@ public abstract class DaoSQLFacade<T extends EntitySQL, K> {
     }
 
     public JPAJinqStream<T> stream() {
-        return new JinqJPAStreamProvider(eMFactory).streamAll(eMFactory.createEntityManager(), claseEntity);
+        JinqJPAStreamProvider stream = new JinqJPAStreamProvider(eMFactory);
+        stream.registerAttributeConverterType(UUID.class);        
+        return stream.streamAll(eMFactory.createEntityManager(), claseEntity);
     }
 
     public K stringToPK(String s) {

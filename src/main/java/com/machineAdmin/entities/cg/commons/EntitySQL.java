@@ -16,36 +16,10 @@
  */
 package com.machineAdmin.entities.cg.commons;
 
-import java.util.UUID;
-import org.eclipse.persistence.annotations.Converter;
-
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-@Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
-public abstract class EntitySQL extends IEntity {
-
-    /**
-     * la propiedad uuid del usuario creador de esta
-     * entidad, es necesario para poder registrar la alta de esta entidad en
-     * base de datos y poder operar con la produndidad de los permisos de la
-     * configuracion general, si NO se requiere en esta entidad registrar el
-     * usuario creador retornar null en igual de la propiedad.
-     *
-     *
-     *
-     * @return UUID del usuario que crea esta entidad
-     */
-    public abstract UUID getUsuarioCreador() throws UnsupportedOperationException;
-
-    /**
-     * sobreescribir para asignar un UUID a la propiedad del usuario que creará
-     * esta entidad, si No se requiere en esta entidad registrar el usuario
-     * creador dejar vacío.
-     *
-     * @param usuarioCreador uuid del usuario que crea esta entidad
-     */
-    public abstract void setUsuarioCreador(UUID usuarioCreador) throws UnsupportedOperationException;
-
+public abstract class EntitySQL extends IEntity{
+        
 }

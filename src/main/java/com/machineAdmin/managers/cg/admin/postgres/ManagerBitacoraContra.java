@@ -33,13 +33,14 @@ public class ManagerBitacoraContra extends ManagerSQLFacade<BitacoraContras, Bit
     }
 
     @Override
-    public ModelBitacoraGenerica getModeloBitacorizar(BitacoraContras entity) {
-        return null;
+    public ModelBitacoraGenerica modeloBitacorizar(BitacoraContras entity) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    protected String getBitacoraCollectionName() {
-        return null;
+    protected String bitacoraCollectionName() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+   
 }

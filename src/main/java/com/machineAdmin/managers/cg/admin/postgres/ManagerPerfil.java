@@ -17,16 +17,23 @@
 package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoPerfil;
+import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
+import com.machineAdmin.daos.cg.exceptions.ConstraintException;
+import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
-import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import com.machineAdmin.entities.cg.admin.postgres.Permiso;
+import com.machineAdmin.managers.cg.commons.ManagerSQLCatalogFacade;
+import com.machineAdmin.models.cg.ModelAsignarPermisos;
 import com.machineAdmin.models.cg.ModelBitacoraGenerica;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerPerfil extends ManagerSQLFacade<Perfil, UUID>{
+public class ManagerPerfil extends ManagerSQLCatalogFacade<Perfil, UUID>{
     
     public ManagerPerfil(String usuario) {
         super(usuario, new DaoPerfil());
@@ -37,14 +44,25 @@ public class ManagerPerfil extends ManagerSQLFacade<Perfil, UUID>{
     }
 
     @Override
-    public ModelBitacoraGenerica getModeloBitacorizar(Perfil entity) {
-        return new ModelBitacoraGenerica(this.getBitacoraCollectionName(), entity.getNombre());
+    public ModelBitacoraGenerica modeloBitacorizar(Perfil entity) {
+        return new ModelBitacoraGenerica(this.bitacoraCollectionName(), entity.getNombre());
     }
 
     @Override
-    protected String getBitacoraCollectionName() {
+    protected String bitacoraCollectionName() {
         return "perfiles";
     }
 
-    
+    public void asignarPermisos(ModelAsignarPermisos model) throws SQLPersistenceException, ConstraintException{
+        Perfil perfil = dao.findOne(model.getId());
+        List<Permiso> permisosNuevos = new ArrayList<>();
+        
+        DaoPermiso daoPermiso = new DaoPermiso();        
+        model.getPermisosIds().forEach((permisoId) -> {
+            permisosNuevos.add(daoPermiso.findOne(permisoId));
+        });        
+        
+        perfil.setPermisoList(permisosNuevos);                                
+        dao.update(perfil);
+    }
 }

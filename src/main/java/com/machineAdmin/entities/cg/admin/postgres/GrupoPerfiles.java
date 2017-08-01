@@ -32,7 +32,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.machineAdmin.entities.cg.commons.EntitySQL;
+import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
 import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.Lob;
@@ -49,7 +49,7 @@ import org.eclipse.persistence.annotations.Convert;
     , @NamedQuery(name = "GrupoPerfiles.findByNombre", query = "SELECT g FROM GrupoPerfiles g WHERE g.nombre = :nombre")
     , @NamedQuery(name = "GrupoPerfiles.findByDescripcoin", query = "SELECT g FROM GrupoPerfiles g WHERE g.descripcion = :descripcion")})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GrupoPerfiles extends EntitySQL implements Serializable {
+public class GrupoPerfiles extends EntitySQLCatalog implements Serializable {
 
     @Lob()
     @Convert("uuidConverter")

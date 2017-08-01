@@ -36,13 +36,15 @@ public class ManagerSeccion extends ManagerSQLFacade<Seccion, String> {
     }
 
     @Override
-    public ModelBitacoraGenerica getModeloBitacorizar(Seccion entity) {        
-        return null;
+    public ModelBitacoraGenerica modeloBitacorizar(Seccion entity) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    protected String getBitacoraCollectionName() {
-        return null;
+    protected String bitacoraCollectionName() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+   
 
 }

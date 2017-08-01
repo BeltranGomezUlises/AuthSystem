@@ -77,7 +77,7 @@
         <dependency>
             <groupId>org.jinq</groupId>
             <artifactId>jinq-jpa</artifactId>
-            <version>1.8.20</version>
+            <version>1.8.21</version>
         </dependency>  
                                                   
         <!-- Mongo driver -->

@@ -1,151 +1,64 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.machineAdmin.managers.cg.commons;
 
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
-import com.machineAdmin.daos.cg.exceptions.ConstraintException;
-import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.commons.EntitySQL;
 import com.machineAdmin.managers.cg.exceptions.UsuarioNoAsignadoException;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static java.util.stream.Collectors.toList;
-import org.jinq.jpa.JPAJinqStream;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
- * @param <T> Entidad a manejar
- * @param <K> Tipo de dato de llave primaria de la entidad
+ * @param <T>
+ * @param <K>
  */
-public abstract class ManagerSQLFacade<T extends EntitySQL, K> extends ManagerFacade<T, K> {
-
-    private final DaoSQLFacade<T, K> dao;
+public abstract class ManagerSQLFacade<T extends EntitySQL, K> extends ManagerSQLFacadeBase<T, K> {
 
     public ManagerSQLFacade(String usuario, DaoSQLFacade dao) {
-        super(usuario);
-        this.dao = dao;
+        super(usuario, dao);
     }
 
     public ManagerSQLFacade(DaoSQLFacade dao) {
-        super();        
-        this.dao = dao;
+        super(dao);
     }
 
     @Override
-    public T persist(T entity) throws Exception {
-        try {
-            entity.setUsuarioCreador(UUID.fromString(this.getUsuario()));
-        } catch (UnsupportedOperationException e) { //significa que no esta preparada la entidad para tener usuario creador
-        }
-        dao.persist(entity);
-        try {                        
-            this.bitacorizar("alta", this.getModeloBitacorizar(entity));
-        } catch (UsuarioNoAsignadoException ex) {
-            Logger.getLogger(ManagerSQLFacade.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return entity;
-    }
-
-    @Override
-    public List<T> persistAll(List<T> entities) throws Exception {        
-        try {
-            entities.forEach((entity) -> entity.setUsuarioCreador(UUID.fromString(this.getUsuario())));            
-        } catch (UnsupportedOperationException e) { //significa que no esta preparada la entidad para tener usuario creador
-        }        
+    public List<T> persistAll(List<T> entities) throws Exception {
         List<T> ts = dao.persistAll(entities);
-        try {
-            ts.stream().forEach(t -> {
-                t.setUsuarioCreador(UUID.fromString(this.getUsuario()));
-                try {
-                    this.bitacorizar("alta", this.getModeloBitacorizar(t));
-                } catch (UsuarioNoAsignadoException ex) {
-                    Logger.getLogger(ManagerSQLFacade.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            });
+        try {            
+            ts.stream().forEach(t -> this.bitacorizar("alta", this.modeloBitacorizar(t)));
         } catch (Exception ex) {
-            Logger.getLogger(ManagerSQLFacade.class.getName()).log(Level.SEVERE, null, ex);
+            //para omitir que esta entidad no soporta bitacoras            
         }
         return ts;
     }
 
     @Override
-    public void delete(K id) throws Exception {
-        T t = dao.findOne(id);
-        dao.delete(id);
+    public T persist(T entity) throws Exception {
+        dao.persist(entity);
         try {
-            this.bitacorizar("eliminar", this.getModeloBitacorizar(t));
-        } catch (UsuarioNoAsignadoException ex) {
-            Logger.getLogger(ManagerSQLFacade.class.getName()).log(Level.SEVERE, null, ex);
+            this.bitacorizar("alta", this.modeloBitacorizar(entity));
+        } catch (UnsupportedOperationException ex) {
+            //para omitir que esta entidad no soporta bitacoras            
         }
-
-    }
-
-    @Override
-    public void deleteAll(List<K> ids) throws SQLPersistenceException, Exception {
-        List<T> ts = dao.stream().filter((T t) -> ids.contains((K) t.getId())).collect(toList());
-        dao.deleteAll(ids);
-        try {
-            ts.stream().forEach(t -> this.getModeloBitacorizar(t));
-        } catch (Exception e) {
-            Logger.getLogger(ManagerSQLFacade.class.getName()).log(Level.SEVERE, null, e);
-        }
-
-    }
-
-    @Override
-    public void update(T entity) throws SQLPersistenceException, ConstraintException {
-        dao.update(entity);
-        try {
-            this.bitacorizar("actualizar", this.getModeloBitacorizar(entity));
-        } catch (UsuarioNoAsignadoException ex) {
-            Logger.getLogger(ManagerSQLFacade.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @Override
-    public T findOne(K id) {
-        T t = (T) dao.findOne(id);
-        try {
-            this.bitacorizar("obtener", this.getModeloBitacorizar(t));
-        } catch (UsuarioNoAsignadoException ex) {
-            Logger.getLogger(ManagerSQLFacade.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return t;
-    }
-
-    @Override
-    public List<T> findAll() {
-        return dao.findAll();
-    }
-
-    @Override
-    public List<T> findAll(int max) {
-        return dao.findAll(max);
-    }
-
-    @Override
-    public long count() {
-        return dao.count();
-    }
-
-    @Override
-    public T findFirst() {
-        return (T) dao.findFirst();
-    }
-
-    public JPAJinqStream<T> stream() {
-        return dao.stream();
-    }
-
-    @Override
-    public K stringToKey(String s) {
-        return dao.stringToPK(s);
+        return entity;
     }
 
 }

@@ -17,7 +17,7 @@
 package com.machineAdmin.entities.cg.admin.postgres;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.machineAdmin.entities.cg.commons.EntitySQL;
+import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
 import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -63,7 +63,7 @@ import org.eclipse.persistence.annotations.Converter;
     , @NamedQuery(name = "Usuario.findByBloqueado", query = "SELECT u FROM Usuario u WHERE u.bloqueado = :bloqueado")
     , @NamedQuery(name = "Usuario.findByBloqueadoHastaFecha", query = "SELECT u FROM Usuario u WHERE u.bloqueadoHastaFecha = :bloqueadoHastaFecha")})
 @Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
-public class Usuario extends EntitySQL implements Serializable {
+public class Usuario extends EntitySQLCatalog implements Serializable {
 
     @Lob
     @Convert("uuidConverter")
@@ -104,7 +104,7 @@ public class Usuario extends EntitySQL implements Serializable {
     @JoinTable(name = "usuarios_permisos", joinColumns = {
         @JoinColumn(name = "usuario", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "permiso", referencedColumnName = "id")})
-    @ManyToMany(mappedBy = "usuarioList")
+    @ManyToMany()
     private List<Permiso> permisoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
     private List<BitacoraContras> bitacoraContrasList;
@@ -263,6 +263,7 @@ public class Usuario extends EntitySQL implements Serializable {
         this.usuarioCreador = usuarioCreador;
     }
 
+    @JsonIgnore
     public List<Permiso> getPermisoList() {
         return permisoList;
     }

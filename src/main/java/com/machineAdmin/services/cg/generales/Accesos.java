@@ -65,7 +65,7 @@ public class Accesos {
             Usuario usuarioLogeado = managerUsuario.login(usuarioAutenticando);
 
             ModelUsuarioLogeado modelUsuarioLogeado = new ModelUsuarioLogeado();
-            modelUsuarioLogeado.setPermissions(UtilsPermissions.permisosAsignadosAUsuario(usuarioLogeado.getId().toString()));
+            modelUsuarioLogeado.setPermisos(UtilsPermissions.permisosAsignadosAUsuario(usuarioLogeado.getId().toString()));
 
             BeanUtils.copyProperties(modelUsuarioLogeado, usuarioLogeado);
 
