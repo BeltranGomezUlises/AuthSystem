@@ -160,6 +160,22 @@ public class ServiceFacade<T extends IEntity, K> {
         return response;
     }
 
+    @GET
+    @Path("/bitacoras")
+    public Response obtenerBitacoras(@HeaderParam("Authorization") String token){
+        Response res = new Response();        
+        try {
+            this.manager.setToken(token);
+            res.setData(manager.bitacoras());
+            res.setDevMessage("Bitácoras de esta entidad");
+        } catch (TokenExpiradoException | TokenInvalidoException e) {
+            setInvalidTokenResponse(res);
+        } catch (Exception e) {
+            setErrorResponse(res, e);
+        }      
+        return res;        
+    }
+    
     /**
      * asigna al modelo response, la pila de causas del error de la exception e
      *

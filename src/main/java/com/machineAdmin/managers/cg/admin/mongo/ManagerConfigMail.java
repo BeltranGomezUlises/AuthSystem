@@ -31,7 +31,7 @@ public class ManagerConfigMail extends ManagerMongoFacade<ConfigMail> {
 
     @Override
     protected String bitacoraCollectionName() {
-        return "correosConfiguracion";
+        return "correos";
     }
         
 }

@@ -33,12 +33,12 @@ public class ManagerCGConfig extends ManagerMongoFacade<CGConfig> {
 
     @Override
     public ModelBitacoraGenerica modeloBitacorizar(CGConfig entity) {
-        return null;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     protected String bitacoraCollectionName() {
-        return null;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-        
+      
 }

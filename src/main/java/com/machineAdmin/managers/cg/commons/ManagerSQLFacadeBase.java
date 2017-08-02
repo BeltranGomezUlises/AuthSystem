@@ -70,7 +70,7 @@ public abstract class ManagerSQLFacadeBase<T extends IEntity, K> extends Manager
 
     @Override
     public void update(T entity) throws SQLPersistenceException, ConstraintException {
-        dao.update(entity);
+        dao.update(entity);        
         try {
             this.bitacorizar("actualizar", this.modeloBitacorizar(entity));
         } catch (UnsupportedOperationException e) {

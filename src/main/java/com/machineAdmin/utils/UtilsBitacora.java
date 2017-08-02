@@ -16,18 +16,21 @@
  */
 package com.machineAdmin.utils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.machineAdmin.entities.cg.admin.mongo.BitacoraAcceso;
+import com.machineAdmin.entities.cg.commons.EntityMongo;
 import java.util.Date;
+import java.util.List;
 import org.mongojack.JacksonDBCollection;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class UtilsBitacora {    
+public class UtilsBitacora {
 
-    public static void bitacorizar(String usuario, String accion, String collectionName, Object objectToPersist) {                        
-        JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection( "bitacora." + collectionName), Object.class, String.class);
+    public static void bitacorizar(String usuario, String accion, String collectionName, Object objectToPersist) {
+        JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection("bitacora." + collectionName), Object.class, String.class);
         coll.insert(new ModeloBitacora(usuario, accion, objectToPersist));
     }
 
@@ -36,19 +39,27 @@ public class UtilsBitacora {
         BitacoraAcceso bitacoraAcceso = new BitacoraAcceso(usuario);
         coll.insert(bitacoraAcceso);
     }
-    
+
     public static void bitacorizarLogIn(String usuario) {
         JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection("bitacora.login"), Object.class, String.class);
         BitacoraAcceso bitacoraAcceso = new BitacoraAcceso(usuario);
         coll.insert(bitacoraAcceso);
     }
 
-    private static class ModeloBitacora {
+    public static List<ModeloBitacora> bitacoras(String collectionName) {
+        JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection("bitacora." + collectionName), ModeloBitacora.class, String.class);
+        return coll.find().toArray();
+    }
+
+    public static class ModeloBitacora extends EntityMongo {
 
         private String usuario;
         private Date fecha;
         private String accion;
         private Object objectoReferencia;
+
+        public ModeloBitacora() {
+        }
 
         public ModeloBitacora(String usuario, String accion, Object objectoReferencia) {
             this.usuario = usuario;
@@ -87,6 +98,18 @@ public class UtilsBitacora {
 
         public void setObjectoReferencia(Object objectoReferencia) {
             this.objectoReferencia = objectoReferencia;
+        }
+
+        @JsonIgnore
+        @Override
+        public String getId() {
+            return id;
+        }
+
+        @JsonIgnore
+        @Override
+        public void setId(String id) {
+            this.id = id;
         }
 
     }

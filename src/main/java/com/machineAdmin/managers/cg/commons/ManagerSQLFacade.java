@@ -18,10 +18,7 @@ package com.machineAdmin.managers.cg.commons;
 
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.commons.EntitySQL;
-import com.machineAdmin.managers.cg.exceptions.UsuarioNoAsignadoException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
