@@ -17,7 +17,6 @@
 package com.machineAdmin.entities.cg.admin.postgres;
 
 import com.machineAdmin.entities.cg.commons.EntitySQL;
-import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -31,10 +30,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
- *
+ * entidad que representa una seccion del sistema
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity

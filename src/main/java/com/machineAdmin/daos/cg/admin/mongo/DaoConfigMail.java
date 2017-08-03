@@ -15,7 +15,7 @@ import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
 public class DaoConfigMail extends DaoMongoFacade<ConfigMail>{
 
     public DaoConfigMail() {
-        super("cg.config.mails", ConfigMail.class);
+        super("cg.config.correos", ConfigMail.class);
     }
             
 }

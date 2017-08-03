@@ -33,7 +33,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- *
+ * entidad de bitacora de contraseñas por usuario
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity

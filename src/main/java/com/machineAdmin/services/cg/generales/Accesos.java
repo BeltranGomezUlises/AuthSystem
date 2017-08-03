@@ -19,7 +19,7 @@ import com.machineAdmin.models.cg.ModelContenidoCifrado;
 import com.machineAdmin.models.cg.ModelCodigoRecuperacionUsuario;
 import com.machineAdmin.models.cg.ModelUsuarioLogeado;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import static com.machineAdmin.services.cg.commons.ServiceFacade.*;
+import static com.machineAdmin.services.cg.commons.ServiceFacadeBase.*;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsJson;
 import com.machineAdmin.utils.UtilsPermissions;

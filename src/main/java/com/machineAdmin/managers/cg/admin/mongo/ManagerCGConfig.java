@@ -22,7 +22,7 @@ import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
 import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 
 /**
- *
+ * manejador de la entidad de configuraciones generales
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ManagerCGConfig extends ManagerMongoFacade<CGConfig> {

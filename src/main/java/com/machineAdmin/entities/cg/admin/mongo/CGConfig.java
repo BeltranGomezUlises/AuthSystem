@@ -19,7 +19,7 @@ package com.machineAdmin.entities.cg.admin.mongo;
 import com.machineAdmin.entities.cg.commons.EntityMongo;
 
 /**
- * contenedor de configuraciones generales del sistema
+ * entidad de configuraciones generales del sistema
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com  
  */
 public class CGConfig extends EntityMongo {

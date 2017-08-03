@@ -21,6 +21,7 @@ import com.machineAdmin.entities.cg.admin.mongo.BitacoraAcceso;
 import com.machineAdmin.entities.cg.commons.EntityMongo;
 import java.util.Date;
 import java.util.List;
+import org.mongojack.DBQuery;
 import org.mongojack.JacksonDBCollection;
 
 /**
@@ -50,7 +51,25 @@ public class UtilsBitacora {
         JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection("bitacora." + collectionName), ModeloBitacora.class, String.class);
         return coll.find().toArray();
     }
-
+    
+    public static List<ModeloBitacora> bitacorasEntre(String collectionName, Date fechaInicial, Date fechaFinal) {
+        JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection("bitacora." + collectionName), ModeloBitacora.class, String.class);
+        return coll.find(DBQuery.and(
+                DBQuery.greaterThanEquals("fecha", fechaInicial),
+                DBQuery.lessThanEquals("fecha", fechaFinal)
+        )).toArray();                
+    }
+    
+    public static List<ModeloBitacora> bitacorasDesde(String collectionName, Date fechaInicial) {
+        JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection("bitacora." + collectionName), ModeloBitacora.class, String.class);
+        return coll.find(DBQuery.greaterThanEquals("fecha", fechaInicial)).toArray();                
+    }
+    
+    public static List<ModeloBitacora> bitacorasHasta(String collectionName, Date fechaFinal) {
+        JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection("bitacora." + collectionName), ModeloBitacora.class, String.class);
+        return coll.find(DBQuery.lessThanEquals("fecha", fechaFinal)).toArray();                
+    }
+        
     public static class ModeloBitacora extends EntityMongo {
 
         private String usuario;

@@ -21,10 +21,12 @@ import com.machineAdmin.entities.cg.commons.EntitySQL;
 import java.util.List;
 
 /**
+ * Facade, contiene el comportamiento base, mas la particularidad de cualquier
+ * entindad que no sea un catalogo de SQL
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
- * @param <T>
- * @param <K>
+ * @param <T> Entidad a manejar
+ * @param <K> Tipo de dato de llave primaria de la entidad
  */
 public abstract class ManagerSQLFacade<T extends EntitySQL, K> extends ManagerSQLFacadeBase<T, K> {
 
@@ -39,7 +41,7 @@ public abstract class ManagerSQLFacade<T extends EntitySQL, K> extends ManagerSQ
     @Override
     public List<T> persistAll(List<T> entities) throws Exception {
         List<T> ts = dao.persistAll(entities);
-        try {            
+        try {
             ts.stream().forEach(t -> this.bitacorizar("alta", this.modeloBitacorizar(t)));
         } catch (Exception ex) {
             //para omitir que esta entidad no soporta bitacoras            

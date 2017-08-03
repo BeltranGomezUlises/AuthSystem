@@ -12,6 +12,8 @@ import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 import com.machineAdmin.utils.UtilsBitacora;
 import com.machineAdmin.utils.UtilsBitacora.ModeloBitacora;
 import com.machineAdmin.utils.UtilsJWT;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -180,8 +182,59 @@ public abstract class ManagerFacade<T extends IEntity, K> {
      * @return lista de movimientos bitacorizados en la coleccion de mongoDB
      * generados por esta clase entidad <T>
      */
-    public List<ModeloBitacora> bitacoras() {
-        return UtilsBitacora.bitacoras(this.bitacoraCollectionName());
+    public List<ModeloBitacora> bitacoras() throws UnsupportedOperationException {
+        try {
+            return UtilsBitacora.bitacoras(this.bitacoraCollectionName());
+        } catch (UnsupportedOperationException e) {
+            throw e;
+        }
+    }
+
+    /**
+     * obtiene las bitácoras existentes de la entidad <T> que su fecha esta
+     * entre las 2 fechas propuestas, donde fecha sea mayor o igual a
+     * fechaInicial y fecha sea menor o igual a fecha final
+     *
+     * @param fechaInicial fecha donde inicia el rango de filtrado
+     * @param fechaFinal fecha donte termina el rango de filtrado
+     * @return lista de modelos con la bitacora de esta entidad <T>
+     */
+    public List<ModeloBitacora> bitacorasEntre(Date fechaInicial, Date fechaFinal) throws UnsupportedOperationException {
+        try {
+            return UtilsBitacora.bitacorasEntre(this.bitacoraCollectionName(), fechaInicial, fechaFinal);
+        } catch (UnsupportedOperationException e) {
+            throw e;
+        }
+    }
+
+    /**
+     * obtiene las bitácoras existentes de la entidad <T> que su fecha esta
+     * despues la fecha propuesta, donde fecha sea mayor o igual a fechaInicial
+     *
+     * @param fechaInicial fecha donde inicial rango de filtrado
+     * @return lista de modelos con la bitacora de esta entidad
+     */
+    public List<ModeloBitacora> bitacorasDesde(Date fechaInicial) throws UnsupportedOperationException {
+        try {
+            return UtilsBitacora.bitacorasDesde(this.bitacoraCollectionName(), fechaInicial);
+        } catch (UnsupportedOperationException e) {
+            throw e;
+        }
+    }
+
+    /**
+     * obtiene las bitácoras existentes de la entidad <T> que su fecha esta
+     * antes la fecha propuesta, donde fecha sea menor o igual a fechaFinal
+     *
+     * @param fechaFinal fecha donde termina le rango de filtrado
+     * @return lista de modelos con la bitacora de esta entidad
+     */
+    public List<ModeloBitacora> bitacorasHasta(Date fechaFinal) throws UnsupportedOperationException{
+        try {
+            return UtilsBitacora.bitacorasHasta(this.bitacoraCollectionName(), fechaFinal);
+        } catch (UnsupportedOperationException e) {
+            throw e;
+        }
     }
 
 }

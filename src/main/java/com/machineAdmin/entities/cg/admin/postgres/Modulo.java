@@ -33,11 +33,9 @@ import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.machineAdmin.entities.cg.commons.EntitySQL;
-import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
-import java.util.UUID;
 
 /**
- *
+ * entidad que representa un modulo del sistema
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity

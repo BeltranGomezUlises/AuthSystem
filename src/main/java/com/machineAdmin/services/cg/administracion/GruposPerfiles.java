@@ -22,9 +22,8 @@ import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlGrupoPerfil;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.commons.ServiceFacade;
-import static com.machineAdmin.services.cg.commons.ServiceFacade.setErrorResponse;
-import static com.machineAdmin.services.cg.commons.ServiceFacade.setInvalidTokenResponse;
+import com.machineAdmin.services.cg.commons.ServiceBitacoraFacade;
+import static com.machineAdmin.services.cg.commons.ServiceFacadeBase.*;
 import com.machineAdmin.utils.UtilsJWT;
 import java.util.UUID;
 import javax.ws.rs.HeaderParam;
@@ -36,7 +35,7 @@ import javax.ws.rs.Path;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/gruposPerfiles")
-public class GruposPerfiles extends ServiceFacade<GrupoPerfiles, UUID> {
+public class GruposPerfiles extends ServiceBitacoraFacade<GrupoPerfiles, UUID> {
 
     public GruposPerfiles() {
         super(new ManagerGrupoPerfil());

@@ -6,7 +6,7 @@
 package com.machineAdmin.services.cg.generales;
 
 import com.machineAdmin.models.cg.responsesCG.Response;
-import static com.machineAdmin.services.cg.commons.ServiceFacade.setErrorResponse;
+import static com.machineAdmin.services.cg.commons.ServiceFacadeBase.*;
 import com.machineAdmin.utils.UtilsConfig;
 import com.machineAdmin.utils.UtilsDate.DateClass;
 import javax.ws.rs.Consumes;

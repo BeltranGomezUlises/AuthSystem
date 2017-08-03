@@ -13,7 +13,7 @@ import org.mongojack.DBQuery;
 import org.mongojack.DBQuery.Query;
 
 /**
- *
+ * Facade, cumple con el comportamiento base de una entidad de una colección en mongoDB
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> is an entity
  */

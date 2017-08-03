@@ -37,7 +37,7 @@ import com.machineAdmin.daos.cg.admin.postgres.DaoSeccion;
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPerfil;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
-import com.machineAdmin.services.cg.commons.ServiceFacade;
+import com.machineAdmin.services.cg.commons.ServiceBitacoraFacade;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -410,7 +410,7 @@ public class InitServletContext implements ServletContextListener {
 
     private List<String> getClasesSimpleNameFromPackage2(String packageName) {
         Reflections reflections = new Reflections(packageName);
-        Set<Class<? extends ServiceFacade>> subtypes = reflections.getSubTypesOf(ServiceFacade.class);
+        Set<Class<? extends ServiceBitacoraFacade>> subtypes = reflections.getSubTypesOf(ServiceBitacoraFacade.class);
 
         return subtypes.stream().map(c -> c.getSimpleName()).collect(toList());
     }

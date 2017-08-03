@@ -25,7 +25,7 @@ import static java.util.stream.Collectors.toList;
 import org.jinq.jpa.JPAJinqStream;
 
 /**
- *
+ * Facade, comportamiento y estructura basica de cualquier manejador de entidades de SQL
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T>
  * @param <K>

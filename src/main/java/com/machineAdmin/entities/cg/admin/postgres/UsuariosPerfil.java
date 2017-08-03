@@ -18,7 +18,6 @@ package com.machineAdmin.entities.cg.admin.postgres;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
-import com.machineAdmin.entities.cg.commons.IEntity;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
@@ -33,7 +32,7 @@ import javax.persistence.Table;
 
 
 /**
- *
+ * entidad relacion de usuarios con perfiles de N:N
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity

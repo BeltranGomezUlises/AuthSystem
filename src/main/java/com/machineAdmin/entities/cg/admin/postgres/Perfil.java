@@ -43,7 +43,7 @@ import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.Converter;
 
 /**
- *
+ * entidad de perfile para los usuarios que contienen permisos para asignar a usuarios por relación
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity
