@@ -82,7 +82,7 @@ public class GruposPerfiles extends ServiceBitacoraFacade<GrupoPerfiles, UUID> {
         Response res = new Response();
         try {
             UtilsJWT.validateSessionToken(token);
-            ManagerGrupoPerfil managerGrupoPerfil = new ManagerGrupoPerfil();
+            ManagerGrupoPerfil managerGrupoPerfil = new ManagerGrupoPerfil();            
             managerGrupoPerfil.asignarPerfiles(modelo);
             res.setMessage("Los Permisos fuéron asignados al perfil con éxito");
             res.setDevMessage("Permisos asignado al perfil");

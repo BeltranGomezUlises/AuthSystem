@@ -16,7 +16,6 @@
  */
 package com.machineAdmin.utils;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.machineAdmin.entities.cg.admin.mongo.BitacoraAcceso;
 import com.machineAdmin.entities.cg.commons.EntityMongo;
 import java.util.Date;
@@ -30,69 +29,79 @@ import org.mongojack.JacksonDBCollection;
  */
 public class UtilsBitacora {
 
-    public static void bitacorizar(String usuario, String accion, String collectionName, Object objectToPersist) {
-        JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection("bitacora." + collectionName), Object.class, String.class);
-        coll.insert(new ModeloBitacora(usuario, accion, objectToPersist));
+    private static final String PREFIJO_BITACORA = "bitacora.";
+
+    public static void bitacorizar(String collectionName, ModeloBitacora model) {
+        JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getBitacoraCollection(PREFIJO_BITACORA + collectionName), ModeloBitacora.class, String.class);
+        coll.insert(model);
     }
 
     public static void bitacorizarLogOut(String usuario) {
-        JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection("bitacora.logout"), Object.class, String.class);
+        JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getBitacoraCollection(PREFIJO_BITACORA + "logout"), Object.class, String.class);
         BitacoraAcceso bitacoraAcceso = new BitacoraAcceso(usuario);
         coll.insert(bitacoraAcceso);
     }
 
     public static void bitacorizarLogIn(String usuario) {
-        JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection("bitacora.login"), Object.class, String.class);
+        JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getBitacoraCollection(PREFIJO_BITACORA + "login"), Object.class, String.class);
         BitacoraAcceso bitacoraAcceso = new BitacoraAcceso(usuario);
         coll.insert(bitacoraAcceso);
     }
 
     public static List<ModeloBitacora> bitacoras(String collectionName) {
-        JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection("bitacora." + collectionName), ModeloBitacora.class, String.class);
+        JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getBitacoraCollection(PREFIJO_BITACORA + collectionName), ModeloBitacora.class, String.class);
         return coll.find().toArray();
     }
-    
+
     public static List<ModeloBitacora> bitacorasEntre(String collectionName, Date fechaInicial, Date fechaFinal) {
-        JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection("bitacora." + collectionName), ModeloBitacora.class, String.class);
+        JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getBitacoraCollection(PREFIJO_BITACORA + collectionName), ModeloBitacora.class, String.class);
         return coll.find(DBQuery.and(
                 DBQuery.greaterThanEquals("fecha", fechaInicial),
                 DBQuery.lessThanEquals("fecha", fechaFinal)
-        )).toArray();                
+        )).toArray();
     }
-    
+
     public static List<ModeloBitacora> bitacorasDesde(String collectionName, Date fechaInicial) {
-        JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection("bitacora." + collectionName), ModeloBitacora.class, String.class);
-        return coll.find(DBQuery.greaterThanEquals("fecha", fechaInicial)).toArray();                
+        JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getBitacoraCollection(PREFIJO_BITACORA + collectionName), ModeloBitacora.class, String.class);
+        return coll.find(DBQuery.greaterThanEquals("fecha", fechaInicial)).toArray();
     }
-    
+
     public static List<ModeloBitacora> bitacorasHasta(String collectionName, Date fechaFinal) {
-        JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection("bitacora." + collectionName), ModeloBitacora.class, String.class);
-        return coll.find(DBQuery.lessThanEquals("fecha", fechaFinal)).toArray();                
+        JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getBitacoraCollection(PREFIJO_BITACORA + collectionName), ModeloBitacora.class, String.class);
+        return coll.find(DBQuery.lessThanEquals("fecha", fechaFinal)).toArray();
     }
-        
+
     public static class ModeloBitacora extends EntityMongo {
 
         private String usuario;
         private Date fecha;
         private String accion;
-        private Object objectoReferencia;
+        private String ipCliente;
+        private String navegadorCliente;
+        private String sistemaOperativoCliente;
 
-        public ModeloBitacora() {
+        public String getIpCliente() {
+            return ipCliente;
         }
 
-        public ModeloBitacora(String usuario, String accion, Object objectoReferencia) {
-            this.usuario = usuario;
-            this.fecha = new Date();
-            this.accion = accion;
-            this.objectoReferencia = objectoReferencia;
+        public void setIpCliente(String ipCliente) {
+            this.ipCliente = ipCliente;
         }
 
-        public Date getFecha() {
-            return fecha;
+        public String getNavegadorCliente() {
+            return navegadorCliente;
         }
 
-        public void setFecha(Date fecha) {
-            this.fecha = fecha;
+        public void setNavegadorCliente(String navegadorCliente) {
+            this.navegadorCliente = navegadorCliente;
+        }
+
+        public String getSistemaOperativoCliente() {
+            return sistemaOperativoCliente;
+        }
+
+        public void setSistemaOperativoCliente(String sistemaOperativoCliente) {
+            this.sistemaOperativoCliente = sistemaOperativoCliente;
         }
 
         public String getUsuario() {
@@ -103,6 +112,14 @@ public class UtilsBitacora {
             this.usuario = usuario;
         }
 
+        public Date getFecha() {
+            return fecha;
+        }
+
+        public void setFecha(Date fecha) {
+            this.fecha = fecha;
+        }
+
         public String getAccion() {
             return accion;
         }
@@ -111,21 +128,11 @@ public class UtilsBitacora {
             this.accion = accion;
         }
 
-        public Object getObjectoReferencia() {
-            return objectoReferencia;
-        }
-
-        public void setObjectoReferencia(Object objectoReferencia) {
-            this.objectoReferencia = objectoReferencia;
-        }
-
-        @JsonIgnore
         @Override
         public String getId() {
             return id;
         }
 
-        @JsonIgnore
         @Override
         public void setId(String id) {
             this.id = id;

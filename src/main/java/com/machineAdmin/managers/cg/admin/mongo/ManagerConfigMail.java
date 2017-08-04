@@ -8,7 +8,6 @@ package com.machineAdmin.managers.cg.admin.mongo;
 import com.machineAdmin.daos.cg.admin.mongo.DaoConfigMail;
 import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
 import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
-import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 
 /**
  *
@@ -25,12 +24,7 @@ public class ManagerConfigMail extends ManagerMongoFacade<ConfigMail> {
     }
 
     @Override
-    public ModelBitacoraGenerica modeloBitacorizar(ConfigMail entity) {        
-        return new ModelBitacoraGenerica(this.bitacoraCollectionName(), entity.getAuth().getMail());
-    }
-
-    @Override
-    protected String bitacoraCollectionName() {
+    protected String nombreColeccionParaRegistros() {
         return "correos";
     }
         

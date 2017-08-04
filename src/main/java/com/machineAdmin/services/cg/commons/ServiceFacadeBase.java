@@ -22,6 +22,7 @@ import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -31,6 +32,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -60,22 +62,17 @@ public class ServiceFacadeBase<T extends IEntity, K> {
     /**
      * proporciona el listado de las entidades de esta clase servicio
      *
+     * @param request
      * @param token token de sesion
      * @return reponse, con su campo data asignado con una lista de las
      * entidades de esta clase servicio
      */
     @GET
-    public Response listar(@HeaderParam("Authorization") String token) {
+    public Response listar(@HeaderParam("Authorization") String token) {                        
         Response response = new Response();
         try {
-            this.manager.setToken(token);
-
-            StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-            for (StackTraceElement stackTraceElement : stack) {
-                System.out.println(stackTraceElement);
-            }
-
-            setOkResponse(response, manager.findAll(), "Entidades encontradas");
+            this.manager.setToken(token);      
+            setOkResponse(response, manager.findAll(), "Entidades encontradas");           
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(response);
         } catch (Exception ex) {

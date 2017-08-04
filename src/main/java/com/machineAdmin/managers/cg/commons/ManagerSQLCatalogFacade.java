@@ -32,11 +32,11 @@ public abstract class ManagerSQLCatalogFacade<T extends EntitySQLCatalog, K> ext
     public T persist(T entity) throws Exception {
         entity.setUsuarioCreador(UUID.fromString(this.getUsuario()));
         dao.persist(entity);
-        try {
-            this.bitacorizar("alta", this.modeloBitacorizar(entity));
-        } catch (UnsupportedOperationException ex) {
-            //para omitir que esta entidad no soporta bitacoras
-        }
+//        try {
+//            this.auditar("alta", this.modeloRegistroGenerico(entity));
+//        } catch (UnsupportedOperationException ex) {
+//            //para omitir que esta entidad no soporta bitacoras
+//        }
         return entity;
     }
 
@@ -44,11 +44,11 @@ public abstract class ManagerSQLCatalogFacade<T extends EntitySQLCatalog, K> ext
     public List<T> persistAll(List<T> entities) throws Exception {
         entities.forEach((entity) -> entity.setUsuarioCreador(UUID.fromString(this.getUsuario())));
         List<T> ts = dao.persistAll(entities);
-        try {
-            ts.stream().forEach(t -> this.bitacorizar("alta", this.modeloBitacorizar(t)));
-        } catch (Exception ex) {
-            //para omitir que esta entidad no soporta bitacoras            
-        }
+//        try {
+//            ts.stream().forEach(t -> this.auditar("alta", this.modeloRegistroGenerico(t)));
+//        } catch (Exception ex) {
+//            //para omitir que esta entidad no soporta bitacoras            
+//        }
         return ts;
     }
 

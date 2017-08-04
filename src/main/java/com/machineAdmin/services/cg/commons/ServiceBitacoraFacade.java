@@ -6,17 +6,12 @@ import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import static com.machineAdmin.services.cg.commons.ServiceFacadeBase.*;
+import com.machineAdmin.utils.UtilsBitacora;
 import java.util.Date;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
 /**
  *
@@ -44,7 +39,7 @@ public class ServiceBitacoraFacade<T extends IEntity, K> extends ServiceFacadeBa
         Response res = new Response();
         try {
             this.manager.setToken(token);
-            res.setData(manager.bitacoras());
+            res.setData(UtilsBitacora.bitacoras(manager.nombreColeccionParaRegistros()));
             res.setDevMessage("Bitácoras de esta entidad");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
@@ -72,7 +67,7 @@ public class ServiceBitacoraFacade<T extends IEntity, K> extends ServiceFacadeBa
         Response res = new Response();
         try {
             this.manager.setToken(token);
-            res.setData(manager.bitacorasEntre(new Date(fechaInicial), new Date(fechaFinal)));
+            res.setData(manager.auditoriaEntre(new Date(fechaInicial), new Date(fechaFinal)));
             res.setDevMessage("Bitácoras de esta entidad");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
@@ -99,7 +94,7 @@ public class ServiceBitacoraFacade<T extends IEntity, K> extends ServiceFacadeBa
         Response res = new Response();
         try {
             this.manager.setToken(token);
-            res.setData(manager.bitacorasDesde(new Date(fechaInicial)));
+            res.setData(manager.auditoriaDesde(new Date(fechaInicial)));
             res.setDevMessage("Bitácoras de esta entidad");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
@@ -125,7 +120,7 @@ public class ServiceBitacoraFacade<T extends IEntity, K> extends ServiceFacadeBa
         Response res = new Response();
         try {
             this.manager.setToken(token);
-            res.setData(manager.bitacorasHasta(new Date(fechaFinal)));
+            res.setData(manager.auditoriaHasta(new Date(fechaFinal)));
             res.setDevMessage("Bitácoras de esta entidad");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);

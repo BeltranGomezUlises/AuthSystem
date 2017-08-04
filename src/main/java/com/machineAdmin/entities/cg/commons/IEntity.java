@@ -19,7 +19,7 @@ package com.machineAdmin.entities.cg.commons;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
- *
+ * clase padre de cualquier entidad de la configuracion general
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)

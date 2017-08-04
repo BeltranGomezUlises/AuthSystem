@@ -41,22 +41,22 @@ public abstract class ManagerSQLFacade<T extends EntitySQL, K> extends ManagerSQ
     @Override
     public List<T> persistAll(List<T> entities) throws Exception {
         List<T> ts = dao.persistAll(entities);
-        try {
-            ts.stream().forEach(t -> this.bitacorizar("alta", this.modeloBitacorizar(t)));
-        } catch (Exception ex) {
-            //para omitir que esta entidad no soporta bitacoras            
-        }
+//        try {
+//            ts.stream().forEach(t -> this.auditar("alta", this.modeloRegistroGenerico(t)));
+//        } catch (Exception ex) {
+//            //para omitir que esta entidad no soporta bitacoras            
+//        }
         return ts;
     }
 
     @Override
     public T persist(T entity) throws Exception {
         dao.persist(entity);
-        try {
-            this.bitacorizar("alta", this.modeloBitacorizar(entity));
-        } catch (UnsupportedOperationException ex) {
-            //para omitir que esta entidad no soporta bitacoras            
-        }
+//        try {
+//            this.auditar("alta", this.modeloRegistroGenerico(entity));
+//        } catch (UnsupportedOperationException ex) {
+//            //para omitir que esta entidad no soporta bitacoras            
+//        }
         return entity;
     }
 

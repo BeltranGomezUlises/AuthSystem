@@ -23,7 +23,6 @@ import com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles;
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
 import com.machineAdmin.managers.cg.commons.ManagerSQLCatalogFacade;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlGrupoPerfil;
-import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -52,15 +51,9 @@ public class ManagerGrupoPerfil extends ManagerSQLCatalogFacade<GrupoPerfiles, U
     }
 
     @Override
-    public ModelBitacoraGenerica modeloBitacorizar(GrupoPerfiles entity) {                
-        return new ModelBitacoraGenerica(this.bitacoraCollectionName(), entity);
-    }
-
-    @Override
-    protected String bitacoraCollectionName() {
+    protected String nombreColeccionParaRegistros() {        
         return "gruposPerfiles";
+        
     }
     
-    
-
 }

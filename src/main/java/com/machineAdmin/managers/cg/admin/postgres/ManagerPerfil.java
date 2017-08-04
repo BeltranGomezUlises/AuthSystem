@@ -24,7 +24,6 @@ import com.machineAdmin.entities.cg.admin.postgres.Perfil;
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.managers.cg.commons.ManagerSQLCatalogFacade;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
-import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -44,12 +43,7 @@ public class ManagerPerfil extends ManagerSQLCatalogFacade<Perfil, UUID>{
     }
 
     @Override
-    public ModelBitacoraGenerica modeloBitacorizar(Perfil entity) {
-        return new ModelBitacoraGenerica(this.bitacoraCollectionName(), entity.getNombre());
-    }
-
-    @Override
-    protected String bitacoraCollectionName() {
+    protected String nombreColeccionParaRegistros() {
         return "perfiles";
     }
 

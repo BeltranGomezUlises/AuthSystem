@@ -19,7 +19,6 @@ package com.machineAdmin.managers.cg.admin.mongo;
 import com.machineAdmin.daos.cg.admin.mongo.DaoCGConfig;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
-import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 
 /**
  * manejador de la entidad de configuraciones generales
@@ -32,12 +31,7 @@ public class ManagerCGConfig extends ManagerMongoFacade<CGConfig> {
     }
 
     @Override
-    public ModelBitacoraGenerica modeloBitacorizar(CGConfig entity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    protected String bitacoraCollectionName() {
+    protected String nombreColeccionParaRegistros() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
       
