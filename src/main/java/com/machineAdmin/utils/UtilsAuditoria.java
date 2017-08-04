@@ -31,17 +31,17 @@ public class UtilsAuditoria {
     private static final String PREFIJO_AUDITORIA = "auditoria.";
     
     public static void auditar(String collectionName, ModeloAuditoria model) {
-        JacksonDBCollection<ModeloAuditoria, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection(PREFIJO_AUDITORIA + collectionName), ModeloAuditoria.class, String.class);
+        JacksonDBCollection<ModeloAuditoria, String> coll = JacksonDBCollection.wrap(UtilsDB.getAuditoriaCollection(PREFIJO_AUDITORIA + collectionName), ModeloAuditoria.class, String.class);
         coll.insert(model);
     }
 
     public static List<UtilsAuditoria.ModeloAuditoria> auditorias(String collectionName) {
-        JacksonDBCollection<UtilsAuditoria.ModeloAuditoria, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection(PREFIJO_AUDITORIA + collectionName), UtilsAuditoria.ModeloAuditoria.class, String.class);
+        JacksonDBCollection<UtilsAuditoria.ModeloAuditoria, String> coll = JacksonDBCollection.wrap(UtilsDB.getAuditoriaCollection(PREFIJO_AUDITORIA + collectionName), UtilsAuditoria.ModeloAuditoria.class, String.class);
         return coll.find().toArray();
     }
 
     public static List<UtilsAuditoria.ModeloAuditoria> auditoriasEntre(String collectionName, Date fechaInicial, Date fechaFinal) {
-        JacksonDBCollection<UtilsAuditoria.ModeloAuditoria, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection(PREFIJO_AUDITORIA + collectionName), UtilsAuditoria.ModeloAuditoria.class, String.class);
+        JacksonDBCollection<UtilsAuditoria.ModeloAuditoria, String> coll = JacksonDBCollection.wrap(UtilsDB.getAuditoriaCollection(PREFIJO_AUDITORIA + collectionName), UtilsAuditoria.ModeloAuditoria.class, String.class);
         return coll.find(DBQuery.and(
                 DBQuery.greaterThanEquals("fecha", fechaInicial),
                 DBQuery.lessThanEquals("fecha", fechaFinal)
@@ -49,12 +49,12 @@ public class UtilsAuditoria {
     }
 
     public static List<UtilsAuditoria.ModeloAuditoria> auditoriasDesde(String collectionName, Date fechaInicial) {
-        JacksonDBCollection<UtilsAuditoria.ModeloAuditoria, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection(PREFIJO_AUDITORIA + collectionName), UtilsAuditoria.ModeloAuditoria.class, String.class);
+        JacksonDBCollection<UtilsAuditoria.ModeloAuditoria, String> coll = JacksonDBCollection.wrap(UtilsDB.getAuditoriaCollection(PREFIJO_AUDITORIA + collectionName), UtilsAuditoria.ModeloAuditoria.class, String.class);
         return coll.find(DBQuery.greaterThanEquals("fecha", fechaInicial)).toArray();
     }
 
     public static List<UtilsAuditoria.ModeloAuditoria> auditoriasHasta(String collectionName, Date fechaFinal) {
-        JacksonDBCollection<UtilsAuditoria.ModeloAuditoria, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection(PREFIJO_AUDITORIA+ collectionName), UtilsAuditoria.ModeloAuditoria.class, String.class);
+        JacksonDBCollection<UtilsAuditoria.ModeloAuditoria, String> coll = JacksonDBCollection.wrap(UtilsDB.getAuditoriaCollection(PREFIJO_AUDITORIA+ collectionName), UtilsAuditoria.ModeloAuditoria.class, String.class);
         return coll.find(DBQuery.lessThanEquals("fecha", fechaFinal)).toArray();
     }
         
@@ -70,6 +70,15 @@ public class UtilsAuditoria {
         public ModeloAuditoria() {
         }
 
+        public ModeloAuditoria(String usuario, Date fecha, String accion, Object objetoAnterior, Object objetoNuevo, Object objectoReferencia) {
+            this.usuario = usuario;
+            this.fecha = fecha;
+            this.accion = accion;
+            this.objetoAnterior = objetoAnterior;
+            this.objetoNuevo = objetoNuevo;
+            this.objectoReferencia = objectoReferencia;
+        }
+                
         public ModeloAuditoria(String usuario, String accion, Object objectoReferencia) {
             this.usuario = usuario;
             this.fecha = new Date();

@@ -31,7 +31,7 @@ public class ManagerModulo extends ManagerSQLFacade<Modulo, String>{
     }
 
     @Override
-    protected String nombreColeccionParaRegistros() {
+    public String nombreColeccionParaRegistros() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

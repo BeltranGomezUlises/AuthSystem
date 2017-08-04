@@ -65,11 +65,6 @@ public class Usuarios extends ServiceBitacoraFacade<Usuario, UUID> {
     public Response obtener(String token, String id) {
         return super.obtener(token, id); //To change body of generated methods, choose Tools | Templates.
     }
-
-    @Override
-    public Response listar(String token) {
-        return super.listar(token); //To change body of generated methods, choose Tools | Templates.
-    }
     
     /**
      * asigna los permisos al usuario reemplazando los que tenia por los nuevos

@@ -9,6 +9,7 @@ import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
 import com.machineAdmin.managers.cg.admin.mongo.ManagerConfigMail;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceBitacoraFacade;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
 
 /**
@@ -43,9 +44,10 @@ public class Correos extends ServiceBitacoraFacade<ConfigMail, Object>{
     }
 
     @Override
-    public Response listar(String token) {
-        return super.listar(token); //To change body of generated methods, choose Tools | Templates.
+    public Response listar(HttpServletRequest request, String token) {        
+        return super.listar(request, token); //To change body of generated methods, choose Tools | Templates.
     }
-   
+
+    
     
 }

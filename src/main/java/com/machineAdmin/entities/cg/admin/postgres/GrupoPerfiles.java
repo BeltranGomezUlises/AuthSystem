@@ -35,7 +35,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
 import java.util.Objects;
 import java.util.UUID;
-import javax.persistence.Lob;
 import org.eclipse.persistence.annotations.Convert;
 
 /**
@@ -50,8 +49,7 @@ import org.eclipse.persistence.annotations.Convert;
     , @NamedQuery(name = "GrupoPerfiles.findByDescripcoin", query = "SELECT g FROM GrupoPerfiles g WHERE g.descripcion = :descripcion")})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GrupoPerfiles extends EntitySQLCatalog implements Serializable {
-
-    @Lob()
+    
     @Convert("uuidConverter")
     @Column(name = "usuario_creador")
     private UUID usuarioCreador;

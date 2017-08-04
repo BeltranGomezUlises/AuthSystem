@@ -35,7 +35,7 @@ public class ManagerSeccion extends ManagerSQLFacade<Seccion, String> {
     }
 
     @Override
-    protected String nombreColeccionParaRegistros() {
+    public String nombreColeccionParaRegistros() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

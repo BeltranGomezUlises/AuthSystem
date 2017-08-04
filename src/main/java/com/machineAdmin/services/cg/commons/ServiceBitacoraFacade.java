@@ -67,7 +67,7 @@ public class ServiceBitacoraFacade<T extends IEntity, K> extends ServiceFacadeBa
         Response res = new Response();
         try {
             this.manager.setToken(token);
-            res.setData(manager.auditoriaEntre(new Date(fechaInicial), new Date(fechaFinal)));
+//            res.setData(manager.auditoriaEntre(new Date(fechaInicial), new Date(fechaFinal)));
             res.setDevMessage("Bitácoras de esta entidad");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
@@ -94,7 +94,7 @@ public class ServiceBitacoraFacade<T extends IEntity, K> extends ServiceFacadeBa
         Response res = new Response();
         try {
             this.manager.setToken(token);
-            res.setData(manager.auditoriaDesde(new Date(fechaInicial)));
+            //res.setData(manager.auditoriaDesde(new Date(fechaInicial)));
             res.setDevMessage("Bitácoras de esta entidad");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
@@ -120,7 +120,7 @@ public class ServiceBitacoraFacade<T extends IEntity, K> extends ServiceFacadeBa
         Response res = new Response();
         try {
             this.manager.setToken(token);
-            res.setData(manager.auditoriaHasta(new Date(fechaFinal)));
+            //res.setData(manager.auditoriaHasta(new Date(fechaFinal)));
             res.setDevMessage("Bitácoras de esta entidad");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);

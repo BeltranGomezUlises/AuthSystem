@@ -334,7 +334,7 @@ public class ManagerUsuario extends ManagerSQLCatalogFacade<Usuario, UUID> {
     }
 
     @Override
-    protected String nombreColeccionParaRegistros() {
+    public String nombreColeccionParaRegistros() {
         return "usuarios";
     }
 

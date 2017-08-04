@@ -18,11 +18,13 @@ package com.machineAdmin.services.cg.generales;
 
 import com.machineAdmin.models.cg.ModelTest;
 import com.machineAdmin.models.cg.responsesCG.Response;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -34,6 +36,22 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 public class Tests {
 
+    @GET
+    @Path("/info")
+    public Response explotarServidor(@Context HttpServletRequest request) {
+        Response r = new Response();
+                
+        String ip = request.getRemoteAddr();
+        String agent = request.getHeader("User-Agent");
+        String authorization = request.getHeader("authorization");
+        
+        
+        r.setData(ip);
+        r.setMessage(agent);
+        r.setDevMessage(authorization);
+        
+        return r;
+    }
     @GET
     @Path("/explotar")
     public Response explotarServidor() {
@@ -84,6 +102,7 @@ public class Tests {
         } catch (Exception e) {
             
         }        
-        return res;        
+        return res;       
+        
     }
 }

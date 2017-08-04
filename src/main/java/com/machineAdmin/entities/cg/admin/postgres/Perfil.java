@@ -38,7 +38,6 @@ import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.Converter;
 
@@ -55,7 +54,6 @@ import org.eclipse.persistence.annotations.Converter;
 @Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
 public class Perfil extends EntitySQLCatalog implements Serializable {
 
-    @Lob
     @Convert("uuidConverter")
     @Column(name = "usuario_creador")
     private UUID usuarioCreador;

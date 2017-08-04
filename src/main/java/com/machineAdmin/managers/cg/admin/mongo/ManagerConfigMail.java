@@ -24,7 +24,7 @@ public class ManagerConfigMail extends ManagerMongoFacade<ConfigMail> {
     }
 
     @Override
-    protected String nombreColeccionParaRegistros() {
+    public String nombreColeccionParaRegistros() {
         return "correos";
     }
         

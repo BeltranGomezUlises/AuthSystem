@@ -80,6 +80,24 @@ public class UtilsBitacora {
         private String navegadorCliente;
         private String sistemaOperativoCliente;
 
+        public ModeloBitacora() {
+        }
+        
+        public ModeloBitacora(String usuario, Date fecha, String accion) {
+            this.usuario = usuario;
+            this.fecha = fecha;
+            this.accion = accion;
+        }
+
+        public ModeloBitacora(String usuario, Date fecha, String accion, String ipCliente, String navegadorCliente, String sistemaOperativoCliente) {
+            this.usuario = usuario;
+            this.fecha = fecha;
+            this.accion = accion;
+            this.ipCliente = ipCliente;
+            this.navegadorCliente = navegadorCliente;
+            this.sistemaOperativoCliente = sistemaOperativoCliente;
+        }
+                
         public String getIpCliente() {
             return ipCliente;
         }

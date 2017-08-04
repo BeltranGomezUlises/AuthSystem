@@ -32,7 +32,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -65,7 +64,6 @@ import org.eclipse.persistence.annotations.Converter;
 @Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
 public class Usuario extends EntitySQLCatalog implements Serializable {
 
-    @Lob
     @Convert("uuidConverter")
     @Column(name = "usuario_creador")
     private UUID usuarioCreador;

@@ -22,6 +22,10 @@ import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
+import com.machineAdmin.utils.UtilsAuditoria;
+import com.machineAdmin.utils.UtilsBitacora;
+import java.util.Date;
+import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -33,7 +37,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 
 /**
  *
@@ -63,16 +69,30 @@ public class ServiceFacadeBase<T extends IEntity, K> {
      * proporciona el listado de las entidades de esta clase servicio
      *
      * @param request
+     * @param headers
      * @param token token de sesion
      * @return reponse, con su campo data asignado con una lista de las
      * entidades de esta clase servicio
      */
     @GET
-    public Response listar(@HeaderParam("Authorization") String token) {                        
+    public Response listar(@Context HttpServletRequest request) {
         Response response = new Response();
+        
+        String ip = request.getRemoteAddr();
+        String agent = request.getHeader("User-Agent");
+        String authorization = request.getHeader("authorization");
+        
         try {
-            this.manager.setToken(token);      
-            setOkResponse(response, manager.findAll(), "Entidades encontradas");           
+            this.manager.setToken(authorization);
+            setOkResponse(response, manager.findAll(), "Entidades encontradas");
+            
+            //bitacoriza
+            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Listar " + manager.nombreColeccionParaRegistros(), ip, null, obtenerSistemaOperativo(agent).toString());
+            UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            //bitacoriza
+            UtilsAuditoria.ModeloAuditoria auditoria = new UtilsAuditoria.ModeloAuditoria(manager.getUsuario(), "listar " + manager.nombreColeccionParaRegistros(), null);
+            UtilsAuditoria.auditar(manager.nombreColeccionParaRegistros(), auditoria);
+            
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(response);
         } catch (Exception ex) {
@@ -307,6 +327,29 @@ public class ServiceFacadeBase<T extends IEntity, K> {
         res.setStatus(Status.OK);
         res.setDevMessage(devMessage);
     }
-    
-}
 
+    protected static final SistemaOperativo obtenerSistemaOperativo(String userAgent) {
+        if (userAgent.contains("Linux x")) {
+            return SistemaOperativo.LINUX;
+        }
+        if (userAgent.contains("Windows")) {
+            return SistemaOperativo.WIN;
+        }
+        if (userAgent.contains("Mac")) {
+            return SistemaOperativo.MAC;
+        }
+        if (userAgent.contains("Android")) {
+            return SistemaOperativo.ANDROID;
+        }
+        if (userAgent.contains("IOS")) {
+            return SistemaOperativo.IOS;
+        } else {
+            return null;
+        }
+    }
+
+    public static enum SistemaOperativo {
+        WIN, LINUX, MAC, ANDROID, IOS
+    }
+
+}

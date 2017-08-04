@@ -51,9 +51,8 @@ public class ManagerGrupoPerfil extends ManagerSQLCatalogFacade<GrupoPerfiles, U
     }
 
     @Override
-    protected String nombreColeccionParaRegistros() {        
-        return "gruposPerfiles";
-        
+    public String nombreColeccionParaRegistros() {        
+        return "gruposPerfiles";        
     }
     
 }

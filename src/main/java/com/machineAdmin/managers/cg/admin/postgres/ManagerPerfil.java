@@ -43,7 +43,7 @@ public class ManagerPerfil extends ManagerSQLCatalogFacade<Perfil, UUID>{
     }
 
     @Override
-    protected String nombreColeccionParaRegistros() {
+    public String nombreColeccionParaRegistros() {
         return "perfiles";
     }
 
