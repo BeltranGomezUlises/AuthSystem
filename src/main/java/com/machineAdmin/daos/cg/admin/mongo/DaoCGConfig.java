@@ -24,10 +24,9 @@ import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class DaoCGConfig extends DaoMongoFacade<CGConfig>{
-
+    
     public DaoCGConfig() {
         super("cg.config.general", CGConfig.class);
     }
-    
-    
+        
 }

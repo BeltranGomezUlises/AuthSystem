@@ -36,7 +36,7 @@ import java.util.Objects;
 import javax.persistence.ManyToMany;
 
 /**
- *
+ * entidad que representa un permiso de una acción del sistema
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity

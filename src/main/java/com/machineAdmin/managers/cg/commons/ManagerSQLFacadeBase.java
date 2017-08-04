@@ -25,7 +25,7 @@ import static java.util.stream.Collectors.toList;
 import org.jinq.jpa.JPAJinqStream;
 
 /**
- *
+ * Facade, comportamiento y estructura basica de cualquier manejador de entidades de SQL
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T>
  * @param <K>
@@ -48,11 +48,11 @@ public abstract class ManagerSQLFacadeBase<T extends IEntity, K> extends Manager
     public void delete(K id) throws Exception {
         T t = dao.findOne(id);
         dao.delete(id);
-        try {
-            this.bitacorizar("eliminar", this.modeloBitacorizar(t));
-        } catch (UnsupportedOperationException e) {
-            //para omitir que esta entidad no soporta bitacoras
-        }
+//        try {
+//            this.auditar("eliminar", this.modeloRegistroGenerico(t));
+//        } catch (UnsupportedOperationException e) {
+//            //para omitir que esta entidad no soporta bitacoras
+//        }
 
     }
 
@@ -60,31 +60,31 @@ public abstract class ManagerSQLFacadeBase<T extends IEntity, K> extends Manager
     public void deleteAll(List<K> ids) throws SQLPersistenceException, Exception {
         List<T> ts = dao.stream().filter((T t) -> ids.contains((K) t.getId())).collect(toList());
         dao.deleteAll(ids);
-        try {
-            ts.stream().forEach(t -> this.bitacorizar("eliminar", this.modeloBitacorizar(t)));
-        } catch (Exception  e) {
-            //para omitir que esta entidad no soporta bitacoras
-        }
+//        try {
+//            ts.stream().forEach(t -> this.auditar("eliminar", this.modeloRegistroGenerico(t)));
+//        } catch (Exception  e) {
+//            //para omitir que esta entidad no soporta bitacoras
+//        }
 
     }
 
     @Override
     public void update(T entity) throws SQLPersistenceException, ConstraintException {
-        dao.update(entity);
-        try {
-            this.bitacorizar("actualizar", this.modeloBitacorizar(entity));
-        } catch (UnsupportedOperationException e) {
-        }
+        dao.update(entity);        
+//        try {
+//            this.auditar("actualizar", this.modeloRegistroGenerico(entity));
+//        } catch (UnsupportedOperationException e) {
+//        }
     }
 
     @Override
     public T findOne(K id) {
         T t = (T) dao.findOne(id);        
-        try {
-            this.bitacorizar("obtener", this.modeloBitacorizar(t));
-        } catch (UnsupportedOperationException  e) {
-            //para omitir que esta entidad no soporta bitacoras
-        }                    
+//        try {
+//            this.auditar("obtener", this.modeloRegistroGenerico(t));
+//        } catch (UnsupportedOperationException  e) {
+//            //para omitir que esta entidad no soporta bitacoras
+//        }                    
         return t;
     }
 

@@ -8,13 +8,15 @@ package com.machineAdmin.managers.cg.commons;
 import com.machineAdmin.entities.cg.commons.IEntity;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
-import com.machineAdmin.managers.cg.exceptions.UsuarioNoAsignadoException;
-import com.machineAdmin.models.cg.ModelBitacoraGenerica;
+import com.machineAdmin.models.cg.ModelRegistroGenerico;
+import com.machineAdmin.utils.UtilsAuditoria;
+import com.machineAdmin.utils.UtilsAuditoria.ModeloAuditoria;
 import com.machineAdmin.utils.UtilsBitacora;
+import com.machineAdmin.utils.UtilsBitacora.ModeloBitacora;
 import com.machineAdmin.utils.UtilsJWT;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -26,21 +28,22 @@ public abstract class ManagerFacade<T extends IEntity, K> {
 
     protected String usuario;
 
-    public ManagerFacade(String usuario) {        
+    public ManagerFacade(String usuario) {
         this.usuario = usuario;
     }
-    
-    public ManagerFacade(){
-        
-    }  
-    
+
+    public ManagerFacade() {
+
+    }
+
     public String getUsuario() {
         return usuario;
-    }    
-    
-    private void setUsuario(String usuario){
+    }
+
+    private void setUsuario(String usuario) {
         this.usuario = usuario;
     }
+
     /**
      * metodo para persistir la entidad a base de datos
      *
@@ -131,19 +134,26 @@ public abstract class ManagerFacade<T extends IEntity, K> {
      * @param s cadena a trasformar
      * @return K, objeto del tipo de dato del identificador de la entidad
      */
-    public abstract K stringToKey(String s);
+    public abstract K stringToKey(String s);   
 
-    public abstract ModelBitacoraGenerica modeloBitacorizar(T entity);
+    /**
+     * Débe de retorna el nombre de la colección que se generará en mongoDB para
+     * almacenar las bitcaras, auditorias, registros estadisticos de esta la clases entidad <T>
+     *
+     * @return nombre de la colección a utilizar para el registor de bitacoras
+     */
+    public abstract String nombreColeccionParaRegistros();
 
-    protected abstract String bitacoraCollectionName();
-
-    public void setToken(String token) throws TokenInvalidoException, TokenExpiradoException {       
+    /**
+     * asignar un token de sesion a este manager, con la intencion de validar el
+     * usuario en pemisos y registros de bitacoras
+     *
+     * @param token token de sesion
+     * @throws TokenInvalidoException si el token proporsionado no es válido
+     * @throws TokenExpiradoException si el token proporsionado ya expiró
+     */
+    public void setToken(String token) throws TokenInvalidoException, TokenExpiradoException {
         this.setUsuario(UtilsJWT.getBodyToken(token));
     }
-    
-    public void bitacorizar(String accion, ModelBitacoraGenerica model) {
-        if (usuario != null) {
-            UtilsBitacora.bitacorizar(usuario, accion, model.getCollectionName(), model.getObjectToPersist());
-        }                                                                             
-    }
+  
 }

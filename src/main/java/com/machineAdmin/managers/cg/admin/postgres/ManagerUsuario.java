@@ -32,7 +32,6 @@ import com.machineAdmin.managers.cg.exceptions.UserException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
-import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 import com.machineAdmin.models.cg.ModelCodigoRecuperacionUsuario;
 import com.machineAdmin.utils.UtilsBitacora;
 import com.machineAdmin.utils.UtilsConfig;
@@ -335,12 +334,7 @@ public class ManagerUsuario extends ManagerSQLCatalogFacade<Usuario, UUID> {
     }
 
     @Override
-    public ModelBitacoraGenerica modeloBitacorizar(Usuario entity) {
-        return new ModelBitacoraGenerica(this.bitacoraCollectionName(), entity.getNombre());
-    }
-
-    @Override
-    protected String bitacoraCollectionName() {
+    protected String nombreColeccionParaRegistros() {
         return "usuarios";
     }
 

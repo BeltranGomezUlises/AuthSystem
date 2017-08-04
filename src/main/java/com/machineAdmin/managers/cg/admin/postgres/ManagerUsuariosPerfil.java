@@ -22,7 +22,6 @@ import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfilPK;
 import com.machineAdmin.managers.cg.commons.ManagerSQLCatalogFacade;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlUsuario;
-import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 import com.machineAdmin.models.cg.ModelPerfilYHereda;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +32,12 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerUsuariosPerfil extends  ManagerSQLCatalogFacade<UsuariosPerfil, UsuariosPerfilPK>{
-    
+public class ManagerUsuariosPerfil extends ManagerSQLCatalogFacade<UsuariosPerfil, UsuariosPerfilPK> {
+
     public ManagerUsuariosPerfil(String usuario) {
         super(usuario, new DaoUsuariosPerfil());
     }
-    
+
     public ManagerUsuariosPerfil() {
         super(new DaoUsuariosPerfil());
     }
@@ -46,12 +45,12 @@ public class ManagerUsuariosPerfil extends  ManagerSQLCatalogFacade<UsuariosPerf
     public void asignarPerfilesAlUsuario(ModelAsignarPerfilesAlUsuario modelo) throws Exception {
         //remover los perfiles actuales
         List<UsuariosPerfilPK> idsActuales = this.stream()
-                .filter( up -> up.getUsuariosPerfilPK().getUsuario().equals(modelo.getUserId()))
-                .map( up-> up.getUsuariosPerfilPK())
+                .filter(up -> up.getUsuariosPerfilPK().getUsuario().equals(modelo.getUserId()))
+                .map(up -> up.getUsuariosPerfilPK())
                 .collect(toList());
-        
+
         dao.deleteAll(idsActuales);
-                
+
         //asignar los perfiles del modelo
         List<UsuariosPerfil> usuariosPerfilNuevos = new ArrayList<>();
         UsuariosPerfil entidadRelacion;
@@ -60,25 +59,20 @@ public class ManagerUsuariosPerfil extends  ManagerSQLCatalogFacade<UsuariosPerf
             entidadRelacion.setHereda(perfil.isHereda());
             usuariosPerfilNuevos.add(entidadRelacion);
         }
-        
+
         dao.persistAll(usuariosPerfilNuevos);
     }
 
-    public List<Perfil> perfilesDeUsuario(UUID usuarioId){
+    public List<Perfil> perfilesDeUsuario(UUID usuarioId) {
         return dao.stream()
-                .where( up -> up.getUsuariosPerfilPK().getUsuario().equals(usuarioId))
-                .map( up -> up.getPerfil1())
-                .collect(toList());                
+                .where(up -> up.getUsuariosPerfilPK().getUsuario().equals(usuarioId))
+                .map(up -> up.getPerfil1())
+                .collect(toList());
     }
 
     @Override
-    public ModelBitacoraGenerica modeloBitacorizar(UsuariosPerfil entity) {
+    protected String nombreColeccionParaRegistros() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    protected String bitacoraCollectionName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-                
 }

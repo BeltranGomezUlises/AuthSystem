@@ -29,15 +29,75 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
     private final Class<T> claseEntity;
     private final Class<K> clasePK;
     private final EntityManagerFactory eMFactory;
-    private final JinqJPAStreamProvider streams;
+    private final JinqJPAStreamProvider stream;
 
+    /**
+     * al sobreescribir considerar la fabrica de EntityManager, que sea la que
+     * apunte a la base de datos adecuada, que la clase entidad sea correcta y
+     * la clase que represente la llave primaria tambien corresponda
+     *
+     * @param eMFactory fabrica de manejadores de entidad EntityManager que
+     * corresponda a la base de datos con la cual trabajar
+     * @param claseEntity clase de la entidad con la cual operar
+     * @param clasePk clase que represente la llave primaria de la entidad
+     */
     public DaoSQLFacade(EntityManagerFactory eMFactory, Class<T> claseEntity, Class<K> clasePk) {
         this.eMFactory = eMFactory;
         this.claseEntity = claseEntity;
         this.clasePK = clasePk;
-        streams = new JinqJPAStreamProvider(eMFactory);
+        
+        stream = new JinqJPAStreamProvider(eMFactory);
+        stream.registerAttributeConverterType(UUID.class);
     }
 
+    /**
+     * obtiene una nueva instancia de un EntityManager de la fabrica proporsionada al construir el objeto
+     * @return EntityManager de la fabrica de este Data Access Object
+     */
+    public EntityManager getEM() {
+        return eMFactory.createEntityManager();
+    }
+
+    /**
+     * construye un JPQL Query con el parametro obtenido
+     * @param jpql cadena con el JPQL para construir un query
+     * @return query contruido con el JPQL
+     */
+    protected Query createQuery(String jpql) {
+        return this.getEM().createQuery(jpql);
+    }
+
+    /**
+     * construye un Stream de datos de tipo JPAJinq, esto para poder realizar consultas con funciones lambda
+     * @return strema de datos de la entidad con la cual operar
+     */
+    public JPAJinqStream<T> stream() {        
+        return stream.streamAll(eMFactory.createEntityManager(), claseEntity);
+    }
+
+    /**
+     * transforma una cadena serializada en pk (UUID, Long, Integer)
+     * @param s cadena representativa de la pk
+     * @return  K tipo de dato asignado a la llave primaria de la entidad
+     */
+    public K stringToPK(String s) {
+        if (clasePK.getName().equals(Integer.class.getName())) {
+            return (K) Integer.valueOf(s);
+        } else {
+            if (clasePK.getName().equals(Long.class.getName())) {
+                return (K) Long.valueOf(s);
+            } else {
+                if (clasePK.getName().equals(UUID.class.getName())) {
+                    return (K) UUID.fromString(s);
+                }
+            }
+        }
+        return (K) s;
+    }
+
+    //<editor-fold defaultstate="collapsed" desc="¡LEEME!">
+    //Todos los metodos siguientes tiene con objetivo hacer y solo hacer lo que su nombre indica       
+    //</editor-fold>
     public void persist(T entity) throws Exception {
         EntityManager em = this.getEM();
         try {
@@ -160,39 +220,11 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
 
     public long count() {
         EntityManager em = getEM();
-        long count = streams.streamAll(getEM(), claseEntity).count();
+        long count = stream.streamAll(getEM(), claseEntity).count();
         if (em != null) {
             em.close();
         }
         return count;
     }
 
-    public EntityManager getEM() {
-        return eMFactory.createEntityManager();
-    }
-
-    protected Query createQuery(String query) {
-        return this.getEM().createQuery(query);
-    }
-
-    public JPAJinqStream<T> stream() {
-        JinqJPAStreamProvider stream = new JinqJPAStreamProvider(eMFactory);
-        stream.registerAttributeConverterType(UUID.class);        
-        return stream.streamAll(eMFactory.createEntityManager(), claseEntity);
-    }
-
-    public K stringToPK(String s) {
-        if (clasePK.getName().equals(Integer.class.getName())) {
-            return (K) Integer.valueOf(s);
-        } else {
-            if (clasePK.getName().equals(Long.class.getName())) {
-                return (K) Long.valueOf(s);
-            } else {
-                if (clasePK.getName().equals(UUID.class.getName())) {
-                    return (K) UUID.fromString(s);
-                }
-            }
-        }
-        return (K) s;
-    }
 }

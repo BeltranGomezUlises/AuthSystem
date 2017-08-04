@@ -20,7 +20,7 @@ import com.machineAdmin.entities.cg.commons.EntityMongo;
 import java.util.Date;
 
 /**
- * modelo de registro de bitacoras
+ * modelo de registro de bitacoras de accesos
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  *

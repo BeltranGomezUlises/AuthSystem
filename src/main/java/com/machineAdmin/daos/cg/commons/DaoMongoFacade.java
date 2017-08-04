@@ -15,38 +15,51 @@ import org.mongojack.WriteResult;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> entidad que extienda de la clase EntityMongo
  */
-public class DaoMongoFacade<T extends EntityMongo>{
+public class DaoMongoFacade<T extends EntityMongo> {
 
     protected final String collectionName;
     protected JacksonDBCollection<T, String> coll;
 
+    /**
+     * al sobreescribir, consigerar el nombre de la colección categorizada -ej:
+     * {nombreNegocio}.{modulo}.{nombreColeccion} -ej: cg.config.correo
+     *
+     * @param collectionName nombre de la coleccion con la cual operar
+     * @param clazz calse de la entidad con la cual operar
+     */
     public DaoMongoFacade(String collectionName, Class<T> clazz) {
         this.collectionName = collectionName;
         this.coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection(collectionName), clazz, String.class);
     }
 
+    /**
+     * obtiene la coleccion de tiop JacksonDB para poder operar directamente con
+     * los metodos particulares del conector
+     *
+     * @return contenedor de coleccion de MongoDB de la entidad a operar
+     */
     public JacksonDBCollection<T, String> getCollection() {
         return coll;
     }
 
     public T persist(T entity) {
         return coll.insert(entity).getSavedObject();
-    }    
+    }
 
     public List<T> persistAll(List<T> entities) {
         return coll.insert(entities).getSavedObjects();
     }
 
     public boolean delete(Object id) {
-        WriteResult<T, String> result = coll.removeById(id.toString());        
+        WriteResult<T, String> result = coll.removeById(id.toString());
         return true;
     }
 
     public void delete(Query query) {
         coll.remove(query);
-    }   
+    }
 
-    public void deleteAll(List<Object> ids) {       
+    public void deleteAll(List<Object> ids) {
         Query q = DBQuery.in("_id", ids);
         coll.remove(q);
     }
@@ -59,17 +72,17 @@ public class DaoMongoFacade<T extends EntityMongo>{
 //        } catch (IllegalAccessException | InvocationTargetException ex) {
 //            throw new Exception("No fue posible actualizar la entidad, Causa: " + ex.getMessage());
 //        }
-          coll.updateById(entity.getId(), entity);            
+        coll.updateById(entity.getId(), entity);
     }
 
-    public List<T> update(Query query, T t) {                   
-        return coll.update(query, t).getSavedObjects();       
+    public List<T> update(Query query, T t) {
+        return coll.update(query, t).getSavedObjects();
     }
 
-    public T findFirst(){
+    public T findFirst() {
         return coll.findOne();
     }
-        
+
     public T findOne(Object id) {
         return coll.findOneById(id.toString());
     }

@@ -36,7 +36,7 @@ import com.machineAdmin.entities.cg.commons.EntitySQL;
 import javax.persistence.Entity;
 
 /**
- *
+ * entidad que representa un menu del sistema ( tiene una lista de acciones, y para cada accion un permiso "permisoList" )
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity

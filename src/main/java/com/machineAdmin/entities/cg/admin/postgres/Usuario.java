@@ -46,7 +46,7 @@ import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.Converter;
 
 /**
- *
+ * entidad que representa un usuario que opera dentro del sistema
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity

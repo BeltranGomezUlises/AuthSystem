@@ -20,12 +20,12 @@ package com.machineAdmin.models.cg;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ModelBitacoraGenerica {
+public class ModelRegistroGenerico {
 
     private String collectionName;
     private Object objectToPersist;
 
-    public ModelBitacoraGenerica(String collectionName, Object objectToPersist) {
+    public ModelRegistroGenerico(String collectionName, Object objectToPersist) {
         this.collectionName = collectionName;
         this.objectToPersist = objectToPersist;
     }

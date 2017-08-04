@@ -28,9 +28,8 @@ public class ApplicationConfig extends Application {
         resources.add(com.machineAdmin.services.cg.administracion.Correos.class);
         resources.add(com.machineAdmin.services.cg.administracion.GruposPerfiles.class);
         resources.add(com.machineAdmin.services.cg.administracion.Perfiles.class);
-        resources.add(com.machineAdmin.services.cg.administracion.Secciones.class);
         resources.add(com.machineAdmin.services.cg.administracion.Usuarios.class);
-        resources.add(com.machineAdmin.services.cg.commons.ServiceFacade.class);
+        resources.add(com.machineAdmin.services.cg.commons.ServiceFacadeBase.class);
         resources.add(com.machineAdmin.services.cg.generales.Accesos.class);
         resources.add(com.machineAdmin.services.cg.generales.Commons.class);
         resources.add(com.machineAdmin.services.cg.generales.Permisos.class);

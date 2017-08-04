@@ -21,7 +21,7 @@ import com.machineAdmin.managers.cg.admin.postgres.ManagerSeccion;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import static com.machineAdmin.services.cg.commons.ServiceFacade.*;
+import static com.machineAdmin.services.cg.commons.ServiceFacadeBase.*;
 import com.machineAdmin.utils.UtilsJWT;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;

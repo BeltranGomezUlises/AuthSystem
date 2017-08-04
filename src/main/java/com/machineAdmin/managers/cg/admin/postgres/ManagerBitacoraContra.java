@@ -20,7 +20,6 @@ import com.machineAdmin.daos.cg.admin.postgres.DaoBitacoraContra;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContras;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContrasPK;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
-import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 
 /**
  *
@@ -33,14 +32,8 @@ public class ManagerBitacoraContra extends ManagerSQLFacade<BitacoraContras, Bit
     }
 
     @Override
-    public ModelBitacoraGenerica modeloBitacorizar(BitacoraContras entity) {
+    protected String nombreColeccionParaRegistros() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    protected String bitacoraCollectionName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-   
 }

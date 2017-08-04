@@ -28,7 +28,7 @@ import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.Converter;
 
 /**
- *
+ * 
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Embeddable

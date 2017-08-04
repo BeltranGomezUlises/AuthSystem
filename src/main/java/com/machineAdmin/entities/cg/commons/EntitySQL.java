@@ -17,7 +17,7 @@
 package com.machineAdmin.entities.cg.commons;
 
 /**
- *
+ * clase padre para cualquier entidad que no es necesariamente un catalogo y no requiere tener un usuario credor
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public abstract class EntitySQL extends IEntity{

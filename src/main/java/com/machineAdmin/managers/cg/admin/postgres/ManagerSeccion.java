@@ -19,7 +19,6 @@ package com.machineAdmin.managers.cg.admin.postgres;
 import com.machineAdmin.daos.cg.admin.postgres.DaoSeccion;
 import com.machineAdmin.entities.cg.admin.postgres.Seccion;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
-import com.machineAdmin.models.cg.ModelBitacoraGenerica;
 
 /**
  *
@@ -36,12 +35,7 @@ public class ManagerSeccion extends ManagerSQLFacade<Seccion, String> {
     }
 
     @Override
-    public ModelBitacoraGenerica modeloBitacorizar(Seccion entity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    protected String bitacoraCollectionName() {
+    protected String nombreColeccionParaRegistros() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

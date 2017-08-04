@@ -39,7 +39,7 @@ import javax.persistence.Lob;
 import org.eclipse.persistence.annotations.Convert;
 
 /**
- *
+ * entidad de grupo de perfiles, que sirve para agrupar perfiles en aspectos de negocio
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity
