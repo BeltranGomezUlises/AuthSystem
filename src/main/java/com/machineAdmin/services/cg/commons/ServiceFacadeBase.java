@@ -17,15 +17,16 @@
 package com.machineAdmin.services.cg.commons;
 
 import com.machineAdmin.entities.cg.commons.IEntity;
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.commons.ManagerFacade;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
+import static com.machineAdmin.services.cg.commons.ServiceFacadeBase.SistemaOperativo.*;
 import com.machineAdmin.utils.UtilsAuditoria;
 import com.machineAdmin.utils.UtilsBitacora;
 import java.util.Date;
-import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -37,9 +38,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
 
 /**
  *
@@ -51,7 +50,7 @@ import javax.ws.rs.core.Request;
 @Produces(MediaType.APPLICATION_JSON)
 public class ServiceFacadeBase<T extends IEntity, K> {
 
-    private ManagerFacade<T, K> manager;
+    protected ManagerFacade<T, K> manager;
 
     public ServiceFacadeBase(ManagerFacade<T, K> manager) {
         this.manager = manager;
@@ -68,31 +67,30 @@ public class ServiceFacadeBase<T extends IEntity, K> {
     /**
      * proporciona el listado de las entidades de esta clase servicio
      *
-     * @param request
-     * @param headers
+     * @param request contexto de peticion necesario para obtener datos como ip,
+     * sistema operativo y navegador del cliente
      * @param token token de sesion
      * @return reponse, con su campo data asignado con una lista de las
      * entidades de esta clase servicio
      */
     @GET
-    public Response listar(@Context HttpServletRequest request) {
+    public Response listar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token) {
         Response response = new Response();
-        
-        String ip = request.getRemoteAddr();
-        String agent = request.getHeader("User-Agent");
-        String authorization = request.getHeader("authorization");
-        
-        try {
-            this.manager.setToken(authorization);
+        try {                        
+            this.manager.setToken(token);
+            
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
-            
-            //bitacoriza
-            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Listar " + manager.nombreColeccionParaRegistros(), ip, null, obtenerSistemaOperativo(agent).toString());
+
+            //bitacoriza            
+            String ip = request.getRemoteAddr();
+            String agent = request.getHeader("User-Agent");
+
+            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Listar", ip, null, obtenerSistemaOperativo(agent).toString());
             UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
-            //bitacoriza
-            UtilsAuditoria.ModeloAuditoria auditoria = new UtilsAuditoria.ModeloAuditoria(manager.getUsuario(), "listar " + manager.nombreColeccionParaRegistros(), null);
+            //audita
+            UtilsAuditoria.ModeloAuditoria auditoria = new UtilsAuditoria.ModeloAuditoria(manager.getUsuario(), "Listar", null);
             UtilsAuditoria.auditar(manager.nombreColeccionParaRegistros(), auditoria);
-            
+
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(response);
         } catch (Exception ex) {
@@ -105,18 +103,28 @@ public class ServiceFacadeBase<T extends IEntity, K> {
      * obtiene una entidad en particular por su identificador de esta clase
      * servicio
      *
+     * @param request contexto de peticion necesario para obtener datos como ip,
+     * sistema operativo y navegador del cliente
      * @param token token de sesion
      * @param id identificador de la entidad buscada
      * @return response, con su campo data asignado con la entidad buscada
      */
     @GET
     @Path("/{id}")
-    public Response obtener(@HeaderParam("Authorization") String token, @PathParam("id") String id) {
+    public Response detalle(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, @PathParam("id") String id) {
         Response response = new Response();
         try {
             this.manager.setToken(token);
             response.setData(manager.findOne(manager.stringToKey(id)));
             response.setMessage("Entidad encontrada");
+
+            //bitacoriza            
+            String ip = request.getRemoteAddr();
+            String agent = request.getHeader("User-Agent");
+
+            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Detalle", ip, null, obtenerSistemaOperativo(agent).toString());
+            UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
         } catch (Exception e) {
@@ -128,17 +136,26 @@ public class ServiceFacadeBase<T extends IEntity, K> {
     /**
      * persiste la entidad de esta clase servicio en base de datos
      *
+     * @param request contexto de peticion necesario para obtener datos como ip,
+     * sistema operativo y navegador del cliente
      * @param token token de sesion
      * @param t entidad a persistir en base de datos
      * @return response con el estatus y el mensaje
      */
     @POST
-    public Response alta(@HeaderParam("Authorization") String token, T t) {
+    public Response alta(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
         try {
             this.manager.setToken(token);
             response.setData(manager.persist(t));
             response.setMessage("Entidad persistida");
+            //bitacoriza            
+            String ip = request.getRemoteAddr();
+            String agent = request.getHeader("User-Agent");
+
+            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Alta", ip, null, obtenerSistemaOperativo(agent).toString());
+            UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
         } catch (Exception e) {
@@ -151,18 +168,27 @@ public class ServiceFacadeBase<T extends IEntity, K> {
      * actualiza la entidad proporsionada a su equivalente en base de datos,
      * tomando como referencia su identificador
      *
+     * @param request contexto de peticion necesario para obtener datos como ip,
+     * sistema operativo y navegador del cliente
      * @param token token de sesion
      * @param t entidad con los datos actualizados
      * @return Response, en data asignado con la entidad que se actualizó
      */
     @PUT
-    public Response modificar(@HeaderParam("Authorization") String token, T t) {
+    public Response modificar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
         try {
             this.manager.setToken(token);
             manager.update(t);
             response.setData(t);
             response.setMessage("Entidad actualizada");
+            //bitacoriza            
+            String ip = request.getRemoteAddr();
+            String agent = request.getHeader("User-Agent");
+
+            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", ip, null, obtenerSistemaOperativo(agent).toString());
+            UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
         } catch (Exception e) {
@@ -174,17 +200,26 @@ public class ServiceFacadeBase<T extends IEntity, K> {
     /**
      * eliminar la entidad proporsionada
      *
+     * @param request contexto de peticion necesario para obtener datos como ip,
+     * sistema operativo y navegador del cliente
      * @param token token de sesion
      * @param t entidad proporsionada
      * @return
      */
     @DELETE
-    public Response eliminar(@HeaderParam("Authorization") String token, T t) {
+    public Response eliminar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
         try {
             this.manager.setToken(token);
             manager.delete((K) t.getId());
             response.setMessage("Entidad eliminada");
+            //bitacoriza            
+            String ip = request.getRemoteAddr();
+            String agent = request.getHeader("User-Agent");
+
+            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Eliminar", ip, null, obtenerSistemaOperativo(agent).toString());
+            UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
         } catch (Exception e) {
@@ -328,28 +363,38 @@ public class ServiceFacadeBase<T extends IEntity, K> {
         res.setDevMessage(devMessage);
     }
 
-    protected static final SistemaOperativo obtenerSistemaOperativo(String userAgent) {
+    /**
+     * genera el enum correspondiente al sistema operativo del cual la cabecera
+     * UserAgent de la peticion indica
+     *
+     * @param userAgent cadena con el texto de la cabecera User-Agent
+     * @return enumarador del sistema operativo
+     */
+    public static final SistemaOperativo obtenerSistemaOperativo(String userAgent) {
         if (userAgent.contains("Linux x")) {
-            return SistemaOperativo.LINUX;
+            return LINUX;
         }
         if (userAgent.contains("Windows")) {
-            return SistemaOperativo.WIN;
+            return WIN;
         }
-        if (userAgent.contains("Mac")) {
-            return SistemaOperativo.MAC;
+        if (userAgent.contains("iPhone OS")) {
+            return MAC;
         }
         if (userAgent.contains("Android")) {
-            return SistemaOperativo.ANDROID;
+            return ANDROID;
         }
-        if (userAgent.contains("IOS")) {
-            return SistemaOperativo.IOS;
+        if (userAgent.contains("Mac")) {
+            return IOS;
         } else {
-            return null;
+            return DESCONOCIDO;
         }
     }
 
+    /**
+     * enumerador del los sistemas operativos conocidos
+     */
     public static enum SistemaOperativo {
-        WIN, LINUX, MAC, ANDROID, IOS
+        WIN, LINUX, MAC, ANDROID, IOS, DESCONOCIDO
     }
 
 }

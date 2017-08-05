@@ -18,6 +18,7 @@ package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoSeccion;
 import com.machineAdmin.entities.cg.admin.postgres.Seccion;
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
 
 /**
@@ -26,19 +27,21 @@ import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
  */
 public class ManagerSeccion extends ManagerSQLFacade<Seccion, String> {
 
+    public ManagerSeccion() {
+        super(new DaoSeccion());
+    }
+        
     public ManagerSeccion(String usuario) {
         super(usuario, new DaoSeccion());
     }
 
-    public ManagerSeccion() {
-        super(new DaoSeccion());
+    public ManagerSeccion(Profundidad profundidad, String token) {
+        super(new DaoSeccion(), profundidad, token);
     }
 
     @Override
     public String nombreColeccionParaRegistros() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-   
 
 }

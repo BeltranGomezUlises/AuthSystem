@@ -17,9 +17,11 @@
 package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPerfil;
+import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfilPK;
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.commons.ManagerSQLCatalogFacade;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlUsuario;
 import com.machineAdmin.models.cg.ModelPerfilYHereda;
@@ -34,12 +36,16 @@ import static java.util.stream.Collectors.toList;
  */
 public class ManagerUsuariosPerfil extends ManagerSQLCatalogFacade<UsuariosPerfil, UsuariosPerfilPK> {
 
+    public ManagerUsuariosPerfil(){
+        super(new DaoUsuariosPerfil());
+    }
+    
     public ManagerUsuariosPerfil(String usuario) {
         super(usuario, new DaoUsuariosPerfil());
     }
 
-    public ManagerUsuariosPerfil() {
-        super(new DaoUsuariosPerfil());
+    public ManagerUsuariosPerfil(Profundidad profundidad, String token) {
+        super(new DaoUsuariosPerfil(), profundidad, token);
     }
 
     public void asignarPerfilesAlUsuario(ModelAsignarPerfilesAlUsuario modelo) throws Exception {

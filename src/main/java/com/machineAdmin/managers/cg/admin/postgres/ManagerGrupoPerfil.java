@@ -21,6 +21,7 @@ import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles;
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.commons.ManagerSQLCatalogFacade;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlGrupoPerfil;
 import java.util.ArrayList;
@@ -33,12 +34,16 @@ import java.util.UUID;
  */
 public class ManagerGrupoPerfil extends ManagerSQLCatalogFacade<GrupoPerfiles, UUID> {
 
+    public ManagerGrupoPerfil(){
+        super(new DaoGrupoPerfiles());
+    }
+    
     public ManagerGrupoPerfil(String usuario) {
         super(usuario, new DaoGrupoPerfiles());
     }
-    
-    public ManagerGrupoPerfil() {
-        super(new DaoGrupoPerfiles());
+
+    public ManagerGrupoPerfil(Profundidad profundidad, String token) {
+        super(new DaoGrupoPerfiles(), profundidad, token);
     }
 
     public void asignarPerfiles(ModelAsignarPerfilesAlGrupoPerfil model) throws SQLPersistenceException, ConstraintException {
@@ -51,8 +56,8 @@ public class ManagerGrupoPerfil extends ManagerSQLCatalogFacade<GrupoPerfiles, U
     }
 
     @Override
-    public String nombreColeccionParaRegistros() {        
-        return "gruposPerfiles";        
+    public String nombreColeccionParaRegistros() {
+        return "gruposPerfiles";
     }
-    
+
 }

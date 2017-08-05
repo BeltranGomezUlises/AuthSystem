@@ -7,7 +7,6 @@ import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import static com.machineAdmin.services.cg.commons.ServiceFacadeBase.*;
 import com.machineAdmin.utils.UtilsBitacora;
-import java.util.Date;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -20,9 +19,7 @@ import javax.ws.rs.PathParam;
  * @param <K> tipo de dato del identificador de la entidad manejada
  */
 public class ServiceBitacoraFacade<T extends IEntity, K> extends ServiceFacadeBase<T, K>{
-
-    private ManagerFacade<T, K> manager;
-
+    
     public ServiceBitacoraFacade(ManagerFacade<T, K> manager) {
         super(manager);
     }    

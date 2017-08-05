@@ -63,6 +63,11 @@ public class Permisos {
         return res;
     }
 
+    /**
+     * obtiene las profundides permitidas para asignar
+     * @param token token de sesion
+     * @return  en data, la lista de profundidaes disponibles
+     */
     @GET
     @Path("/profundidades")
     public Response getProfundidades(@HeaderParam("Authorization") String token){

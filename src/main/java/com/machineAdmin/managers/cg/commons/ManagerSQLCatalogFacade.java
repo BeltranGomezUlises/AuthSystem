@@ -7,6 +7,7 @@ package com.machineAdmin.managers.cg.commons;
 
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,12 +21,16 @@ import java.util.UUID;
  */
 public abstract class ManagerSQLCatalogFacade<T extends EntitySQLCatalog, K> extends ManagerSQLFacadeBase<T, K> {
 
+    public ManagerSQLCatalogFacade(DaoSQLFacade<T, K> dao) {
+        super(dao);
+    }
+       
     public ManagerSQLCatalogFacade(String usuario, DaoSQLFacade dao) {
         super(usuario, dao);
     }
 
-    public ManagerSQLCatalogFacade(DaoSQLFacade dao) {
-        super(dao);
+    public ManagerSQLCatalogFacade(DaoSQLFacade dao, Profundidad profundidad, String token) {
+        super(dao, profundidad, token);
     }
 
     @Override

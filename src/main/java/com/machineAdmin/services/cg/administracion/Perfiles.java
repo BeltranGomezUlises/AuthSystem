@@ -23,10 +23,12 @@ import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceBitacoraFacade;
+import com.machineAdmin.services.cg.commons.ServiceFacadeBase;
 import static com.machineAdmin.services.cg.commons.ServiceFacadeBase.*;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsPermissions;
 import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -35,86 +37,89 @@ import javax.ws.rs.PathParam;
 
 /**
  * servicios de administracion de perfiles
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/perfiles")
-public class Perfiles extends ServiceBitacoraFacade<Perfil, UUID>{
-    
+public class Perfiles extends ServiceBitacoraFacade<Perfil, UUID> {
+
     public Perfiles() {
         super(new ManagerPerfil());
     }
 
     @Override
-    public Response eliminar(String token, Perfil t) {
-        return super.eliminar(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response eliminar(HttpServletRequest request, String token, Perfil t) {
+        return super.eliminar(request, token, t);
     }
 
     @Override
-    public Response modificar(String token, Perfil t) {
-        return super.modificar(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response modificar(HttpServletRequest request, String token, Perfil t) {
+        return super.modificar(request, token, t);
     }
 
     @Override
-    public Response alta(String token, Perfil t) {
-        return super.alta(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response alta(HttpServletRequest request, String token, Perfil t) {
+        return super.alta(request, token, t);
     }
 
     @Override
-    public Response obtener(String token, String id) {
-        return super.obtener(token, id); //To change body of generated methods, choose Tools | Templates.
+    public Response detalle(HttpServletRequest request, String token, String id) {
+        return super.detalle(request, token, id);
     }
 
     @Override
-    public Response listar(String token) {
-        return super.listar(token); //To change body of generated methods, choose Tools | Templates.
+    public Response listar(HttpServletRequest request, String token) {        
+        return super.listar(request, token);
     }
-   
+
     /**
      * asigna los permisos al perfil reemplazando los que tenia por los nuevos
-     * proporsionados    
+     * proporsionados
+     *
      * @param token token de sesion
-     * @param modelo modelo contenedor del perfil y la lista de permisos a asignar
+     * @param modelo modelo contenedor del perfil y la lista de permisos a
+     * asignar
      * @return sin data
      */
     @POST
     @Path("/asignarPermisos")
-    public Response asignarPermisos(@HeaderParam("Authorization") String token, ModelAsignarPermisos modelo){
-        Response res = new Response();       
-        try {                        
+    public Response asignarPermisos(@HeaderParam("Authorization") String token, ModelAsignarPermisos modelo) {
+        Response res = new Response();
+        try {
             ManagerPerfil managerPerfil = new ManagerPerfil();
             managerPerfil.setToken(token);
             managerPerfil.asignarPermisos(modelo);
             res.setMessage("Los Permisos fuéron asignados al perfil con éxito");
             res.setDevMessage("Permisos asignado al perfil");
-        }catch (TokenExpiradoException | TokenInvalidoException ex) {
+        } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(res);
-        }  catch(Exception e){
+        } catch (Exception e) {
             setErrorResponse(res, e);
         }
         return res;
     }
- 
-    
+
     /**
-     * servicio para obtener la lista de los permisos que tiene asignado un perfil
+     * servicio para obtener la lista de los permisos que tiene asignado un
+     * perfil
+     *
      * @param token token de sesion
      * @param perfilId id del perfil del cual buscar sus permisos
      * @return en data, la lista de permisos a obtener
      */
     @GET
     @Path("/permisos/{perfilId}")
-    public Response obtenerPermisos(@HeaderParam("Authorization") String token, @PathParam("perfilId") String perfilId){
-        Response res = new Response();       
+    public Response obtenerPermisos(@HeaderParam("Authorization") String token, @PathParam("perfilId") String perfilId) {
+        Response res = new Response();
         try {
             UtilsJWT.validateSessionToken(token);
-            res.setData(UtilsPermissions.permisosAsignadosAPerfil(perfilId));            
-        }catch (TokenExpiradoException | TokenInvalidoException ex) {
+            res.setData(UtilsPermissions.permisosAsignadosAPerfil(perfilId));
+        } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(res);
-        }  catch(Exception e){
+        } catch (Exception e) {
             setErrorResponse(res, e);
         }
         return res;
     }
- 
-    
+
 }

@@ -1,8 +1,8 @@
 package com.machineAdmin.daos.cg.commons;
 
 import com.machineAdmin.entities.cg.commons.EntityMongo;
-import com.machineAdmin.utils.UtilsDB;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
 import java.util.List;
 import org.mongojack.DBProjection;
 import org.mongojack.DBQuery;
@@ -16,20 +16,20 @@ import org.mongojack.WriteResult;
  * @param <T> entidad que extienda de la clase EntityMongo
  */
 public class DaoMongoFacade<T extends EntityMongo> {
-
-    protected final String collectionName;
+    
     protected JacksonDBCollection<T, String> coll;
+    private final DBCollection dbCollection;
 
     /**
      * al sobreescribir, consigerar el nombre de la colección categorizada -ej:
      * {nombreNegocio}.{modulo}.{nombreColeccion} -ej: cg.config.correo
-     *
-     * @param collectionName nombre de la coleccion con la cual operar
+     *     
+     * @param dbCollection collection con la cual operar esta entidad, debe de provenir de UtilsDB de una base de datos especifica
      * @param clazz calse de la entidad con la cual operar
      */
-    public DaoMongoFacade(String collectionName, Class<T> clazz) {
-        this.collectionName = collectionName;
-        this.coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection(collectionName), clazz, String.class);
+    public DaoMongoFacade(DBCollection dbCollection, Class<T> clazz) {
+        this.coll = JacksonDBCollection.wrap(dbCollection, clazz, String.class);
+        this.dbCollection = dbCollection;
     }
 
     /**
@@ -42,7 +42,7 @@ public class DaoMongoFacade<T extends EntityMongo> {
         return coll;
     }
 
-    public T persist(T entity) {
+    public T persist(T entity) {        
         return coll.insert(entity).getSavedObject();
     }
 
@@ -80,7 +80,11 @@ public class DaoMongoFacade<T extends EntityMongo> {
     }
 
     public T findFirst() {
-        return coll.findOne();
+        try {
+            return coll.findOne();
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
     public T findOne(Object id) {

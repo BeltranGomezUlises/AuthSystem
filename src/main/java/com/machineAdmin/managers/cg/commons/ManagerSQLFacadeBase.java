@@ -20,12 +20,15 @@ import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.commons.IEntity;
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
 import org.jinq.jpa.JPAJinqStream;
 
 /**
- * Facade, comportamiento y estructura basica de cualquier manejador de entidades de SQL
+ * Facade, comportamiento y estructura basica de cualquier manejador de
+ * entidades de SQL
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T>
  * @param <K>
@@ -34,15 +37,20 @@ public abstract class ManagerSQLFacadeBase<T extends IEntity, K> extends Manager
 
     protected final DaoSQLFacade<T, K> dao;
 
+    public ManagerSQLFacadeBase(DaoSQLFacade<T, K> dao) {
+        super();
+        this.dao = dao;
+    }
+
     public ManagerSQLFacadeBase(String usuario, DaoSQLFacade dao) {
         super(usuario);
         this.dao = dao;
     }
 
-    public ManagerSQLFacadeBase(DaoSQLFacade dao) {
-        super();        
+    public ManagerSQLFacadeBase(DaoSQLFacade dao, Profundidad profundidad, String token) {
+        super(profundidad, token);
         this.dao = dao;
-    }        
+    }
 
     @Override
     public void delete(K id) throws Exception {
@@ -70,7 +78,7 @@ public abstract class ManagerSQLFacadeBase<T extends IEntity, K> extends Manager
 
     @Override
     public void update(T entity) throws SQLPersistenceException, ConstraintException {
-        dao.update(entity);        
+        dao.update(entity);
 //        try {
 //            this.auditar("actualizar", this.modeloRegistroGenerico(entity));
 //        } catch (UnsupportedOperationException e) {
@@ -79,7 +87,7 @@ public abstract class ManagerSQLFacadeBase<T extends IEntity, K> extends Manager
 
     @Override
     public T findOne(K id) {
-        T t = (T) dao.findOne(id);        
+        T t = (T) dao.findOne(id);
 //        try {
 //            this.auditar("obtener", this.modeloRegistroGenerico(t));
 //        } catch (UnsupportedOperationException  e) {
@@ -116,5 +124,5 @@ public abstract class ManagerSQLFacadeBase<T extends IEntity, K> extends Manager
     public K stringToKey(String s) {
         return dao.stringToPK(s);
     }
-    
+
 }

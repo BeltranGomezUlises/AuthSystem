@@ -24,30 +24,28 @@ public class Correos extends ServiceBitacoraFacade<ConfigMail, Object>{
     }
 
     @Override
-    public Response eliminar(String token, ConfigMail t) {
-        return super.eliminar(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response eliminar(HttpServletRequest request, String token, ConfigMail t) {
+        return super.eliminar(request, token, t);
     }
 
     @Override
-    public Response modificar(String token, ConfigMail t) {
-        return super.modificar(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response modificar(HttpServletRequest request, String token, ConfigMail t) {
+        return super.modificar(request, token, t);
     }
 
     @Override
-    public Response alta(String token, ConfigMail t) {
-        return super.alta(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response alta(HttpServletRequest request, String token, ConfigMail t) {
+        return super.alta(request, token, t);
     }
 
     @Override
-    public Response obtener(String token, String id) {
-        return super.obtener(token, id); //To change body of generated methods, choose Tools | Templates.
+    public Response detalle(HttpServletRequest request, String token, String id) {
+        return super.detalle(request, token, id);
     }
 
     @Override
-    public Response listar(HttpServletRequest request, String token) {        
-        return super.listar(request, token); //To change body of generated methods, choose Tools | Templates.
+    public Response listar(HttpServletRequest request, String token) {
+        return super.listar(request, token);
     }
-
-    
-    
+           
 }

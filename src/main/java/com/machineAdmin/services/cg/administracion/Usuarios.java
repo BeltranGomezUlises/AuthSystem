@@ -29,6 +29,7 @@ import static com.machineAdmin.services.cg.commons.ServiceFacadeBase.*;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsPermissions;
 import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -47,25 +48,30 @@ public class Usuarios extends ServiceBitacoraFacade<Usuario, UUID> {
     }   
 
     @Override
-    public Response eliminar(String token, Usuario t) {
-        return super.eliminar(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response eliminar(HttpServletRequest request, String token, Usuario t) {
+        return super.eliminar(request, token, t);
     }
 
     @Override
-    public Response modificar(String token, Usuario t) {
-        return super.modificar(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response modificar(HttpServletRequest request, String token, Usuario t) {
+        return super.modificar(request, token, t);
     }
 
     @Override
-    public Response alta(String token, Usuario t) {
-        return super.alta(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response alta(HttpServletRequest request, String token, Usuario t) {
+        return super.alta(request, token, t);
     }
 
     @Override
-    public Response obtener(String token, String id) {
-        return super.obtener(token, id); //To change body of generated methods, choose Tools | Templates.
+    public Response detalle(HttpServletRequest request, String token, String id) {
+        return super.detalle(request, token, id);
     }
-    
+
+    @Override
+    public Response listar(HttpServletRequest request, String token) {
+        return super.listar(request, token);
+    }
+        
     /**
      * asigna los permisos al usuario reemplazando los que tenia por los nuevos
      * proporsionados

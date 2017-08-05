@@ -18,11 +18,13 @@ package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
+import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContras;
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.commons.ManagerSQLCatalogFacade;
 import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
@@ -56,14 +58,18 @@ import org.apache.commons.mail.EmailException;
  */
 public class ManagerUsuario extends ManagerSQLCatalogFacade<Usuario, UUID> {
 
+    public ManagerUsuario() {
+        super(new DaoUsuario());
+    }
+        
     public ManagerUsuario(String usuario) {
         super(usuario, new DaoUsuario());
     }
 
-    public ManagerUsuario() {
-        super(new DaoUsuario());
+    public ManagerUsuario(Profundidad profundidad, String token) {
+        super(new DaoUsuario(), profundidad, token);
     }
-
+    
     @Override
     public Usuario persist(Usuario entity) throws Exception {
 
@@ -144,7 +150,7 @@ public class ManagerUsuario extends ManagerSQLCatalogFacade<Usuario, UUID> {
             daoUsuario.update(loged);
 
             //login exitoso, generar bitácora                                     
-            UtilsBitacora.bitacorizarLogIn(loged.getId().toString());
+            UtilsBitacora.bitacorizarLogIn(this.nombreDeUsuario(loged.getId()));
         } catch (NoSuchElementException e) {
             //verificar si existe el usuario
             this.numberAttemptVerification(usuarioAutenticando);
@@ -154,7 +160,7 @@ public class ManagerUsuario extends ManagerSQLCatalogFacade<Usuario, UUID> {
     }
 
     public void logout(String token) throws TokenInvalidoException, TokenExpiradoException {
-        UtilsBitacora.bitacorizarLogOut(UtilsJWT.getBodyToken(token));
+        UtilsBitacora.bitacorizarLogOut(this.nombreDeUsuario(UUID.fromString(UtilsJWT.getBodyToken(token))));
     }
 
     private void numberAttemptVerification(Usuario usuario) throws UsuarioInexistenteException, UsuarioBlockeadoException, Exception {
@@ -329,6 +335,10 @@ public class ManagerUsuario extends ManagerSQLCatalogFacade<Usuario, UUID> {
         dao.update(u);                
     }
 
+    public String nombreDeUsuario(UUID usuarioId){        
+        return this.stream().where(u -> u.getId().equals(usuarioId)).findFirst().get().getNombre();
+    }
+    
     private enum userIdentifierType {
         PHONE, MAIL, USER
     }

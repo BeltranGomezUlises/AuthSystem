@@ -18,6 +18,7 @@ package com.machineAdmin.managers.cg.admin.mongo;
 
 import com.machineAdmin.daos.cg.admin.mongo.DaoCGConfig;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
 
 /**
@@ -25,11 +26,15 @@ import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ManagerCGConfig extends ManagerMongoFacade<CGConfig> {
-    
+
     public ManagerCGConfig(String usuario) {
         super(usuario, new DaoCGConfig());
     }
-
+                
+    public ManagerCGConfig(Profundidad profundidad, String token) {
+        super(new DaoCGConfig(), profundidad, token);
+    }
+                   
     @Override
     public String nombreColeccionParaRegistros() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

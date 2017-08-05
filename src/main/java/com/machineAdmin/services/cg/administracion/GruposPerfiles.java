@@ -26,6 +26,7 @@ import com.machineAdmin.services.cg.commons.ServiceBitacoraFacade;
 import static com.machineAdmin.services.cg.commons.ServiceFacadeBase.*;
 import com.machineAdmin.utils.UtilsJWT;
 import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -42,31 +43,30 @@ public class GruposPerfiles extends ServiceBitacoraFacade<GrupoPerfiles, UUID> {
     }
 
     @Override
-    public Response eliminar(String token, GrupoPerfiles t) {
-        return super.eliminar(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response eliminar(HttpServletRequest request, String token, GrupoPerfiles t) {
+        return super.eliminar(request, token, t);
     }
 
     @Override
-    public Response modificar(String token, GrupoPerfiles t) {
-        return super.modificar(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response modificar(HttpServletRequest request, String token, GrupoPerfiles t) {
+        return super.modificar(request, token, t);
     }
 
     @Override
-    public Response alta(String token, GrupoPerfiles t) {
-        return super.alta(token, t); //To change body of generated methods, choose Tools | Templates.
+    public Response alta(HttpServletRequest request, String token, GrupoPerfiles t) {
+        return super.alta(request, token, t);
     }
 
     @Override
-    public Response obtener(String token, String id) {
-        return super.obtener(token, id); //To change body of generated methods, choose Tools | Templates.
+    public Response detalle(HttpServletRequest request, String token, String id) {
+        return super.detalle(request, token, id);
     }
 
     @Override
-    public Response listar(String token) {
-        return super.listar(token); //To change body of generated methods, choose Tools | Templates.
+    public Response listar(HttpServletRequest request, String token) {
+        return super.listar(request, token);
     }
-
-    
+       
     /**
      * sirve para asignar a un grupo de perfiles, una lista de perfiles para
      * agruparlos

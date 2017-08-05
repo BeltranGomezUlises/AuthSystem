@@ -37,6 +37,7 @@ import com.machineAdmin.daos.cg.admin.postgres.DaoSeccion;
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPerfil;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
+import com.machineAdmin.entities.cg.admin.mongo.CGConfig.BitacorasConfig;
 import com.machineAdmin.services.cg.commons.ServiceBitacoraFacade;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -57,9 +58,9 @@ import org.reflections.Reflections;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class InitServletContext implements ServletContextListener {
-
+    
     private final String PACKAGE_SERVICES = "com.machineAdmin.services";
-
+    
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         try {
@@ -68,10 +69,10 @@ public class InitServletContext implements ServletContextListener {
             Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-
+        
     }
 
     /**
@@ -81,12 +82,12 @@ public class InitServletContext implements ServletContextListener {
      */
     private void initDBConfigs() throws Exception {
         System.out.println("INICIANDO LA CONFIGURACION EN BASE DE DATOS DEFAULT");
-
+        
         this.initDBPermissions();
 
         //<editor-fold defaultstate="collapsed" desc="Creacion de usuario default master">
         DaoUsuario daoUsuario = new DaoUsuario();
-
+        
         Usuario usuarioDB;
         try {
             usuarioDB = daoUsuario.stream().where(u -> u.getNombre().equals("Administrador")).findFirst().get();
@@ -97,17 +98,16 @@ public class InitServletContext implements ServletContextListener {
             usuarioDB.setTelefono("6671007264");
             usuarioDB.setContra(UtilsSecurity.cifrarMD5("1234"));
             daoUsuario.persist(usuarioDB);
-
+            
             usuarioDB.setUsuarioCreador(usuarioDB.getId());
             daoUsuario.update(usuarioDB);
         }
 
         //</editor-fold>  
-        
         //<editor-fold defaultstate="collapsed" desc="Creacion del perfil Master">
         //crear perfil master
         DaoPerfil daoPerfil = new DaoPerfil();
-
+        
         Perfil perfilMaster;
         try {
             perfilMaster = daoPerfil.stream().where(p -> p.getNombre().equals("Master")).findFirst().get();
@@ -120,16 +120,15 @@ public class InitServletContext implements ServletContextListener {
         }
 
         //</editor-fold>
-        
         //<editor-fold defaultstate="collapsed" desc="Creacion del grupo de perfiles">
         DaoGrupoPerfiles daoGrupoPerfil = new DaoGrupoPerfiles();
-
+        
         GrupoPerfiles gp = daoGrupoPerfil.findFirst();
         if (gp == null) {
             gp = new GrupoPerfiles();
             gp.setNombre("Administradores del sistema");
             gp.setDescripcion("Este grupo de roles puede administrar las configuraciones del sistemas, ademas de poder realizar las operaciones de negocio de toda la aplicacion");
-
+            
             List<Perfil> perfilesDelRol = new ArrayList<>();
             perfilesDelRol.add(perfilMaster);
             gp.setPerfilList(perfilesDelRol);
@@ -156,7 +155,6 @@ public class InitServletContext implements ServletContextListener {
         }
 
         //</editor-fold>
-        
         //<editor-fold defaultstate="collapsed" desc="Asignaion de permisos al usuario">
         for (Permiso existingPermission : UtilsPermissions.getExistingPermissions()) {
             if (!usuarioDB.getPermisoList().contains(existingPermission)) {
@@ -178,7 +176,7 @@ public class InitServletContext implements ServletContextListener {
             mail.setPort(465);
             mail.setSsl(true);
             mail = daoMail.persist(mail);
-
+            
             System.out.println("Correo dado de alta por defecto:");
             System.out.println(mail);
         }
@@ -186,7 +184,7 @@ public class InitServletContext implements ServletContextListener {
 
         //<editor-fold defaultstate="collapsed" desc="Configuraciones generales">
         CGConfig configuracionGeneral = daoConfig.findFirst();
-
+        
         if (configuracionGeneral == null) {
             configuracionGeneral = new CGConfig();
             //<editor-fold defaultstate="collapsed" desc="JWT CONFIGS">
@@ -198,12 +196,12 @@ public class InitServletContext implements ServletContextListener {
 
             //<editor-fold defaultstate="collapsed" desc="LOGIN CONFIGS">
             CGConfig.AccessConfig loginAttemptConfig = new CGConfig.AccessConfig();
-
+            
             loginAttemptConfig.setMaxNumberAttemps(10); // 10 intentos fallidos maximo
             loginAttemptConfig.setSecondsBetweenEvents(120); // 2 minutos de intervalo para contar
             loginAttemptConfig.setSecondsTermporalBlockingUser(1800); // bloqueado por media hora al sobrepasar intentos maximos
             loginAttemptConfig.setMaxPasswordRecords(3);
-
+            
             configuracionGeneral.setAccessConfig(loginAttemptConfig);
             //</editor-fold>
 
@@ -223,8 +221,14 @@ public class InitServletContext implements ServletContextListener {
             configuracionGeneral.setSmsConfig(sMSConfig);
             //</editor-fold>
 
-            daoConfig.persist(configuracionGeneral);
+            //<editor-fold defaultstate="collapsed" desc="BITACORAS CONFIG">
+            BitacorasConfig bitacorasConfig = new BitacorasConfig();
+            bitacorasConfig.setMesesAPersistir(6);
+            configuracionGeneral.setBitacorasConfig(bitacorasConfig);
 
+            //</editor-fold>
+            daoConfig.persist(configuracionGeneral);
+            
             System.out.println("configuracion generales instaladas:");
             System.out.println(configuracionGeneral);
         }
@@ -242,9 +246,9 @@ public class InitServletContext implements ServletContextListener {
         DaoPermiso daoPermiso = new DaoPermiso();
         DaoMenu daoMenu = new DaoMenu();
         DaoModulo daoModulo = new DaoModulo();
-
+        
         DaoSeccion daoSeccion = new DaoSeccion();
-
+        
         Package[] paquetes = Package.getPackages();
         List<String> paquetesServicios = Arrays.stream(paquetes)
                 .map(p -> p.getName())
@@ -264,7 +268,7 @@ public class InitServletContext implements ServletContextListener {
         for (String nombreSeccion : nombreSecciones) {
             try {
                 String packageSeccionName = PACKAGE_SERVICES + "." + nombreSeccion;
-
+                
                 Seccion seccion = daoSeccion.findOne(packageSeccionName);
                 if (seccion == null) {
                     seccion = new Seccion(packageSeccionName);
@@ -272,12 +276,12 @@ public class InitServletContext implements ServletContextListener {
                     daoSeccion.persist(seccion);
                 }
                 seccionesActuales.add(seccion);
-
+                
                 List<String> modulosPackageNombre = Arrays.stream(paquetes)
                         .map(p -> p.getName())
                         .filter(name -> name.startsWith(packageSeccionName))
                         .collect(toList());
-
+                
                 List<String> modulosNombres = modulosPackageNombre.stream()
                         .filter(packageName -> !packageName.endsWith(nombreSeccion))
                         .map(n -> n.split("\\.")[4])
@@ -289,7 +293,7 @@ public class InitServletContext implements ServletContextListener {
                     }
                     try {
                         String packageModuleName = packageSeccionName + "." + nombreModulo;
-
+                        
                         Modulo module = daoModulo.findOne(packageModuleName);
                         if (module == null) {
                             module = new Modulo(packageModuleName);
@@ -297,7 +301,7 @@ public class InitServletContext implements ServletContextListener {
                             module.setSeccion(seccion);
                             daoModulo.persist(module);
                         }
-
+                        
                         modulosActuales.add(module);
                         List<String> menusNames = getClasesSimpleNameFromPackage2(packageModuleName);
 
@@ -305,7 +309,7 @@ public class InitServletContext implements ServletContextListener {
                         for (String menusName : menusNames) {
                             try {
                                 String packageClassName = packageModuleName + "." + menusName;
-
+                                
                                 Menu menu = daoMenu.findOne(packageClassName);
                                 if (menu == null) {
                                     menu = new Menu(packageClassName);
@@ -330,10 +334,10 @@ public class InitServletContext implements ServletContextListener {
                                                     .contains(method.getName())) {
                                                 continue;
                                             }
-
+                                            
                                             String permisoId = menu.getId() + "." + method.getName();
                                             Permiso permiso = daoPermiso.findOne(permisoId);
-
+                                            
                                             if (permiso == null) {
                                                 permiso = new Permiso(permisoId);
                                                 permiso.setNombre(generatePublicMenuName(method.getName()));
@@ -366,8 +370,9 @@ public class InitServletContext implements ServletContextListener {
             //</editor-fold>
         }
 
-        //verificar que no existan secciones, modulos, menus y permisos en base de datos, que no esten en los actuales generados
-        //permisos
+        //<editor-fold defaultstate="collapsed" desc="PURGA DE ACCIONES, MENUS, MODULOS Y SECCIONES">
+//verificar que no existan secciones, modulos, menus y permisos en base de datos, que no esten en los actuales generados
+//permisos
         List<Permiso> permisosEnDB = daoPermiso.findAll();
         permisosEnDB.stream().filter((p) -> (!permisosActuales.contains(p))).forEach((p) -> {
             try {
@@ -376,7 +381,7 @@ public class InitServletContext implements ServletContextListener {
                 Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-        //menus
+//menus
         List<Menu> menusEnDB = daoMenu.findAll();
         menusEnDB.stream().filter((m) -> (!menusActuales.contains(m))).forEach((m) -> {
             try {
@@ -386,7 +391,7 @@ public class InitServletContext implements ServletContextListener {
             }
         });
 
-        //modulos
+//modulos
         List<Modulo> modulosEnDB = daoModulo.findAll();
         modulosEnDB.stream().filter((m) -> (!modulosActuales.contains(m))).forEach((m) -> {
             try {
@@ -396,7 +401,7 @@ public class InitServletContext implements ServletContextListener {
             }
         });
 
-        //verificar secciones
+//verificar secciones
         List<Seccion> seccionesEnDB = daoSeccion.findAll();
         seccionesEnDB.stream().filter((seccion) -> (!seccionesActuales.contains(seccion))).forEach((seccion) -> {
             try {
@@ -405,16 +410,16 @@ public class InitServletContext implements ServletContextListener {
                 Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-
+//</editor-fold>
     }
-
+    
     private List<String> getClasesSimpleNameFromPackage2(String packageName) {
         Reflections reflections = new Reflections(packageName);
         Set<Class<? extends ServiceBitacoraFacade>> subtypes = reflections.getSubTypesOf(ServiceBitacoraFacade.class);
-
+        
         return subtypes.stream().map(c -> c.getSimpleName()).collect(toList());
     }
-
+    
     private String generatePublicMenuName(String menuName) {
         String res = "" + Character.toUpperCase(menuName.charAt(0));
         for (int i = 1; i < menuName.length(); i++) {
@@ -426,5 +431,5 @@ public class InitServletContext implements ServletContextListener {
         }
         return res;
     }
-
+    
 }

@@ -21,6 +21,7 @@ import com.machineAdmin.managers.cg.admin.mongo.ManagerCGConfig;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceBitacoraFacade;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
 
 /**
@@ -35,18 +36,18 @@ public class Configuraciones extends ServiceBitacoraFacade<CGConfig, Object>{
     }
 
     @Override
-    public Response eliminar(String token, CGConfig t) {
+    public Response eliminar(HttpServletRequest request, String token, CGConfig t) {
         return new Response(Status.WARNING, "Opción no disponible");
     }
 
     @Override
-    public Response alta(String token, CGConfig t) {
+    public Response alta(HttpServletRequest request, String token, CGConfig t) {
         return new Response(Status.WARNING, "Opción no disponible");
     }
 
     @Override
-    public Response obtener(String token, String id) {
+    public Response detalle(HttpServletRequest request, String token, String id) {
         return new Response(Status.WARNING, "Opción no disponible");
     }
-
+    
 }

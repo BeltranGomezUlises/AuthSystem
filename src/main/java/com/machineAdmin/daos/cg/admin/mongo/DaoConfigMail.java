@@ -7,6 +7,7 @@ package com.machineAdmin.daos.cg.admin.mongo;
 
 import com.machineAdmin.daos.cg.commons.DaoMongoFacade;
 import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
+import com.machineAdmin.utils.UtilsDB;
 
 /**
  *
@@ -15,7 +16,7 @@ import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
 public class DaoConfigMail extends DaoMongoFacade<ConfigMail>{
 
     public DaoConfigMail() {
-        super("cg.config.correos", ConfigMail.class);
+        super(UtilsDB.getCGCollection("config.correos"), ConfigMail.class);
     }
             
 }

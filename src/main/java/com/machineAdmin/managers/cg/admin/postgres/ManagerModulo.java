@@ -18,21 +18,26 @@ package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoModulo;
 import com.machineAdmin.entities.cg.admin.postgres.Modulo;
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerModulo extends ManagerSQLFacade<Modulo, String>{
-    
+public class ManagerModulo extends ManagerSQLFacade<Modulo, String> {
+
     public ManagerModulo(String usuario) {
         super(usuario, new DaoModulo());
+    }
+
+    public ManagerModulo(Profundidad profundidad, String token) {
+        super(new DaoModulo(), profundidad, token);
     }
 
     @Override
     public String nombreColeccionParaRegistros() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

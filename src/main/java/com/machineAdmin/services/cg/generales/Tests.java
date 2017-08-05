@@ -18,6 +18,9 @@ package com.machineAdmin.services.cg.generales;
 
 import com.machineAdmin.models.cg.ModelTest;
 import com.machineAdmin.models.cg.responsesCG.Response;
+import com.machineAdmin.services.cg.commons.ServiceFacadeBase;
+import com.machineAdmin.utils.UtilsBitacora;
+import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -49,7 +52,15 @@ public class Tests {
         r.setData(ip);
         r.setMessage(agent);
         r.setDevMessage(authorization);
+        System.out.println("----");        
+        System.out.println(ip);
+        System.out.println(agent);
+        System.out.println(authorization);
+        System.out.println("----");
         
+        UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora("ulises", new Date(), "test", ip, agent, ServiceFacadeBase.obtenerSistemaOperativo(agent).toString());
+        
+        UtilsBitacora.bitacorizar("test", bitacora);                        
         return r;
     }
     @GET

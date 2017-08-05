@@ -18,6 +18,7 @@ package com.machineAdmin.managers.cg.commons;
 
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.commons.EntitySQL;
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import java.util.List;
 
 /**
@@ -30,14 +31,19 @@ import java.util.List;
  */
 public abstract class ManagerSQLFacade<T extends EntitySQL, K> extends ManagerSQLFacadeBase<T, K> {
 
+    public ManagerSQLFacade(DaoSQLFacade<T, K> dao) {
+        super(dao);
+    }
+    
     public ManagerSQLFacade(String usuario, DaoSQLFacade dao) {
         super(usuario, dao);
     }
 
-    public ManagerSQLFacade(DaoSQLFacade dao) {
-        super(dao);
+    public ManagerSQLFacade(DaoSQLFacade dao, Profundidad profundidad, String token) {
+        super(dao, profundidad, token);
     }
 
+    
     @Override
     public List<T> persistAll(List<T> entities) throws Exception {
         List<T> ts = dao.persistAll(entities);

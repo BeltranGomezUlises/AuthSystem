@@ -19,6 +19,9 @@ import org.jinq.jpa.JinqJPAStreamProvider;
  */
 public class UtilsDB {
 
+    private static final String NOMBRE_DB_PROYECTO = "machineAdmin";
+    private static final MongoClientURI CONNECTION_STRING = new MongoClientURI("mongodb://admin:mongo.90Y9B8yh$@192.168.10.8:27170/admin");
+    //private static final MongoClientURI CG_CONNECTION_STRING = new MongoClientURI("mongodb://localhost:27017");
     //<editor-fold defaultstate="collapsed" desc="mongo utils">
     /**
      * The MongoClient instance actually represents a pool of connections to the
@@ -26,16 +29,16 @@ public class UtilsDB {
      * multiple threads.
      *
      */
+
     //</editor-fold> 
-    
     //<editor-fold defaultstate="collapsed" desc="CG DB">
 //configuracion general
-    private static final String CG_DATA_BASE_NAME = "cg";
-    //private static final MongoClientURI CONNECTION_STRING = new MongoClientURI("mongodb://admin:mongo.90Y9B8yh$@192.168.10.8:27170/admin");
-    private static final MongoClientURI CG_CONNECTION_STRING = new MongoClientURI("mongodb://localhost:27017");
-    private static final MongoClient CG_MONGO_CLIENT = new MongoClient(CG_CONNECTION_STRING);
+    //la union de segmento con nombre de proyecto debe de ser con guion bajo
+    private static final String CG_DATA_BASE_NAME = NOMBRE_DB_PROYECTO + "_" + "cg";
+
+    private static final MongoClient CG_MONGO_CLIENT = new MongoClient(CONNECTION_STRING);
     public static final MongoDatabase CG_DB = CG_MONGO_CLIENT.getDatabase(CG_DATA_BASE_NAME);
-    
+
     public static DBCollection getCGCollection(String name) {
         return CG_MONGO_CLIENT.getDB(CG_DATA_BASE_NAME).getCollection(name);
     }
@@ -43,12 +46,11 @@ public class UtilsDB {
 
     //<editor-fold defaultstate="collapsed" desc="BITACORA DB">
     //bitacoras
-    private static final String BITACORA_DATA_BASE_NAME = "bitacora";
-    //private static final MongoClientURI CONNECTION_STRING = new MongoClientURI("mongodb://admin:mongo.90Y9B8yh$@192.168.10.8:27170/admin");
-    private static final MongoClientURI BITACORA_CONNECTION_STRING = new MongoClientURI("mongodb://localhost:27017");
-    private static final MongoClient BITACORA_MONGO_CLIENT = new MongoClient(BITACORA_CONNECTION_STRING);
+    //la union de segmento con nombre de proyecto debe de ser con guion bajo
+    private static final String BITACORA_DATA_BASE_NAME = NOMBRE_DB_PROYECTO + "_" + "bitacora";
+    private static final MongoClient BITACORA_MONGO_CLIENT = new MongoClient(CONNECTION_STRING);
     public static final MongoDatabase BITACORA_DB = CG_MONGO_CLIENT.getDatabase(BITACORA_DATA_BASE_NAME);
-    
+
     public static DBCollection getBitacoraCollection(String name) {
         return BITACORA_MONGO_CLIENT.getDB(BITACORA_DATA_BASE_NAME).getCollection(name);
     }
@@ -56,14 +58,13 @@ public class UtilsDB {
 
     //<editor-fold defaultstate="collapsed" desc="AUDITORIA DB">
 //auditorias
-    private static final String AUDITORIA_DATA_BASE_NAME = "auditoria";
-    //private static final MongoClientURI CONNECTION_STRING = new MongoClientURI("mongodb://admin:mongo.90Y9B8yh$@192.168.10.8:27170/admin");
-    private static final MongoClientURI AUDITORIA_CONNECTION_STRING = new MongoClientURI("mongodb://localhost:27017");
-    private static final MongoClient AUDITORIA_MONGO_CLIENT = new MongoClient(AUDITORIA_CONNECTION_STRING);
+    //la union de segmento con nombre de proyecto debe de ser con guion bajo
+    private static final String AUDITORIA_DATA_BASE_NAME = NOMBRE_DB_PROYECTO + "_" + "auditoria";
+    private static final MongoClient AUDITORIA_MONGO_CLIENT = new MongoClient(CONNECTION_STRING);
     public static final MongoDatabase AUDITORIA_DB = CG_MONGO_CLIENT.getDatabase(AUDITORIA_DATA_BASE_NAME);
-    
+
     public static DBCollection getAuditoriaCollection(String name) {
-        return CG_MONGO_CLIENT.getDB(AUDITORIA_DATA_BASE_NAME).getCollection(name);
+        return BITACORA_MONGO_CLIENT.getDB(AUDITORIA_DATA_BASE_NAME).getCollection(name);
     }
 //</editor-fold>
 
@@ -102,6 +103,5 @@ public class UtilsDB {
         }
         return eMFactoryMachineAdmin;
     }
-
 
 }
