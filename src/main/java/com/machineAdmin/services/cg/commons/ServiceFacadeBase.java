@@ -17,13 +17,11 @@
 package com.machineAdmin.services.cg.commons;
 
 import com.machineAdmin.entities.cg.commons.IEntity;
-import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.commons.ManagerFacade;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
-import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import static com.machineAdmin.services.cg.commons.ServiceFacadeBase.SistemaOperativo.*;
+import static com.machineAdmin.utils.UtilsService.*;
 import com.machineAdmin.utils.UtilsAuditoria;
 import com.machineAdmin.utils.UtilsBitacora;
 import java.util.Date;
@@ -76,16 +74,11 @@ public class ServiceFacadeBase<T extends IEntity, K> {
     @GET
     public Response listar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token) {
         Response response = new Response();
-        try {                        
+        try {
             this.manager.setToken(token);
-            
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
 
-            //bitacoriza            
-            String ip = request.getRemoteAddr();
-            String agent = request.getHeader("User-Agent");
-
-            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Listar", ip, null, obtenerSistemaOperativo(agent).toString());
+            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Listar", request);
             UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
             //audita
             UtilsAuditoria.ModeloAuditoria auditoria = new UtilsAuditoria.ModeloAuditoria(manager.getUsuario(), "Listar", null);
@@ -118,11 +111,8 @@ public class ServiceFacadeBase<T extends IEntity, K> {
             response.setData(manager.findOne(manager.stringToKey(id)));
             response.setMessage("Entidad encontrada");
 
-            //bitacoriza            
-            String ip = request.getRemoteAddr();
-            String agent = request.getHeader("User-Agent");
-
-            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Detalle", ip, null, obtenerSistemaOperativo(agent).toString());
+            //bitacorizar
+            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Detalle", request);
             UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
@@ -149,11 +139,8 @@ public class ServiceFacadeBase<T extends IEntity, K> {
             this.manager.setToken(token);
             response.setData(manager.persist(t));
             response.setMessage("Entidad persistida");
-            //bitacoriza            
-            String ip = request.getRemoteAddr();
-            String agent = request.getHeader("User-Agent");
-
-            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Alta", ip, null, obtenerSistemaOperativo(agent).toString());
+            //bitacoriza                        
+            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Alta", request);
             UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
@@ -182,12 +169,12 @@ public class ServiceFacadeBase<T extends IEntity, K> {
             manager.update(t);
             response.setData(t);
             response.setMessage("Entidad actualizada");
-            //bitacoriza            
-            String ip = request.getRemoteAddr();
-            String agent = request.getHeader("User-Agent");
-
-            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", ip, null, obtenerSistemaOperativo(agent).toString());
+            
+            
+            //<editor-fold defaultstate="collapsed" desc="BITSCORIZAR">
+            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", request);
             UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            //</editor-fold>    
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
@@ -214,10 +201,7 @@ public class ServiceFacadeBase<T extends IEntity, K> {
             manager.delete((K) t.getId());
             response.setMessage("Entidad eliminada");
             //bitacoriza            
-            String ip = request.getRemoteAddr();
-            String agent = request.getHeader("User-Agent");
-
-            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Eliminar", ip, null, obtenerSistemaOperativo(agent).toString());
+            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Eliminar", request);
             UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
@@ -226,175 +210,6 @@ public class ServiceFacadeBase<T extends IEntity, K> {
             setErrorResponse(response, e);
         }
         return response;
-    }
-
-    /**
-     * asigna al modelo response, la pila de causas del error de la exception e
-     *
-     * @param response response a asignar la pila de causas
-     * @param e la exception lanzada
-     */
-    public static final void setCauseMessage(Response response, Throwable e) {
-        String anterior = response.getMeta().getDevMessage();
-        if (anterior == null) {
-            response.setDevMessage("CAUSE: " + e.getMessage());
-        } else {
-            response.setDevMessage(response.getMeta().getDevMessage() + " CAUSE: " + e.getMessage());
-        }
-        if (e.getCause() != null) {
-            setCauseMessage(response, e.getCause());
-        }
-    }
-
-    /**
-     * asigna a response el estatus y el mensaje de un token invalido, se
-     * utiliza cuando se lanzá una exception de tipo TokenInvalidoException
-     *
-     * @param response res
-     */
-    public static final void setInvalidTokenResponse(Response response) {
-        response.setStatus(Status.WARNING);
-        response.setDevMessage("Token inválido");
-    }
-
-    /**
-     * asignar a response el estatus WARNING y los mensajes proporcionados
-     *
-     * @param res modelo response generico a asignar valores
-     * @param message mensaje para el usuario
-     * @param devMessage mensaje para el desarrollador
-     */
-    public static final void setWarningResponse(Response res, String message, String devMessage) {
-        res.setStatus(Status.WARNING);
-        res.setMessage(message);
-        res.setDevMessage(devMessage);
-    }
-
-    /**
-     * asignar a response el estatus WARNING y el mensaje proporsionado
-     *
-     * @param res modelo response generico a asignar valores
-     * @param devMessage mensaje para el desarrollador
-     */
-    public static final void setWarningResponse(Response res, String devMessage) {
-        res.setStatus(Status.WARNING);
-        res.setDevMessage(devMessage);
-    }
-
-    /**
-     * asignar a response el estatus ERROR y el mensaje proporsionado para el
-     * usuario
-     *
-     * @param res modelo response generico a asignar valores
-     * @param err exception lanzada
-     * @param message mensaje para el usuario
-     */
-    public static final void setErrorResponse(Response res, Throwable err, String message) {
-        res.setStatus(Status.ERROR);
-        setCauseMessage(res, err);
-        res.setMessage(message);
-    }
-
-    /**
-     * asignar a response el estatus ERROR asi como un mensaje generico
-     *
-     * @param res modelo response generico a asignar valores
-     * @param err exception lanzada
-     */
-    public static final void setErrorResponse(Response res, Throwable err) {
-        res.setStatus(Status.ERROR);
-        res.setMessage("Existió un error de programación, consultar con el administrador del sistema");
-        setCauseMessage(res, err);
-
-    }
-
-    /**
-     * asigna a response el estatus OK y los mensajes proporcionados
-     *
-     * @param res modelo response generico
-     * @param message
-     * @param devMessage
-     */
-    public static final void setOkResponse(Response res, String message, String devMessage) {
-        res.setStatus(Status.OK);
-        res.setMessage(message);
-        res.setDevMessage(devMessage);
-    }
-
-    /**
-     * asigna a response el estatus OK mas los mensajes proporcionados, ademas
-     * de poner en metadata el objeto data proporsionado
-     *
-     * @param res
-     * @param data
-     * @param message
-     * @param devMessage
-     */
-    public static final void setOkResponse(Response res, Object data, String message, String devMessage) {
-        res.setStatus(Status.OK);
-        res.setData(data);
-        res.setMessage(message);
-        res.setDevMessage(devMessage);
-    }
-
-    /**
-     * asignar a response el estatus OK, el metadata y un mensaje para el
-     * desarrollador
-     *
-     * @param res
-     * @param data
-     * @param devMessage
-     */
-    public static final void setOkResponse(Response res, Object data, String devMessage) {
-        res.setStatus(Status.OK);
-        res.setData(data);
-        res.setDevMessage(devMessage);
-    }
-
-    /**
-     * asigna solo le estatus OK a response y le añade el mensaje para el
-     * desarrollador
-     *
-     * @param res
-     * @param devMessage
-     */
-    public static final void setOkResponse(Response res, String devMessage) {
-        res.setStatus(Status.OK);
-        res.setDevMessage(devMessage);
-    }
-
-    /**
-     * genera el enum correspondiente al sistema operativo del cual la cabecera
-     * UserAgent de la peticion indica
-     *
-     * @param userAgent cadena con el texto de la cabecera User-Agent
-     * @return enumarador del sistema operativo
-     */
-    public static final SistemaOperativo obtenerSistemaOperativo(String userAgent) {
-        if (userAgent.contains("Linux x")) {
-            return LINUX;
-        }
-        if (userAgent.contains("Windows")) {
-            return WIN;
-        }
-        if (userAgent.contains("iPhone OS")) {
-            return MAC;
-        }
-        if (userAgent.contains("Android")) {
-            return ANDROID;
-        }
-        if (userAgent.contains("Mac")) {
-            return IOS;
-        } else {
-            return DESCONOCIDO;
-        }
-    }
-
-    /**
-     * enumerador del los sistemas operativos conocidos
-     */
-    public static enum SistemaOperativo {
-        WIN, LINUX, MAC, ANDROID, IOS, DESCONOCIDO
     }
 
 }

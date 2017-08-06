@@ -22,6 +22,9 @@ import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
 import org.mongojack.DBQuery;
 import org.mongojack.JacksonDBCollection;
 
@@ -32,12 +35,18 @@ import org.mongojack.JacksonDBCollection;
 public class UtilsBitacora {
 
     public static void bitacorizar(String collectionName, ModeloBitacora model) {
-        //buscar el usuario en base de datos para obtener su nombre
-        ManagerUsuario managerUsuario = new ManagerUsuario();
-        model.setUsuario(managerUsuario.nombreDeUsuario(UUID.fromString(model.getUsuario())));
+        new Thread(() -> {
+            try {
+                //buscar el usuario en base de datos para obtener su nombre
+                ManagerUsuario managerUsuario = new ManagerUsuario();
+                model.setUsuario(managerUsuario.nombreDeUsuario(UUID.fromString(model.getUsuario())));
 
-        JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getBitacoraCollection(collectionName), ModeloBitacora.class, String.class);
-        coll.insert(model);
+                JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getBitacoraCollection(collectionName), ModeloBitacora.class, String.class);
+                coll.insert(model);
+            } catch (Exception e) {
+                Logger.getLogger(UtilsBitacora.class.getName()).log(Level.WARNING, "No se pudo bitacorizar", e);
+            }
+        }).start();        
     }
 
     public static void bitacorizarLogOut(String usuario) {
@@ -46,7 +55,7 @@ public class UtilsBitacora {
         coll.insert(bitacoraAcceso);
     }
 
-    public static void bitacorizarLogIn(String usuario) {                
+    public static void bitacorizarLogIn(String usuario) {
         JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getBitacoraCollection("login"), Object.class, String.class);
         BitacoraAcceso bitacoraAcceso = new BitacoraAcceso(usuario);
         coll.insert(bitacoraAcceso);
@@ -81,7 +90,6 @@ public class UtilsBitacora {
         private Date fecha;
         private String accion;
         private String ipCliente;
-        private String navegadorCliente;
         private String sistemaOperativoCliente;
 
         public ModeloBitacora() {
@@ -93,13 +101,12 @@ public class UtilsBitacora {
             this.accion = accion;
         }
 
-        public ModeloBitacora(String usuario, Date fecha, String accion, String ipCliente, String navegadorCliente, String sistemaOperativoCliente) {
+        public ModeloBitacora(String usuario, Date fecha, String accion, HttpServletRequest request) {
             this.usuario = usuario;
             this.fecha = fecha;
             this.accion = accion;
-            this.ipCliente = ipCliente;
-            this.navegadorCliente = navegadorCliente;
-            this.sistemaOperativoCliente = sistemaOperativoCliente;
+            this.ipCliente = request.getRemoteAddr();
+            this.sistemaOperativoCliente = UtilsService.obtenerSistemaOperativo(request.getHeader("User-Agent"));
         }
 
         public String getIpCliente() {
@@ -108,14 +115,6 @@ public class UtilsBitacora {
 
         public void setIpCliente(String ipCliente) {
             this.ipCliente = ipCliente;
-        }
-
-        public String getNavegadorCliente() {
-            return navegadorCliente;
-        }
-
-        public void setNavegadorCliente(String navegadorCliente) {
-            this.navegadorCliente = navegadorCliente;
         }
 
         public String getSistemaOperativoCliente() {

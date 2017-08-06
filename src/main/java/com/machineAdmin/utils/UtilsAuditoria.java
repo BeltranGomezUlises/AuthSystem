@@ -17,8 +17,12 @@
 package com.machineAdmin.utils;
 
 import com.machineAdmin.entities.cg.commons.EntityMongo;
+import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.mongojack.DBQuery;
 import org.mongojack.JacksonDBCollection;
 
@@ -27,10 +31,20 @@ import org.mongojack.JacksonDBCollection;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class UtilsAuditoria {
-    
+
     public static void auditar(String collectionName, ModeloAuditoria model) {
-        JacksonDBCollection<ModeloAuditoria, String> coll = JacksonDBCollection.wrap(UtilsDB.getAuditoriaCollection(collectionName), ModeloAuditoria.class, String.class);
-        coll.insert(model);
+        new Thread(() -> {
+            try {
+                //buscar el usuario en base de datos para obtener su nombre
+                ManagerUsuario managerUsuario = new ManagerUsuario();
+                model.setUsuario(managerUsuario.nombreDeUsuario(UUID.fromString(model.getUsuario())));
+
+                JacksonDBCollection<ModeloAuditoria, String> coll = JacksonDBCollection.wrap(UtilsDB.getAuditoriaCollection(collectionName), ModeloAuditoria.class, String.class);
+                coll.insert(model);
+            } catch (Exception e) {
+                Logger.getLogger(UtilsAuditoria.class.getName()).log(Level.WARNING, "No se pudo auditar", e);
+            }            
+        }).start();
     }
 
     public static List<UtilsAuditoria.ModeloAuditoria> auditorias(String collectionName) {
@@ -55,7 +69,7 @@ public class UtilsAuditoria {
         JacksonDBCollection<UtilsAuditoria.ModeloAuditoria, String> coll = JacksonDBCollection.wrap(UtilsDB.getAuditoriaCollection(collectionName), UtilsAuditoria.ModeloAuditoria.class, String.class);
         return coll.find(DBQuery.lessThanEquals("fecha", fechaFinal)).toArray();
     }
-        
+
     public static class ModeloAuditoria extends EntityMongo {
 
         private String usuario;
@@ -76,7 +90,7 @@ public class UtilsAuditoria {
             this.objetoNuevo = objetoNuevo;
             this.objectoReferencia = objectoReferencia;
         }
-                
+
         public ModeloAuditoria(String usuario, String accion, Object objectoReferencia) {
             this.usuario = usuario;
             this.fecha = new Date();

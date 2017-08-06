@@ -16,15 +16,12 @@
  */
 package com.machineAdmin.services.cg.generales;
 
-import com.machineAdmin.models.cg.ModelTest;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.commons.ServiceFacadeBase;
 import com.machineAdmin.utils.UtilsBitacora;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -58,11 +55,12 @@ public class Tests {
         System.out.println(authorization);
         System.out.println("----");
         
-        UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora("ulises", new Date(), "test", ip, agent, ServiceFacadeBase.obtenerSistemaOperativo(agent).toString());
+        UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora("ulises", new Date(), "test", request);
         
         UtilsBitacora.bitacorizar("test", bitacora);                        
         return r;
     }
+    
     @GET
     @Path("/explotar")
     public Response explotarServidor() {
@@ -100,20 +98,4 @@ public class Tests {
         return r;
     }
     
-    @POST
-    @Path("/uuid")
-    public Response uuid(ModelTest test){        
-        Response res = new Response();
-        try {
-            
-            res.setData(test);
-            
-            
-            
-        } catch (Exception e) {
-            
-        }        
-        return res;       
-        
-    }
 }

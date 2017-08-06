@@ -23,7 +23,7 @@ import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlGrupoPerfil;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceBitacoraFacade;
-import static com.machineAdmin.services.cg.commons.ServiceFacadeBase.*;
+import static com.machineAdmin.utils.UtilsService.*;
 import com.machineAdmin.utils.UtilsJWT;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;

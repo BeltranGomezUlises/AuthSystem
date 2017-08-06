@@ -5,7 +5,7 @@ import com.machineAdmin.managers.cg.commons.ManagerFacade;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import static com.machineAdmin.services.cg.commons.ServiceFacadeBase.*;
+import static com.machineAdmin.utils.UtilsService.*;
 import com.machineAdmin.utils.UtilsBitacora;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
