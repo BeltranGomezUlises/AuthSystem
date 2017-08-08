@@ -5,19 +5,24 @@
  */
 package com.machineAdmin.managers.cg.commons;
 
+import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
+import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPerfil;
 import com.machineAdmin.daos.cg.commons.DaoMongoFacade;
-import com.machineAdmin.entities.cg.commons.EntityMongo;
+import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.entities.cg.commons.EntityMongoCatalog;
 import com.machineAdmin.entities.cg.commons.Profundidad;
+import com.machineAdmin.managers.cg.exceptions.ProfundidadNoAsignadaException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import java.util.List;
+import java.util.UUID;
 import static java.util.stream.Collectors.toList;
 import org.mongojack.DBQuery;
+import org.mongojack.DBQuery.Query;
 
 /**
- * Facade, cumple con el comportamiento base de una entidad de una colección en
- * mongoDB
+ * fachada para manejadores de entidades mongo que tienen usuario creador y
+ * habilidad de acceder con profundidad
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> is an entity
@@ -30,7 +35,7 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
     protected DaoMongoFacade<T> dao;
 
     public ManagerMongoCatalog(DaoMongoFacade<T> dao) {
-        super();        
+        super();
         this.dao = dao;
     }
 
@@ -40,7 +45,7 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
     }
 
     @Override
-    public T persist(T entity) {        
+    public T persist(T entity) {
         T t = (T) dao.persist(entity);
         return t;
     }
@@ -93,21 +98,32 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
     }
 
     @Override
-    public List<T> findAll() {
-        return dao.findAll();
+    public List<T> findAll() throws Exception {
+        Query q = this.queryProfundidad();
+        if (q != null) {
+            return dao.findAll(q);
+        } else {
+            throw new Exception("Query de profundidad imposible de generar");
+        }
     }
 
-    public List<T> findAll(String... attributesProjection) {
-        return dao.findAll(attributesProjection);
-    }
-
-    public List<T> findall(String... attributesProjection) {
-        return dao.findAll(attributesProjection);
+    public List<T> findAll(String... attributesProjection) throws Exception {
+        Query q = this.queryProfundidad();
+        if (q != null) {
+            return dao.findAll(q, attributesProjection);
+        } else {
+            return dao.findAll(attributesProjection);
+        }
     }
 
     @Override
-    public List<T> findAll(int max) {
-        return dao.findAll(max);
+    public List<T> findAll(int max) throws Exception {
+        Query q = this.queryProfundidad();
+        if (q != null) {
+            return dao.findAll(q, max);
+        } else {
+            return dao.findAll(max);
+        }
     }
 
     public List<T> findAll(int max, String... attributesProjection) {
@@ -151,6 +167,41 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
     @Override
     public Object stringToKey(String s) {
         return s;
+    }
+
+    private Query queryProfundidad() throws Exception {
+        Query q = null;
+        if (this.profundidad == null) {
+            throw new ProfundidadNoAsignadaException();
+        }
+        switch (this.profundidad) {
+            case TODOS:
+                //no poner query
+                break;
+            case PROPIOS:
+                q = DBQuery.is("usuarioCreador", this.usuario);
+                break;
+            case PROPIOS_MAS_PERFILES:
+                //buscar los id de los usuarios con mis perfiles 
+                DaoUsuario daoUsuario = new DaoUsuario();
+
+                Usuario u = daoUsuario.findOne(UUID.fromString(usuario));
+
+                //ids de perfiles del usuario
+                List<UUID> perfilesDelUsuario = u.getUsuariosPerfilList().stream()
+                        .map(up -> up.getUsuariosPerfilPK().getPerfil())
+                        .collect(toList());
+                //ids de usuarios con esos perfiles
+                DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
+                List<UUID> usuariosDeLosPerfiles = daoUsuariosPerfil.stream()
+                        .where(up -> perfilesDelUsuario.contains(up.getUsuariosPerfilPK().getPerfil()))
+                        .map(up -> up.getUsuariosPerfilPK().getUsuario())
+                        .collect(toList());
+
+                q = DBQuery.in("usuarioCreador", perfilesDelUsuario);
+                break;         
+        }
+        return q;
     }
 
 }

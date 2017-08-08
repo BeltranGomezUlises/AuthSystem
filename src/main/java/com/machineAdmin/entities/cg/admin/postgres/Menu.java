@@ -16,10 +16,13 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
+import com.machineAdmin.entities.cg.commons.EntitySQL;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -29,23 +32,20 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
+import javax.xml.bind.annotation.XmlRootElement;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.machineAdmin.entities.cg.commons.EntitySQL;
-import javax.persistence.Entity;
 
 /**
- * entidad que representa un menu del sistema ( tiene una lista de acciones, y para cada accion un permiso "permisoList" )
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity
 @Table(name = "menu")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Menu.findAll", query = "SELECT m FROM Menu m")
     , @NamedQuery(name = "Menu.findById", query = "SELECT m FROM Menu m WHERE m.id = :id")
     , @NamedQuery(name = "Menu.findByNombre", query = "SELECT m FROM Menu m WHERE m.nombre = :nombre")})
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Menu extends EntitySQL implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -58,10 +58,10 @@ public class Menu extends EntitySQL implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "menu")
     private List<Permiso> permisoList;
     @JoinColumn(name = "modulo", referencedColumnName = "id")
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Modulo modulo;
 
     public Menu() {
@@ -87,7 +87,7 @@ public class Menu extends EntitySQL implements Serializable {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
+        
     public List<Permiso> getPermisoList() {
         return permisoList;
     }
@@ -119,12 +119,15 @@ public class Menu extends EntitySQL implements Serializable {
             return false;
         }
         Menu other = (Menu) object;
-        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.Menu[ id=" + id + " ]";
     }
-
+    
 }

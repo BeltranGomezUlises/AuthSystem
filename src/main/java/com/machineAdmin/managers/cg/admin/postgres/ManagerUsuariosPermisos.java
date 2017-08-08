@@ -14,16 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.daos.cg.exceptions;
+package com.machineAdmin.managers.cg.admin.postgres;
+
+import com.machineAdmin.daos.cg.admin.postgres.DaoUsuarioPermisos;
+import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos;
+import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisosPK;
+import com.machineAdmin.managers.cg.commons.ManagerSQL;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class SQLPersistenceException extends Exception{
+public class ManagerUsuariosPermisos extends ManagerSQL<UsuariosPermisos, UsuariosPermisosPK>{
 
-    public SQLPersistenceException(String message) {
-        super(message);
+    public ManagerUsuariosPermisos() {
+        super(new DaoUsuarioPermisos());
     }
-        
+
+    @Override
+    public String nombreColeccionParaRegistros() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
 }

@@ -34,7 +34,7 @@ import org.mongojack.JacksonDBCollection;
  */
 public class UtilsBitacora {
 
-    public static void bitacorizar(String collectionName, ModeloBitacora model) {
+    public static void bitacorizar(String collectionName, ModeloBitacora model)throws UnsupportedOperationException {
         new Thread(() -> {
             try {
                 //buscar el usuario en base de datos para obtener su nombre
@@ -43,7 +43,9 @@ public class UtilsBitacora {
 
                 JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getBitacoraCollection(collectionName), ModeloBitacora.class, String.class);
                 coll.insert(model);
-            } catch (Exception e) {
+            } catch (UnsupportedOperationException e) {
+                throw e;
+            }catch(Exception e){
                 Logger.getLogger(UtilsBitacora.class.getName()).log(Level.WARNING, "No se pudo bitacorizar", e);
             }
         }).start();        

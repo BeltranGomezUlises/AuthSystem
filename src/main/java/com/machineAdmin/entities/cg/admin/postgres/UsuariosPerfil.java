@@ -16,10 +16,8 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
+import com.machineAdmin.entities.cg.commons.EntitySQL;
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -29,19 +27,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * entidad relacion de usuarios con perfiles de N:N
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity
 @Table(name = "usuarios_perfil")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UsuariosPerfil.findAll", query = "SELECT u FROM UsuariosPerfil u")
     , @NamedQuery(name = "UsuariosPerfil.findByHereda", query = "SELECT u FROM UsuariosPerfil u WHERE u.hereda = :hereda")})
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class UsuariosPerfil extends EntitySQLCatalog implements Serializable {
+public class UsuariosPerfil extends EntitySQL implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -56,7 +54,6 @@ public class UsuariosPerfil extends EntitySQLCatalog implements Serializable {
     private Usuario usuario1;
 
     public UsuariosPerfil() {
-        this.hereda = false;
     }
 
     public UsuariosPerfil(UsuariosPerfilPK usuariosPerfilPK) {
@@ -101,24 +98,22 @@ public class UsuariosPerfil extends EntitySQLCatalog implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 97 * hash + Objects.hashCode(this.usuariosPerfilPK);
+        int hash = 0;
+        hash += (usuariosPerfilPK != null ? usuariosPerfilPK.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof UsuariosPerfil)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        UsuariosPerfil other = (UsuariosPerfil) object;
+        if ((this.usuariosPerfilPK == null && other.usuariosPerfilPK != null) || (this.usuariosPerfilPK != null && !this.usuariosPerfilPK.equals(other.usuariosPerfilPK))) {
             return false;
         }
-        final UsuariosPerfil other = (UsuariosPerfil) obj;
-        return Objects.equals(this.usuariosPerfilPK, other.usuariosPerfilPK);
+        return true;
     }
 
     @Override
@@ -130,15 +125,5 @@ public class UsuariosPerfil extends EntitySQLCatalog implements Serializable {
     public Object getId() {
         return usuariosPerfilPK;
     }
-
-    @Override
-    public UUID getUsuarioCreador() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setUsuarioCreador(UUID usuarioCreador) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    
 }

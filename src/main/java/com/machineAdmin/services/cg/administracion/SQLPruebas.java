@@ -14,22 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.entities.cg.commons;
+package com.machineAdmin.services.cg.administracion;
 
 /**
- * clase padre de entidades mongo con usuario creador para acceder con profundiad
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class EntityMongoCatalog extends EntityMongo {
-       
-    private String usuarioCreador;
-
-    public String getUsuarioCreador() {
-        return usuarioCreador;
-    }
-
-    public void setUsuarioCreador(String usuarioCreador) {        
-        this.usuarioCreador = usuarioCreador;
-    }
-
+public class SQLPruebas {
+    
 }

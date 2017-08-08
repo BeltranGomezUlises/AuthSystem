@@ -20,7 +20,7 @@ import java.util.UUID;
 import org.eclipse.persistence.annotations.Converter;
 
 /**
- * clase padre para aquellas entidades que son un catalogo y que requiere de una columna de usuario creador
+ * clase padre para entidades sql que tienen un usuario creador y puedes acceder con profundidad
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Converter(name = "uuidConverter", converterClass = UUIDConverter.class)

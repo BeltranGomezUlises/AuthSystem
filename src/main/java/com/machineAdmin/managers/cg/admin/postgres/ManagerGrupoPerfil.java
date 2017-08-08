@@ -17,15 +17,10 @@
 package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoGrupoPerfiles;
-import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
-import com.machineAdmin.daos.cg.exceptions.ConstraintException;
-import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles;
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
 import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.commons.ManagerSQLCatalog;
-import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
-import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlGrupoPerfil;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,21 +32,26 @@ import java.util.UUID;
  */
 public class ManagerGrupoPerfil extends ManagerSQLCatalog<GrupoPerfiles, UUID> {
 
-    public ManagerGrupoPerfil(){
+    public ManagerGrupoPerfil() {
         super(new DaoGrupoPerfiles());
     }
 
-    public ManagerGrupoPerfil(String token, Profundidad profundidad) throws TokenInvalidoException, TokenExpiradoException {
+    public ManagerGrupoPerfil(String token, Profundidad profundidad) throws Exception {
         super(new DaoGrupoPerfiles(), token, profundidad);
     }
-        
-    public void asignarPerfiles(ModelAsignarPerfilesAlGrupoPerfil model) throws SQLPersistenceException, ConstraintException {
+
+    public void asignarPerfiles(ModelAsignarPerfilesAlGrupoPerfil model) throws Exception {
         GrupoPerfiles gp = this.findOne(UUID.fromString(model.getGrupoPerfilId()));
         ManagerPerfil managerPerfil = new ManagerPerfil();
         managerPerfil.setUsuario(this.getUsuario());
-        
+
         List<Perfil> perfiles = new ArrayList<>();
-        model.getPerfilesIds().forEach(pId -> perfiles.add(managerPerfil.findOne(UUID.fromString(pId))));
+        model.getPerfilesIds().forEach(pId -> {
+            try {
+                perfiles.add(managerPerfil.findOne(UUID.fromString(pId)));
+            } catch (Exception e) {
+            }            
+        });
         gp.setPerfilList(perfiles);
         this.update(gp);
     }
@@ -60,5 +60,5 @@ public class ManagerGrupoPerfil extends ManagerSQLCatalog<GrupoPerfiles, UUID> {
     public String nombreColeccionParaRegistros() {
         return "gruposPerfiles";
     }
-    
+
 }

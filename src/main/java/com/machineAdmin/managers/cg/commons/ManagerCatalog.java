@@ -22,10 +22,11 @@ import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 
 /**
+ * manager para entidades que tienen usuario creador y la habilidada de tener profundidad de acceso
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
- * @param <T>
- * @param <K>
+ * @param <T> entidad a manejar
+ * @param <K> objeto de llave primaria de la entidad
  */
 public abstract class ManagerCatalog<T extends IEntity, K> extends ManagerFacade<T, K> {
 

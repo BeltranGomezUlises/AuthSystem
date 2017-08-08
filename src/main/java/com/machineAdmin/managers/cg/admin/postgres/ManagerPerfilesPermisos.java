@@ -14,16 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.daos.cg.exceptions;
+package com.machineAdmin.managers.cg.admin.postgres;
+
+import com.machineAdmin.daos.cg.admin.postgres.DaoPerfilesPermisos;
+import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos;
+import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisosPK;
+import com.machineAdmin.managers.cg.commons.ManagerSQL;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ConstraintException extends Exception{
+public class ManagerPerfilesPermisos extends ManagerSQL<PerfilesPermisos, PerfilesPermisosPK>{
 
-    public ConstraintException(String message) {
-        super(message);
+    public ManagerPerfilesPermisos() {
+        super(new DaoPerfilesPermisos());
+    }
+
+    @Override
+    public String nombreColeccionParaRegistros() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

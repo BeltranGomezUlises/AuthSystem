@@ -18,9 +18,6 @@ package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
-import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
-import com.machineAdmin.daos.cg.exceptions.ConstraintException;
-import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContras;
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
@@ -64,7 +61,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, UUID> {
 
     public ManagerUsuario(String token, Profundidad profundidad) throws TokenInvalidoException, TokenExpiradoException {
         super(new DaoUsuario(), token, profundidad);
-    }    
+    }
 
     @Override
     public Usuario persist(Usuario entity) throws Exception {
@@ -89,14 +86,8 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, UUID> {
     }
 
     @Override
-    public void update(Usuario entity) throws ConstraintException, SQLPersistenceException {
-        try {
-            super.update(entity);
-        } catch (ConstraintException ex) {
-            throw new ConstraintException(getMessageOfUniqueContraint(entity));
-        } catch (SQLPersistenceException ex) {
-            throw ex;
-        }
+    public void update(Usuario entity) throws Exception {
+        super.update(entity);
     }
 
     @Override
@@ -184,7 +175,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, UUID> {
             } else {
                 long intervaloDeIntento = (new Date().getTime() - intentoLogin.getFechaUltimoIntentoLogin().getTime());
                 if (intervaloDeIntento < UtilsConfig.getSecondsBetweenLoginAttempt() * 1000) { //es un intento fuera del rango permitido de tiempo 
-                    intentoLogin.aumentarNumeroDeIntentosLogin();
+                    intentoLogin.setNumeroIntentosLogin(intentoLogin.getNumeroIntentosLogin() + 1);                    
                 } else { //es un intento dentro del rango permitido de tiempo 
                     intentoLogin.setNumeroIntentosLogin(1);
                     intentoLogin.setFechaUltimoIntentoLogin(new Date());
@@ -295,7 +286,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, UUID> {
 
         ManagerUsuario managerUsuario = new ManagerUsuario();
         managerUsuario.setUsuario(usuario);
-        
+
         Usuario u = dao.findOne(UUID.fromString(userId));
         u.setContra(pass);
         managerUsuario.update(u);
@@ -320,17 +311,20 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, UUID> {
         }
     }
 
-    public void asignarPermisos(ModelAsignarPermisos modelo) throws ConstraintException, SQLPersistenceException {
-        Usuario u = dao.findOne(modelo.getId());
-        List<Permiso> permisosNuevos = new ArrayList<>();
-
-        DaoPermiso daoPermiso = new DaoPermiso();
-        modelo.getPermisosIds().forEach((permisoId) -> {
-            permisosNuevos.add(daoPermiso.findOne(permisoId));
-        });
-
-        u.setPermisoList(permisosNuevos);
-        dao.update(u);
+    public void asignarPermisos(ModelAsignarPermisos modelo) throws Exception {
+//        Usuario u = dao.findOne(modelo.getId());
+//        List<Permiso> permisosNuevos = new ArrayList<>();
+//
+//        DaoPermiso daoPermiso = new DaoPermiso();
+//        modelo.getPermisosIds().forEach((permisoId) -> {
+//            try {
+//                permisosNuevos.add(daoPermiso.findOne(permisoId));
+//            } catch (Exception e) {
+//            }            
+//        });
+//
+//        u.setPermisoList(permisosNuevos);
+//        dao.update(u);
     }
 
     public String nombreDeUsuario(UUID usuarioId) {

@@ -11,7 +11,7 @@ import org.mongojack.JacksonDBCollection;
 import org.mongojack.WriteResult;
 
 /**
- *
+ * Facade Data Access Object para entidades mongo
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> entidad que extienda de la clase EntityMongo
  */
@@ -105,6 +105,10 @@ public class DaoMongoFacade<T extends EntityMongo> {
 
     public List<T> findAll() {
         return coll.find().toArray();
+    }
+    
+    public List<T> findAll(Query query) {
+        return coll.find(query).toArray();       
     }
 
     public List<T> findAll(String... attributesProject) {

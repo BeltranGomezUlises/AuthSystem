@@ -12,7 +12,7 @@ import com.machineAdmin.utils.UtilsJWT;
 import java.util.List;
 
 /**
- *
+ * fachada de manager general
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> class entity used to restrict the class of use
  * @param <K>
@@ -106,15 +106,17 @@ public abstract class ManagerFacade<T extends IEntity, K> {
      * busca la primer entidad existente en base de datos
      *
      * @return la entidad manejada en primer posición en base de datos
+     * @throws java.lang.Exception
      */
-    public abstract T findFirst();
+    public abstract T findFirst() throws Exception;
 
     /**
      * busca todas las entidades existentes en base de datos
      *
      * @return lista con las entidades manejadas que existen en base de datos
+     * @throws java.lang.Exception
      */
-    public abstract List<T> findAll();
+    public abstract List<T> findAll() throws Exception;
 
     /**
      * busca todas las entidades existentes en base de datos con un numero
@@ -122,15 +124,17 @@ public abstract class ManagerFacade<T extends IEntity, K> {
      *
      * @param max numero maximo de entidades a tomar de base de datos
      * @return lista con las entidades manejadas que existen en base de datos
+     * @throws java.lang.Exception
      */
-    public abstract List<T> findAll(int max);
+    public abstract List<T> findAll(int max)throws Exception;
 
     /**
      * cuenta las entidades manejadas
      *
      * @return numero de entidades existentes en base de datos
+     * @throws java.lang.Exception
      */
-    public abstract long count();
+    public abstract long count()throws Exception;
 
     /**
      * transforma un String s a el tipo de datos del identificador de la entidad

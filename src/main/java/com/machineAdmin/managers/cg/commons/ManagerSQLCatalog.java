@@ -6,8 +6,6 @@
 package com.machineAdmin.managers.cg.commons;
 
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
-import com.machineAdmin.daos.cg.exceptions.ConstraintException;
-import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
 import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
@@ -16,8 +14,8 @@ import java.util.List;
 import org.jinq.jpa.JPAJinqStream;
 
 /**
- * Facade, contiene el comportamiento base, mas la particularidad de tener
- * bitacoras para las entidades que sean catalogos en SQL
+ * fachada para manejar entidades sql que tienen usuario creador y hbailidad de
+ * acceso con profundidad
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> Entidad a manejar
@@ -37,10 +35,10 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
         this.dao = dao;
     }
 
-    public JPAJinqStream<T> stream() {        
+    public JPAJinqStream<T> stream() {
         return dao.stream();
     }
-    
+
     @Override
     public T persist(T entity) throws Exception {
         dao.persist(entity);
@@ -58,37 +56,39 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
     }
 
     @Override
-    public void deleteAll(List<K> ids) throws SQLPersistenceException, Exception {
+    public void deleteAll(List<K> ids) throws Exception {
         dao.deleteAll(ids);
     }
 
     @Override
-    public void update(T entity) throws SQLPersistenceException, ConstraintException {
+    public void update(T entity) throws Exception {
         dao.update(entity);
     }
 
     @Override
-    public T findOne(K id) {
+    public T findOne(K id) throws Exception{
         return dao.findOne(id);
     }
 
     @Override
-    public List<T> findAll() {
+    public List<T> findAll() throws Exception {
+        //buscar el permiso
+        
         return dao.findAll();
     }
 
     @Override
-    public List<T> findAll(int max) {
+    public List<T> findAll(int max) throws Exception{
         return dao.findAll(max);
     }
 
     @Override
-    public long count() {
+    public long count() throws Exception{
         return dao.count();
     }
 
     @Override
-    public T findFirst() {
+    public T findFirst() throws Exception{
         return (T) dao.findFirst();
     }
 

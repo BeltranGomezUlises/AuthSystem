@@ -33,64 +33,64 @@ import org.eclipse.persistence.annotations.Converter;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Embeddable
-@Converter(name = "uuidConverter", converterClass = UUIDConverter.class) 
-public class BitacoraContrasPK implements Serializable {
+@Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
+public class PerfilesPermisosPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
     @Lob
     @Convert("uuidConverter")
-    @Column(name = "usuario")
-    private UUID usuario;
+    @Column(name = "perfil")
+    private UUID perfil;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
-    @Column(name = "contra")
-    private String contra;
+    @Column(name = "permiso")
+    private String permiso;
 
-    public BitacoraContrasPK() {
+    public PerfilesPermisosPK() {
     }
 
-    public BitacoraContrasPK(UUID usuario, String contra) {
-        this.usuario = usuario;
-        this.contra = contra;
+    public PerfilesPermisosPK(UUID perfil, String permiso) {
+        this.perfil = perfil;
+        this.permiso = permiso;
     }
 
-    public UUID getUsuario() {
-        return usuario;
+    public UUID getPerfil() {
+        return perfil;
     }
 
-    public void setUsuario(UUID usuario) {
-        this.usuario = usuario;
+    public void setPerfil(UUID perfil) {
+        this.perfil = perfil;
     }
 
-    public String getContra() {
-        return contra;
+    public String getPermiso() {
+        return permiso;
     }
 
-    public void setContra(String contra) {
-        this.contra = contra;
+    public void setPermiso(String permiso) {
+        this.permiso = permiso;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (usuario != null ? usuario.hashCode() : 0);
-        hash += (contra != null ? contra.hashCode() : 0);
+        hash += (perfil != null ? perfil.hashCode() : 0);
+        hash += (permiso != null ? permiso.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof BitacoraContrasPK)) {
+        if (!(object instanceof PerfilesPermisosPK)) {
             return false;
         }
-        BitacoraContrasPK other = (BitacoraContrasPK) object;
-        if ((this.usuario == null && other.usuario != null) || (this.usuario != null && !this.usuario.equals(other.usuario))) {
+        PerfilesPermisosPK other = (PerfilesPermisosPK) object;
+        if ((this.perfil == null && other.perfil != null) || (this.perfil != null && !this.perfil.equals(other.perfil))) {
             return false;
         }
-        if ((this.contra == null && other.contra != null) || (this.contra != null && !this.contra.equals(other.contra))) {
+        if ((this.permiso == null && other.permiso != null) || (this.permiso != null && !this.permiso.equals(other.permiso))) {
             return false;
         }
         return true;
@@ -98,7 +98,7 @@ public class BitacoraContrasPK implements Serializable {
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.BitacoraContrasPK[ usuario=" + usuario + ", contra=" + contra + " ]";
+        return "com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisosPK[ perfil=" + perfil + ", permiso=" + permiso + " ]";
     }
     
 }

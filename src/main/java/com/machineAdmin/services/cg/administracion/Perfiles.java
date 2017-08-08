@@ -112,7 +112,7 @@ public class Perfiles extends ServiceFacade<Perfil, UUID> {
         Response res = new Response();
         try {
             UtilsJWT.validateSessionToken(token);
-            res.setData(UtilsPermissions.permisosAsignadosAPerfil(perfilId));
+            res.setData(UtilsPermissions.permisosAsignadosAlPerfil(perfilId));
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(res);
         } catch (Exception e) {

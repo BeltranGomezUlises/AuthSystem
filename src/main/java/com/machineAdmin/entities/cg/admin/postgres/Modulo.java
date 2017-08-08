@@ -16,9 +16,11 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
+import com.machineAdmin.entities.cg.commons.EntitySQL;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -30,21 +32,20 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.machineAdmin.entities.cg.commons.EntitySQL;
 
 /**
- * entidad que representa un modulo del sistema
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity
 @Table(name = "modulo")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Modulo.findAll", query = "SELECT m FROM Modulo m")
     , @NamedQuery(name = "Modulo.findById", query = "SELECT m FROM Modulo m WHERE m.id = :id")
     , @NamedQuery(name = "Modulo.findByNombre", query = "SELECT m FROM Modulo m WHERE m.nombre = :nombre")})
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Modulo extends EntitySQL implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -57,10 +58,10 @@ public class Modulo extends EntitySQL implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(mappedBy = "modulo")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modulo")
     private List<Menu> menuList;
     @JoinColumn(name = "seccion", referencedColumnName = "id")
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Seccion seccion;
 
     public Modulo() {
@@ -86,7 +87,7 @@ public class Modulo extends EntitySQL implements Serializable {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
+    
     public List<Menu> getMenuList() {
         return menuList;
     }
@@ -94,7 +95,7 @@ public class Modulo extends EntitySQL implements Serializable {
     public void setMenuList(List<Menu> menuList) {
         this.menuList = menuList;
     }
-
+    
     @JsonIgnore
     public Seccion getSeccion() {
         return seccion;
@@ -118,7 +119,10 @@ public class Modulo extends EntitySQL implements Serializable {
             return false;
         }
         Modulo other = (Modulo) object;
-        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
     }
 
     @Override

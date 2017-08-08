@@ -14,22 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.entities.cg.commons;
+package com.machineAdmin.managers.cg.admin.mongo;
+
+import com.machineAdmin.daos.cg.admin.mongo.DaoMongoPrueba;
+import com.machineAdmin.entities.cg.admin.mongo.EntidadMongoPrueba;
+import com.machineAdmin.managers.cg.commons.ManagerMongoCatalog;
 
 /**
- * clase padre de entidades mongo con usuario creador para acceder con profundiad
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class EntityMongoCatalog extends EntityMongo {
-       
-    private String usuarioCreador;
+public class ManagerMongoPrueba extends ManagerMongoCatalog<EntidadMongoPrueba> {
 
-    public String getUsuarioCreador() {
-        return usuarioCreador;
+    public ManagerMongoPrueba() {
+        super(new DaoMongoPrueba());
     }
 
-    public void setUsuarioCreador(String usuarioCreador) {        
-        this.usuarioCreador = usuarioCreador;
+    @Override
+    public String nombreColeccionParaRegistros() throws UnsupportedOperationException {
+        return "pruebas";
     }
-
+    
 }

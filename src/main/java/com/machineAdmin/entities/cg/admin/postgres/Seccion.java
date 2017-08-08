@@ -20,6 +20,7 @@ import com.machineAdmin.entities.cg.commons.EntitySQL;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -29,14 +30,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Objects;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- * entidad que representa una seccion del sistema
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity
 @Table(name = "seccion")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Seccion.findAll", query = "SELECT s FROM Seccion s")
     , @NamedQuery(name = "Seccion.findById", query = "SELECT s FROM Seccion s WHERE s.id = :id")
@@ -52,9 +56,8 @@ public class Seccion extends EntitySQL implements Serializable {
     private String id;
     @Size(max = 2147483647)
     @Column(name = "nombre")
-    private String nombre;   
-
-    @OneToMany(mappedBy = "seccion")
+    private String nombre;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seccion")
     private List<Modulo> moduloList;
 
     public Seccion() {
@@ -80,7 +83,7 @@ public class Seccion extends EntitySQL implements Serializable {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
+    
     public List<Modulo> getModuloList() {
         return moduloList;
     }
@@ -91,29 +94,27 @@ public class Seccion extends EntitySQL implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 89 * hash + Objects.hashCode(this.id);
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Seccion)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        Seccion other = (Seccion) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
-        final Seccion other = (Seccion) obj;
-        return Objects.equals(this.id, other.id);
+        return true;
     }
 
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.Seccion[ id=" + id + " ]";
     }
-
+    
 }
