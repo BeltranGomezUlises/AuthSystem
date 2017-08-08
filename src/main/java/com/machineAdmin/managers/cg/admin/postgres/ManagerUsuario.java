@@ -25,7 +25,7 @@ import com.machineAdmin.entities.cg.admin.postgres.BitacoraContras;
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.entities.cg.commons.Profundidad;
-import com.machineAdmin.managers.cg.commons.ManagerSQLCatalogFacade;
+import com.machineAdmin.managers.cg.commons.ManagerSQLCatalog;
 import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
@@ -56,20 +56,16 @@ import org.apache.commons.mail.EmailException;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerUsuario extends ManagerSQLCatalogFacade<Usuario, UUID> {
+public class ManagerUsuario extends ManagerSQLCatalog<Usuario, UUID> {
 
     public ManagerUsuario() {
         super(new DaoUsuario());
     }
-        
-    public ManagerUsuario(String usuario) {
-        super(usuario, new DaoUsuario());
-    }
 
-    public ManagerUsuario(Profundidad profundidad, String token) {
-        super(new DaoUsuario(), profundidad, token);
-    }
-    
+    public ManagerUsuario(String token, Profundidad profundidad) throws TokenInvalidoException, TokenExpiradoException {
+        super(new DaoUsuario(), token, profundidad);
+    }    
+
     @Override
     public Usuario persist(Usuario entity) throws Exception {
 
@@ -124,7 +120,7 @@ public class ManagerUsuario extends ManagerSQLCatalogFacade<Usuario, UUID> {
     public Usuario login(Usuario usuarioAutenticando) throws UsuarioInexistenteException, ContraseñaIncorrectaException, UsuarioBlockeadoException, Exception {
         Usuario loged;
         try {
-            DaoUsuario daoUsuario = new DaoUsuario();           
+            DaoUsuario daoUsuario = new DaoUsuario();
             String identificador = usuarioAutenticando.getNombre();
             String contraseña = usuarioAutenticando.getContra();
             switch (getUserIdentifierType(usuarioAutenticando.getNombre())) {
@@ -166,7 +162,7 @@ public class ManagerUsuario extends ManagerSQLCatalogFacade<Usuario, UUID> {
     private void numberAttemptVerification(Usuario usuario) throws UsuarioInexistenteException, UsuarioBlockeadoException, Exception {
         try {
             String identi = usuario.getNombre();
-            
+
             Usuario intentoLogin = this.stream().where(u
                     -> u.getCorreo().equals(identi)
                     || u.getNombre().equals(identi)
@@ -297,7 +293,9 @@ public class ManagerUsuario extends ManagerSQLCatalogFacade<Usuario, UUID> {
             throw new ParametroInvalidoException("La contraseña que esta ingresando ya fué utilizada, intente con otra");
         }
 
-        ManagerUsuario managerUsuario = new ManagerUsuario(userId);
+        ManagerUsuario managerUsuario = new ManagerUsuario();
+        managerUsuario.setUsuario(usuario);
+        
         Usuario u = dao.findOne(UUID.fromString(userId));
         u.setContra(pass);
         managerUsuario.update(u);
@@ -325,20 +323,20 @@ public class ManagerUsuario extends ManagerSQLCatalogFacade<Usuario, UUID> {
     public void asignarPermisos(ModelAsignarPermisos modelo) throws ConstraintException, SQLPersistenceException {
         Usuario u = dao.findOne(modelo.getId());
         List<Permiso> permisosNuevos = new ArrayList<>();
-        
-        DaoPermiso daoPermiso = new DaoPermiso();        
+
+        DaoPermiso daoPermiso = new DaoPermiso();
         modelo.getPermisosIds().forEach((permisoId) -> {
             permisosNuevos.add(daoPermiso.findOne(permisoId));
-        });        
-        
-        u.setPermisoList(permisosNuevos);                                
-        dao.update(u);                
+        });
+
+        u.setPermisoList(permisosNuevos);
+        dao.update(u);
     }
 
-    public String nombreDeUsuario(UUID usuarioId){        
+    public String nombreDeUsuario(UUID usuarioId) {
         return this.stream().where(u -> u.getId().equals(usuarioId)).findFirst().get().getNombre();
     }
-    
+
     private enum userIdentifierType {
         PHONE, MAIL, USER
     }

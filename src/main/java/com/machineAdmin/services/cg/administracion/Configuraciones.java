@@ -20,7 +20,7 @@ import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.managers.cg.admin.mongo.ManagerCGConfig;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.commons.ServiceBitacoraFacade;
+import com.machineAdmin.services.cg.commons.ServiceFacade;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
 
@@ -29,10 +29,10 @@ import javax.ws.rs.Path;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/configs")
-public class Configuraciones extends ServiceBitacoraFacade<CGConfig, Object>{
+public class Configuraciones extends ServiceFacade<CGConfig, Object>{
     
     public Configuraciones() {
-        super(new ManagerCGConfig(null));
+        super(new ManagerCGConfig());
     }
 
     @Override

@@ -14,31 +14,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.managers.cg.admin.postgres;
+package com.machineAdmin.managers.cg.commons;
 
-import com.machineAdmin.daos.cg.admin.postgres.DaoModulo;
-import com.machineAdmin.entities.cg.admin.postgres.Modulo;
-import com.machineAdmin.managers.cg.commons.ManagerSQL;
+import com.machineAdmin.entities.cg.commons.IEntity;
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @param <T>
+ * @param <K>
  */
-public class ManagerModulo extends ManagerSQL<Modulo, String> {
+public abstract class ManagerCatalog<T extends IEntity, K> extends ManagerFacade<T, K> {
 
-    public ManagerModulo() {
-        super(new DaoModulo());
+    /**
+     * indicador de profundiad de acceso a los registros
+     */
+    protected Profundidad profundidad;
+
+    public ManagerCatalog() {
     }
 
-    public ManagerModulo(String token) throws TokenInvalidoException, TokenExpiradoException {
-        super(new DaoModulo(), token);
+    public ManagerCatalog(String token, Profundidad profundidad) throws TokenInvalidoException, TokenExpiradoException {
+        super(token);
+        this.profundidad = profundidad;
+    }
+                
+    public Profundidad getProfundidad() {
+        return profundidad;
     }
 
-    @Override
-    public String nombreColeccionParaRegistros() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setProfundidad(Profundidad profundidad) {
+        this.profundidad = profundidad;
     }
-
+      
 }

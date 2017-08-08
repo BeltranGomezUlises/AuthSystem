@@ -6,13 +6,10 @@
 package com.machineAdmin.managers.cg.commons;
 
 import com.machineAdmin.entities.cg.commons.IEntity;
-import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.utils.UtilsJWT;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -23,38 +20,32 @@ import java.util.logging.Logger;
 public abstract class ManagerFacade<T extends IEntity, K> {
 
     protected String usuario;
-    protected Profundidad profundidad;
 
-    public ManagerFacade(String usuario) {
-        this.usuario = usuario;
-    }
-
-    public ManagerFacade(Profundidad profundidad, String token){
-        this.profundidad = profundidad;
-        try {
-            this.usuario = UtilsJWT.getBodyToken(token);
-        } catch (TokenInvalidoException | TokenExpiradoException ex) {
-            Logger.getLogger(ManagerFacade.class.getName()).log(Level.SEVERE, null, ex);
-        }        
-    }
-    
     public ManagerFacade() {
     }
 
-    public Profundidad getProfundidad() {
-        return profundidad;
-    }
-
-    public void setProfundidad(Profundidad profundidad) {
-        this.profundidad = profundidad;
+    public ManagerFacade(String token) throws TokenInvalidoException, TokenExpiradoException {
+        this.usuario = UtilsJWT.getBodyToken(token);
     }
 
     public String getUsuario() {
         return usuario;
     }
 
-    private void setUsuario(String usuario) {
+    public void setUsuario(String usuario) {
         this.usuario = usuario;
+    }    
+
+    /**
+     * asignar un token de sesion a este manager, con la intencion de validar el
+     * usuario en pemisos y registros de bitacoras
+     *
+     * @param token token de sesion
+     * @throws TokenInvalidoException si el token proporsionado no es válido
+     * @throws TokenExpiradoException si el token proporsionado ya expiró
+     */
+    public void setToken(String token) throws TokenInvalidoException, TokenExpiradoException {
+        this.setUsuario(UtilsJWT.getBodyToken(token));
     }
 
     /**
@@ -156,21 +147,6 @@ public abstract class ManagerFacade<T extends IEntity, K> {
      *
      * @return nombre de la colección a utilizar para el registor de bitacoras
      */
-    public abstract String nombreColeccionParaRegistros();
+    public abstract String nombreColeccionParaRegistros() throws UnsupportedOperationException ;
 
-    /**
-     * asignar un token de sesion a este manager, con la intencion de validar el
-     * usuario en pemisos y registros de bitacoras
-     *
-     * @param token token de sesion
-     * @throws TokenInvalidoException si el token proporsionado no es válido
-     * @throws TokenExpiradoException si el token proporsionado ya expiró
-     */
-    public void setToken(String token) throws TokenInvalidoException, TokenExpiradoException {
-        this.setUsuario(UtilsJWT.getBodyToken(token));
-    }
-
-    public static String obtenerAccionActual() {
-        return Thread.currentThread().getStackTrace()[2].getClassName() + "." + Thread.currentThread().getStackTrace()[2].getMethodName();
-    }
 }

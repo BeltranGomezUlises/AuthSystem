@@ -19,24 +19,26 @@ package com.machineAdmin.managers.cg.admin.mongo;
 import com.machineAdmin.daos.cg.admin.mongo.DaoCGConfig;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.entities.cg.commons.Profundidad;
-import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
+import com.machineAdmin.managers.cg.commons.ManagerMongo;
+import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 
 /**
  * manejador de la entidad de configuraciones generales
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerCGConfig extends ManagerMongoFacade<CGConfig> {
+public class ManagerCGConfig extends ManagerMongo<CGConfig> {
 
-    public ManagerCGConfig(String usuario) {
-        super(usuario, new DaoCGConfig());
+    public ManagerCGConfig() {
+        super(new DaoCGConfig());
     }
-                
-    public ManagerCGConfig(Profundidad profundidad, String token) {
-        super(new DaoCGConfig(), profundidad, token);
+        
+    public ManagerCGConfig(String token, Profundidad profundidad) throws TokenInvalidoException, TokenExpiradoException {
+        super(new DaoCGConfig(), token, profundidad);
     }
-                   
+                                       
     @Override
-    public String nombreColeccionParaRegistros() {
+    public String nombreColeccionParaRegistros() throws UnsupportedOperationException{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
       

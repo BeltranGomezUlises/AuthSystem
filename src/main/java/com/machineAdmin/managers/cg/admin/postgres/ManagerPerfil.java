@@ -24,7 +24,9 @@ import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.entities.cg.commons.Profundidad;
-import com.machineAdmin.managers.cg.commons.ManagerSQLCatalogFacade;
+import com.machineAdmin.managers.cg.commons.ManagerSQLCatalog;
+import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,21 +36,16 @@ import java.util.UUID;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerPerfil extends ManagerSQLCatalogFacade<Perfil, UUID> {
+public class ManagerPerfil extends ManagerSQLCatalog<Perfil, UUID> {
 
     public ManagerPerfil() {
         super(new DaoPerfil());
-    }
+    }   
 
-        
-    public ManagerPerfil(String usuario) {
-        super(usuario, new DaoPerfil());
+    public ManagerPerfil(DaoSQLFacade dao, String token, Profundidad profundidad) throws TokenInvalidoException, TokenExpiradoException {
+        super(dao, token, profundidad);
     }
-
-    public ManagerPerfil(Profundidad profundidad, String token) {
-        super(new DaoPerfil(), profundidad, token);
-    }
-
+   
     @Override
     public String nombreColeccionParaRegistros() {
         return "perfiles";

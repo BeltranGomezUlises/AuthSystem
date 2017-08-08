@@ -22,7 +22,7 @@ import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.commons.ServiceBitacoraFacade;
+import com.machineAdmin.services.cg.commons.ServiceFacade;
 import static com.machineAdmin.utils.UtilsService.*;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsPermissions;
@@ -40,7 +40,7 @@ import javax.ws.rs.PathParam;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/perfiles")
-public class Perfiles extends ServiceBitacoraFacade<Perfil, UUID> {
+public class Perfiles extends ServiceFacade<Perfil, UUID> {
 
     public Perfiles() {
         super(new ManagerPerfil());

@@ -22,7 +22,9 @@ import com.machineAdmin.entities.cg.admin.postgres.Perfil;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfilPK;
 import com.machineAdmin.entities.cg.commons.Profundidad;
-import com.machineAdmin.managers.cg.commons.ManagerSQLCatalogFacade;
+import com.machineAdmin.managers.cg.commons.ManagerSQLCatalog;
+import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlUsuario;
 import com.machineAdmin.models.cg.ModelPerfilYHereda;
 import java.util.ArrayList;
@@ -34,20 +36,16 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerUsuariosPerfil extends ManagerSQLCatalogFacade<UsuariosPerfil, UsuariosPerfilPK> {
+public class ManagerUsuariosPerfil extends ManagerSQLCatalog<UsuariosPerfil, UsuariosPerfilPK> {
 
     public ManagerUsuariosPerfil(){
         super(new DaoUsuariosPerfil());
     }
-    
-    public ManagerUsuariosPerfil(String usuario) {
-        super(usuario, new DaoUsuariosPerfil());
-    }
 
-    public ManagerUsuariosPerfil(Profundidad profundidad, String token) {
-        super(new DaoUsuariosPerfil(), profundidad, token);
+    public ManagerUsuariosPerfil(String token, Profundidad profundidad) throws TokenInvalidoException, TokenExpiradoException {
+        super(new DaoUsuariosPerfil(), token, profundidad);
     }
-
+       
     public void asignarPerfilesAlUsuario(ModelAsignarPerfilesAlUsuario modelo) throws Exception {
         //remover los perfiles actuales
         List<UsuariosPerfilPK> idsActuales = this.stream()

@@ -8,7 +8,7 @@ package com.machineAdmin.services.cg.administracion;
 import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
 import com.machineAdmin.managers.cg.admin.mongo.ManagerConfigMail;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.commons.ServiceBitacoraFacade;
+import com.machineAdmin.services.cg.commons.ServiceFacadeCatalogMongo;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
 
@@ -17,7 +17,7 @@ import javax.ws.rs.Path;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/correos")
-public class Correos extends ServiceBitacoraFacade<ConfigMail, Object>{
+public class Correos extends ServiceFacadeCatalogMongo<ConfigMail, Object>{
     
     public Correos() {
         super(new ManagerConfigMail());

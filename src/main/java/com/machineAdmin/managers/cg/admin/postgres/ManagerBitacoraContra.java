@@ -19,21 +19,22 @@ package com.machineAdmin.managers.cg.admin.postgres;
 import com.machineAdmin.daos.cg.admin.postgres.DaoBitacoraContra;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContras;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContrasPK;
-import com.machineAdmin.entities.cg.commons.Profundidad;
-import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import com.machineAdmin.managers.cg.commons.ManagerSQL;
+import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerBitacoraContra extends ManagerSQLFacade<BitacoraContras, BitacoraContrasPK> {
+public class ManagerBitacoraContra extends ManagerSQL<BitacoraContras, BitacoraContrasPK> {
 
-    public ManagerBitacoraContra(Profundidad profundidad, String token) {
-        super(new DaoBitacoraContra(), profundidad, token);
+    public ManagerBitacoraContra(String token) throws TokenInvalidoException, TokenExpiradoException {
+        super(new DaoBitacoraContra(), token);
     }
 
-    public ManagerBitacoraContra(String usuario) {
-        super(usuario, new DaoBitacoraContra());
+    public ManagerBitacoraContra() {
+        super(new DaoBitacoraContra());
     }
 
     @Override

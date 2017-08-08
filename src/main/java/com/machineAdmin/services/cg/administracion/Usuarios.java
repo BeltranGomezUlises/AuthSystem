@@ -24,7 +24,7 @@ import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlUsuario;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.commons.ServiceBitacoraFacade;
+import com.machineAdmin.services.cg.commons.ServiceFacade;
 import static com.machineAdmin.utils.UtilsService.*;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsPermissions;
@@ -38,14 +38,15 @@ import javax.ws.rs.PathParam;
 
 /**
  * servicios de administracion de usuarios del sistema
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/usuarios")
-public class Usuarios extends ServiceBitacoraFacade<Usuario, UUID> {
+public class Usuarios extends ServiceFacade<Usuario, UUID> {
 
     public Usuarios() {
         super(new ManagerUsuario());
-    }   
+    }
 
     @Override
     public Response eliminar(HttpServletRequest request, String token, Usuario t) {
@@ -71,7 +72,7 @@ public class Usuarios extends ServiceBitacoraFacade<Usuario, UUID> {
     public Response listar(HttpServletRequest request, String token) {
         return super.listar(request, token);
     }
-        
+
     /**
      * asigna los permisos al usuario reemplazando los que tenia por los nuevos
      * proporsionados
@@ -84,7 +85,7 @@ public class Usuarios extends ServiceBitacoraFacade<Usuario, UUID> {
     @Path("/asignarPermisos")
     public Response asignarPermisos(@HeaderParam("Authorization") String token, ModelAsignarPermisos modelo) {
         Response res = new Response();
-        try {            
+        try {
             ManagerUsuario managerUsuario = new ManagerUsuario();
             managerUsuario.setToken(token);
             managerUsuario.asignarPermisos(modelo);
@@ -121,50 +122,53 @@ public class Usuarios extends ServiceBitacoraFacade<Usuario, UUID> {
         }
         return res;
     }
-    
+
     /**
-     * sirve para obtener la lista de permisos asignados al usuario junto a su profundidad de acceso
+     * sirve para obtener la lista de permisos asignados al usuario junto a su
+     * profundidad de acceso
+     *
      * @param token token de sesion
      * @param usuario id de usuario a obtener permisos
      * @return retorna en data, la lista de permisos asignados al usuario
      */
     @GET
     @Path("/permisos/{userId}")
-    public Response obtenerPermisosAsignados(@HeaderParam("Authorization") String token, @PathParam("userId") String usuario){
+    public Response obtenerPermisosAsignados(@HeaderParam("Authorization") String token, @PathParam("userId") String usuario) {
         Response res = new Response();
-        try {            
+        try {
             UtilsJWT.validateSessionToken(token);
             res.setData(UtilsPermissions.permisosAsignadosAUsuario(usuario));
             res.setDevMessage("permisos que el usuario tiene asignado");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
-        } catch(Exception ex){
-            setErrorResponse(res, ex);  
-        }        
-        return res;        
+        } catch (Exception ex) {
+            setErrorResponse(res, ex);
+        }
+        return res;
     }
-    
+
     /**
      * sirve para obtener la lista de perfiles asignados al usuario
+     *
      * @param token token de sesion
      * @param usuario id de usuario a obtener sus perfiles
      * @return retorna en data, la lista de perfiles asignados al usuario
      */
     @GET
     @Path("/perfiles/{userId}")
-    public Response obtenerPerfilesAsignados(@HeaderParam("Authorization") String token, @PathParam("userId") String usuario){
+    public Response obtenerPerfilesAsignados(@HeaderParam("Authorization") String token, @PathParam("userId") String usuario) {
         Response res = new Response();
-        try {                        
+        try {
             ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();
-            managerUsuariosPerfil.setToken(token);                        
+            managerUsuariosPerfil.setToken(token);
             res.setData(managerUsuariosPerfil.perfilesDeUsuario(UUID.fromString(usuario)));
             res.setDevMessage("permisos que el usuario tiene asignado");
-            
+
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
-        } catch(Exception ex){
-            setErrorResponse(res, ex);  
-        }        
-        return res;        
+        } catch (Exception ex) {
+            setErrorResponse(res, ex);
+        }
+        return res;
     }
 }

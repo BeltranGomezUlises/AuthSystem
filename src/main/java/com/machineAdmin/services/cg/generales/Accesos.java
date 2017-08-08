@@ -7,6 +7,7 @@ package com.machineAdmin.services.cg.generales;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerSeccion;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
 import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
@@ -193,11 +194,10 @@ public class Accesos {
             String userId = UtilsJWT.getBodyToken(tokenResetPassword);
             String pass = UtilsSecurity.decryptBase64ByPrivateKey(content.getContent());
 
-            ManagerUsuario managerUsuario = new ManagerUsuario(userId);
+            ManagerUsuario managerUsuario = new ManagerUsuario(tokenResetPassword, Profundidad.TODOS);
             managerUsuario.resetPassword(userId, pass);
 
             res.setMessage("La contraseña fué restablecida con éxito");
-
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
         } catch (ParametroInvalidoException ex) {

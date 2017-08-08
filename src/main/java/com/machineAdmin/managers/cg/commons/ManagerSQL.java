@@ -19,81 +19,63 @@ package com.machineAdmin.managers.cg.commons;
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.daos.cg.exceptions.ConstraintException;
 import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
-import com.machineAdmin.entities.cg.commons.IEntity;
-import com.machineAdmin.entities.cg.commons.Profundidad;
+import com.machineAdmin.entities.cg.commons.EntitySQL;
+import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import java.util.List;
-import static java.util.stream.Collectors.toList;
 import org.jinq.jpa.JPAJinqStream;
 
 /**
- * Facade, comportamiento y estructura basica de cualquier manejador de
- * entidades de SQL
+ * Facade, contiene el comportamiento base, mas la particularidad de cualquier
+ * entindad que no sea un catalogo de SQL
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
- * @param <T>
- * @param <K>
+ * @param <T> Entidad a manejar
+ * @param <K> Tipo de dato de llave primaria de la entidad
  */
-public abstract class ManagerSQLFacadeBase<T extends IEntity, K> extends ManagerFacade<T, K> {
+public abstract class ManagerSQL<T extends EntitySQL, K> extends ManagerFacade<T, K> {
 
     protected final DaoSQLFacade<T, K> dao;
-
-    public ManagerSQLFacadeBase(DaoSQLFacade<T, K> dao) {
+    
+    public ManagerSQL(DaoSQLFacade<T, K> dao) {
         super();
         this.dao = dao;
     }
-
-    public ManagerSQLFacadeBase(String usuario, DaoSQLFacade dao) {
-        super(usuario);
+    
+    public ManagerSQL(DaoSQLFacade dao, String token) throws TokenInvalidoException, TokenExpiradoException {
+        super(token);
         this.dao = dao;
     }
-
-    public ManagerSQLFacadeBase(DaoSQLFacade dao, Profundidad profundidad, String token) {
-        super(profundidad, token);
-        this.dao = dao;
+    
+    @Override
+    public List<T> persistAll(List<T> entities) throws Exception {        
+        return dao.persistAll(entities);        
     }
 
     @Override
-    public void delete(K id) throws Exception {
-        T t = dao.findOne(id);
+    public T persist(T entity) throws Exception {
+       
+        dao.persist(entity);
+        return entity;
+    }
+    @Override
+    public void delete(K id) throws Exception {        
         dao.delete(id);
-//        try {
-//            this.auditar("eliminar", this.modeloRegistroGenerico(t));
-//        } catch (UnsupportedOperationException e) {
-//            //para omitir que esta entidad no soporta bitacoras
-//        }
-
     }
 
     @Override
-    public void deleteAll(List<K> ids) throws SQLPersistenceException, Exception {
-        List<T> ts = dao.stream().filter((T t) -> ids.contains((K) t.getId())).collect(toList());
+    public void deleteAll(List<K> ids) throws SQLPersistenceException, Exception {        
         dao.deleteAll(ids);
-//        try {
-//            ts.stream().forEach(t -> this.auditar("eliminar", this.modeloRegistroGenerico(t)));
-//        } catch (Exception  e) {
-//            //para omitir que esta entidad no soporta bitacoras
-//        }
-
     }
 
     @Override
     public void update(T entity) throws SQLPersistenceException, ConstraintException {
         dao.update(entity);
-//        try {
-//            this.auditar("actualizar", this.modeloRegistroGenerico(entity));
-//        } catch (UnsupportedOperationException e) {
-//        }
     }
 
     @Override
-    public T findOne(K id) {
-        T t = (T) dao.findOne(id);
-//        try {
-//            this.auditar("obtener", this.modeloRegistroGenerico(t));
-//        } catch (UnsupportedOperationException  e) {
-//            //para omitir que esta entidad no soporta bitacoras
-//        }                    
-        return t;
+    public T findOne(K id) {                  
+        return dao.findOne(id);
     }
 
     @Override
@@ -115,7 +97,7 @@ public abstract class ManagerSQLFacadeBase<T extends IEntity, K> extends Manager
     public T findFirst() {
         return (T) dao.findFirst();
     }
-
+    
     public JPAJinqStream<T> stream() {
         return dao.stream();
     }

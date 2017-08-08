@@ -16,17 +16,19 @@
  */
 package com.machineAdmin.services.cg.commons;
 
-import com.machineAdmin.entities.cg.commons.IEntity;
+import com.machineAdmin.entities.cg.commons.EntityMongoCatalog;
 import com.machineAdmin.managers.cg.commons.ManagerFacade;
+import com.machineAdmin.managers.cg.commons.ManagerMongoCatalog;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import static com.machineAdmin.utils.UtilsService.*;
 import com.machineAdmin.utils.UtilsAuditoria;
 import com.machineAdmin.utils.UtilsBitacora;
+import static com.machineAdmin.utils.UtilsService.setErrorResponse;
+import static com.machineAdmin.utils.UtilsService.setInvalidTokenResponse;
+import static com.machineAdmin.utils.UtilsService.setOkResponse;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -34,35 +36,23 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 
 /**
- *
+ * servicios LCRUD para entidades mongo que tienen profundidad de acceso
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
- * @param <T>
- * @param <K>
+ * @param <T> entidad a manejar por esta clase de servicios
+ * @param <Object>
  */
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-public class ServiceFacadeBase<T extends IEntity, K> {
+public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> extends ServiceBitacoraFacade<T, Object>{
+    
+    private final ManagerMongoCatalog<T> manager;
 
-    protected ManagerFacade<T, K> manager;
-
-    public ServiceFacadeBase(ManagerFacade<T, K> manager) {
+    public ServiceFacadeCatalogMongo(ManagerMongoCatalog<T> manager) {
         this.manager = manager;
     }
-
-    public final ManagerFacade<T, K> getManager() {
-        return manager;
-    }
-
-    public final void setManager(ManagerFacade<T, K> manager) {
-        this.manager = manager;
-    }
-
-    /**
+            
+     /**
      * proporciona el listado de las entidades de esta clase servicio
      *
      * @param request contexto de peticion necesario para obtener datos como ip,
@@ -75,14 +65,18 @@ public class ServiceFacadeBase<T extends IEntity, K> {
     public Response listar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token) {
         Response response = new Response();
         try {
-            this.manager.setToken(token);
+            this.manager.setToken(token);              
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
 
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Listar", request);
             UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
-            //audita
+            //</editor-fold>
+
+            //<editor-fold defaultstate="collapsed" desc="Auditar">
             UtilsAuditoria.ModeloAuditoria auditoria = new UtilsAuditoria.ModeloAuditoria(manager.getUsuario(), "Listar", null);
             UtilsAuditoria.auditar(manager.nombreColeccionParaRegistros(), auditoria);
+            //</editor-fold>
 
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(response);
@@ -111,9 +105,10 @@ public class ServiceFacadeBase<T extends IEntity, K> {
             response.setData(manager.findOne(manager.stringToKey(id)));
             response.setMessage("Entidad encontrada");
 
-            //bitacorizar
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Detalle", request);
             UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            //</editor-fold>
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
@@ -139,9 +134,11 @@ public class ServiceFacadeBase<T extends IEntity, K> {
             this.manager.setToken(token);
             response.setData(manager.persist(t));
             response.setMessage("Entidad persistida");
-            //bitacoriza                        
+
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Alta", request);
             UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            //</editor-fold>
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
@@ -169,9 +166,8 @@ public class ServiceFacadeBase<T extends IEntity, K> {
             manager.update(t);
             response.setData(t);
             response.setMessage("Entidad actualizada");
-            
-            
-            //<editor-fold defaultstate="collapsed" desc="BITSCORIZAR">
+
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", request);
             UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
             //</editor-fold>    
@@ -198,11 +194,13 @@ public class ServiceFacadeBase<T extends IEntity, K> {
         Response response = new Response();
         try {
             this.manager.setToken(token);
-            manager.delete((K) t.getId());
+            manager.delete(t.getId());
             response.setMessage("Entidad eliminada");
-            //bitacoriza            
+
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Eliminar", request);
             UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            //</editor-fold>
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
@@ -210,6 +208,11 @@ public class ServiceFacadeBase<T extends IEntity, K> {
             setErrorResponse(response, e);
         }
         return response;
+    }
+
+    @Override
+    public ManagerFacade<T, Object> getManager() {
+        return (ManagerFacade<T, Object>) manager;
     }
 
 }

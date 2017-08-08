@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.machineAdmin.services.cg.commons;
 
 import com.machineAdmin.entities.cg.commons.IEntity;
@@ -5,25 +21,30 @@ import com.machineAdmin.managers.cg.commons.ManagerFacade;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import static com.machineAdmin.utils.UtilsService.*;
 import com.machineAdmin.utils.UtilsBitacora;
+import static com.machineAdmin.utils.UtilsService.setErrorResponse;
+import static com.machineAdmin.utils.UtilsService.setInvalidTokenResponse;
+import java.util.Date;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 /**
- *
+ * clase de servicios para bitacoras de acciones
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
- * @param <T> is a Entity that workw with de manager
- * @param <K> tipo de dato del identificador de la entidad manejada
+ * @param <T> entidad a manejar por esta clase servicio
+ * @param <K> tipo de dato de llave primaria de la entidad a menejar por esta clase servicio
  */
-public class ServiceBitacoraFacade<T extends IEntity, K> extends ServiceFacadeBase<T, K>{
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public abstract class ServiceBitacoraFacade<T extends IEntity, K> {
     
-    public ServiceBitacoraFacade(ManagerFacade<T, K> manager) {
-        super(manager);
-    }    
-
+    public abstract ManagerFacade<T, K> getManager();
+           
     /**
      * obtener todo los registros de bitacoras de esta entidad
      *
@@ -35,8 +56,8 @@ public class ServiceBitacoraFacade<T extends IEntity, K> extends ServiceFacadeBa
     public Response obtenerBitacoras(@HeaderParam("Authorization") String token) {
         Response res = new Response();
         try {
-            this.manager.setToken(token);
-            res.setData(UtilsBitacora.bitacoras(manager.nombreColeccionParaRegistros()));
+            getManager().setToken(token);
+            res.setData(UtilsBitacora.bitacoras(getManager().nombreColeccionParaRegistros()));
             res.setDevMessage("Bitácoras de esta entidad");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
@@ -63,8 +84,8 @@ public class ServiceBitacoraFacade<T extends IEntity, K> extends ServiceFacadeBa
     public Response obtenerBitacorasRangoFechas(@HeaderParam("Authorization") String token, @PathParam("fechaInicial") long fechaInicial, @PathParam("fechaFinal") long fechaFinal) {
         Response res = new Response();
         try {
-            this.manager.setToken(token);
-//            res.setData(manager.auditoriaEntre(new Date(fechaInicial), new Date(fechaFinal)));
+            this.getManager().setToken(token);
+            res.setData(UtilsBitacora.bitacorasEntre(getManager().nombreColeccionParaRegistros(), new Date(fechaInicial), new Date(fechaFinal)));
             res.setDevMessage("Bitácoras de esta entidad");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
@@ -90,8 +111,8 @@ public class ServiceBitacoraFacade<T extends IEntity, K> extends ServiceFacadeBa
     public Response obtenerBitacorasDesdeFecha(@HeaderParam("Authorization") String token, @PathParam("fechaInicial") long fechaInicial) {
         Response res = new Response();
         try {
-            this.manager.setToken(token);
-            //res.setData(manager.auditoriaDesde(new Date(fechaInicial)));
+            this.getManager().setToken(token);
+            res.setData(UtilsBitacora.bitacorasDesde(getManager().nombreColeccionParaRegistros(), new Date(fechaInicial)));
             res.setDevMessage("Bitácoras de esta entidad");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
@@ -116,8 +137,8 @@ public class ServiceBitacoraFacade<T extends IEntity, K> extends ServiceFacadeBa
     public Response obtenerBitacorasHastaFecha(@HeaderParam("Authorization") String token, @PathParam("fechaFinal") long fechaFinal) {
         Response res = new Response();
         try {
-            this.manager.setToken(token);
-            //res.setData(manager.auditoriaHasta(new Date(fechaFinal)));
+            this.getManager().setToken(token);
+            res.setData(UtilsBitacora.bitacorasHasta(getManager().nombreColeccionParaRegistros(), new Date(fechaFinal)));
             res.setDevMessage("Bitácoras de esta entidad");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);

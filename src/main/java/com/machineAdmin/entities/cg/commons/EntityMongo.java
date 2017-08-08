@@ -19,17 +19,7 @@ public class EntityMongo extends IEntity {
     @ObjectId
     @JsonProperty("_id")
     protected String id;
-
-    private String usuarioCreador;
-
-    public String getUsuarioCreador() {
-        return usuarioCreador;
-    }
-
-    public void setUsuarioCreador(String usuarioCreador) {        
-        this.usuarioCreador = usuarioCreador;
-    }
-
+        
     @Override
     public String getId() {
         return id;

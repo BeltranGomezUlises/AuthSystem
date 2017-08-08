@@ -33,6 +33,14 @@ import static java.util.stream.Collectors.toList;
 public class UtilsPermissions {
 
     /**
+     * obtiene por stacktrace el id de la accion actual en ejecucion
+     * @return id de accion actual en ejecucion
+     */
+    public static String obtenerAccionActual() {
+        return Thread.currentThread().getStackTrace()[2].getClassName() + "." + Thread.currentThread().getStackTrace()[2].getMethodName();
+    }
+    
+    /**
      * sirve para obtener los permisos existentes disponibles en el sistem
      * @return  lista de permisos existentes
      */
