@@ -16,23 +16,17 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
-import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -41,15 +35,18 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Converter;
 
 /**
- * entidad que representa un usuario que opera dentro del sistema
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity
 @Table(name = "usuario")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u")
     , @NamedQuery(name = "Usuario.findByNombre", query = "SELECT u FROM Usuario u WHERE u.nombre = :nombre")
@@ -61,20 +58,9 @@ import org.eclipse.persistence.annotations.Converter;
     , @NamedQuery(name = "Usuario.findByNumeroIntentosLogin", query = "SELECT u FROM Usuario u WHERE u.numeroIntentosLogin = :numeroIntentosLogin")
     , @NamedQuery(name = "Usuario.findByBloqueado", query = "SELECT u FROM Usuario u WHERE u.bloqueado = :bloqueado")
     , @NamedQuery(name = "Usuario.findByBloqueadoHastaFecha", query = "SELECT u FROM Usuario u WHERE u.bloqueadoHastaFecha = :bloqueadoHastaFecha")})
-@Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
 public class Usuario extends EntitySQLCatalog implements Serializable {
 
-    @Convert("uuidConverter")
-    @Column(name = "usuario_creador")
-    private UUID usuarioCreador;
-
     private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Convert("uuidConverter")
-    @Column(name = "id")
-    private UUID id;
     @Size(max = 2147483647)
     @Column(name = "nombre")
     private String nombre;
@@ -88,33 +74,37 @@ public class Usuario extends EntitySQLCatalog implements Serializable {
     @Column(name = "contra")
     private String contra;
     @Column(name = "inhabilitado")
-    private Boolean inhabilitado;
+    private boolean inhabilitado;
     @Column(name = "fecha_ultimo_intento_login")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaUltimoIntentoLogin;
     @Column(name = "numero_intentos_login")
-    private Integer numeroIntentosLogin;
+    private int numeroIntentosLogin;
     @Column(name = "bloqueado")
-    private Boolean bloqueado;
+    private boolean bloqueado;
     @Column(name = "bloqueado_hasta_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date bloqueadoHastaFecha;
-    @JoinTable(name = "usuarios_permisos", joinColumns = {
-        @JoinColumn(name = "usuario", referencedColumnName = "id")}, inverseJoinColumns = {
-        @JoinColumn(name = "permiso", referencedColumnName = "id")})
-    @ManyToMany()
-    private List<Permiso> permisoList;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Convert("uuidConverter")
+    @Column(name = "id")
+    private UUID id;
+    @Lob
+    @Convert("uuidConverter")
+    @Column(name = "usuario_creador")
+    private UUID usuarioCreador;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
     private List<BitacoraContras> bitacoraContrasList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
+    private List<UsuariosPermisos> usuariosPermisosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
     private List<UsuariosPerfil> usuariosPerfilList;
 
     public Usuario() {
-        this.bloqueado = false;
-        this.inhabilitado = false;
-        this.id = UUID.randomUUID();
-        this.numeroIntentosLogin = 0;
-        this.permisoList = new ArrayList<>();
+        this.id = UUID.randomUUID();        
     }
 
     public Usuario(UUID id) {
@@ -202,6 +192,17 @@ public class Usuario extends EntitySQLCatalog implements Serializable {
         this.id = id;
     }
 
+    @Override
+    public UUID getUsuarioCreador() {
+        return usuarioCreador;
+    }
+
+    @Override
+    public void setUsuarioCreador(UUID usuarioCreador) {
+        this.usuarioCreador = usuarioCreador;
+    }
+
+    @XmlTransient
     @JsonIgnore
     public List<BitacoraContras> getBitacoraContrasList() {
         return bitacoraContrasList;
@@ -211,6 +212,17 @@ public class Usuario extends EntitySQLCatalog implements Serializable {
         this.bitacoraContrasList = bitacoraContrasList;
     }
 
+    @XmlTransient
+    @JsonIgnore
+    public List<UsuariosPermisos> getUsuariosPermisosList() {
+        return usuariosPermisosList;
+    }
+
+    public void setUsuariosPermisosList(List<UsuariosPermisos> usuariosPermisosList) {
+        this.usuariosPermisosList = usuariosPermisosList;
+    }
+
+    @XmlTransient
     @JsonIgnore
     public List<UsuariosPerfil> getUsuariosPerfilList() {
         return usuariosPerfilList;
@@ -222,52 +234,27 @@ public class Usuario extends EntitySQLCatalog implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + Objects.hashCode(this.id);
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Usuario)) {
             return false;
         }
-        if (this.getClass() != obj.getClass()) {
+        Usuario other = (Usuario) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
-        final Usuario other = (Usuario) obj;
-        return Objects.equals(this.id, other.id);
+        return true;
     }
 
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.Usuario[ id=" + id + " ]";
-    }
-
-    public void aumentarNumeroDeIntentosLogin() {
-        this.numeroIntentosLogin++;
-    }
-
-    @Override
-    public UUID getUsuarioCreador() {
-        return this.usuarioCreador;
-    }
-
-    @Override
-    public void setUsuarioCreador(UUID usuarioCreador) {
-        this.usuarioCreador = usuarioCreador;
-    }
-
-    @JsonIgnore
-    public List<Permiso> getPermisoList() {
-        return permisoList;
-    }
-
-    public void setPermisoList(List<Permiso> permisoList) {
-        this.permisoList = permisoList;
     }
 
 }

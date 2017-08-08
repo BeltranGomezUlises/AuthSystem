@@ -54,10 +54,12 @@ public class UtilsPermissions {
      * @param userId id del usuario a obtener sus permisos
      * @return lista modelos con id de permiso y profundidad
      */
-    public static List<Permiso> permisosAsignadosAUsuario(String userId) {
-        DaoUsuario dao = new DaoUsuario();        
-        Usuario usuario = dao.findOne(UUID.fromString(userId));
-        return usuario.getPermisoList();        
+    public static List<Permiso> permisosAsignadosAUsuario(String userId) throws Exception {
+//        DaoUsuario dao = new DaoUsuario();        
+//        Usuario usuario = dao.findOne(UUID.fromString(userId));
+//        return usuario.getPermisoList();        
+            return null;
+
     }
 
     /**
@@ -65,10 +67,11 @@ public class UtilsPermissions {
      * @param perfilId id del perfil a obtener sus permisos
      * @return lista modelos con id de permiso y profundidad
      */
-    public static List<Permiso> permisosAsignadosAPerfil(String perfilId) {
-       DaoPerfil dao = new DaoPerfil();
-       Perfil perfil = dao.findOne(UUID.fromString(perfilId));
-       return perfil.getPermisoList();
+    public static List<Permiso> permisosAsignadosAPerfil(String perfilId) throws Exception {
+//       DaoPerfil dao = new DaoPerfil();
+//       Perfil perfil = dao.findOne(UUID.fromString(perfilId));
+//       return perfil.getPermisoList();
+        return null;
     }
 
 }

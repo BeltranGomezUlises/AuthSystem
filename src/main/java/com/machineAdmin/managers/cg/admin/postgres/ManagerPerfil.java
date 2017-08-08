@@ -19,8 +19,6 @@ package com.machineAdmin.managers.cg.admin.postgres;
 import com.machineAdmin.daos.cg.admin.postgres.DaoPerfil;
 import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
-import com.machineAdmin.daos.cg.exceptions.ConstraintException;
-import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.entities.cg.commons.Profundidad;
@@ -51,16 +49,20 @@ public class ManagerPerfil extends ManagerSQLCatalog<Perfil, UUID> {
         return "perfiles";
     }
 
-    public void asignarPermisos(ModelAsignarPermisos model) throws SQLPersistenceException, ConstraintException {
-        Perfil perfil = dao.findOne(model.getId());
-        List<Permiso> permisosNuevos = new ArrayList<>();
-
-        DaoPermiso daoPermiso = new DaoPermiso();
-        model.getPermisosIds().forEach((permisoId) -> {
-            permisosNuevos.add(daoPermiso.findOne(permisoId));
-        });
-
-        perfil.setPermisoList(permisosNuevos);
-        dao.update(perfil);
+    public void asignarPermisos(ModelAsignarPermisos model) throws Exception {
+//        Perfil perfil = dao.findOne(model.getId());
+//        List<Permiso> permisosNuevos = new ArrayList<>();
+//
+//        DaoPermiso daoPermiso = new DaoPermiso();        
+//        model.getPermisosIds().forEach((permisoId) -> {
+//            try {
+//                permisosNuevos.add(daoPermiso.findOne(permisoId));
+//            } catch (Exception e) {
+//                
+//            }            
+//        });
+//
+//        perfil.setPermisoList(permisosNuevos);
+//        dao.update(perfil);
     }
 }

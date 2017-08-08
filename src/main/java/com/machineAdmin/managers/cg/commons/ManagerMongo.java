@@ -26,9 +26,9 @@ import static java.util.stream.Collectors.toList;
 import org.mongojack.DBQuery;
 
 /**
- *
+ * manaherm para entidades mongoDB
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
- * @param <T>
+ * @param <T> entidad a manejar
  */
 public abstract class ManagerMongo<T extends EntityMongo> extends ManagerFacade<T, Object> {
 

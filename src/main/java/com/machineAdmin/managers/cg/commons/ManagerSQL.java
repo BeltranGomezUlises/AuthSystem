@@ -17,8 +17,6 @@
 package com.machineAdmin.managers.cg.commons;
 
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
-import com.machineAdmin.daos.cg.exceptions.ConstraintException;
-import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.commons.EntitySQL;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
@@ -26,8 +24,7 @@ import java.util.List;
 import org.jinq.jpa.JPAJinqStream;
 
 /**
- * Facade, contiene el comportamiento base, mas la particularidad de cualquier
- * entindad que no sea un catalogo de SQL
+ * fachada para manejar entidades sql 
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> Entidad a manejar
@@ -64,37 +61,37 @@ public abstract class ManagerSQL<T extends EntitySQL, K> extends ManagerFacade<T
     }
 
     @Override
-    public void deleteAll(List<K> ids) throws SQLPersistenceException, Exception {        
+    public void deleteAll(List<K> ids) throws Exception {        
         dao.deleteAll(ids);
     }
 
     @Override
-    public void update(T entity) throws SQLPersistenceException, ConstraintException {
+    public void update(T entity) throws Exception {
         dao.update(entity);
     }
 
     @Override
-    public T findOne(K id) {                  
+    public T findOne(K id) throws Exception {                  
         return dao.findOne(id);
     }
 
     @Override
-    public List<T> findAll() {
+    public List<T> findAll() throws Exception {
         return dao.findAll();
     }
 
     @Override
-    public List<T> findAll(int max) {
+    public List<T> findAll(int max) throws Exception{
         return dao.findAll(max);
     }
 
     @Override
-    public long count() {
+    public long count()throws Exception {
         return dao.count();
     }
 
     @Override
-    public T findFirst() {
+    public T findFirst() throws Exception{
         return (T) dao.findFirst();
     }
     

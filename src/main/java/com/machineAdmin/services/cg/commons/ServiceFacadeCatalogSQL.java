@@ -40,12 +40,13 @@ import javax.ws.rs.core.Context;
 
 /**
  * servicios LCRUD para entidades SQL que tienen profundidad de acceso
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T>
  * @param <K>
  */
-public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends ServiceBitacoraFacade<T, K>{
- 
+public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends ServiceBitacoraFacade<T, K> {
+    
     private ManagerSQLCatalog<T, K> manager;
     
     @Override
@@ -70,8 +71,11 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
 
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
-            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Listar", request);
-            UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Listar", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException unsupportedOperationException) {
+            }
             //</editor-fold>
 
             //<editor-fold defaultstate="collapsed" desc="Auditar">
@@ -107,8 +111,11 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
             response.setMessage("Entidad encontrada");
 
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
-            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Detalle", request);
-            UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Detalle", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException unsupportedOperationException) {
+            }
             //</editor-fold>
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
@@ -137,8 +144,11 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
             response.setMessage("Entidad persistida");
 
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
-            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Alta", request);
-            UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Alta", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException unsupportedOperationException) {
+            }
             //</editor-fold>
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
@@ -169,8 +179,11 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
             response.setMessage("Entidad actualizada");
 
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
-            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", request);
-            UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException unsupportedOperationException) {
+            }
             //</editor-fold>    
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
@@ -199,8 +212,11 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
             response.setMessage("Entidad eliminada");
 
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
-            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Eliminar", request);
-            UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Eliminar", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException unsupportedOperationException) {
+            }
             //</editor-fold>
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
@@ -210,6 +226,5 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
         }
         return response;
     }
-    
     
 }

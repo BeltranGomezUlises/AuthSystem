@@ -16,7 +16,6 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.machineAdmin.entities.cg.commons.EntitySQL;
 import java.io.Serializable;
 import java.util.Date;
@@ -31,18 +30,19 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * entidad de bitacora de contraseñas por usuario
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity
 @Table(name = "bitacora_contras")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "BitacoraContras.findAll", query = "SELECT b FROM BitacoraContras b")
     , @NamedQuery(name = "BitacoraContras.findByContra", query = "SELECT b FROM BitacoraContras b WHERE b.bitacoraContrasPK.contra = :contra")
     , @NamedQuery(name = "BitacoraContras.findByFechaAsignada", query = "SELECT b FROM BitacoraContras b WHERE b.fechaAsignada = :fechaAsignada")})
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BitacoraContras extends EntitySQL implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -116,5 +116,5 @@ public class BitacoraContras extends EntitySQL implements Serializable {
     public Object getId() {
         return bitacoraContrasPK;
     }
- 
+    
 }

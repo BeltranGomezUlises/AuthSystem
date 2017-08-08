@@ -5,8 +5,6 @@
  */
 package com.machineAdmin.daos.cg.commons;
 
-import com.machineAdmin.daos.cg.exceptions.ConstraintException;
-import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.commons.IEntity;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +16,7 @@ import org.jinq.jpa.JPAJinqStream;
 import org.jinq.jpa.JinqJPAStreamProvider;
 
 /**
+ * Facade Data Access Object para entidades SQL
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> Entidad JPA a utilizar por el controlador C JPA respaldado de
@@ -45,13 +44,15 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
         this.eMFactory = eMFactory;
         this.claseEntity = claseEntity;
         this.clasePK = clasePk;
-        
+
         stream = new JinqJPAStreamProvider(eMFactory);
         stream.registerAttributeConverterType(UUID.class);
     }
 
     /**
-     * obtiene una nueva instancia de un EntityManager de la fabrica proporsionada al construir el objeto
+     * obtiene una nueva instancia de un EntityManager de la fabrica
+     * proporsionada al construir el objeto
+     *
      * @return EntityManager de la fabrica de este Data Access Object
      */
     public EntityManager getEM() {
@@ -60,6 +61,7 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
 
     /**
      * construye un JPQL Query con el parametro obtenido
+     *
      * @param jpql cadena con el JPQL para construir un query
      * @return query contruido con el JPQL
      */
@@ -68,17 +70,20 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
     }
 
     /**
-     * construye un Stream de datos de tipo JPAJinq, esto para poder realizar consultas con funciones lambda
+     * construye un Stream de datos de tipo JPAJinq, esto para poder realizar
+     * consultas con funciones lambda
+     *
      * @return strema de datos de la entidad con la cual operar
      */
-    public JPAJinqStream<T> stream() {        
+    public JPAJinqStream<T> stream() {
         return stream.streamAll(eMFactory.createEntityManager(), claseEntity);
     }
 
     /**
      * transforma una cadena serializada en pk (UUID, Long, Integer)
+     *
      * @param s cadena representativa de la pk
-     * @return  K tipo de dato asignado a la llave primaria de la entidad
+     * @return K tipo de dato asignado a la llave primaria de la entidad
      */
     public K stringToPK(String s) {
         if (clasePK.getName().equals(Integer.class.getName())) {
@@ -113,7 +118,7 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
         }
     }
 
-    public List<T> persistAll(List<T> entities) {
+    public List<T> persistAll(List<T> entities) throws Exception {
         EntityManager em = this.getEM();
         try {
             em.getTransaction().begin();
@@ -131,7 +136,7 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
         return entities;
     }
 
-    public void delete(K id) throws SQLPersistenceException {
+    public void delete(K id) throws Exception {
         EntityManager em = this.getEM();
         try {
             em.getTransaction().begin();
@@ -163,7 +168,7 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
         }
     }
 
-    public void update(T entity) throws SQLPersistenceException, ConstraintException {
+    public void update(T entity) throws Exception {
         EntityManager em = this.getEM();
         try {
             em.getTransaction().begin();
@@ -178,47 +183,51 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
         }
     }
 
-    public T findFirst() {
+    public T findFirst() throws Exception {
         try {
             return findAll(false, 1, 0).get(0);
-        } catch (Exception e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
             return null;
-        }
+        }        
     }
 
-    public T findOne(K id) {
+    public T findOne(K id) throws Exception {
         return getEM().find(claseEntity, id);
     }
 
-    public List<T> findAll(int max) {
+    public List<T> findAll(int max) throws Exception {
         return findAll(false, max, 0);
     }
 
-    public List<T> findAll() {
+    public List<T> findAll() throws Exception {
         return findAll(true, -1, -1);
     }
 
-    public List<T> findAll(int maxResults, int firstResult) {
+    public List<T> findAll(int maxResults, int firstResult) throws Exception {
         return findAll(false, maxResults, firstResult);
     }
 
-    private List<T> findAll(boolean all, int maxResults, int firstResult) {
+    private List<T> findAll(boolean all, int maxResults, int firstResult) throws Exception {
         EntityManager em = getEM();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
             cq.select(cq.from(claseEntity));
             Query q = em.createQuery(cq);
-            if (!all) {
+            if (!all) {                
                 q.setMaxResults(maxResults);
                 q.setFirstResult(firstResult);
             }
             return q.getResultList();
-        } finally {
-            em.close();
+        }catch(Exception e){
+            throw e;
+        }finally {
+            if (em != null) {
+                em.close();
+            }            
         }
     }
 
-    public long count() {
+    public long count() throws Exception {
         EntityManager em = getEM();
         long count = stream.streamAll(getEM(), claseEntity).count();
         if (em != null) {

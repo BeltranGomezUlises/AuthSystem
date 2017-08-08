@@ -40,19 +40,20 @@ import javax.ws.rs.core.Context;
 
 /**
  * servicios LCRUD para entidades mongo que tienen profundidad de acceso
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> entidad a manejar por esta clase de servicios
  * @param <Object>
  */
-public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> extends ServiceBitacoraFacade<T, Object>{
-    
+public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> extends ServiceBitacoraFacade<T, Object> {
+
     private final ManagerMongoCatalog<T> manager;
 
     public ServiceFacadeCatalogMongo(ManagerMongoCatalog<T> manager) {
         this.manager = manager;
     }
-            
-     /**
+
+    /**
      * proporciona el listado de las entidades de esta clase servicio
      *
      * @param request contexto de peticion necesario para obtener datos como ip,
@@ -65,14 +66,17 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
     public Response listar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token) {
         Response response = new Response();
         try {
-            this.manager.setToken(token);              
+            this.manager.setToken(token);
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
 
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
-            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Listar", request);
-            UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
-            //</editor-fold>
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Listar", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException e) {
+            }
 
+            //</editor-fold>
             //<editor-fold defaultstate="collapsed" desc="Auditar">
             UtilsAuditoria.ModeloAuditoria auditoria = new UtilsAuditoria.ModeloAuditoria(manager.getUsuario(), "Listar", null);
             UtilsAuditoria.auditar(manager.nombreColeccionParaRegistros(), auditoria);
@@ -106,10 +110,13 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
             response.setMessage("Entidad encontrada");
 
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
-            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Detalle", request);
-            UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
-            //</editor-fold>
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Detalle", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException e) {
+            }
 
+            //</editor-fold>
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
         } catch (Exception e) {
@@ -135,9 +142,12 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
             response.setData(manager.persist(t));
             response.setMessage("Entidad persistida");
 
-            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
-            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Alta", request);
-            UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">          
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Alta", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException unsupportedOperationException) {
+            }
             //</editor-fold>
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
@@ -168,8 +178,11 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
             response.setMessage("Entidad actualizada");
 
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
-            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", request);
-            UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException unsupportedOperationException) {
+            }
             //</editor-fold>    
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
@@ -198,8 +211,11 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
             response.setMessage("Entidad eliminada");
 
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
-            UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Eliminar", request);
-            UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Eliminar", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException unsupportedOperationException) {
+            }
             //</editor-fold>
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
