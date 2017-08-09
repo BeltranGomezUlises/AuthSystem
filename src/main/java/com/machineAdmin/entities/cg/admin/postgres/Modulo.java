@@ -33,8 +33,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -88,9 +87,7 @@ public class Modulo extends EntitySQL implements Serializable {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
-    @XmlTransient
-    @JsonIgnore
+    
     public List<Menu> getMenuList() {
         return menuList;
     }
@@ -98,7 +95,8 @@ public class Modulo extends EntitySQL implements Serializable {
     public void setMenuList(List<Menu> menuList) {
         this.menuList = menuList;
     }
-
+    
+    @JsonIgnore
     public Seccion getSeccion() {
         return seccion;
     }

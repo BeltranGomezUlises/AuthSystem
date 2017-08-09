@@ -41,6 +41,7 @@ import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos;
 import com.machineAdmin.entities.cg.commons.Profundidad;
 import static com.machineAdmin.entities.cg.commons.Profundidad.TODOS;
+import com.machineAdmin.services.cg.commons.ServiceBitacoraFacade;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -145,13 +146,12 @@ public class InitServletContext implements ServletContextListener {
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="Asignacion de permisos al perfil">        
-                
-        for (Permiso permiso : UtilsPermissions.getExistingPermissions()) {                        
+        for (Permiso permiso : UtilsPermissions.getExistingPermissions()) {
             PerfilesPermisos perfilesPermisosRelacion = new PerfilesPermisos(perfilMaster.getId(), permiso.getId());
-            perfilesPermisosRelacion.setProfundidad(Profundidad.TODOS);           
+            perfilesPermisosRelacion.setProfundidad(Profundidad.TODOS);
             if (!perfilMaster.getPerfilesPermisosList().contains(perfilesPermisosRelacion)) {
                 perfilMaster.getPerfilesPermisosList().add(perfilesPermisosRelacion);
-            }                                    
+            }
         }
         daoPerfil.update(perfilMaster);
         //</editor-fold>
@@ -168,11 +168,11 @@ public class InitServletContext implements ServletContextListener {
         
         //<editor-fold defaultstate="collapsed" desc="Asignaion de permisos al usuario">
         for (Permiso existingPermission : UtilsPermissions.getExistingPermissions()) {
-              UsuariosPermisos usuariosPermisosRelacion = new UsuariosPermisos(usuarioDB.getId(), existingPermission.getId());
-              usuariosPermisosRelacion.setProfundidad(TODOS);
-              if (!usuarioDB.getUsuariosPermisosList().contains(usuariosPermisosRelacion)) {
-                  usuarioDB.getUsuariosPermisosList().add(usuariosPermisosRelacion);
-              }
+            UsuariosPermisos usuariosPermisosRelacion = new UsuariosPermisos(usuarioDB.getId(), existingPermission.getId());
+            usuariosPermisosRelacion.setProfundidad(TODOS);
+            if (!usuarioDB.getUsuariosPermisosList().contains(usuariosPermisosRelacion)) {
+                usuarioDB.getUsuariosPermisosList().add(usuariosPermisosRelacion);
+            }
         }
         daoUsuario.update(usuarioDB);
         //</editor-fold>
@@ -431,9 +431,13 @@ public class InitServletContext implements ServletContextListener {
 
     private List<String> getClasesSimpleNameFromPackage2(String packageName) {
         Reflections reflections = new Reflections(packageName);
-        Set<Class<? extends ServiceFacade>> subtypes = reflections.getSubTypesOf(ServiceFacade.class);
+        Set<Class<? extends ServiceBitacoraFacade>> subtypes = reflections.getSubTypesOf(ServiceBitacoraFacade.class);
 
-        return subtypes.stream().map(c -> c.getSimpleName()).collect(toList());
+        return subtypes.stream().filter(s -> {
+            return !s.getSimpleName().equals("ServiceFacadeCatalogMongo")
+                    && !s.getSimpleName().equals("ServiceFacadeCatalogSQL")
+                    && !s.getSimpleName().equals("ServiceFacade");
+        }).map(c -> c.getSimpleName()).collect(toList());
     }
 
     private String generatePublicMenuName(String menuName) {

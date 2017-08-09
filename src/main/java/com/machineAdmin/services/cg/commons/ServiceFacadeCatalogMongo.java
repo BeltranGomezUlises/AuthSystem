@@ -66,7 +66,7 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
     public Response listar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token) {
         Response response = new Response();
         try {
-            this.manager.setToken(token);
+            this.manager.setToken(token);            
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
 
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
@@ -227,7 +227,7 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
     }
 
     @Override
-    public ManagerFacade<T, Object> getManager() {
+    public final ManagerFacade<T, Object> getManager() {
         return (ManagerFacade<T, Object>) manager;
     }
 

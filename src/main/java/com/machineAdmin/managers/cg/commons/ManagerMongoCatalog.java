@@ -11,6 +11,7 @@ import com.machineAdmin.daos.cg.commons.DaoMongoFacade;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.entities.cg.commons.EntityMongoCatalog;
 import com.machineAdmin.entities.cg.commons.Profundidad;
+import com.machineAdmin.managers.cg.exceptions.ProfundidadNoAsignadaException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import java.util.List;
@@ -98,25 +99,31 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
 
     @Override
     public List<T> findAll() throws Exception {
-        Query q = this.queryProfundidad();        
+        Query q = this.queryProfundidad();
         if (q != null) {
             return dao.findAll(q);
-        }else{
-            throw new Exception( "Query de profundidad imposible de generar" );
+        } else {
+            throw new Exception("Query de profundidad imposible de generar");
         }
     }
 
-    public List<T> findAll(String... attributesProjection) {
-        return dao.findAll(attributesProjection);
-    }
-
-    public List<T> findall(String... attributesProjection) {
-        return dao.findAll(attributesProjection);
+    public List<T> findAll(String... attributesProjection) throws Exception {
+        Query q = this.queryProfundidad();
+        if (q != null) {
+            return dao.findAll(q, attributesProjection);
+        } else {
+            return dao.findAll(attributesProjection);
+        }
     }
 
     @Override
-    public List<T> findAll(int max) {
-        return dao.findAll(max);
+    public List<T> findAll(int max) throws Exception {
+        Query q = this.queryProfundidad();
+        if (q != null) {
+            return dao.findAll(q, max);
+        } else {
+            return dao.findAll(max);
+        }
     }
 
     public List<T> findAll(int max, String... attributesProjection) {
@@ -162,38 +169,39 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
         return s;
     }
 
-    private Query queryProfundidad() throws Exception{
+    private Query queryProfundidad() throws Exception {
         Query q = null;
+        if (this.profundidad == null) {
+            throw new ProfundidadNoAsignadaException();
+        }
         switch (this.profundidad) {
             case TODOS:
                 //no poner query
                 break;
             case PROPIOS:
-                q = DBQuery.is("usuarioCreador", this.usuario);                
+                q = DBQuery.is("usuarioCreador", this.usuario);
                 break;
             case PROPIOS_MAS_PERFILES:
                 //buscar los id de los usuarios con mis perfiles 
                 DaoUsuario daoUsuario = new DaoUsuario();
-               
+
                 Usuario u = daoUsuario.findOne(UUID.fromString(usuario));
-                
+
                 //ids de perfiles del usuario
                 List<UUID> perfilesDelUsuario = u.getUsuariosPerfilList().stream()
-                        .map( up-> up.getUsuariosPerfilPK().getPerfil())
+                        .map(up -> up.getUsuariosPerfilPK().getPerfil())
                         .collect(toList());
                 //ids de usuarios con esos perfiles
                 DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
                 List<UUID> usuariosDeLosPerfiles = daoUsuariosPerfil.stream()
-                        .where( up -> perfilesDelUsuario.contains(up.getUsuariosPerfilPK().getPerfil()))
+                        .where(up -> perfilesDelUsuario.contains(up.getUsuariosPerfilPK().getPerfil()))
                         .map(up -> up.getUsuariosPerfilPK().getUsuario())
                         .collect(toList());
-                
-                q = DBQuery.in("usuarioCreador", perfilesDelUsuario);                
-                break;            
-            default:
-                //q se ignora
-        }  
+
+                q = DBQuery.in("usuarioCreador", perfilesDelUsuario);
+                break;         
+        }
         return q;
     }
-    
+
 }

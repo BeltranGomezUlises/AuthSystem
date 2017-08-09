@@ -137,7 +137,7 @@ public class Usuarios extends ServiceFacade<Usuario, UUID> {
         Response res = new Response();
         try {
             UtilsJWT.validateSessionToken(token);
-            res.setData(UtilsPermissions.permisosAsignadosAUsuario(usuario));
+            res.setData(UtilsPermissions.permisosAsignadosAlUsuario(usuario));
             res.setDevMessage("permisos que el usuario tiene asignado");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);

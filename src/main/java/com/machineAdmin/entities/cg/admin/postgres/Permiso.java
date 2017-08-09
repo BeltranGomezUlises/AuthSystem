@@ -34,7 +34,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -90,8 +90,7 @@ public class Permiso extends EntitySQL implements Serializable {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
-    @XmlTransient
+    
     @JsonIgnore
     public List<PerfilesPermisos> getPerfilesPermisosList() {
         return perfilesPermisosList;
@@ -100,8 +99,7 @@ public class Permiso extends EntitySQL implements Serializable {
     public void setPerfilesPermisosList(List<PerfilesPermisos> perfilesPermisosList) {
         this.perfilesPermisosList = perfilesPermisosList;
     }
-
-    @XmlTransient
+    
     @JsonIgnore
     public List<UsuariosPermisos> getUsuariosPermisosList() {
         return usuariosPermisosList;
@@ -111,6 +109,7 @@ public class Permiso extends EntitySQL implements Serializable {
         this.usuariosPermisosList = usuariosPermisosList;
     }
 
+    @JsonIgnore
     public Menu getMenu() {
         return menu;
     }

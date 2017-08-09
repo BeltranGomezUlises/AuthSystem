@@ -50,7 +50,7 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
     private ManagerSQLCatalog<T, K> manager;
     
     @Override
-    public ManagerFacade<T, K> getManager() {
+    public final ManagerFacade<T, K> getManager() {
         return manager;
     }
 
