@@ -186,6 +186,56 @@ public class UtilsPermissions {
 
         return seccionesDeUsuario;
     }
+    
+    public static ModelPermisosAsignados permisosAsignadosAlUsuarioConProfundidad(Integer userId) throws Exception {
+        DaoUsuario daoUsuario = new DaoUsuario();
+        DaoSeccion daoSeccion = new DaoSeccion();
+
+        DaoUsuariosPermisos daoUsuarioPermisos = new DaoUsuariosPermisos();
+        List<UsuariosPermisos> permisosUsuario = daoUsuarioPermisos.stream().where(e -> e.getUsuariosPermisosPK().getUsuario().equals(userId)).collect(toList());
+
+        //secciones disponibles -> eliminar todos los permisos que el usuario no tenga               
+        List<Seccion> secciones = daoSeccion.findAll();
+
+        List<ModelSeccion> seccionesDeUsuario = new ArrayList<>();        
+        ModelPermisosAsignados asignados = new ModelPermisosAsignados(seccionesDeUsuario);                                
+        for (Seccion seccion : secciones) {
+
+            List<ModelModulo> modulos = new ArrayList<>();
+            for (Modulo modulo : seccion.getModuloList()) {
+
+                List<ModelMenu> menus = new ArrayList<>();
+                for (Menu menu : modulo.getMenuList()) {
+
+                    List<ModelPermiso> permisos = new ArrayList<>();
+                    for (Permiso permiso : menu.getPermisoList()) {
+                        try {
+                            String permisoId = permiso.getId();
+                            UsuariosPermisos usuarioPermiso = permisosUsuario.stream().filter(up -> up.getUsuariosPermisosPK().getPermiso().equals(permiso.getId())).findFirst().get();                                                        
+                            permisos.add(new ModelPermiso(permiso.getNombre(), permiso.getId(), usuarioPermiso.getProfundidad()));
+                        } catch (NoSuchElementException e) {//no tiene el permiso
+                        }                                                                                                
+                    }
+                    //si tiene permisos del menu agregar el menu
+                    if (!permisos.isEmpty()) {
+                        ModelMenu m = new ModelMenu(menu.getNombre(), menu.getId(), permisos);                        
+                        menus.add(m);
+                    }
+                }
+                //si tiene menus en el modulo, agregar el modulo
+                if (!menus.isEmpty()) {
+                    ModelModulo m = new ModelModulo(modulo.getNombre(), modulo.getId(), menus);                    
+                    modulos.add(m);
+                }
+            }
+            if (!modulos.isEmpty()) {
+                ModelSeccion s = new ModelSeccion(seccion.getNombre(), seccion.getId(), modulos);                
+                seccionesDeUsuario.add(s);
+            }
+        }
+
+        return asignados;
+    }
 
     /**
      * genera una lista de los permisos que un perfil tiene asignados con su
@@ -193,6 +243,7 @@ public class UtilsPermissions {
      *
      * @param perfilId id del perfil a obtener sus permisos
      * @return lista modelos con id de permiso y profundidad
+     * @throws java.lang.Exception
      */
     public static ModelPermisosAsignados permisosAsignadosAlPerfil(Integer perfilId) throws Exception {
         DaoPerfil daoPerfil = new DaoPerfil();
@@ -219,7 +270,8 @@ public class UtilsPermissions {
                     List<ModelPermiso> permisos = new ArrayList<>();
                     for (Permiso permiso : menu.getPermisoList()) {
                         try {
-                            PerfilesPermisos perfilConPermiso = perfilesPermisos.stream().filter( pp -> pp.getPerfilesPermisosPK().getPermiso().equals(permiso.getId())).findFirst().get();                            
+                            String permisoId = permiso.getId();
+                            PerfilesPermisos perfilConPermiso = perfilesPermisos.stream().filter( pp -> pp.getPerfilesPermisosPK().getPermiso().equals(permisoId)).findFirst().get();                            
                             ModelPermiso modelPermiso = new ModelPermiso(permiso.getNombre(), permiso.getId(), perfilConPermiso.getProfundidad());                            
                             permisos.add(modelPermiso);
                         } catch (NoSuchElementException e) {//no encontro el permiso en ese perfil

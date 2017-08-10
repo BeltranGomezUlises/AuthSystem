@@ -133,11 +133,11 @@ public class Usuarios extends ServiceFacadeCatalogSQL<Usuario, Integer> {
      */
     @GET
     @Path("/permisos/{userId}")
-    public Response obtenerPermisosAsignados(@HeaderParam("Authorization") String token, @PathParam("userId") String usuario) {
+    public Response obtenerPermisosAsignados(@HeaderParam("Authorization") String token, @PathParam("userId") Integer usuario) {
         Response res = new Response();
         try {
             UtilsJWT.validateSessionToken(token);
-            res.setData(UtilsPermissions.permisosAsignadosAlUsuario(Integer.parseInt(usuario)));
+            res.setData(UtilsPermissions.permisosAsignadosAlUsuarioConProfundidad(usuario));
             res.setDevMessage("permisos que el usuario tiene asignado");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);

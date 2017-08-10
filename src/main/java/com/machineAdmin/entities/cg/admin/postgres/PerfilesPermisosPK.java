@@ -16,24 +16,18 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
-import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.io.Serializable;
-import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Converter;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Embeddable
-@Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
 public class PerfilesPermisosPK implements Serializable {
 
     @Basic(optional = false)

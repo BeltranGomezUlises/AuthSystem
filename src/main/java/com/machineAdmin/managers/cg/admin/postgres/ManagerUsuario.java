@@ -21,6 +21,7 @@ import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContras;
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
+import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos;
 import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.commons.ManagerSQLCatalog;
 import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
@@ -32,6 +33,7 @@ import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
 import com.machineAdmin.models.cg.ModelCodigoRecuperacionUsuario;
+import com.machineAdmin.models.cg.ModelPermisoAsignado;
 import com.machineAdmin.utils.UtilsBitacora;
 import com.machineAdmin.utils.UtilsConfig;
 import com.machineAdmin.utils.UtilsDate;
@@ -65,7 +67,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
 
     @Override
     public Usuario persist(Usuario entity) throws Exception {
-        
+
         entity.setContra(UtilsSecurity.cifrarMD5(entity.getContra()));
         try {
             Usuario persisted = super.persist(entity);
@@ -75,7 +77,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
 
             ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra();
             managerBitacoraContra.setUsuario(this.getUsuario());
-            
+
             managerBitacoraContra.persist(bc);
 
             return persisted;
@@ -177,7 +179,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
             } else {
                 long intervaloDeIntento = (new Date().getTime() - intentoLogin.getFechaUltimoIntentoLogin().getTime());
                 if (intervaloDeIntento < UtilsConfig.getSecondsBetweenLoginAttempt() * 1000) { //es un intento fuera del rango permitido de tiempo 
-                    intentoLogin.setNumeroIntentosLogin(intentoLogin.getNumeroIntentosLogin() + 1);                    
+                    intentoLogin.setNumeroIntentosLogin(intentoLogin.getNumeroIntentosLogin() + 1);
                 } else { //es un intento dentro del rango permitido de tiempo 
                     intentoLogin.setNumeroIntentosLogin(1);
                     intentoLogin.setFechaUltimoIntentoLogin(new Date());
@@ -281,7 +283,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
 
         ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra();
         managerBitacoraContra.setUsuario(userId);
-        
+
         BitacoraContras bitacoraContra = new BitacoraContras(userId, pass);
 
         if (managerBitacoraContra.stream().anyMatch(e -> e.equals(bitacoraContra))) {
@@ -316,19 +318,24 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
     }
 
     public void asignarPermisos(ModelAsignarPermisos modelo) throws Exception {
-//        Usuario u = dao.findOne(modelo.getId());
-//        List<Permiso> permisosNuevos = new ArrayList<>();
-//
-//        DaoPermiso daoPermiso = new DaoPermiso();
-//        modelo.getPermisosIds().forEach((permisoId) -> {
-//            try {
-//                permisosNuevos.add(daoPermiso.findOne(permisoId));
-//            } catch (Exception e) {
-//            }            
-//        });
-//
-//        u.setPermisoList(permisosNuevos);
-//        dao.update(u);
+        ManagerUsuariosPermisos managerUsuariosPermisos = new ManagerUsuariosPermisos();
+        //eliminar los permisos anteriores
+        Integer usuarioId = modelo.getId();
+        managerUsuariosPermisos.deleteAll(managerUsuariosPermisos.stream()
+                .where(up -> up.getUsuariosPermisosPK().getUsuario().equals(usuarioId))
+                .select(up -> up.getUsuariosPermisosPK())
+                .collect(toList())
+        );
+        //asignar los nuevos
+        List<UsuariosPermisos> permisosNuevos = new ArrayList<>();
+        for (ModelPermisoAsignado permiso : modelo.getPermisos()) {
+            UsuariosPermisos u = new UsuariosPermisos(modelo.getId(), permiso.getId());
+            u.setProfundidad(permiso.getProfundidad());
+
+            permisosNuevos.add(u);
+        }
+
+        managerUsuariosPermisos.persistAll(permisosNuevos);
     }
 
     public String nombreDeUsuario(Integer usuarioId) {

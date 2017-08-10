@@ -24,7 +24,6 @@ import com.machineAdmin.managers.cg.commons.ManagerSQLCatalog;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlGrupoPerfil;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  *

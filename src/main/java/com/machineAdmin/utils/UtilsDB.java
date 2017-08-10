@@ -20,8 +20,8 @@ import org.jinq.jpa.JinqJPAStreamProvider;
 public class UtilsDB {
 
     private static final String NOMBRE_DB_PROYECTO = "machineAdmin";
-    private static final MongoClientURI CONNECTION_STRING = new MongoClientURI("mongodb://admin:mongo.90Y9B8yh$@192.168.10.8:27170/admin");
-    //private static final MongoClientURI CONNECTION_STRING = new MongoClientURI("mongodb://localhost:27017");
+    //private static final MongoClientURI CONNECTION_STRING = new MongoClientURI("mongodb://admin:mongo.90Y9B8yh$@192.168.10.8:27170/admin");
+    private static final MongoClientURI CONNECTION_STRING = new MongoClientURI("mongodb://localhost:27017");
     //<editor-fold defaultstate="collapsed" desc="mongo utils">
     /**
      * The MongoClient instance actually represents a pool of connections to the
