@@ -19,16 +19,15 @@ package com.machineAdmin.daos.cg.admin.postgres;
 import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.utils.UtilsDB;
-import java.util.UUID;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoUsuario extends DaoSQLFacade<Usuario, UUID>{
+public class DaoUsuario extends DaoSQLFacade<Usuario, Integer>{
 
     public DaoUsuario() {
-        super(UtilsDB.getEMFactoryCG(),Usuario.class, UUID.class);
+        super(UtilsDB.getEMFactoryCG(),Usuario.class, Integer.class);
     }
 
 }

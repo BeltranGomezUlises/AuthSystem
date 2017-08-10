@@ -24,7 +24,7 @@ import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlUsuario;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.commons.ServiceFacade;
+import com.machineAdmin.services.cg.commons.ServiceFacadeCatalogSQL;
 import static com.machineAdmin.utils.UtilsService.*;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsPermissions;
@@ -42,7 +42,7 @@ import javax.ws.rs.PathParam;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/usuarios")
-public class Usuarios extends ServiceFacade<Usuario, UUID> {
+public class Usuarios extends ServiceFacadeCatalogSQL<Usuario, Integer> {
 
     public Usuarios() {
         super(new ManagerUsuario());
@@ -137,7 +137,7 @@ public class Usuarios extends ServiceFacade<Usuario, UUID> {
         Response res = new Response();
         try {
             UtilsJWT.validateSessionToken(token);
-            res.setData(UtilsPermissions.permisosAsignadosAlUsuario(usuario));
+            res.setData(UtilsPermissions.permisosAsignadosAlUsuario(Integer.parseInt(usuario)));
             res.setDevMessage("permisos que el usuario tiene asignado");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);

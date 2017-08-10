@@ -16,32 +16,27 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
-import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.io.Serializable;
-import java.util.UUID;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Converter;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Embeddable
-@Converter(name = "uuidConverter", converterClass = UUIDConverter.class) 
 public class BitacoraContrasPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
-    @Lob
-    @Convert("uuidConverter")
+    @Lob    
     @Column(name = "usuario")
-    private UUID usuario;
+    private Integer usuario;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
@@ -51,16 +46,16 @@ public class BitacoraContrasPK implements Serializable {
     public BitacoraContrasPK() {
     }
 
-    public BitacoraContrasPK(UUID usuario, String contra) {
+    public BitacoraContrasPK(Integer usuario, String contra) {
         this.usuario = usuario;
         this.contra = contra;
     }
 
-    public UUID getUsuario() {
+    public Integer getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(UUID usuario) {
+    public void setUsuario(Integer usuario) {
         this.usuario = usuario;
     }
 
@@ -74,27 +69,34 @@ public class BitacoraContrasPK implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (usuario != null ? usuario.hashCode() : 0);
-        hash += (contra != null ? contra.hashCode() : 0);
+        int hash = 7;
+        hash = 97 * hash + this.usuario;
+        hash = 97 * hash + Objects.hashCode(this.contra);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof BitacoraContrasPK)) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        BitacoraContrasPK other = (BitacoraContrasPK) object;
-        if ((this.usuario == null && other.usuario != null) || (this.usuario != null && !this.usuario.equals(other.usuario))) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
-        if ((this.contra == null && other.contra != null) || (this.contra != null && !this.contra.equals(other.contra))) {
+        final BitacoraContrasPK other = (BitacoraContrasPK) obj;
+        if (this.usuario != other.usuario) {
+            return false;
+        }
+        if (!Objects.equals(this.contra, other.contra)) {
             return false;
         }
         return true;
     }
+
+    
 
     @Override
     public String toString() {

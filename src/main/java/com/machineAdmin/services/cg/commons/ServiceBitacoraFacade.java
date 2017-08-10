@@ -148,5 +148,15 @@ public abstract class ServiceBitacoraFacade<T extends IEntity, K> {
         return res;
     }
 
+    /**
+     * obtiene por stacktrace el id de la accion actual en ejecucion
+     *
+     * @return id de accion actual en ejecucion
+     */
+    protected static String accionActual() {
+        String className = Thread.currentThread().getStackTrace()[3].getClassName();
+        String raiz = "com.machineAdmin.services.";
+        return className.substring(raiz.length()) + "." + Thread.currentThread().getStackTrace()[3].getMethodName();
+    }
     
 }

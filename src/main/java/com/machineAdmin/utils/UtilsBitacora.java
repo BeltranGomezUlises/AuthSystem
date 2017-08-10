@@ -16,6 +16,7 @@
  */
 package com.machineAdmin.utils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.machineAdmin.entities.cg.admin.mongo.BitacoraAcceso;
 import com.machineAdmin.entities.cg.commons.EntityMongo;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
@@ -34,21 +35,21 @@ import org.mongojack.JacksonDBCollection;
  */
 public class UtilsBitacora {
 
-    public static void bitacorizar(String collectionName, ModeloBitacora model)throws UnsupportedOperationException {
+    public static void bitacorizar(String collectionName, ModeloBitacora model) throws UnsupportedOperationException {
         new Thread(() -> {
             try {
                 //buscar el usuario en base de datos para obtener su nombre
                 ManagerUsuario managerUsuario = new ManagerUsuario();
-                model.setUsuario(managerUsuario.nombreDeUsuario(UUID.fromString(model.getUsuario())));
+                model.setUsuario(managerUsuario.nombreDeUsuario(model.getUsuarioId()));
 
                 JacksonDBCollection<ModeloBitacora, String> coll = JacksonDBCollection.wrap(UtilsDB.getBitacoraCollection(collectionName), ModeloBitacora.class, String.class);
                 coll.insert(model);
             } catch (UnsupportedOperationException e) {
                 throw e;
-            }catch(Exception e){
+            } catch (Exception e) {
                 Logger.getLogger(UtilsBitacora.class.getName()).log(Level.WARNING, "No se pudo bitacorizar", e);
             }
-        }).start();        
+        }).start();
     }
 
     public static void bitacorizarLogOut(String usuario) {
@@ -88,6 +89,9 @@ public class UtilsBitacora {
 
     public static class ModeloBitacora extends EntityMongo {
 
+        @JsonIgnore
+        private Integer usuarioId;
+
         private String usuario;
         private Date fecha;
         private String accion;
@@ -97,14 +101,14 @@ public class UtilsBitacora {
         public ModeloBitacora() {
         }
 
-        public ModeloBitacora(String usuario, Date fecha, String accion) {
-            this.usuario = usuario;
+        public ModeloBitacora(Integer usuarioId, Date fecha, String accion) {
+            this.usuarioId = usuarioId;
             this.fecha = fecha;
             this.accion = accion;
         }
 
-        public ModeloBitacora(String usuario, Date fecha, String accion, HttpServletRequest request) {
-            this.usuario = usuario;
+        public ModeloBitacora(Integer usuarioId, Date fecha, String accion, HttpServletRequest request) {
+            this.usuarioId = usuarioId;
             this.fecha = fecha;
             this.accion = accion;
             this.ipCliente = request.getRemoteAddr();
@@ -149,6 +153,14 @@ public class UtilsBitacora {
 
         public void setAccion(String accion) {
             this.accion = accion;
+        }
+
+        public Integer getUsuarioId() {
+            return usuarioId;
+        }
+
+        public void setUsuarioId(Integer usuarioId) {
+            this.usuarioId = usuarioId;
         }
 
         @Override

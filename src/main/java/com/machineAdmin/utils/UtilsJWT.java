@@ -78,10 +78,20 @@ public class UtilsJWT {
             throw new TokenInvalidoException("Token Invalido");
         }catch ( ExpiredJwtException exe){
             throw new TokenExpiradoException("Token expirado");
-        }
-        
+        }        
+    }
+    
+    public static Integer getUserIdFrom(String token) throws TokenInvalidoException, TokenExpiradoException {
+        try {
+            return Integer.parseInt(Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token).getBody().getSubject()); 
+        } catch (SignatureException | IllegalArgumentException e) {
+            throw new TokenInvalidoException("Token Invalido");
+        }catch ( ExpiredJwtException exe){
+            throw new TokenExpiradoException("Token expirado");
+        }        
     }
 
+    
     public static void validateSessionToken(String token) throws TokenExpiradoException, TokenInvalidoException {
         try {
             Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token);

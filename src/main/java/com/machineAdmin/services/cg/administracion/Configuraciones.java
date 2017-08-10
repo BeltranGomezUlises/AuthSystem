@@ -36,18 +36,8 @@ public class Configuraciones extends ServiceFacade<CGConfig, Object>{
     }
 
     @Override
-    public Response eliminar(HttpServletRequest request, String token, CGConfig t) {
-        return new Response(Status.WARNING, "Opción no disponible");
+    public Response modificar(HttpServletRequest request, String token, CGConfig t) {
+        return super.modificar(request, token, t);
     }
-
-    @Override
-    public Response alta(HttpServletRequest request, String token, CGConfig t) {
-        return new Response(Status.WARNING, "Opción no disponible");
-    }
-
-    @Override
-    public Response detalle(HttpServletRequest request, String token, String id) {
-        return new Response(Status.WARNING, "Opción no disponible");
-    }
-    
+        
 }

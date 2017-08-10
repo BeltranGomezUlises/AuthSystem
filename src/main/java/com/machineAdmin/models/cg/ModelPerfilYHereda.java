@@ -22,14 +22,14 @@ package com.machineAdmin.models.cg;
  */
 public class ModelPerfilYHereda {
 
-    private String perfilId;
+    private Integer perfilId;
     private boolean hereda;
 
-    public String getPerfilId() {
+    public Integer getPerfilId() {
         return perfilId;
     }
 
-    public void setPerfilId(String profileId) {
+    public void setPerfilId(Integer profileId) {
         this.perfilId = profileId;
     }
 

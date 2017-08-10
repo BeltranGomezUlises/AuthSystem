@@ -60,7 +60,7 @@ public class ManagerUsuariosPerfil extends ManagerSQL<UsuariosPerfil, UsuariosPe
         List<UsuariosPerfil> usuariosPerfilNuevos = new ArrayList<>();
         UsuariosPerfil entidadRelacion;
         for (ModelPerfilYHereda perfil : modelo.getPerfiles()) {
-            entidadRelacion = new UsuariosPerfil(modelo.getUserId(), UUID.fromString(perfil.getPerfilId()));
+            entidadRelacion = new UsuariosPerfil(modelo.getUserId(), perfil.getPerfilId());
             entidadRelacion.setHereda(perfil.isHereda());
             usuariosPerfilNuevos.add(entidadRelacion);
         }

@@ -15,8 +15,10 @@ import com.machineAdmin.managers.cg.exceptions.ProfundidadNoAsignadaException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import org.mongojack.DBQuery;
 import org.mongojack.DBQuery.Query;
 
@@ -46,12 +48,16 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
 
     @Override
     public T persist(T entity) {
+        entity.setUsuarioCreador(this.getUsuario());
         T t = (T) dao.persist(entity);
         return t;
     }
 
     @Override
     public List<T> persistAll(List<T> entities) throws Exception {
+        for (T entity : entities) {
+            entity.setUsuarioCreador(this.getUsuario());
+        }
         List<T> ts = dao.persistAll(entities);
         return ts;
     }
@@ -103,7 +109,7 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
         if (q != null) {
             return dao.findAll(q);
         } else {
-            throw new Exception("Query de profundidad imposible de generar");
+            return dao.findAll();
         }
     }
 
@@ -185,20 +191,20 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
                 //buscar los id de los usuarios con mis perfiles 
                 DaoUsuario daoUsuario = new DaoUsuario();
 
-                Usuario u = daoUsuario.findOne(UUID.fromString(usuario));
+                Usuario u = daoUsuario.findOne(usuario);
 
                 //ids de perfiles del usuario
-                List<UUID> perfilesDelUsuario = u.getUsuariosPerfilList().stream()
+                List<Integer> perfilesDelUsuario = u.getUsuariosPerfilList().stream()
                         .map(up -> up.getUsuariosPerfilPK().getPerfil())
                         .collect(toList());
                 //ids de usuarios con esos perfiles
                 DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
-                List<UUID> usuariosDeLosPerfiles = daoUsuariosPerfil.stream()
+                Set<String> usuariosDeLosPerfiles = daoUsuariosPerfil.stream()
                         .where(up -> perfilesDelUsuario.contains(up.getUsuariosPerfilPK().getPerfil()))
-                        .map(up -> up.getUsuariosPerfilPK().getUsuario())
-                        .collect(toList());
+                        .map(up -> up.getUsuariosPerfilPK().getUsuario().toString())
+                        .collect(toSet());
 
-                q = DBQuery.in("usuarioCreador", perfilesDelUsuario);
+                q = DBQuery.in("usuarioCreador", usuariosDeLosPerfiles);
                 break;         
         }
         return q;

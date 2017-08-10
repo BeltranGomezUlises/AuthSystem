@@ -36,39 +36,35 @@ import org.eclipse.persistence.annotations.Converter;
 public class UsuariosPerfilPK implements Serializable {
 
     @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Convert("uuidConverter")
+    @NotNull    
     @Column(name = "usuario")
-    private UUID usuario;
+    private Integer usuario;
     @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Convert("uuidConverter")
+    @NotNull    
     @Column(name = "perfil")
-    private UUID perfil;
+    private Integer perfil;
 
     public UsuariosPerfilPK() {
     }
 
-    public UsuariosPerfilPK(UUID usuario, UUID perfil) {
+    public UsuariosPerfilPK(Integer usuario, Integer perfil) {
         this.usuario = usuario;
         this.perfil = perfil;
     }
 
-    public UUID getUsuario() {
+    public Integer getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(UUID usuario) {
+    public void setUsuario(Integer usuario) {
         this.usuario = usuario;
     }
 
-    public UUID getPerfil() {
+    public Integer getPerfil() {
         return perfil;
     }
 
-    public void setPerfil(UUID perfil) {
+    public void setPerfil(Integer perfil) {
         this.perfil = perfil;
     }
 

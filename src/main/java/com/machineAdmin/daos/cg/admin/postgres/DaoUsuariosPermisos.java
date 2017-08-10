@@ -25,9 +25,9 @@ import com.machineAdmin.utils.UtilsDB;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoUsuarioPermisos extends DaoSQLFacade<UsuariosPermisos, UsuariosPermisosPK>{
+public class DaoUsuariosPermisos extends DaoSQLFacade<UsuariosPermisos, UsuariosPermisosPK>{
     
-    public DaoUsuarioPermisos() {
+    public DaoUsuariosPermisos() {
         super(UtilsDB.getEMFactoryCG(), UsuariosPermisos.class, UsuariosPermisosPK.class);
     }
     

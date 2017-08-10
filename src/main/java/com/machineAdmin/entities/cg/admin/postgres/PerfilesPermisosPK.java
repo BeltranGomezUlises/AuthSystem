@@ -37,11 +37,9 @@ import org.eclipse.persistence.annotations.Converter;
 public class PerfilesPermisosPK implements Serializable {
 
     @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Convert("uuidConverter")
+    @NotNull    
     @Column(name = "perfil")
-    private UUID perfil;
+    private Integer perfil;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
@@ -51,16 +49,16 @@ public class PerfilesPermisosPK implements Serializable {
     public PerfilesPermisosPK() {
     }
 
-    public PerfilesPermisosPK(UUID perfil, String permiso) {
+    public PerfilesPermisosPK(Integer perfil, String permiso) {
         this.perfil = perfil;
         this.permiso = permiso;
     }
 
-    public UUID getPerfil() {
+    public Integer getPerfil() {
         return perfil;
     }
 
-    public void setPerfil(UUID perfil) {
+    public void setPerfil(Integer perfil) {
         this.perfil = perfil;
     }
 

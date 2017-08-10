@@ -26,7 +26,6 @@ import com.machineAdmin.services.cg.commons.ServiceFacade;
 import static com.machineAdmin.utils.UtilsService.*;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsPermissions;
-import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -40,7 +39,7 @@ import javax.ws.rs.PathParam;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/perfiles")
-public class Perfiles extends ServiceFacade<Perfil, UUID> {
+public class Perfiles extends ServiceFacade<Perfil, Integer> {
 
     public Perfiles() {
         super(new ManagerPerfil());
@@ -108,7 +107,7 @@ public class Perfiles extends ServiceFacade<Perfil, UUID> {
      */
     @GET
     @Path("/permisos/{perfilId}")
-    public Response obtenerPermisos(@HeaderParam("Authorization") String token, @PathParam("perfilId") String perfilId) {
+    public Response obtenerPermisos(@HeaderParam("Authorization") String token, @PathParam("perfilId") Integer perfilId) {
         Response res = new Response();
         try {
             UtilsJWT.validateSessionToken(token);

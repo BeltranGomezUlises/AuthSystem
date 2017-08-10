@@ -53,7 +53,7 @@ import org.apache.commons.mail.EmailException;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerUsuario extends ManagerSQLCatalog<Usuario, UUID> {
+public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
 
     public ManagerUsuario() {
         super(new DaoUsuario());
@@ -65,7 +65,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, UUID> {
 
     @Override
     public Usuario persist(Usuario entity) throws Exception {
-
+        
         entity.setContra(UtilsSecurity.cifrarMD5(entity.getContra()));
         try {
             Usuario persisted = super.persist(entity);
@@ -73,7 +73,9 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, UUID> {
             BitacoraContras bc = new BitacoraContras(persisted.getId(), persisted.getContra());
             bc.setUsuario1(persisted);
 
-            ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra(this.getUsuario());
+            ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra();
+            managerBitacoraContra.setUsuario(this.getUsuario());
+            
             managerBitacoraContra.persist(bc);
 
             return persisted;
@@ -91,7 +93,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, UUID> {
     }
 
     @Override
-    public void delete(UUID id) throws Exception {
+    public void delete(Integer id) throws Exception {
         Usuario u = this.findOne(id);
         u.setInhabilitado(Boolean.TRUE);
         this.update(u);
@@ -147,7 +149,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, UUID> {
     }
 
     public void logout(String token) throws TokenInvalidoException, TokenExpiradoException {
-        UtilsBitacora.bitacorizarLogOut(this.nombreDeUsuario(UUID.fromString(UtilsJWT.getBodyToken(token))));
+        UtilsBitacora.bitacorizarLogOut(this.nombreDeUsuario(UtilsJWT.getUserIdFrom(token)));
     }
 
     private void numberAttemptVerification(Usuario usuario) throws UsuarioInexistenteException, UsuarioBlockeadoException, Exception {
@@ -274,11 +276,13 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, UUID> {
         }
     }
 
-    public void resetPassword(String userId, String pass) throws Exception {
+    public void resetPassword(Integer userId, String pass) throws Exception {
         pass = UtilsSecurity.cifrarMD5(pass);
 
-        ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra(userId);
-        BitacoraContras bitacoraContra = new BitacoraContras(UUID.fromString(userId), pass);
+        ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra();
+        managerBitacoraContra.setUsuario(userId);
+        
+        BitacoraContras bitacoraContra = new BitacoraContras(userId, pass);
 
         if (managerBitacoraContra.stream().anyMatch(e -> e.equals(bitacoraContra))) {
             throw new ParametroInvalidoException("La contraseña que esta ingresando ya fué utilizada, intente con otra");
@@ -287,7 +291,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, UUID> {
         ManagerUsuario managerUsuario = new ManagerUsuario();
         managerUsuario.setUsuario(usuario);
 
-        Usuario u = dao.findOne(UUID.fromString(userId));
+        Usuario u = dao.findOne(userId);
         u.setContra(pass);
         managerUsuario.update(u);
 
@@ -327,7 +331,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, UUID> {
 //        dao.update(u);
     }
 
-    public String nombreDeUsuario(UUID usuarioId) {
+    public String nombreDeUsuario(Integer usuarioId) {
         return this.stream().where(u -> u.getId().equals(usuarioId)).findFirst().get().getNombre();
     }
 

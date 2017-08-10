@@ -19,20 +19,20 @@ import java.util.List;
  */
 public abstract class ManagerFacade<T extends IEntity, K> {
 
-    protected String usuario;
+    protected Integer usuario;
 
     public ManagerFacade() {
     }
 
     public ManagerFacade(String token) throws TokenInvalidoException, TokenExpiradoException {
-        this.usuario = UtilsJWT.getBodyToken(token);
+        this.usuario =UtilsJWT.getUserIdFrom(token);
     }
 
-    public String getUsuario() {
+    public Integer getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(String usuario) {
+    public void setUsuario(Integer usuario) {
         this.usuario = usuario;
     }    
 
@@ -45,7 +45,7 @@ public abstract class ManagerFacade<T extends IEntity, K> {
      * @throws TokenExpiradoException si el token proporsionado ya expiró
      */
     public void setToken(String token) throws TokenInvalidoException, TokenExpiradoException {
-        this.setUsuario(UtilsJWT.getBodyToken(token));
+        this.setUsuario(UtilsJWT.getUserIdFrom(token));
     }
 
     /**

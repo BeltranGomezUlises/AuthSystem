@@ -16,14 +16,10 @@
  */
 package com.machineAdmin.entities.cg.commons;
 
-import java.util.UUID;
-import org.eclipse.persistence.annotations.Converter;
-
 /**
  * clase padre para entidades sql que tienen un usuario creador y puedes acceder con profundidad
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-@Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
 public abstract class EntitySQLCatalog extends IEntity {
 
     /**
@@ -35,17 +31,17 @@ public abstract class EntitySQLCatalog extends IEntity {
      *
      *
      *
-     * @return UUID del usuario que crea esta entidad
+     * @return id del usuario que crea esta entidad
      */
-    public abstract UUID getUsuarioCreador() throws UnsupportedOperationException;
+    public abstract Integer getUsuarioCreador() throws UnsupportedOperationException;
 
     /**
      * sobreescribir para asignar un UUID a la propiedad del usuario que creará
      * esta entidad, si No se requiere en esta entidad registrar el usuario
      * creador dejar vacío.
      *
-     * @param usuarioCreador uuid del usuario que crea esta entidad
+     * @param usuarioCreador id del usuario que crea esta entidad
      */
-    public abstract void setUsuarioCreador(UUID usuarioCreador) throws UnsupportedOperationException;
+    public abstract void setUsuarioCreador(Integer usuarioCreador) throws UnsupportedOperationException;
 
 }

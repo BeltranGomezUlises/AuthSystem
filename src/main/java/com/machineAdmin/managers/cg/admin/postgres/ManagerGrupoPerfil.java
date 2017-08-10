@@ -30,7 +30,7 @@ import java.util.UUID;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerGrupoPerfil extends ManagerSQLCatalog<GrupoPerfiles, UUID> {
+public class ManagerGrupoPerfil extends ManagerSQLCatalog<GrupoPerfiles, Integer> {
 
     public ManagerGrupoPerfil() {
         super(new DaoGrupoPerfiles());
@@ -41,14 +41,14 @@ public class ManagerGrupoPerfil extends ManagerSQLCatalog<GrupoPerfiles, UUID> {
     }
 
     public void asignarPerfiles(ModelAsignarPerfilesAlGrupoPerfil model) throws Exception {
-        GrupoPerfiles gp = this.findOne(UUID.fromString(model.getGrupoPerfilId()));
+        GrupoPerfiles gp = this.findOne(model.getGrupoPerfilId());
         ManagerPerfil managerPerfil = new ManagerPerfil();
         managerPerfil.setUsuario(this.getUsuario());
 
         List<Perfil> perfiles = new ArrayList<>();
         model.getPerfilesIds().forEach(pId -> {
             try {
-                perfiles.add(managerPerfil.findOne(UUID.fromString(pId)));
+                perfiles.add(managerPerfil.findOne(pId));
             } catch (Exception e) {
             }            
         });

@@ -25,6 +25,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
@@ -34,7 +36,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 import org.eclipse.persistence.annotations.Convert;
 
 /**
@@ -43,7 +44,6 @@ import org.eclipse.persistence.annotations.Convert;
  */
 @Entity
 @Table(name = "perfil")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Perfil.findAll", query = "SELECT p FROM Perfil p")
     , @NamedQuery(name = "Perfil.findByNombre", query = "SELECT p FROM Perfil p WHERE p.nombre = :nombre")
@@ -53,21 +53,18 @@ public class Perfil extends EntitySQLCatalog implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Convert("uuidConverter")
+    @NotNull    
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private UUID id;
+    private Integer id;
     @Size(max = 2147483647)
     @Column(name = "nombre")
     private String nombre;
     @Size(max = 2147483647)
     @Column(name = "descripcion")
-    private String descripcion;
-    @Lob
-    @Convert("uuidConverter")
+    private String descripcion;        
     @Column(name = "usuario_creador")
-    private UUID usuarioCreador;
+    private Integer usuarioCreador;
     @ManyToMany(mappedBy = "perfilList")
     private List<GrupoPerfiles> grupoPerfilesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "perfil1")
@@ -76,19 +73,18 @@ public class Perfil extends EntitySQLCatalog implements Serializable {
     private List<UsuariosPerfil> usuariosPerfilList;
 
     public Perfil() {
-        this.id = UUID.randomUUID();
     }
 
-    public Perfil(UUID id) {
+    public Perfil(Integer id) {
         this.id = id;
     }
 
     @Override
-    public UUID getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -109,12 +105,12 @@ public class Perfil extends EntitySQLCatalog implements Serializable {
     }
 
     @Override
-    public UUID getUsuarioCreador() {
+    public Integer getUsuarioCreador() {
         return usuarioCreador;
     }
 
     @Override
-    public void setUsuarioCreador(UUID usuarioCreador) {
+    public void setUsuarioCreador(Integer usuarioCreador) {
         this.usuarioCreador = usuarioCreador;
     }
    

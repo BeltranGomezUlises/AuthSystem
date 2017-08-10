@@ -38,10 +38,8 @@ public class UsuariosPermisosPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
-    @Lob
-    @Convert("uuidConverter")
     @Column(name = "usuario")
-    private UUID usuario;
+    private Integer usuario;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
@@ -51,16 +49,16 @@ public class UsuariosPermisosPK implements Serializable {
     public UsuariosPermisosPK() {
     }
 
-    public UsuariosPermisosPK(UUID usuario, String permiso) {
+    public UsuariosPermisosPK(Integer usuario, String permiso) {
         this.usuario = usuario;
         this.permiso = permiso;
     }
 
-    public UUID getUsuario() {
+    public Integer getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(UUID usuario) {
+    public void setUsuario(Integer usuario) {
         this.usuario = usuario;
     }
 

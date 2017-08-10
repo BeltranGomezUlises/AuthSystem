@@ -139,8 +139,7 @@ public class InitServletContext implements ServletContextListener {
             List<Perfil> perfilesDelRol = new ArrayList<>();
             perfilesDelRol.add(perfilMaster);
             gp.setPerfilList(perfilesDelRol);
-            gp.setUsuarioCreador(usuarioDB.getId());
-            gp.setId(UUID.randomUUID());
+            gp.setUsuarioCreador(usuarioDB.getId());            
             daoGrupoPerfil.persist(gp);
         }
         //</editor-fold>

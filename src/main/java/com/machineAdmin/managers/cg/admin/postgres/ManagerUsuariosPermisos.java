@@ -16,7 +16,7 @@
  */
 package com.machineAdmin.managers.cg.admin.postgres;
 
-import com.machineAdmin.daos.cg.admin.postgres.DaoUsuarioPermisos;
+import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPermisos;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisosPK;
 import com.machineAdmin.managers.cg.commons.ManagerSQL;
@@ -28,7 +28,7 @@ import com.machineAdmin.managers.cg.commons.ManagerSQL;
 public class ManagerUsuariosPermisos extends ManagerSQL<UsuariosPermisos, UsuariosPermisosPK>{
 
     public ManagerUsuariosPermisos() {
-        super(new DaoUsuarioPermisos());
+        super(new DaoUsuariosPermisos());
     }
 
     @Override

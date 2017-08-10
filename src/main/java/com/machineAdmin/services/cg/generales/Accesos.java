@@ -66,7 +66,7 @@ public class Accesos {
             Usuario usuarioLogeado = managerUsuario.login(usuarioAutenticando);
 
             ModelUsuarioLogeado modelUsuarioLogeado = new ModelUsuarioLogeado();
-            modelUsuarioLogeado.setPermisos(UtilsPermissions.permisosAsignadosAlUsuario(usuarioLogeado.getId().toString()));
+            modelUsuarioLogeado.setPermisos(UtilsPermissions.permisosAsignadosAlUsuario(usuarioLogeado.getId()));
 
             BeanUtils.copyProperties(modelUsuarioLogeado, usuarioLogeado);
 
@@ -191,7 +191,7 @@ public class Accesos {
         Response res = new Response();
         try {
             UtilsJWT.validateSessionToken(tokenResetPassword);
-            String userId = UtilsJWT.getBodyToken(tokenResetPassword);
+            Integer userId = UtilsJWT.getUserIdFrom(tokenResetPassword);
             String pass = UtilsSecurity.decryptBase64ByPrivateKey(content.getContent());
 
             ManagerUsuario managerUsuario = new ManagerUsuario(tokenResetPassword, Profundidad.TODOS);

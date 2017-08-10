@@ -53,7 +53,7 @@ public class ServiceFacade<T extends IEntity, K> extends ServiceBitacoraFacade<T
     }
 
     @Override
-    public ManagerFacade<T, K> getManager() {
+    public final ManagerFacade<T, K> getManager() {
         return manager;
     }
 

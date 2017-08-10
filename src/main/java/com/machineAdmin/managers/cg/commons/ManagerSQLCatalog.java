@@ -11,6 +11,7 @@ import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import java.util.List;
+import java.util.UUID;
 import org.jinq.jpa.JPAJinqStream;
 
 /**
@@ -41,12 +42,16 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
 
     @Override
     public T persist(T entity) throws Exception {
+        entity.setUsuarioCreador(this.getUsuario());
         dao.persist(entity);
         return entity;
     }
 
     @Override
     public List<T> persistAll(List<T> entities) throws Exception {
+        for (T entity : entities) {
+            entity.setUsuarioCreador(this.getUsuario());
+        }
         return dao.persistAll(entities);
     }
 
@@ -66,29 +71,27 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
     }
 
     @Override
-    public T findOne(K id) throws Exception{
+    public T findOne(K id) throws Exception {
         return dao.findOne(id);
     }
 
     @Override
     public List<T> findAll() throws Exception {
-        //buscar el permiso
-        
         return dao.findAll();
     }
 
     @Override
-    public List<T> findAll(int max) throws Exception{
+    public List<T> findAll(int max) throws Exception {
         return dao.findAll(max);
     }
 
     @Override
-    public long count() throws Exception{
+    public long count() throws Exception {
         return dao.count();
     }
 
     @Override
-    public T findFirst() throws Exception{
+    public T findFirst() throws Exception {
         return (T) dao.findFirst();
     }
 

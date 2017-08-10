@@ -19,7 +19,6 @@ package com.machineAdmin.entities.cg.admin.postgres;
 import com.machineAdmin.entities.cg.commons.EntitySQL;
 import com.machineAdmin.entities.cg.commons.Profundidad;
 import java.io.Serializable;
-import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -33,7 +32,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -41,7 +39,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "perfiles_permisos")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "PerfilesPermisos.findAll", query = "SELECT p FROM PerfilesPermisos p")
     , @NamedQuery(name = "PerfilesPermisos.findByPermiso", query = "SELECT p FROM PerfilesPermisos p WHERE p.perfilesPermisosPK.permiso = :permiso")
@@ -76,7 +73,7 @@ public class PerfilesPermisos extends EntitySQL implements Serializable {
         this.profundidad = profundidad;
     }
 
-    public PerfilesPermisos(UUID perfil, String permiso) {
+    public PerfilesPermisos(Integer perfil, String permiso) {
         this.perfilesPermisosPK = new PerfilesPermisosPK(perfil, permiso);
     }
 

@@ -28,6 +28,9 @@ public class EntidadMongoPrueba extends EntityMongoCatalog{
     private int numero;
     private String fotoBase64;
 
+    public EntidadMongoPrueba() {
+    }
+        
     public EntidadMongoPrueba(String cadena, int numero) {
         this.cadena = cadena;
         this.numero = numero;

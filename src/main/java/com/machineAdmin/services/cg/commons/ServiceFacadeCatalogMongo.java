@@ -17,6 +17,7 @@
 package com.machineAdmin.services.cg.commons;
 
 import com.machineAdmin.entities.cg.commons.EntityMongoCatalog;
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.commons.ManagerFacade;
 import com.machineAdmin.managers.cg.commons.ManagerMongoCatalog;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
@@ -24,6 +25,7 @@ import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.utils.UtilsAuditoria;
 import com.machineAdmin.utils.UtilsBitacora;
+import com.machineAdmin.utils.UtilsPermissions;
 import static com.machineAdmin.utils.UtilsService.setErrorResponse;
 import static com.machineAdmin.utils.UtilsService.setInvalidTokenResponse;
 import static com.machineAdmin.utils.UtilsService.setOkResponse;
@@ -66,9 +68,11 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
     public Response listar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token) {
         Response response = new Response();
         try {
-            this.manager.setToken(token);            
+            this.manager.setToken(token);           
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, accionActual()));                        
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
 
+            
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
                 UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Listar", request);
@@ -77,6 +81,7 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
             }
 
             //</editor-fold>
+            
             //<editor-fold defaultstate="collapsed" desc="Auditar">
             UtilsAuditoria.ModeloAuditoria auditoria = new UtilsAuditoria.ModeloAuditoria(manager.getUsuario(), "Listar", null);
             UtilsAuditoria.auditar(manager.nombreColeccionParaRegistros(), auditoria);
@@ -230,5 +235,5 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
     public final ManagerFacade<T, Object> getManager() {
         return (ManagerFacade<T, Object>) manager;
     }
-
+    
 }

@@ -37,13 +37,13 @@ public class UtilsAuditoria {
             try {
                 //buscar el usuario en base de datos para obtener su nombre
                 ManagerUsuario managerUsuario = new ManagerUsuario();
-                model.setUsuario(managerUsuario.nombreDeUsuario(UUID.fromString(model.getUsuario())));
+                model.setUsuario(managerUsuario.nombreDeUsuario(model.getUsuarioId()));
 
                 JacksonDBCollection<ModeloAuditoria, String> coll = JacksonDBCollection.wrap(UtilsDB.getAuditoriaCollection(collectionName), ModeloAuditoria.class, String.class);
                 coll.insert(model);
             } catch (Exception e) {
                 Logger.getLogger(UtilsAuditoria.class.getName()).log(Level.WARNING, "No se pudo auditar", e);
-            }            
+            }
         }).start();
     }
 
@@ -72,6 +72,7 @@ public class UtilsAuditoria {
 
     public static class ModeloAuditoria extends EntityMongo {
 
+        private Integer usuarioId;
         private String usuario;
         private Date fecha;
         private String accion;
@@ -82,8 +83,8 @@ public class UtilsAuditoria {
         public ModeloAuditoria() {
         }
 
-        public ModeloAuditoria(String usuario, Date fecha, String accion, Object objetoAnterior, Object objetoNuevo, Object objectoReferencia) {
-            this.usuario = usuario;
+        public ModeloAuditoria(Integer usuarioId, Date fecha, String accion, Object objetoAnterior, Object objetoNuevo, Object objectoReferencia) {
+            this.usuarioId = usuarioId;
             this.fecha = fecha;
             this.accion = accion;
             this.objetoAnterior = objetoAnterior;
@@ -91,8 +92,8 @@ public class UtilsAuditoria {
             this.objectoReferencia = objectoReferencia;
         }
 
-        public ModeloAuditoria(String usuario, String accion, Object objectoReferencia) {
-            this.usuario = usuario;
+        public ModeloAuditoria(Integer usuarioId, String accion, Object objectoReferencia) {
+            this.usuarioId = usuarioId;
             this.fecha = new Date();
             this.accion = accion;
             this.objectoReferencia = objectoReferencia;
@@ -144,6 +145,14 @@ public class UtilsAuditoria {
 
         public void setObjectoReferencia(Object objectoReferencia) {
             this.objectoReferencia = objectoReferencia;
+        }
+
+        public Integer getUsuarioId() {
+            return usuarioId;
+        }
+
+        public void setUsuarioId(Integer usuarioId) {
+            this.usuarioId = usuarioId;
         }
 
         @Override

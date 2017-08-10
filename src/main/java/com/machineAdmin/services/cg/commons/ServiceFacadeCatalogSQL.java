@@ -47,8 +47,12 @@ import javax.ws.rs.core.Context;
  */
 public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends ServiceBitacoraFacade<T, K> {
     
-    private ManagerSQLCatalog<T, K> manager;
-    
+    private final ManagerSQLCatalog<T, K> manager;
+
+    public ServiceFacadeCatalogSQL(ManagerSQLCatalog<T, K> manager) {
+        this.manager = manager;
+    }
+            
     @Override
     public final ManagerFacade<T, K> getManager() {
         return manager;

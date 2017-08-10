@@ -35,9 +35,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.annotation.Generated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import org.eclipse.persistence.annotations.Convert;
 
 /**
@@ -46,7 +47,6 @@ import org.eclipse.persistence.annotations.Convert;
  */
 @Entity
 @Table(name = "usuario")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u")
     , @NamedQuery(name = "Usuario.findByNombre", query = "SELECT u FROM Usuario u WHERE u.nombre = :nombre")
@@ -87,15 +87,12 @@ public class Usuario extends EntitySQLCatalog implements Serializable {
     private Date bloqueadoHastaFecha;
     @Id
     @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Convert("uuidConverter")
+    @NotNull    
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private UUID id;
-    @Lob
-    @Convert("uuidConverter")
+    private Integer id;    
     @Column(name = "usuario_creador")
-    private UUID usuarioCreador;
+    private Integer usuarioCreador;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
     private List<BitacoraContras> bitacoraContrasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
@@ -104,10 +101,10 @@ public class Usuario extends EntitySQLCatalog implements Serializable {
     private List<UsuariosPerfil> usuariosPerfilList;
 
     public Usuario() {
-        this.id = UUID.randomUUID();        
+        id = 0;        
     }
 
-    public Usuario(UUID id) {
+    public Usuario(Integer id) {
         this.id = id;
     }
 
@@ -184,25 +181,24 @@ public class Usuario extends EntitySQLCatalog implements Serializable {
     }
 
     @Override
-    public UUID getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
     @Override
-    public UUID getUsuarioCreador() {
+    public Integer getUsuarioCreador() {
         return usuarioCreador;
     }
 
     @Override
-    public void setUsuarioCreador(UUID usuarioCreador) {
+    public void setUsuarioCreador(Integer usuarioCreador) {
         this.usuarioCreador = usuarioCreador;
     }
-
-    @XmlTransient
+    
     @JsonIgnore
     public List<BitacoraContras> getBitacoraContrasList() {
         return bitacoraContrasList;
@@ -211,8 +207,7 @@ public class Usuario extends EntitySQLCatalog implements Serializable {
     public void setBitacoraContrasList(List<BitacoraContras> bitacoraContrasList) {
         this.bitacoraContrasList = bitacoraContrasList;
     }
-
-    @XmlTransient
+    
     @JsonIgnore
     public List<UsuariosPermisos> getUsuariosPermisosList() {
         return usuariosPermisosList;
@@ -222,7 +217,6 @@ public class Usuario extends EntitySQLCatalog implements Serializable {
         this.usuariosPermisosList = usuariosPermisosList;
     }
 
-    @XmlTransient
     @JsonIgnore
     public List<UsuariosPerfil> getUsuariosPerfilList() {
         return usuariosPerfilList;

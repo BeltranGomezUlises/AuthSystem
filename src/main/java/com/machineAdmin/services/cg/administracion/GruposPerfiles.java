@@ -36,7 +36,7 @@ import javax.ws.rs.Path;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/gruposPerfiles")
-public class GruposPerfiles extends ServiceFacade<GrupoPerfiles, UUID> {
+public class GruposPerfiles extends ServiceFacade<GrupoPerfiles, Integer> {
 
     public GruposPerfiles() {
         super(new ManagerGrupoPerfil());

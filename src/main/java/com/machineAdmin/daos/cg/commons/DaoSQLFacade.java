@@ -7,12 +7,14 @@ package com.machineAdmin.daos.cg.commons;
 
 import com.machineAdmin.entities.cg.commons.IEntity;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import org.jinq.jpa.JPAJinqStream;
+import org.jinq.jpa.JPAQueryLogger;
 import org.jinq.jpa.JinqJPAStreamProvider;
 
 /**
@@ -28,8 +30,8 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
     private final Class<T> claseEntity;
     private final Class<K> clasePK;
     private final EntityManagerFactory eMFactory;
-    private final JinqJPAStreamProvider stream;
-
+    private final JinqJPAStreamProvider streamProvider
+;
     /**
      * al sobreescribir considerar la fabrica de EntityManager, que sea la que
      * apunte a la base de datos adecuada, que la clase entidad sea correcta y
@@ -45,8 +47,8 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
         this.claseEntity = claseEntity;
         this.clasePK = clasePk;
 
-        stream = new JinqJPAStreamProvider(eMFactory);
-        stream.registerAttributeConverterType(UUID.class);
+        streamProvider = new JinqJPAStreamProvider(eMFactory);
+        streamProvider.registerAttributeConverterType(UUID.class);
     }
 
     /**
@@ -76,7 +78,12 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
      * @return strema de datos de la entidad con la cual operar
      */
     public JPAJinqStream<T> stream() {
-        return stream.streamAll(eMFactory.createEntityManager(), claseEntity);
+        JPAJinqStream<T> stream= streamProvider.streamAll(eMFactory.createEntityManager(), claseEntity);
+        stream.setHint(
+                "queryLogger", (JPAQueryLogger) (String query, Map<Integer, Object> positionParameters, Map<String, Object> namedParameters) -> {
+                    System.out.println("queryLogr -> " + query);
+                });
+        return  stream;
     }
 
     /**
@@ -229,7 +236,7 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
 
     public long count() throws Exception {
         EntityManager em = getEM();
-        long count = stream.streamAll(getEM(), claseEntity).count();
+        long count = streamProvider.streamAll(getEM(), claseEntity).count();
         if (em != null) {
             em.close();
         }
