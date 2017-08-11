@@ -21,6 +21,8 @@ import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContras;
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
+import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil;
+import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfilPK;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos;
 import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.commons.ManagerSQLCatalog;
@@ -31,6 +33,7 @@ import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.UserException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioBlockeadoException;
 import com.machineAdmin.managers.cg.exceptions.UsuarioInexistenteException;
+import com.machineAdmin.models.cg.ModelAltaUsuario;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
 import com.machineAdmin.models.cg.ModelCodigoRecuperacionUsuario;
 import com.machineAdmin.models.cg.ModelPermisoAsignado;
@@ -67,7 +70,6 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
 
     @Override
     public Usuario persist(Usuario entity) throws Exception {
-
         entity.setContra(UtilsSecurity.cifrarMD5(entity.getContra()));
         try {
             Usuario persisted = super.persist(entity);
@@ -101,6 +103,28 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
         this.update(u);
     }
 
+    
+    public void altaUsuario(ModelAltaUsuario model) throws ParametroInvalidoException, Exception{
+        //validar que venga minimo un perfil
+        if (model.getPerfiles().isEmpty()) {
+            throw new ParametroInvalidoException("Debe de asignar por lo menos 1 perfil cuando crea un usuario");
+        }
+                
+        Usuario nuevoUsuario = new Usuario();
+        this.persist(nuevoUsuario);        
+        //generar relacion con los ids de los perfiles del usuario
+        ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();        
+        UsuariosPerfil up;
+        List<UsuariosPerfil> usuariosPerfilesRelacion = new ArrayList<>();
+        for (Integer perfilId : model.getPerfiles()) {
+            up = new UsuariosPerfil();
+            up.setHereda(Boolean.TRUE);
+            up.setUsuariosPerfilPK(new UsuariosPerfilPK(nuevoUsuario.getId(), perfilId));                                    
+            usuariosPerfilesRelacion.add(up);
+        }
+        managerUsuariosPerfil.persistAll(usuariosPerfilesRelacion);                
+    }
+    
     /**
      * Metodo de login para autentificar usuarios
      *

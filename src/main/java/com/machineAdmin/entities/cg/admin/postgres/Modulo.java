@@ -32,7 +32,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -93,8 +92,7 @@ public class Modulo extends EntitySQL implements Serializable {
     public void setMenuList(List<Menu> menuList) {
         this.menuList = menuList;
     }
-    
-    @JsonIgnore
+        
     public Seccion getSeccion() {
         return seccion;
     }

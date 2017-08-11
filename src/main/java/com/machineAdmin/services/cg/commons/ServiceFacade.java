@@ -72,7 +72,6 @@ public class ServiceFacade<T extends IEntity, K> extends ServiceBitacoraFacade<T
         try {
             this.manager.setToken(token);
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
-
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
                 UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Listar", request);
@@ -80,12 +79,10 @@ public class ServiceFacade<T extends IEntity, K> extends ServiceBitacoraFacade<T
             } catch (UnsupportedOperationException e) {
             }
             //</editor-fold>
-
-            //<editor-fold defaultstate="collapsed" desc="Auditar">
+            //<editor-fold defaultstate="collapsed" desc="AUDITAR">
             UtilsAuditoria.ModeloAuditoria auditoria = new UtilsAuditoria.ModeloAuditoria(manager.getUsuario(), "Listar", null);
             UtilsAuditoria.auditar(manager.nombreColeccionParaRegistros(), auditoria);
             //</editor-fold>
-
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(response);
         } catch (Exception ex) {

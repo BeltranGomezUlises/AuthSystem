@@ -156,7 +156,7 @@ public abstract class ServiceBitacoraFacade<T extends IEntity, K> {
     protected static String accionActual() {
         String className = Thread.currentThread().getStackTrace()[3].getClassName();
         String raiz = "com.machineAdmin.services.";
-        return className.substring(raiz.length()) + "." + Thread.currentThread().getStackTrace()[3].getMethodName();
+        return className.substring(raiz.length()) + "." + Thread.currentThread().getStackTrace()[2  ].getMethodName();
     }
     
 }

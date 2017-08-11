@@ -21,13 +21,16 @@ import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuariosPerfil;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
+import com.machineAdmin.models.cg.ModelAltaUsuario;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlUsuario;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacadeCatalogSQL;
+import com.machineAdmin.utils.UtilsBitacora;
 import static com.machineAdmin.utils.UtilsService.*;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsPermissions;
+import java.util.Date;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -59,11 +62,6 @@ public class Usuarios extends ServiceFacadeCatalogSQL<Usuario, Integer> {
     }
 
     @Override
-    public Response alta(HttpServletRequest request, String token, Usuario t) {
-        return super.alta(request, token, t);
-    }
-
-    @Override
     public Response detalle(HttpServletRequest request, String token, String id) {
         return super.detalle(request, token, id);
     }
@@ -72,7 +70,32 @@ public class Usuarios extends ServiceFacadeCatalogSQL<Usuario, Integer> {
     public Response listar(HttpServletRequest request, String token) {
         return super.listar(request, token);
     }
+    
+    public Response alta(HttpServletRequest request, String token, ModelAltaUsuario model) {
+        Response response = new Response();
+        try {
+            ManagerUsuario managerUsuario = new ManagerUsuario();
+            managerUsuario.setToken(token);
+            managerUsuario.setProfundidad(UtilsPermissions.obtenerProfundidad(token, accionActual()));
+            managerUsuario.altaUsuario(model);
+            
+            response.setMessage("Entidad persistida");
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">                        
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(managerUsuario.getUsuario(), new Date(), "Alta", request);
+                UtilsBitacora.bitacorizar(managerUsuario.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException unsupportedOperationException) {
+            }
+            //</editor-fold>
 
+        } catch (TokenExpiradoException | TokenInvalidoException ex) {
+            setInvalidTokenResponse(response);
+        } catch (Exception e) {
+            setErrorResponse(response, e);
+        }
+        return response;
+    }
+    
     /**
      * asigna los permisos al usuario reemplazando los que tenia por los nuevos
      * proporsionados

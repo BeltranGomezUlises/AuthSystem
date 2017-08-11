@@ -70,10 +70,8 @@ public class Accesos {
 
             BeanUtils.copyProperties(modelUsuarioLogeado, usuarioLogeado);
 
-            res.setData(modelUsuarioLogeado);
-            res.setMetaData(UtilsJWT.generateSessionToken(usuarioLogeado.getId().toString()));
-            res.setMessage("Bienvenido " + usuarioLogeado.getNombre());
-            res.setDevMessage("Token de sesion de usuario, necesario para las cabeceras de los demas servicios");
+            setOkResponse(res, modelUsuarioLogeado, "BienVenido " + usuarioLogeado.getNombre(), "Token de sesion de usuario, necesario para las cabeceras de los demas servicios");            
+            res.setMetaData(UtilsJWT.generateSessionToken(usuarioLogeado.getId().toString()));                        
         } catch (UsuarioInexistenteException | ContraseñaIncorrectaException e) {
             setWarningResponse(res, "Usuario y/o contraseña incorrecto", "imposible inicio de sesión, por: " + e.getMessage());
         } catch (UsuarioBlockeadoException ex) {

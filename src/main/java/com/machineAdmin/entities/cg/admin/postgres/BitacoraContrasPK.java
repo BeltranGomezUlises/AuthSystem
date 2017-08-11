@@ -21,7 +21,6 @@ import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -33,8 +32,7 @@ import javax.validation.constraints.Size;
 public class BitacoraContrasPK implements Serializable {
 
     @Basic(optional = false)
-    @NotNull
-    @Lob    
+    @NotNull      
     @Column(name = "usuario")
     private Integer usuario;
     @Basic(optional = false)

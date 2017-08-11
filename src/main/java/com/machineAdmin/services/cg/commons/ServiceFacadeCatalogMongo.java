@@ -69,9 +69,8 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
         Response response = new Response();
         try {
             this.manager.setToken(token);           
-            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, accionActual()));                        
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, accionActual()));
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
-
             
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
