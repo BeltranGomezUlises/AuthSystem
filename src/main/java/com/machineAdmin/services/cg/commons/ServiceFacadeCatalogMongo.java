@@ -17,18 +17,17 @@
 package com.machineAdmin.services.cg.commons;
 
 import com.machineAdmin.entities.cg.commons.EntityMongoCatalog;
-import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.commons.ManagerFacade;
 import com.machineAdmin.managers.cg.commons.ManagerMongoCatalog;
+import com.machineAdmin.managers.cg.exceptions.AccesoDenegadoException;
+import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.utils.UtilsAuditoria;
 import com.machineAdmin.utils.UtilsBitacora;
 import com.machineAdmin.utils.UtilsPermissions;
-import static com.machineAdmin.utils.UtilsService.setErrorResponse;
-import static com.machineAdmin.utils.UtilsService.setInvalidTokenResponse;
-import static com.machineAdmin.utils.UtilsService.setOkResponse;
+import static com.machineAdmin.utils.UtilsService.*;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -69,7 +68,7 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
         Response response = new Response();
         try {
             this.manager.setToken(token);           
-            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, accionActual()));
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
             
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
@@ -110,9 +109,8 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
         Response response = new Response();
         try {
             this.manager.setToken(token);
-            response.setData(manager.findOne(manager.stringToKey(id)));
-            response.setMessage("Entidad encontrada");
-
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));                       
+            setOkResponse(response, "Entidad encontrada", manager.findOne(manager.stringToKey(id)));
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
                 UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Detalle", request);
@@ -123,6 +121,10 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
             //</editor-fold>
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
+        } catch (AccesoDenegadoException ee) {
+            setAccesDeniedResponse(response, ee);                    
+        } catch (ParametroInvalidoException e) {
+            setParametroInvalidoResponse(response, e);        
         } catch (Exception e) {
             setErrorResponse(response, e);
         }

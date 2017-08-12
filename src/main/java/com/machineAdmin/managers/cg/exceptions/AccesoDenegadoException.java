@@ -20,9 +20,9 @@ package com.machineAdmin.managers.cg.exceptions;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class AccessDenied extends Exception{
+public class AccesoDenegadoException extends Exception{
 
-    public AccessDenied(String message) {
+    public AccesoDenegadoException(String message) {
         super(message);
     }
     

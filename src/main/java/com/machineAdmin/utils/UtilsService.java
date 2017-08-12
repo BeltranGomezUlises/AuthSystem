@@ -16,6 +16,8 @@
  */
 package com.machineAdmin.utils;
 
+import com.machineAdmin.managers.cg.exceptions.AccesoDenegadoException;
+import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import static com.machineAdmin.utils.UtilsService.SistemaOperativo.*;
@@ -25,6 +27,7 @@ import static com.machineAdmin.utils.UtilsService.SistemaOperativo.*;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class UtilsService {
+
     /**
      * asigna al modelo response, la pila de causas del error de la exception e
      *
@@ -52,6 +55,44 @@ public class UtilsService {
     public static final void setInvalidTokenResponse(Response response) {
         response.setStatus(Status.WARNING);
         response.setDevMessage("Token inválido");
+    }
+
+    /**
+     * asigna a response el status y el mensaje de un parametro invalido, se
+     * utiliza cuando se lanzá una exception de tipo ParametroInvalidoException
+     *
+     * @param response respuesta a asignar valores
+     * @param e exception lanzada de tipo ParametroInvalidoException
+     */
+    public static final void setParametroInvalidoResponse(Response response, ParametroInvalidoException e) {
+        response.setStatus(Status.INVALID_PARAM);
+        response.setMessage(e.getMessage());
+        response.setDevMessage(e.toString());
+    }
+
+    /**
+     * asigna a response el status y el mensaje de acceso denegado, se utiliza
+     * cuando se lanza una exception de tipo AccesoDenegado
+     *
+     * @param response respuesta a asignar los valores
+     * @param ex exception de la cual obtener los mensajes
+     */
+    public static final void setAccesDeniedResponse(Response response, AccesoDenegadoException ex) {
+        response.setStatus(Status.ACCES_DENIED);
+        response.setDevMessage(ex.toString());
+        response.setMessage(ex.getMessage());
+    }
+
+    /**
+     * asigna a response el status y el mensaje de acceso denegado, se utiliza
+     * cuando se lanza una exception de tipo AccessDenied
+     *
+     * @param response respuesta a asignar los valores
+     * @param mensaje mensaje a asignar para el usuario
+     */
+    public static final void setAccesDeniedResponse(Response response, String mensaje) {
+        response.setStatus(Status.ACCES_DENIED);
+        response.setMessage(mensaje);
     }
 
     /**
@@ -102,7 +143,6 @@ public class UtilsService {
         res.setStatus(Status.ERROR);
         res.setMessage("Existió un error de programación, consultar con el administrador del sistema");
         setCauseMessage(res, err);
-
     }
 
     /**
@@ -146,6 +186,20 @@ public class UtilsService {
         res.setStatus(Status.OK);
         res.setData(data);
         res.setDevMessage(devMessage);
+    }
+
+    /**
+     * asignar a response el estatus OK, el metadata y un mensaje para el
+     * desarrollador
+     *
+     * @param res respuesta a asignar los valores
+     * @param message mensaje para el usuario final
+     * @param data objeto a insertar en res
+     */
+    public static final void setOkResponse(Response res, String message, Object data) {
+        res.setStatus(Status.OK);
+        res.setData(data);
+        res.setMessage(message);
     }
 
     /**

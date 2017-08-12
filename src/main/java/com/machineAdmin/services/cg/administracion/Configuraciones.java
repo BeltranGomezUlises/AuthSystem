@@ -18,7 +18,6 @@ package com.machineAdmin.services.cg.administracion;
 
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.managers.cg.admin.mongo.ManagerCGConfig;
-import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +33,7 @@ public class Configuraciones extends ServiceFacade<CGConfig, Object>{
     public Configuraciones() {
         super(new ManagerCGConfig());
     }
-
+    
     @Override
     public Response modificar(HttpServletRequest request, String token, CGConfig t) {
         return super.modificar(request, token, t);

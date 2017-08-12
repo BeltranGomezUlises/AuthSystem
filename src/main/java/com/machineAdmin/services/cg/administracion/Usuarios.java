@@ -21,6 +21,7 @@ import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuariosPerfil;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
+import com.machineAdmin.managers.cg.exceptions.UserException;
 import com.machineAdmin.models.cg.ModelAltaUsuario;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlUsuario;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
@@ -38,6 +39,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 
 /**
  * servicios de administracion de usuarios del sistema
@@ -50,7 +52,12 @@ public class Usuarios extends ServiceFacadeCatalogSQL<Usuario, Integer> {
     public Usuarios() {
         super(new ManagerUsuario());
     }
-
+    
+    @Override
+    public Response alta(HttpServletRequest request, String token, Usuario t) {
+        return super.alta(request, token, t);
+    }
+        
     @Override
     public Response eliminar(HttpServletRequest request, String token, Usuario t) {
         return super.eliminar(request, token, t);
@@ -71,7 +78,9 @@ public class Usuarios extends ServiceFacadeCatalogSQL<Usuario, Integer> {
         return super.listar(request, token);
     }
     
-    public Response alta(HttpServletRequest request, String token, ModelAltaUsuario model) {
+    @POST
+    @Path("/registrar")
+    public Response registrar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, ModelAltaUsuario model) {
         Response response = new Response();
         try {
             ManagerUsuario managerUsuario = new ManagerUsuario();
@@ -90,6 +99,8 @@ public class Usuarios extends ServiceFacadeCatalogSQL<Usuario, Integer> {
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
+        }catch(UserException.UsuarioYaExistente ee){
+            setWarningResponse(response, ee.getMessage(), ee.getMessage());
         } catch (Exception e) {
             setErrorResponse(response, e);
         }

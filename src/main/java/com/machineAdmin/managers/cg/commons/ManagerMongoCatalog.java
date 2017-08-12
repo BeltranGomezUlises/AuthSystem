@@ -11,9 +11,12 @@ import com.machineAdmin.daos.cg.commons.DaoMongoFacade;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.entities.cg.commons.EntityMongoCatalog;
 import com.machineAdmin.entities.cg.commons.Profundidad;
+import com.machineAdmin.managers.cg.exceptions.AccesoDenegadoException;
+import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.ProfundidadNoAsignadaException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
+import com.machineAdmin.utils.UtilsPermissions;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -89,12 +92,40 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
     }
 
     @Override
-    public T findOne(Object id) {
-        T t = (T) dao.findOne(id);
+    public T findOne(Object id) throws ParametroInvalidoException, AccesoDenegadoException, Exception {
+        T t = null;
+        switch (this.profundidad) {
+            case PROPIOS:
+                //esto está asi para poder notificar con las excepciones que no tiene permiso o no existe
+                t = (T) dao.findOne(id);
+                if (t != null) {
+                    if (t.getUsuarioCreador().equals(this.usuario)) {
+                        return t;
+                    } else {
+                        throw new AccesoDenegadoException("No tiene permiso de ver los detalles de ésta entidad");
+                    }
+                }else{
+                    throw new ParametroInvalidoException("No existe entidad con ese indentificador");
+                }
+            case PROPIOS_MAS_PERFILES:
+                t = (T) dao.findOne(id);
+                if (t != null) {                    
+                    if (UtilsPermissions.idsDeUsuariosDeLosPerfilesDelUsuario(usuario).contains(t.getUsuarioCreador())) {
+                        return t;
+                    } else {
+                        throw new AccesoDenegadoException("No tiene permiso de ver los detalles de ésta entidad");
+                    }
+                }else{
+                    throw new ParametroInvalidoException("No existe entidad con ese indentificador");
+                }                
+            case TODOS:
+                t = (T) dao.findOne(id);
+                break;                                
+        }        
         return t;
     }
 
-    public T findOne(DBQuery.Query q) {
+    public T findOne(DBQuery.Query q) {                
         T t = (T) dao.findOne(q);
         return t;
     }
@@ -187,27 +218,13 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
             case PROPIOS:
                 q = DBQuery.is("usuarioCreador", this.usuario);
                 break;
-            case PROPIOS_MAS_PERFILES:
-                //buscar los id de los usuarios con mis perfiles 
-                DaoUsuario daoUsuario = new DaoUsuario();
-
-                Usuario u = daoUsuario.findOne(usuario);
-
-                //ids de perfiles del usuario
-                List<Integer> perfilesDelUsuario = u.getUsuariosPerfilList().stream()
-                        .map(up -> up.getUsuariosPerfilPK().getPerfil())
-                        .collect(toList());
-                //ids de usuarios con esos perfiles
-                DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
-                Set<String> usuariosDeLosPerfiles = daoUsuariosPerfil.stream()
-                        .where(up -> perfilesDelUsuario.contains(up.getUsuariosPerfilPK().getPerfil()))
-                        .map(up -> up.getUsuariosPerfilPK().getUsuario().toString())
-                        .collect(toSet());
-
-                q = DBQuery.in("usuarioCreador", usuariosDeLosPerfiles);
-                break;         
+            case PROPIOS_MAS_PERFILES:                                
+                q = DBQuery.in("usuarioCreador", UtilsPermissions.idsDeUsuariosDeLosPerfilesDelUsuario(usuario));
+                break;
         }
         return q;
     }
+    
+    
 
 }

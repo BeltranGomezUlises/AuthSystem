@@ -16,6 +16,7 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.machineAdmin.entities.cg.commons.EntitySQL;
 import java.io.Serializable;
 import java.util.List;
@@ -93,6 +94,7 @@ public class Modulo extends EntitySQL implements Serializable {
         this.menuList = menuList;
     }
         
+    @JsonIgnore
     public Seccion getSeccion() {
         return seccion;
     }
