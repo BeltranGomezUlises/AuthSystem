@@ -56,7 +56,7 @@ public class MongoPruebas extends ServiceFacadeCatalogMongo<EntidadMongoPrueba, 
 
     @Override
     public Response listar(HttpServletRequest request, String token) {
-        return super.listar(request, token); //To change body of generated methods, choose Tools | Templates.
+            return super.listar(request, token); //To change body of generated methods, choose Tools | Templates.
     }
     
     

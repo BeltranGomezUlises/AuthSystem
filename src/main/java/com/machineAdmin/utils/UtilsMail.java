@@ -71,7 +71,7 @@ public class UtilsMail {
         email.addTo(toMail);
 
         // embed the image and get the content id to see it in-line
-        URL url = new URL("http://201.165.0.142:8480/pruebas/esoft-transparent.png");
+        URL url = new URL("http://192.168.10.8:8480/pruebas/esoft-transparent.png");
         String cid = email.embed(url, "esoftLogo");
 
         String htmlCadena

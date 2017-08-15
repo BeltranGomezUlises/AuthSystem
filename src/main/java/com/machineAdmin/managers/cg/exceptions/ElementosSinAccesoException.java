@@ -16,14 +16,19 @@
  */
 package com.machineAdmin.managers.cg.exceptions;
 
+import java.util.List;
+
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ProfundidadNoAsignadaException extends Exception{
+public class ElementosSinAccesoException extends Exception{
 
-    public ProfundidadNoAsignadaException() {
-        super("No asignó profundidad de acceso al manejador");        
+   List elementosSinAcceso;
+    
+    public ElementosSinAccesoException(List elementosSinAcceso, String mensaje) {        
+        super(mensaje);
+        this.elementosSinAcceso = elementosSinAcceso;
     }
-       
+    
 }

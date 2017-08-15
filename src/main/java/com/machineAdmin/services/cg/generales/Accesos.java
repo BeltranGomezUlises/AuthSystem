@@ -51,12 +51,14 @@ public class Accesos {
     /**
      * servicio de login del sistema
      *
-     * @param content debera contener la cadena cifrada con el usuario y contra
-     * a logear
+     * @param content debera contener la cadena cifrada con el identificador del
+     * usuario en el atributo nombre y contra a logear en formato json, EJ:
+     * {"nombre":"Administrador", "contra":"1234"}, seria:
+     * SEMZhVpciiV6VyKO4MwpMu92YiYlPoxMTz1ivHKhrKOtw5/2AXSoO/OZE3qmMDQ15C/Mxz9AsO1KbpH92Ov7+s58YnjmvNo+WhSAflsmXLBlYLaSZ9i3Wab9atsAC9+3Sh3it/qqFeyWDicyHVh3Au2d9j9sMGvzb2lM8ygiL+0=
      * @return en data: el usuario logeado, en metadata: el token de sesion
      */
     @POST
-    @Path("/login")
+    @Path("/iniciarSesion")
     public Response login(ModelContenidoCifrado content) {
         Response res = new Response();
         ManagerUsuario managerUsuario = new ManagerUsuario();
@@ -70,8 +72,8 @@ public class Accesos {
 
             BeanUtils.copyProperties(modelUsuarioLogeado, usuarioLogeado);
 
-            setOkResponse(res, modelUsuarioLogeado, "BienVenido " + usuarioLogeado.getNombre(), "Token de sesion de usuario, necesario para las cabeceras de los demas servicios");            
-            res.setMetaData(UtilsJWT.generateSessionToken(usuarioLogeado.getId().toString()));                        
+            setOkResponse(res, modelUsuarioLogeado, "BienVenido " + usuarioLogeado.getNombre(), "Token de sesion de usuario, necesario para las cabeceras de los demas servicios");
+            res.setMetaData(UtilsJWT.generateSessionToken(usuarioLogeado.getId().toString()));
         } catch (UsuarioInexistenteException | ContraseñaIncorrectaException e) {
             setWarningResponse(res, "Usuario y/o contraseña incorrecto", "imposible inicio de sesión, por: " + e.getMessage());
         } catch (UsuarioBlockeadoException ex) {
@@ -89,7 +91,7 @@ public class Accesos {
      * @return solo retorna los mensajes de despedida del sistema
      */
     @GET
-    @Path("/logout")
+    @Path("/cerrarSesion")
     public Response logout(@HeaderParam("Authorization") String token) {
         Response res = new Response();
         ManagerUsuario managerUsuario = new ManagerUsuario();
@@ -97,19 +99,21 @@ public class Accesos {
             managerUsuario.logout(token);
             res.setMessage("Saliendo del sistema");
             res.setDevMessage("Registro de salida del sistema realizado");
-        } catch (Exception ex) {
-            setErrorResponse(res, ex);
+        } catch (TokenExpiradoException | TokenInvalidoException ex) {
+            setInvalidTokenResponse(res);
+        } catch (Exception e) {
+            setErrorResponse(res, e);
         }
         return res;
     }
 
     /**
-     * servicio publico para obtener la clave publica de cifrado RSA
+     * servicio para obtener la clave publica de cifrado RSA
      *
      * @return retorna en metada la clave publica
      */
     @GET
-    @Path("/publicKey")
+    @Path("/llavePublica")
     public Response getPublicKey() {
         Response r = new Response();
         r.setMetaData(UtilsSecurity.getPublicKey());
@@ -127,7 +131,7 @@ public class Accesos {
      * token de reseteo de contraseña
      */
     @GET
-    @Path("/recoverCode/{identifier}")
+    @Path("/enviarCodigoRecuperacion/{identifier}")
     public Response recoverCode(@PathParam("identifier") String identifier) {
         Response res = new Response();
         try {
@@ -156,10 +160,10 @@ public class Accesos {
      *
      * @param token token de verificación
      * @param code código obtenido por correo o telefono
-     * @return retorna el token de reseteo
+     * @return retorna el token para restablecer la contraseña
      */
     @GET
-    @Path("/tokenResetPassword/{code}")
+    @Path("/tokenRestablecer/{code}")
     public Response getTokenReset(@HeaderParam("Authorization") String token, @PathParam("code") String code) {
         Response res = new Response();
         try {
@@ -176,51 +180,34 @@ public class Accesos {
     }
 
     /**
-     * sirve para restablece la contraseña de un usuario
+     * sirve para restablecer la contraseña de un usuario
      *
-     * @param tokenResetPassword token de reseteo de contraseña
-     * @param content contenido cifrado con la clave publica con le texto de la
+     * @param tokenRestablecer token para restaurar de contraseña
+     * @param content contenido cifrado con la clave publica con el texto de la
      * nueva contraseña a asignar
-     * @return retorna mensaje de exito
+     * @return retorna mensaje de éxito
      */
     @POST
-    @Path("/resetPassword")
-    public Response resetPassword(@HeaderParam("Authorization") String tokenResetPassword, ModelContenidoCifrado content) {
+    @Path("/restablecerContraseña")
+    public Response resetPassword(@HeaderParam("Authorization") String tokenRestablecer, ModelContenidoCifrado content) {
         Response res = new Response();
         try {
-            UtilsJWT.validateSessionToken(tokenResetPassword);
-            Integer userId = UtilsJWT.getUserIdFrom(tokenResetPassword);
+            UtilsJWT.validateSessionToken(tokenRestablecer);
+            Integer userId = UtilsJWT.getUserIdFrom(tokenRestablecer);
             String pass = UtilsSecurity.decryptBase64ByPrivateKey(content.getContent());
 
-            ManagerUsuario managerUsuario = new ManagerUsuario(tokenResetPassword, Profundidad.TODOS);
+            ManagerUsuario managerUsuario = new ManagerUsuario(tokenRestablecer, Profundidad.TODOS);
             managerUsuario.resetPassword(userId, pass);
 
             res.setMessage("La contraseña fué restablecida con éxito");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
         } catch (ParametroInvalidoException ex) {
-            setWarningResponse(res, "No puede ingresar un contraseña que ya fué utilizada, intente con otro por favor", ex.getMessage());
+            setWarningResponse(res, "No puede ingresar una contraseña que ya fué utilizada, intente con otro por favor", ex.getMessage());
         } catch (Exception e) {
             setErrorResponse(res, e, "No se logro actualizar la contraseña, consulte con su administrador del sistema");
         }
         return res;
     }
-
-    @GET
-    @Path("/secciones")
-    public Response getSecciones(@HeaderParam("Authorization") String tokenSession) {
-        Response res = new Response();
-        try {
-            ManagerSeccion managerSeccion = new ManagerSeccion();
-            managerSeccion.setToken(tokenSession);
-            res.setData(managerSeccion.findAll());
-            res.setDevMessage("Secciones, modulos, menus y acciones del sistema en general");
-        } catch (TokenExpiradoException | TokenInvalidoException e) {
-            setInvalidTokenResponse(res);
-        } catch (Exception e) {
-            setErrorResponse(res, e);
-        }
-        return res;
-    }
-
+    
 }

@@ -86,7 +86,7 @@ public class UtilsPermissions {
             }
 
             //buscar la profundidad de la accion por perfiles (cada perfil, puede tener el mismo permiso, pero con distintas profundidades                                         
-            List<Profundidad> profundidadesPorPerfiles = profundidadesPorPerfilesConElPermisoConElUsuario(userId, accion);
+            List<Profundidad> profundidadesPorPerfiles = profundidadesPorPerfilesDelUsuario(userId, accion);
             profundidadesDelPermisoDelUsuario.addAll(profundidadesPorPerfiles);
 
             if (!profundidadesDelPermisoDelUsuario.isEmpty()) {
@@ -105,17 +105,17 @@ public class UtilsPermissions {
         throw new AccesoDenegadoException("No Tiene permiso para ejecutar esta acción");
     }
 
-    private static List<Profundidad> profundidadesPorPerfilesConElPermisoConElUsuario(Integer userId, String accion) {
+    private static List<Profundidad> profundidadesPorPerfilesDelUsuario(Integer userId, String accion) {
         DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
         return daoUsuariosPerfil.stream()
-                .where(up -> up.getUsuariosPerfilPK().getUsuario().equals(userId))
+                .where(up -> up.getUsuariosPerfilPK().getUsuario().equals(userId) && up.getHereda().equals(Boolean.TRUE))
                 .joinList(up -> up.getPerfil1().getPerfilesPermisosList())
                 .where(pp -> pp.getTwo().getPerfilesPermisosPK().getPermiso().equals(accion))
                 .select(pp -> pp.getTwo().getProfundidad())
                 .collect(toList());
     }
 
-    public static Set<Integer> idsDeUsuariosDeLosPerfilesDelUsuario(Integer usuarioId) throws Exception {
+    public static Set<Integer> idsDeUsuariosConLosPerfilesQueTieneElUsuario(Integer usuarioId) throws Exception {
         //buscar los id de los usuarios con mis perfiles 
         DaoUsuario daoUsuario = new DaoUsuario();
         Usuario u = daoUsuario.findOne(usuarioId);

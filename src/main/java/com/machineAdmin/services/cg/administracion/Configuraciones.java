@@ -33,9 +33,9 @@ public class Configuraciones extends ServiceFacade<CGConfig, Object>{
     public Configuraciones() {
         super(new ManagerCGConfig());
     }
-    
+   
     @Override
-    public Response modificar(HttpServletRequest request, String token, CGConfig t) {
+    public Response modificar( HttpServletRequest request, String token, CGConfig t) {
         return super.modificar(request, token, t);
     }
         

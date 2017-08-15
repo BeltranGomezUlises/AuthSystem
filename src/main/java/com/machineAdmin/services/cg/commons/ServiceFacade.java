@@ -66,7 +66,7 @@ public class ServiceFacade<T extends IEntity, K> extends ServiceBitacoraFacade<T
      * @return reponse, con su campo data asignado con una lista de las
      * entidades de esta clase servicio
      */
-    @GET
+    @GET    
     public Response listar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token) {
         Response response = new Response();
         try {

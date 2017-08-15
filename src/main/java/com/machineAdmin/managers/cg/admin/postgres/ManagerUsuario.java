@@ -104,29 +104,28 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
         this.update(u);
     }
 
-    
-    public void altaUsuario(ModelAltaUsuario model) throws UserException.UsuarioYaExistente, ParametroInvalidoException, Exception{
+    public void altaUsuario(ModelAltaUsuario model) throws UserException.UsuarioYaExistente, ParametroInvalidoException, Exception {
         //validar que venga minimo un perfil
         if (model.getPerfiles().isEmpty()) {
             throw new ParametroInvalidoException("Debe de asignar por lo menos 1 perfil cuando crea un usuario");
         }
-                
+
         Usuario nuevoUsuario = new Usuario();
-        BeanUtils.copyProperties(nuevoUsuario, model);        
-        this.persist(nuevoUsuario);        
+        BeanUtils.copyProperties(nuevoUsuario, model);
+        this.persist(nuevoUsuario);
         //generar relacion con los ids de los perfiles del usuario
-        ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();        
+        ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();
         UsuariosPerfil up;
         List<UsuariosPerfil> usuariosPerfilesRelacion = new ArrayList<>();
         for (Integer perfilId : model.getPerfiles()) {
             up = new UsuariosPerfil();
             up.setHereda(Boolean.TRUE);
-            up.setUsuariosPerfilPK(new UsuariosPerfilPK(nuevoUsuario.getId(), perfilId));                                    
+            up.setUsuariosPerfilPK(new UsuariosPerfilPK(nuevoUsuario.getId(), perfilId));
             usuariosPerfilesRelacion.add(up);
         }
-        managerUsuariosPerfil.persistAll(usuariosPerfilesRelacion);                
+        managerUsuariosPerfil.persistAll(usuariosPerfilesRelacion);
     }
-    
+
     /**
      * Metodo de login para autentificar usuarios
      *
@@ -236,12 +235,12 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
     private String getMessageOfUniqueContraint(Usuario entity) {
         //buscar que atributo ya ocupado  
         String mensaje = "ya existen un usuario con el atributo";
-        String nombre = entity.getNombre();        
+        String nombre = entity.getNombre();
         String correo = entity.getCorreo();
-        String telefono = entity.getTelefono();        
-        if (this.stream().where( u -> u.getNombre().equals(nombre)).findFirst().isPresent()) {
+        String telefono = entity.getTelefono();
+        if (this.stream().where(u -> u.getNombre().equals(nombre)).findFirst().isPresent()) {
             mensaje += " nombre,";
-        }                                   
+        }
         if (this.stream().where(u -> u.getCorreo().equals(correo)).findFirst().isPresent()) {
             mensaje += " correo,";
         }
