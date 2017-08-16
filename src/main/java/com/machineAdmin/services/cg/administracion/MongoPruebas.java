@@ -20,6 +20,7 @@ import com.machineAdmin.entities.cg.admin.mongo.EntidadMongoPrueba;
 import com.machineAdmin.managers.cg.admin.mongo.ManagerMongoPrueba;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacadeCatalogMongo;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
 
@@ -29,7 +30,7 @@ import javax.ws.rs.Path;
  */
 @Path("/mongoPrueba")
 public class MongoPruebas extends ServiceFacadeCatalogMongo<EntidadMongoPrueba, Object> {
-    
+
     public MongoPruebas() {
         super(new ManagerMongoPrueba());
     }
@@ -56,9 +57,12 @@ public class MongoPruebas extends ServiceFacadeCatalogMongo<EntidadMongoPrueba, 
 
     @Override
     public Response listar(HttpServletRequest request, String token) {
-            return super.listar(request, token); //To change body of generated methods, choose Tools | Templates.
+        return super.listar(request, token); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
-    
+
+    @Override
+    public Response eliminarVarios(HttpServletRequest request, String token, List<EntidadMongoPrueba> t) {
+        return super.eliminarVarios(request, token, t);
+    }
+
 }

@@ -10,5 +10,5 @@ package com.machineAdmin.models.cg.enums;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public enum Status {
-    OK,ERROR,WARNING, ACCES_DENIED, INVALID_PARAM
+    OK,ERROR,WARNING, ACCES_DENIED, INVALID_PARAM, PARCIAL_ACCESS
 }

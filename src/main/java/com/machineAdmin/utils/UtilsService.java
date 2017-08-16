@@ -17,6 +17,7 @@
 package com.machineAdmin.utils;
 
 import com.machineAdmin.managers.cg.exceptions.AccesoDenegadoException;
+import com.machineAdmin.managers.cg.exceptions.ElementosSinAccesoException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
@@ -214,6 +215,18 @@ public class UtilsService {
         res.setDevMessage(devMessage);
     }
 
+    /**
+     * asignar a response el estatus PARCIAL_ACCESS y el metadata los elementos a los que no se le pudo realizar la operacion
+     * @param res response al cual asignar los valores
+     * @param e excepcion lanzada por manager de tipo ElementosSinAccesoException
+     */
+    public static final void setElementosSinAccesoResponse(Response res, ElementosSinAccesoException e){
+        res.setStatus(Status.PARCIAL_ACCESS);
+        res.setMessage(e.getMessage());
+        res.setDevMessage("no se tiene acceso a los elementos");
+        res.setMetaData(e.getElementosSinAcceso());
+    }
+    
     /**
      * genera el enum correspondiente al sistema operativo del cual la cabecera
      * UserAgent de la peticion indica

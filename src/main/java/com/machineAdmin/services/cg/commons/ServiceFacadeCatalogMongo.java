@@ -20,6 +20,7 @@ import com.machineAdmin.entities.cg.commons.EntityMongoCatalog;
 import com.machineAdmin.managers.cg.commons.ManagerFacade;
 import com.machineAdmin.managers.cg.commons.ManagerMongoCatalog;
 import com.machineAdmin.managers.cg.exceptions.AccesoDenegadoException;
+import com.machineAdmin.managers.cg.exceptions.ElementosSinAccesoException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
@@ -29,6 +30,8 @@ import com.machineAdmin.utils.UtilsBitacora;
 import com.machineAdmin.utils.UtilsPermissions;
 import static com.machineAdmin.utils.UtilsService.*;
 import java.util.Date;
+import java.util.List;
+import static java.util.stream.Collectors.toList;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -213,6 +216,7 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
         Response response = new Response();
         try {
             this.manager.setToken(token);
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));                       
             manager.delete(t.getId());
             response.setMessage("Entidad eliminada");
 
@@ -227,6 +231,34 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
         } catch (Exception e) {
+            setErrorResponse(response, e);
+        }
+        return response;
+    }
+    
+    @Path("/varios")
+    @DELETE
+    public Response eliminarVarios(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, List<T> t) {
+        Response response = new Response();
+        try {
+            this.manager.setToken(token);
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));                                   
+            manager.deleteAll(t.stream().map( p -> p.getId()).collect(toList()));
+            response.setMessage("Entidad eliminada");
+
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Eliminar Varios", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException unsupportedOperationException) {
+            }
+            //</editor-fold>
+
+        } catch (TokenExpiradoException | TokenInvalidoException ex) {
+            setInvalidTokenResponse(response);
+        }catch (ElementosSinAccesoException e) {
+            setElementosSinAccesoResponse(response, e);
+        }catch (Exception e) {
             setErrorResponse(response, e);
         }
         return response;

@@ -33,8 +33,10 @@ import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos;
 import com.machineAdmin.entities.cg.commons.Profundidad;
 import static com.machineAdmin.entities.cg.commons.Profundidad.*;
 import com.machineAdmin.managers.cg.exceptions.AccesoDenegadoException;
+import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
+import com.machineAdmin.models.cg.ModelPermisoAsignado;
 import com.machineAdmin.models.cg.ModelPermisosAsignados;
 import com.machineAdmin.models.cg.ModelPermisosAsignados.ModelSeccion;
 import com.machineAdmin.models.cg.ModelPermisosAsignados.ModelSeccion.ModelModulo;
@@ -46,6 +48,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import org.jinq.orm.stream.JinqStream;
+import org.jinq.tuples.Pair;
 
 /**
  * clase utileria de metodos relacionados con permisos
@@ -71,36 +75,19 @@ public class UtilsPermissions {
         // el usuario puede tener permiso por permisos del usuario o por permisos de los perfiles, juntarlos todos aqui
         List<Profundidad> profundidadesDelPermisoDelUsuario = new ArrayList<>();
         try {
-            //buscar profundidad de la accion por usuario
-            Profundidad profundidadDePermisoPorUsuario = null;
+            //buscar profundidad de la accion por usuario           
             try {
-                UsuariosPermisos permisoPorUsuario = daoUsuariosPermisos.stream()
+                profundidadesDelPermisoDelUsuario.add( daoUsuariosPermisos.stream()
                         .where(up -> up.getUsuariosPermisosPK().getUsuario().equals(userId) && up.getUsuariosPermisosPK().getPermiso().equals(accion))
-                        .findFirst().get();
-                profundidadDePermisoPorUsuario = permisoPorUsuario.getProfundidad();
+                        .findFirst().get().getProfundidad() );                
             } catch (NoSuchElementException e) {
-            }
-
-            if (profundidadDePermisoPorUsuario != null) {
-                profundidadesDelPermisoDelUsuario.add(profundidadDePermisoPorUsuario);
-            }
-
+            }                      
             //buscar la profundidad de la accion por perfiles (cada perfil, puede tener el mismo permiso, pero con distintas profundidades                                         
             List<Profundidad> profundidadesPorPerfiles = profundidadesPorPerfilesDelUsuario(userId, accion);
             profundidadesDelPermisoDelUsuario.addAll(profundidadesPorPerfiles);
 
-            if (!profundidadesDelPermisoDelUsuario.isEmpty()) {
-                if (profundidadesDelPermisoDelUsuario.stream().anyMatch(p -> p == TODOS)) {
-                    return TODOS;
-                }
-                if (profundidadesDelPermisoDelUsuario.stream().anyMatch(p -> p == PROPIOS_MAS_PERFILES)) {
-                    return PROPIOS_MAS_PERFILES;
-                }
-                if (profundidadesDelPermisoDelUsuario.stream().anyMatch(p -> p == PROPIOS)) {
-                    return PROPIOS;
-                }
-            }
-        } catch (Exception e) {
+            return profundidadMayor(profundidadesDelPermisoDelUsuario);            
+        } catch (ParametroInvalidoException e) {
         }
         throw new AccesoDenegadoException("No Tiene permiso para ejecutar esta acción");
     }
@@ -122,14 +109,16 @@ public class UtilsPermissions {
         //ids de perfiles del usuario
         List<Integer> perfilesDelUsuario = u.getUsuariosPerfilList().stream()
                 .map(up -> up.getUsuariosPerfilPK().getPerfil())
-                .collect(toList());       
+                .collect(toList());
         //ids de usuarios con esos perfiles
         DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
+
         Set<Integer> usuariosDeLosPerfiles = daoUsuariosPerfil.stream()
                 .where(up -> perfilesDelUsuario.contains(up.getUsuariosPerfilPK().getPerfil()))
                 .select(up -> up.getUsuariosPerfilPK().getUsuario())
-                .collect(toSet());            
+                .collect(toSet());
         return usuariosDeLosPerfiles;
+
     }
 
     /**
@@ -146,16 +135,16 @@ public class UtilsPermissions {
      * genera una lista de los permisos que un usuario tiene asignados con su
      * profundidad de acceso
      *
-     * @param userId id del usuario a obtener sus permisos
+     * @param usuarioId id del usuario a obtener sus permisos
      * @return lista modelos con id de permiso y profundidad
      * @throws java.lang.Exception
      */
-    public static List<Seccion> permisosAsignadosAlUsuario(Integer userId) throws Exception {
+    public static List<Seccion> permisosAsignadosAlUsuario(Integer usuarioId) throws Exception {
         DaoUsuario daoUsuario = new DaoUsuario();
         DaoSeccion daoSeccion = new DaoSeccion();
 
         DaoUsuariosPermisos daoUsuarioPermisos = new DaoUsuariosPermisos();
-        List<String> permisosUsuario = daoUsuarioPermisos.stream().where(e -> e.getUsuariosPermisosPK().getUsuario().equals(userId)).map(e -> e.getUsuariosPermisosPK().getPermiso()).collect(toList());
+        List<String> permisosUsuario = daoUsuarioPermisos.stream().where(e -> e.getUsuariosPermisosPK().getUsuario().equals(usuarioId)).map(e -> e.getUsuariosPermisosPK().getPermiso()).collect(toList());
 
         //secciones disponibles -> eliminar todos los permisos que el usuario no tenga               
         List<Seccion> secciones = daoSeccion.findAll();
@@ -199,6 +188,14 @@ public class UtilsPermissions {
         return seccionesDeUsuario;
     }
 
+    /**
+     * genera los permisos del usuario con su profundidad de acceso
+     *
+     * @param userId id de usuario
+     * @return modelo con la lista de permisos categorizados por seccion,
+     * modulo, menu y accion
+     * @throws Exception
+     */
     public static ModelPermisosAsignados permisosAsignadosAlUsuarioConProfundidad(Integer userId) throws Exception {
         DaoUsuario daoUsuario = new DaoUsuario();
         DaoSeccion daoSeccion = new DaoSeccion();
@@ -309,4 +306,115 @@ public class UtilsPermissions {
         return asignados;
     }
 
+    /**
+     * genera los permisos conmutados del usuario con los permisos por perfiles
+     * con su profundidad de acceso mayoritaria
+     *
+     * @param usuarioId id de usuario a generar permisos conmutados
+     * @return modelo con los permisos asignados
+     * @throws java.lang.Exception
+     */
+    public static ModelPermisosAsignados permisosConmutadosDelUsuario(Integer usuarioId) throws Exception {
+        DaoSeccion daoSeccion = new DaoSeccion();
+
+        DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
+        DaoPerfilesPermisos daoPerfilesPermisos = new DaoPerfilesPermisos();
+
+        DaoUsuariosPermisos daoUsuarioPermisos = new DaoUsuariosPermisos();
+
+        //permisos por usuario
+        List<ModelPermisoAsignado> permisosPorUsuario = daoUsuarioPermisos.stream()
+                .where(e -> e.getUsuariosPermisosPK().getUsuario().equals(usuarioId))
+                .select(e -> new Pair<>(e.getUsuariosPermisosPK().getPermiso(), e.getProfundidad()))
+                .map(pair -> {
+                    ModelPermisoAsignado model = new ModelPermisoAsignado();
+                    model.setId(pair.getOne());
+                    model.setProfundidad(pair.getTwo());
+                    return model;
+                })
+                .collect(toList());
+
+        //permisos por perfiles
+        List<ModelPermisoAsignado> permisosDeLosPerfiles = daoUsuariosPerfil.stream()
+                .where(up -> up.getUsuariosPerfilPK().getUsuario().equals(usuarioId) && up.getHereda().equals(Boolean.TRUE))
+                .join(up -> JinqStream.of(up.getPerfil1()))
+                .joinList(p -> p.getTwo().getPerfilesPermisosList())
+                .select(p -> p.getTwo())
+                .map(p -> {
+                    ModelPermisoAsignado model = new ModelPermisoAsignado();
+                    model.setId(p.getPerfilesPermisosPK().getPermiso());
+                    model.setProfundidad(p.getProfundidad());
+                    return model;
+                })
+                .collect(toList());
+
+        //secciones disponibles -> eliminar todos los permisos que el usuario no tenga               
+        List<Seccion> secciones = daoSeccion.findAll();
+
+        List<ModelSeccion> seccionesDeUsuario = new ArrayList<>();
+        ModelPermisosAsignados asignados = new ModelPermisosAsignados(seccionesDeUsuario);
+        for (Seccion seccion : secciones) {
+
+            List<ModelModulo> modulos = new ArrayList<>();
+            for (Modulo modulo : seccion.getModuloList()) {
+
+                List<ModelMenu> menus = new ArrayList<>();
+                for (Menu menu : modulo.getMenuList()) {
+
+                    List<ModelPermiso> permisos = new ArrayList<>();
+                    for (Permiso permiso : menu.getPermisoList()) {
+                        try {
+                            String permisoId = permiso.getId();
+                            List<Profundidad> profundidades = new ArrayList<>();
+                            //añadir la profundidad por usuario
+                            try {
+                                Profundidad profundidadPorUsuario = permisosPorUsuario.stream().filter(p -> p.getId().equals(permiso.getId())).findFirst().get().getProfundidad();
+                                profundidades.add(profundidadPorUsuario);
+                            } catch (NoSuchElementException e) { //ignorar si no tiene el permiso
+                            }
+                            //añadir las profundidades por perfil
+                            try {
+                                permisosDeLosPerfiles.stream()
+                                        .filter(permi -> permi.getId().equals(permiso.getId()))
+                                        .forEach(p -> profundidades.add(p.getProfundidad()));
+                            } catch (NoSuchElementException e) { //omitir si no existe
+                            }
+
+                            permisos.add(new ModelPermiso(permiso.getNombre(), permiso.getId(), profundidadMayor(profundidades)));
+                        } catch (ParametroInvalidoException e) {//no tiene el permiso                            
+                        }
+                    }
+                    //si tiene permisos del menu agregar el menu
+                    if (!permisos.isEmpty()) {
+                        ModelMenu m = new ModelMenu(menu.getNombre(), menu.getId(), permisos);
+                        menus.add(m);
+                    }
+                }
+                //si tiene menus en el modulo, agregar el modulo
+                if (!menus.isEmpty()) {
+                    ModelModulo m = new ModelModulo(modulo.getNombre(), modulo.getId(), menus);
+                    modulos.add(m);
+                }
+            }
+            if (!modulos.isEmpty()) {
+                ModelSeccion s = new ModelSeccion(seccion.getNombre(), seccion.getId(), modulos);
+                seccionesDeUsuario.add(s);
+            }
+        }
+
+        return asignados;
+    }
+
+    public static Profundidad profundidadMayor(List<Profundidad> profundidades) throws ParametroInvalidoException {
+        if (profundidades.contains(TODOS)) {
+            return TODOS;
+        }
+        if (profundidades.contains(PROPIOS_MAS_PERFILES)) {
+            return PROPIOS_MAS_PERFILES;
+        }
+        if (profundidades.contains(PROPIOS)) {
+            return PROPIOS;
+        }
+        throw new ParametroInvalidoException("No existe una profundidad valida en la lista proporsionada");
+    }
 }

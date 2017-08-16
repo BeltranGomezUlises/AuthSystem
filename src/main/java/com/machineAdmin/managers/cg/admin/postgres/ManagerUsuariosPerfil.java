@@ -17,13 +17,11 @@
 package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPerfil;
-import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfilPK;
-import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.commons.ManagerSQL;
-import com.machineAdmin.managers.cg.commons.ManagerSQLCatalog;
+import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlUsuario;
@@ -48,6 +46,11 @@ public class ManagerUsuariosPerfil extends ManagerSQL<UsuariosPerfil, UsuariosPe
     }
        
     public void asignarPerfilesAlUsuario(ModelAsignarPerfilesAlUsuario modelo) throws Exception {
+        
+        if (modelo.getPerfiles().isEmpty()) {
+            throw new ParametroInvalidoException("No puede dejar un usuario sin ningun perfil");
+        }
+        
         //remover los perfiles actuales
         List<UsuariosPerfilPK> idsActuales = this.stream()
                 .filter(up -> up.getUsuariosPerfilPK().getUsuario().equals(modelo.getUserId()))

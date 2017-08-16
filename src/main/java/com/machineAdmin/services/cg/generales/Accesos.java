@@ -68,11 +68,11 @@ public class Accesos {
             Usuario usuarioLogeado = managerUsuario.login(usuarioAutenticando);
 
             ModelUsuarioLogeado modelUsuarioLogeado = new ModelUsuarioLogeado();
-            modelUsuarioLogeado.setPermisos(UtilsPermissions.permisosAsignadosAlUsuario(usuarioLogeado.getId()));
+            modelUsuarioLogeado.setPermisos(UtilsPermissions.permisosConmutadosDelUsuario(usuarioLogeado.getId()));
 
             BeanUtils.copyProperties(modelUsuarioLogeado, usuarioLogeado);
 
-            setOkResponse(res, modelUsuarioLogeado, "BienVenido " + usuarioLogeado.getNombre(), "Token de sesion de usuario, necesario para las cabeceras de los demas servicios");
+            setOkResponse(res, modelUsuarioLogeado, "Bienvenido " + usuarioLogeado.getNombre(), "Token de sesion de usuario, necesario para las cabeceras de los demas servicios");
             res.setMetaData(UtilsJWT.generateSessionToken(usuarioLogeado.getId().toString()));
         } catch (UsuarioInexistenteException | ContraseñaIncorrectaException e) {
             setWarningResponse(res, "Usuario y/o contraseña incorrecto", "imposible inicio de sesión, por: " + e.getMessage());
@@ -80,7 +80,7 @@ public class Accesos {
             setWarningResponse(res, ex.getMessage(), "El Usuario está bloqueado temporalmente. Cause: " + ex.getMessage());
         } catch (Exception ex) {
             setErrorResponse(res, ex);
-        }
+        }                                        
         return res;
     }
 

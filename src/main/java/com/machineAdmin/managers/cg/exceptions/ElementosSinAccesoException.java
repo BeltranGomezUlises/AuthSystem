@@ -22,13 +22,24 @@ import java.util.List;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ElementosSinAccesoException extends Exception{
+public class ElementosSinAccesoException extends Exception {
 
-   List elementosSinAcceso;
+    List elementosSinAcceso;
+
+    public ElementosSinAccesoException() {
+    }
     
-    public ElementosSinAccesoException(List elementosSinAcceso, String mensaje) {        
+    public ElementosSinAccesoException(List elementosSinAcceso, String mensaje) {
         super(mensaje);
         this.elementosSinAcceso = elementosSinAcceso;
     }
-    
+
+    public List getElementosSinAcceso() {
+        return elementosSinAcceso;
+    }
+
+    public void setElementosSinAcceso(List elementosSinAcceso) {
+        this.elementosSinAcceso = elementosSinAcceso;
+    }
+
 }

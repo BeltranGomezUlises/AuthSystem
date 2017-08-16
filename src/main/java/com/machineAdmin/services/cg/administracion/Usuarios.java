@@ -19,6 +19,7 @@ package com.machineAdmin.services.cg.administracion;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuariosPerfil;
+import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.UserException;
@@ -151,7 +152,9 @@ public class Usuarios extends ServiceFacadeCatalogSQL<Usuario, Integer> {
             setOkResponse(res, "Los permisos fuerons asignados al usuario con éxito", "se asignaron los permisos al usuario");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
-        } catch (Exception ex) {
+        } catch(ParametroInvalidoException e){
+            setParametroInvalidoResponse(res, e);
+        }catch (Exception ex) {
             setErrorResponse(res, ex);
         }
         return res;
