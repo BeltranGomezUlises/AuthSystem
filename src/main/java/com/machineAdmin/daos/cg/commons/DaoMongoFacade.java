@@ -64,16 +64,16 @@ public class DaoMongoFacade<T extends EntityMongo> {
         coll.remove(q);
     }
 
-    public void update(T entity) throws Exception {
-//        try {
-//            T toUpdate = coll.findOneById(entity.getId());
-//            BeanUtils.copyProperties(toUpdate, entity);
-//            coll.updateById(entity.getId(), toUpdate);            
-//        } catch (IllegalAccessException | InvocationTargetException ex) {
-//            throw new Exception("No fue posible actualizar la entidad, Causa: " + ex.getMessage());
-//        }
+    public void update(T entity) throws Exception {        
         coll.updateById(entity.getId(), entity);
     }
+    
+    public void updateAll(List<T> entities) throws Exception{
+        for (T entity : entities) {
+            coll.updateById(entity.getId(), entity);
+        }
+    }
+    
 
     public List<T> update(Query query, T t) {
         return coll.update(query, t).getSavedObjects();

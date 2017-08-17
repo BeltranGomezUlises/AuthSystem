@@ -15,7 +15,6 @@ import com.machineAdmin.managers.cg.exceptions.ProfundidadNoAsignadaException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.utils.UtilsPermissions;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
@@ -88,28 +87,28 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
     public void delete(DBQuery.Query query) throws ElementosSinAccesoException, Exception {
         Query queryDelete;
         Query querySinAcceso;
-        List<T> elementosSinAcceso;        
+        List<T> elementosSinAcceso;
         switch (profundidad) {
             case TODOS:
                 dao.delete(query);
                 break;
             case PROPIOS:
-                queryDelete = DBQuery.and(query, DBQuery.is("_id", this.usuario));                
+                queryDelete = DBQuery.and(query, DBQuery.is("_id", this.usuario));
                 elementosSinAcceso = dao.findAll(
-                        DBQuery.and(query, 
-                        DBQuery.notEquals("_id", this.usuario))
-                );                
+                        DBQuery.and(query,
+                                DBQuery.notEquals("_id", this.usuario))
+                );
                 if (!elementosSinAcceso.isEmpty()) {
                     throw new ElementosSinAccesoException(elementosSinAcceso, "Entidades Que no se puedieron Eliminar");
                 }
                 break;
             case PROPIOS_MAS_PERFILES:
                 Set<Integer> usuariosConPerfilesDeUsuarioActual = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuario);
-                queryDelete = DBQuery.and(query, DBQuery.in("_id", usuariosConPerfilesDeUsuarioActual));                
+                queryDelete = DBQuery.and(query, DBQuery.in("_id", usuariosConPerfilesDeUsuarioActual));
                 elementosSinAcceso = dao.findAll(
-                        DBQuery.and(query, 
-                        DBQuery.notIn("_id", usuariosConPerfilesDeUsuarioActual))
-                );    
+                        DBQuery.and(query,
+                                DBQuery.notIn("_id", usuariosConPerfilesDeUsuarioActual))
+                );
                 if (!elementosSinAcceso.isEmpty()) {
                     throw new ElementosSinAccesoException(elementosSinAcceso, "Entidades Que no se puedieron Eliminar");
                 }
@@ -119,56 +118,118 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
     }
 
     @Override
-    public void deleteAll(List<Object> ids) throws ElementosSinAccesoException, Exception {        
+    public void deleteAll(List<Object> ids) throws ElementosSinAccesoException, Exception {
         Query queryDelete;
         Query querySinAcceso;
         List<T> elementosSinAcceso;
         switch (profundidad) {
-            case TODOS:                
+            case TODOS:
                 dao.delete(DBQuery.in("_id", ids));
                 break;
-            case PROPIOS:                                
+            case PROPIOS:
                 //mandar borrar aquellos que solo sean del usuario actual                                                                
                 queryDelete = DBQuery.and(
-                        DBQuery.in("_id", ids), 
+                        DBQuery.in("_id", ids),
                         DBQuery.is("usuarioCreador", this.usuario)
-                );                                
-                dao.delete(queryDelete);                
-                
+                );
+                dao.delete(queryDelete);
+
                 querySinAcceso = DBQuery.and(
-                        DBQuery.in("_id", ids), 
+                        DBQuery.in("_id", ids),
                         DBQuery.notEquals("usuarioCreador", this.usuario)
-                );                
-                elementosSinAcceso = dao.findAll(querySinAcceso);  
-                
+                );
+                elementosSinAcceso = dao.findAll(querySinAcceso);
+
                 if (!elementosSinAcceso.isEmpty()) {
                     throw new ElementosSinAccesoException(elementosSinAcceso, "Existen entidades que no se puedieron eliminar");
-                }   
+                }
                 break;
             case PROPIOS_MAS_PERFILES:
                 Set<Integer> usuariosConPerfilesDeUsuarioActual = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuario);
                 //mandar borrar aquellos que solo sean del usuario actual                                                                
                 queryDelete = DBQuery.and(
-                        DBQuery.in("_id", ids), 
+                        DBQuery.in("_id", ids),
                         DBQuery.in("usuarioCreador", usuariosConPerfilesDeUsuarioActual)
-                );                                
-                dao.delete(queryDelete);                
-                
+                );
+                dao.delete(queryDelete);
+
                 querySinAcceso = DBQuery.and(
-                        DBQuery.in("_id", ids), 
+                        DBQuery.in("_id", ids),
                         DBQuery.notIn("usuarioCreador", usuariosConPerfilesDeUsuarioActual)
-                );                
-                elementosSinAcceso = dao.findAll(querySinAcceso);                  
+                );
+                elementosSinAcceso = dao.findAll(querySinAcceso);
                 if (!elementosSinAcceso.isEmpty()) {
                     throw new ElementosSinAccesoException(elementosSinAcceso, "Existen entidades que no se puedieron eliminar");
-                }   
+                }
                 break;
+            default:
+                throw new ProfundidadNoAsignadaException();
         }
     }
 
     @Override
     public void update(T entity) throws Exception {
         dao.update(entity);
+    }
+
+    public void updateAll(List<T> entities) throws ElementosSinAccesoException, Exception {
+        Query querySinAcceso;
+        List<T> elementosSinAcceso;
+        switch (this.profundidad) {
+            case TODOS:
+                dao.updateAll(entities);
+                break;
+            case PROPIOS:
+                //elementos sin acceso
+                querySinAcceso = DBQuery.and(
+                        DBQuery.in("_id", entities.stream().map(e -> e.getId()).collect(toList())),
+                        DBQuery.notEquals("usuarioCreador", this.usuario)
+                );
+                elementosSinAcceso = dao.findAll(querySinAcceso);
+                //actualizar elementos con acceso                                
+                if (!elementosSinAcceso.isEmpty()) {
+                    List<String> idsSinAcceso = elementosSinAcceso.stream().map(e -> e.getId()).collect(toList());
+                    for (int i = 0; i < entities.size(); i++) {
+                        if (idsSinAcceso.contains(entities.get(i).getId())) {
+                            entities.remove(i);
+                        }
+                    }
+                    dao.updateAll(entities);
+                    throw new ElementosSinAccesoException(elementosSinAcceso, "Existen entidades que no se puedieron actualizar");
+                } else {
+                    dao.updateAll(entities);
+                }
+
+                break;
+            case PROPIOS_MAS_PERFILES:
+                //elementos sin acceso
+                Set<Integer> usuariosConPerfilesDeUsuarioActual = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuario);
+                querySinAcceso = DBQuery.and(
+                        DBQuery.in("_id", entities.stream().map(e -> e.getId()).collect(toList())),
+                        DBQuery.notIn("usuarioCreador", usuariosConPerfilesDeUsuarioActual)
+                );
+                elementosSinAcceso = dao.findAll(querySinAcceso);
+                //actualizar elementos con acceso                                
+                if (!elementosSinAcceso.isEmpty()) {
+                    List<String> idsSinAcceso = elementosSinAcceso.stream().map(e -> e.getId()).collect(toList());
+                    for (int i = 0; i < idsSinAcceso.size(); i++) {
+                        for (int j = 0; j < entities.size(); j++) {
+                            if (idsSinAcceso.get(i).equals(entities.get(j).getId())) {
+                                entities.remove(j);
+                                break;
+                            }
+                        }
+                    }                    
+                    dao.updateAll(entities);
+                    throw new ElementosSinAccesoException(elementosSinAcceso, "Existen entidades que no se puedieron actualizar");
+                } else {
+                    dao.updateAll(entities);
+                }
+
+                break;
+            default:
+                throw new ProfundidadNoAsignadaException();
+        }
     }
 
     public void update(DBQuery.Query query, T t) throws Exception {
@@ -330,8 +391,9 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
             case TODOS:
                 t = (T) dao.findFirst();
                 break;
+            default:
+                throw new ProfundidadNoAsignadaException();
         }
-
         return t;
     }
 
@@ -352,7 +414,7 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
             case PROPIOS:
                 q = DBQuery.is("usuarioCreador", this.usuario);
                 break;
-            case PROPIOS_MAS_PERFILES:                
+            case PROPIOS_MAS_PERFILES:
                 q = DBQuery.in("usuarioCreador", UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuario));
                 break;
         }

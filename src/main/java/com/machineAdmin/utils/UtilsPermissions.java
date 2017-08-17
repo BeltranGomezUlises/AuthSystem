@@ -116,9 +116,8 @@ public class UtilsPermissions {
         Set<Integer> usuariosDeLosPerfiles = daoUsuariosPerfil.stream()
                 .where(up -> perfilesDelUsuario.contains(up.getUsuariosPerfilPK().getPerfil()))
                 .select(up -> up.getUsuariosPerfilPK().getUsuario())
-                .collect(toSet());
+                .collect(toSet());        
         return usuariosDeLosPerfiles;
-
     }
 
     /**

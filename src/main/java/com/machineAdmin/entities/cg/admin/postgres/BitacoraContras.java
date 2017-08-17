@@ -54,14 +54,17 @@ public class BitacoraContras extends EntitySQL implements Serializable {
     private Usuario usuario1;
 
     public BitacoraContras() {
+        fechaAsignada = new Date();
     }
 
     public BitacoraContras(BitacoraContrasPK bitacoraContrasPK) {
         this.bitacoraContrasPK = bitacoraContrasPK;
+        fechaAsignada = new Date();
     }
 
     public BitacoraContras(int usuario, String contra) {
         this.bitacoraContrasPK = new BitacoraContrasPK(usuario, contra);
+        fechaAsignada = new Date();
     }
 
     public BitacoraContrasPK getBitacoraContrasPK() {

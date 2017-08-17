@@ -65,4 +65,9 @@ public class MongoPruebas extends ServiceFacadeCatalogMongo<EntidadMongoPrueba, 
         return super.eliminarVarios(request, token, t);
     }
 
+    @Override
+    public Response modificarVarios(HttpServletRequest request, String token, List<EntidadMongoPrueba> ts) {
+        return super.modificarVarios(request, token, ts);
+    }
+   
 }

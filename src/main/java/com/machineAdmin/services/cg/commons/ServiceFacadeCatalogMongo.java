@@ -17,6 +17,7 @@
 package com.machineAdmin.services.cg.commons;
 
 import com.machineAdmin.entities.cg.commons.EntityMongoCatalog;
+import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.commons.ManagerFacade;
 import com.machineAdmin.managers.cg.commons.ManagerMongoCatalog;
 import com.machineAdmin.managers.cg.exceptions.AccesoDenegadoException;
@@ -70,10 +71,10 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
     public Response listar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token) {
         Response response = new Response();
         try {
-            this.manager.setToken(token);           
+            this.manager.setToken(token);
             this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
-            
+
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
                 UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Listar", request);
@@ -82,7 +83,6 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
             }
 
             //</editor-fold>
-            
             //<editor-fold defaultstate="collapsed" desc="Auditar">
             UtilsAuditoria.ModeloAuditoria auditoria = new UtilsAuditoria.ModeloAuditoria(manager.getUsuario(), "Listar", null);
             UtilsAuditoria.auditar(manager.nombreColeccionParaRegistros(), auditoria);
@@ -90,6 +90,8 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
 
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(response);
+        } catch (AccesoDenegadoException ex) {
+            setAccesDeniedResponse(response, ex);
         } catch (Exception ex) {
             setErrorResponse(response, ex);
         }
@@ -112,7 +114,7 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
         Response response = new Response();
         try {
             this.manager.setToken(token);
-            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));                       
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
             setOkResponse(response, "Entidad encontrada", manager.findOne(manager.stringToKey(id)));
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
@@ -125,9 +127,9 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
         } catch (AccesoDenegadoException ee) {
-            setAccesDeniedResponse(response, ee);                    
+            setAccesDeniedResponse(response, ee);
         } catch (ParametroInvalidoException e) {
-            setParametroInvalidoResponse(response, e);        
+            setParametroInvalidoResponse(response, e);
         } catch (Exception e) {
             setErrorResponse(response, e);
         }
@@ -148,9 +150,9 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
         Response response = new Response();
         try {
             this.manager.setToken(token);
-            response.setData(manager.persist(t));
-            response.setMessage("Entidad persistida");
-
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
+            setOkResponse(response, t, "Entidad persistida");
+            
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">          
             try {
                 UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Alta", request);
@@ -161,6 +163,8 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
+        } catch (AccesoDenegadoException ex) {
+            setAccesDeniedResponse(response, ex);
         } catch (Exception e) {
             setErrorResponse(response, e);
         }
@@ -182,10 +186,10 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
         Response response = new Response();
         try {
             this.manager.setToken(token);
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
             manager.update(t);
-            response.setData(t);
-            response.setMessage("Entidad actualizada");
-
+            setOkResponse(response, t, "Entidad actualizada");
+            
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
                 UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", request);
@@ -196,6 +200,55 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
+        } catch (AccesoDenegadoException ex) {
+            setAccesDeniedResponse(response, ex);
+        }catch (Exception e) {
+            setErrorResponse(response, e);
+        }
+        return response;
+    }
+
+    /**
+     * actualiza las entidades proporsionadas a su equivalente en base de datos,
+     * tomando como referencia su identificador
+     *
+     * @param request contexto de peticion necesario para obtener datos como ip,
+     * sistema operativo y navegador del cliente
+     * @param token token de sesion
+     * @param ts entidades a actaliazar     
+     * @return Response, en data asignado con la entidad que se actualizó
+     */
+    @Path("/varios")
+    @PUT
+    public Response modificarVarios(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, List<T> ts) {
+        Response response = new Response();
+        try {
+            this.manager.setToken(token);
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
+            manager.updateAll(ts);
+            setOkResponse(response, "Entidades actualizadas", ts);
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException unsupportedOperationException) {
+            }
+            //</editor-fold>    
+
+        } catch (TokenExpiradoException | TokenInvalidoException ex) {
+            setInvalidTokenResponse(response);
+        } catch (AccesoDenegadoException ex) {
+            setAccesDeniedResponse(response, ex);
+        } catch (ElementosSinAccesoException e) {
+            setElementosSinAccesoResponse(response, e);
+            //aunque no tenga acceso a acualizar todos, bitacorizar
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException unsupportedOperationException) {
+            }
+            //</editor-fold>    
         } catch (Exception e) {
             setErrorResponse(response, e);
         }
@@ -216,9 +269,9 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
         Response response = new Response();
         try {
             this.manager.setToken(token);
-            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));                       
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
             manager.delete(t.getId());
-            response.setMessage("Entidad eliminada");
+            setOkResponse(response, "Entidad eliminada");
 
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
@@ -230,21 +283,23 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
+        } catch (AccesoDenegadoException ex) {
+            setAccesDeniedResponse(response, ex);
         } catch (Exception e) {
             setErrorResponse(response, e);
         }
         return response;
     }
-    
+
     @Path("/varios")
     @DELETE
     public Response eliminarVarios(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, List<T> t) {
         Response response = new Response();
         try {
             this.manager.setToken(token);
-            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));                                   
-            manager.deleteAll(t.stream().map( p -> p.getId()).collect(toList()));
-            response.setMessage("Entidad eliminada");
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
+            manager.deleteAll(t.stream().map(p -> p.getId()).collect(toList()));
+            setOkResponse(response, "Entidades eliminadas");
 
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
@@ -256,9 +311,19 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
-        }catch (ElementosSinAccesoException e) {
+        } catch (AccesoDenegadoException ex) {
+            setAccesDeniedResponse(response, ex);
+        } catch (ElementosSinAccesoException e) {
             setElementosSinAccesoResponse(response, e);
-        }catch (Exception e) {
+            //aun que no se hallan podido eliminar todos los elementos, bitacorizar accion
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Eliminar Varios", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException unsupportedOperationException) {
+            }
+            //</editor-fold>
+        } catch (Exception e) {
             setErrorResponse(response, e);
         }
         return response;
@@ -268,5 +333,5 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
     public final ManagerFacade<T, Object> getManager() {
         return (ManagerFacade<T, Object>) manager;
     }
-    
+
 }

@@ -313,7 +313,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
         managerBitacoraContra.setUsuario(userId);
 
         BitacoraContras bitacoraContra = new BitacoraContras(userId, pass);
-
+        
         if (managerBitacoraContra.stream().anyMatch(e -> e.equals(bitacoraContra))) {
             throw new ParametroInvalidoException("La contraseña que esta ingresando ya fué utilizada, intente con otra");
         }
@@ -336,7 +336,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
         // lastPassword.size() >= maxNumber -> resize de lastPassword con los ultimos maxNumber contraseñas                        
 
         bitacoraContra.setUsuario1(u);
-
+        
         if (bitacoraContras.size() < maxNumber) {
             managerBitacoraContra.persist(bitacoraContra); //añadir la bitacora de la contra usada            
         } else {
