@@ -24,10 +24,12 @@ import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.utils.UtilsAuditoria;
 import com.machineAdmin.utils.UtilsBitacora;
+import com.machineAdmin.utils.UtilsPermissions;
 import static com.machineAdmin.utils.UtilsService.setErrorResponse;
 import static com.machineAdmin.utils.UtilsService.setInvalidTokenResponse;
 import static com.machineAdmin.utils.UtilsService.setOkResponse;
 import java.util.Date;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -67,11 +69,13 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
      * @return reponse, con su campo data asignado con una lista de las
      * entidades de esta clase servicio
      */
+    //@com.webcohesion.enunciate.metadata.Ignore
     @GET
     public Response listar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token) {
         Response response = new Response();
         try {
-            this.manager.setToken(token);            
+            this.manager.setToken(token);       
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
 
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
@@ -105,15 +109,16 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
      * @param id identificador de la entidad buscada
      * @return response, con su campo data asignado con la entidad buscada
      */
+//    @com.webcohesion.enunciate.metadata.Ignore
     @GET
     @Path("/{id}")
     public Response detalle(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, @PathParam("id") String id) {
         Response response = new Response();
         try {
             this.manager.setToken(token);
-            response.setData(manager.findOne(manager.stringToKey(id)));
-            response.setMessage("Entidad encontrada");
-
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));            
+            setOkResponse(response,manager.findOne(manager.stringToKey(id)), "Entidad encontrada");
+            
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
                 UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Detalle", request);
@@ -139,14 +144,14 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
      * @param t entidad a persistir en base de datos
      * @return response con el estatus y el mensaje
      */    
+    //@com.webcohesion.enunciate.metadata.Ignore
     @POST
     public Response alta(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
         try {
             this.manager.setToken(token);
-            response.setData(manager.persist(t));
-            response.setMessage("Entidad persistida");
-
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
+            setOkResponse(response, manager.persist(t), "Entidad persistida");                        
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
                 UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Alta", request);
@@ -173,15 +178,51 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
      * @param t entidad con los datos actualizados
      * @return Response, en data asignado con la entidad que se actualizó
      */
+    //@com.webcohesion.enunciate.metadata.Ignore
     @PUT
     public Response modificar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
         try {
             this.manager.setToken(token);
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));           
             manager.update(t);
-            response.setData(t);
-            response.setMessage("Entidad actualizada");
+            setOkResponse(response, t, "Entidad actualizada");                                                            
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException unsupportedOperationException) {
+            }
+            //</editor-fold>    
 
+        } catch (TokenExpiradoException | TokenInvalidoException ex) {
+            setInvalidTokenResponse(response);
+        } catch (Exception e) {
+            setErrorResponse(response, e);
+        }
+        return response;
+    }
+    
+    /**
+     * actualiza la entidad proporsionada a su equivalente en base de datos,
+     * tomando como referencia su identificador
+     *
+     * @param request contexto de peticion necesario para obtener datos como ip,
+     * sistema operativo y navegador del cliente
+     * @param token token de sesion
+     * @param t entidad con los datos actualizados
+     * @return Response, en data asignado con la entidad que se actualizó
+     */
+//    @com.webcohesion.enunciate.metadata.Ignore
+    @Path("/varios")
+    @PUT
+    public Response modificaVarios(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, List<T> t) {
+        Response response = new Response();
+        try {
+            this.manager.setToken(token);
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));           
+            //manager.update(t);
+            setOkResponse(response, t, "Entidad actualizada");                                                            
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
                 UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", request);
@@ -207,14 +248,50 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
      * @param t entidad proporsionada
      * @return
      */
+//    @com.webcohesion.enunciate.metadata.Ignore
     @DELETE
     public Response eliminar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
         try {
             this.manager.setToken(token);
-            manager.delete((K) t.getId());
-            response.setMessage("Entidad eliminada");
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
+            manager.delete((K) t.getId());            
+            setOkResponse(response, "Entidad eliminada");            
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Eliminar", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException unsupportedOperationException) {
+            }
+            //</editor-fold>
 
+        } catch (TokenExpiradoException | TokenInvalidoException ex) {
+            setInvalidTokenResponse(response);
+        } catch (Exception e) {
+            setErrorResponse(response, e);
+        }
+        return response;
+    }
+    
+    /**
+     * eliminar la entidad proporsionada
+     *
+     * @param request contexto de peticion necesario para obtener datos como ip,
+     * sistema operativo y navegador del cliente
+     * @param token token de sesion
+     * @param t entidad proporsionada
+     * @return
+     */
+//    @com.webcohesion.enunciate.metadata.Ignore
+    @Path("/varios")
+    @DELETE
+    public Response eliminarVarios(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, List<T> t) {
+        Response response = new Response();
+        try {
+            this.manager.setToken(token);
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
+            //manager.delete((K) t.getId());            
+            setOkResponse(response, "Entidad eliminada");            
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
                 UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Eliminar", request);

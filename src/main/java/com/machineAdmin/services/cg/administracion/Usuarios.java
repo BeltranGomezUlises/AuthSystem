@@ -26,6 +26,7 @@ import com.machineAdmin.managers.cg.exceptions.UserException;
 import com.machineAdmin.models.cg.ModelAltaUsuario;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlUsuario;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
+import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacadeCatalogSQL;
 import com.machineAdmin.utils.UtilsBitacora;
@@ -53,12 +54,7 @@ public class Usuarios extends ServiceFacadeCatalogSQL<Usuario, Integer> {
     public Usuarios() {
         super(new ManagerUsuario());
     }
-    
-    @Override
-    public Response alta(HttpServletRequest request, String token, Usuario t) {
-        return super.alta(request, token, t);
-    }
-        
+               
     @Override
     public Response eliminar(HttpServletRequest request, String token, Usuario t) {
         return super.eliminar(request, token, t);

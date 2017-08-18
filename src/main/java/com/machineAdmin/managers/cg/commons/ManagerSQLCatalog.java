@@ -77,7 +77,15 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
 
     @Override
     public List<T> findAll() throws Exception {
-        return dao.findAll();
+//        switch (this.profundidad) {
+//            case val:
+//                return dao.findAll();
+//                break;
+//            default:
+//                throw new AssertionError();
+//        }
+//             
+    return null;
     }
 
     @Override

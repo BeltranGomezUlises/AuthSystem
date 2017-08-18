@@ -67,6 +67,7 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
      * @return reponse, con su campo data asignado con una lista de las
      * entidades de esta clase servicio
      */
+//    @com.webcohesion.enunciate.metadata.Ignore
     @GET
     public Response listar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token) {
         Response response = new Response();
@@ -108,6 +109,7 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
      * @param id identificador de la entidad buscada
      * @return response, con su campo data asignado con la entidad buscada
      */
+//    @com.webcohesion.enunciate.metadata.Ignore
     @GET
     @Path("/{id}")
     public Response detalle(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, @PathParam("id") String id) {
@@ -145,6 +147,7 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
      * @param t entidad a persistir en base de datos
      * @return response con el estatus y el mensaje
      */
+//    @com.webcohesion.enunciate.metadata.Ignore
     @POST
     public Response alta(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
@@ -181,6 +184,7 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
      * @param t entidad con los datos actualizados
      * @return Response, en data asignado con la entidad que se actualizó
      */
+//    @com.webcohesion.enunciate.metadata.Ignore
     @PUT
     public Response modificar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
@@ -218,6 +222,7 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
      * @param ts entidades a actaliazar     
      * @return Response, en data asignado con la entidad que se actualizó
      */
+//    @com.webcohesion.enunciate.metadata.Ignore
     @Path("/varios")
     @PUT
     public Response modificarVarios(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, List<T> ts) {
@@ -262,8 +267,9 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
      * sistema operativo y navegador del cliente
      * @param token token de sesion
      * @param t entidad proporsionada
-     * @return
+     * @return Response generico
      */
+//    @com.webcohesion.enunciate.metadata.Ignore
     @DELETE
     public Response eliminar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
@@ -291,14 +297,22 @@ public class ServiceFacadeCatalogMongo<T extends EntityMongoCatalog, Object> ext
         return response;
     }
 
+    /**
+     * eliminar las entidades proporsionadas
+     * @param request informacion de la peticion
+     * @param token token de sesion
+     * @param ts lista de entidades a eliminar
+     * @return Response generico
+     */
+//    @com.webcohesion.enunciate.metadata.Ignore
     @Path("/varios")
     @DELETE
-    public Response eliminarVarios(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, List<T> t) {
+    public Response eliminarVarios(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, List<T> ts) {
         Response response = new Response();
         try {
             this.manager.setToken(token);
             this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
-            manager.deleteAll(t.stream().map(p -> p.getId()).collect(toList()));
+            manager.deleteAll(ts.stream().map(p -> p.getId()).collect(toList()));
             setOkResponse(response, "Entidades eliminadas");
 
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">

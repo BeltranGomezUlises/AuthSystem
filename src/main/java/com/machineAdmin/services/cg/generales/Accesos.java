@@ -188,7 +188,7 @@ public class Accesos {
      * @return retorna mensaje de éxito
      */
     @POST
-    @Path("/restablecerContraseña")
+    @Path("/restablecerContra")
     public Response resetPassword(@HeaderParam("Authorization") String tokenRestablecer, ModelContenidoCifrado content) {
         Response res = new Response();
         try {

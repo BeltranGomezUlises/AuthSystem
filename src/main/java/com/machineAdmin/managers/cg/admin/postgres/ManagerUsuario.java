@@ -71,7 +71,8 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
 
     @Override
     public Usuario persist(Usuario entity) throws UserException.UsuarioYaExistente, Exception {
-        entity.setContra(UtilsSecurity.cifrarMD5(entity.getContra()));
+        entity.setContra(UtilsSecurity.cifrarMD5(entity.getContra())); 
+        entity.setCorreo(entity.getCorreo().toLowerCase());
         try {
             Usuario persisted = super.persist(entity);
             //bitacorizar la contraseña
@@ -145,7 +146,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
             String contraseña = usuarioAutenticando.getContra();
             switch (getUserIdentifierType(usuarioAutenticando.getNombre())) {
                 case MAIL:
-                    loged = daoUsuario.stream().where(u -> u.getCorreo().equals(identificador) && u.getContra().equals(contraseña)).findFirst().get();
+                    loged = daoUsuario.stream().where(u -> u.getCorreo().equals(identificador.toLowerCase()) && u.getContra().equals(contraseña)).findFirst().get();
                     break;
                 case PHONE:
                     loged = daoUsuario.stream().where(u -> u.getTelefono().equals(identificador) && u.getContra().equals(contraseña)).findFirst().get();
@@ -184,7 +185,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
             String identi = usuario.getNombre();
 
             Usuario intentoLogin = this.stream().where(u
-                    -> u.getCorreo().equals(identi)
+                    -> u.getCorreo().equals(identi.toLowerCase())
                     || u.getNombre().equals(identi)
                     || u.getTelefono().equals(identi)).findFirst().get();
 
@@ -241,7 +242,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
         if (this.stream().where(u -> u.getNombre().equals(nombre)).findFirst().isPresent()) {
             mensaje += " nombre,";
         }
-        if (this.stream().where(u -> u.getCorreo().equals(correo)).findFirst().isPresent()) {
+        if (this.stream().where(u -> u.getCorreo().equals(correo.toLowerCase())).findFirst().isPresent()) {
             mensaje += " correo,";
         }
         if (this.stream().where(u -> u.getTelefono().equals(telefono)).findFirst().isPresent()) {
@@ -271,10 +272,10 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
         try {
             switch (getUserIdentifierType(identifier)) {
                 case MAIL:
-                    usuarioARecuperar = this.stream().filter(u -> u.getCorreo().equals(identifier)).findFirst().get();
+                    usuarioARecuperar = this.stream().where(u -> u.getCorreo().equals(identifier.toLowerCase())).findFirst().get();
                     break;
                 case PHONE:
-                    usuarioARecuperar = this.stream().filter(u -> u.getTelefono().equals(identifier)).findFirst().get();
+                    usuarioARecuperar = this.stream().where(u -> u.getTelefono().equals(identifier)).findFirst().get();
                     break;
                 default:
                     throw new ParametroInvalidoException("el identificador proporsionado no es váliodo. Debe de utilizar un correo electronico ó número de teléfono de 10 dígitos");
