@@ -8,7 +8,6 @@ package com.machineAdmin.services.cg.generales;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.entities.cg.commons.Profundidad;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerSeccion;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
 import com.machineAdmin.managers.cg.exceptions.ContraseñaIncorrectaException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
@@ -30,6 +29,7 @@ import java.net.MalformedURLException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -152,7 +152,12 @@ public class Accesos {
         }
         return res;
     }
-
+    
+    @OPTIONS
+    @Path("/enviarCodigoRecuperacion/{identifier}")
+    public Response optionsRecoverCode(@PathParam("identifier") String identifier) {
+        return new Response();
+    }
     /**
      * sirve para autenticar el usuario que quiere recuperar su contraseña, es
      * necesario proporcionar el token de verificacion y el codigo obtenido

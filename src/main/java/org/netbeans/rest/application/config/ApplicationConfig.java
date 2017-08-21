@@ -38,6 +38,7 @@ public class ApplicationConfig extends Application {
         resources.add(com.machineAdmin.services.cg.generales.Permisos.class);
         resources.add(com.machineAdmin.services.cg.generales.Tests.class);
         resources.add(com.webcohesion.enunciate.rt.EnunciateJaxbContextResolver.class);
+        resources.add(org.netbeans.rest.application.config.CORSFilter.class);
     }
     
 }
