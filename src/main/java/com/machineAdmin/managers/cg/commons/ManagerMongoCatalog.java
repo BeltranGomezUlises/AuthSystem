@@ -95,8 +95,7 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
             case PROPIOS:
                 queryDelete = DBQuery.and(query, DBQuery.is("_id", this.usuario));
                 elementosSinAcceso = dao.findAll(
-                        DBQuery.and(query,
-                                DBQuery.notEquals("_id", this.usuario))
+                        DBQuery.and(query, DBQuery.notEquals("_id", this.usuario))
                 );
                 if (!elementosSinAcceso.isEmpty()) {
                     throw new ElementosSinAccesoException(elementosSinAcceso, "Entidades Que no se puedieron Eliminar");
@@ -168,8 +167,28 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
     }
 
     @Override
-    public void update(T entity) throws Exception {
-        dao.update(entity);
+    public void update(T entity) throws Exception {                       
+        switch (profundidad) {
+            case TODOS:
+                dao.update(entity);
+                break;
+            case PROPIOS:
+                if (entity.getUsuarioCreador().equals(this.usuario)) {
+                    dao.update(entity);
+                }else{
+                    throw new AccesoDenegadoException("No tiene permiso de actualizar ésta entidad");
+                }                
+                break;
+            case PROPIOS_MAS_PERFILES:                
+                if (UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(this.usuario).contains(entity.getUsuarioCreador())) {
+                    dao.update(entity);
+                } else {
+                    throw new AccesoDenegadoException("No tiene permiso de actualizar ésta entidad");
+                }
+                break;
+            default:
+                throw new AssertionError();
+        }                        
     }
 
     public void updateAll(List<T> entities) throws ElementosSinAccesoException, Exception {

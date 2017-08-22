@@ -16,10 +16,8 @@
  */
 package com.machineAdmin.managers.cg.admin.postgres;
 
-import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContras;
-import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfilPK;
@@ -50,7 +48,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
-import java.util.UUID;
 import static java.util.stream.Collectors.toList;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.mail.EmailException;
@@ -71,7 +68,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
 
     @Override
     public Usuario persist(Usuario entity) throws UserException.UsuarioYaExistente, Exception {
-        entity.setContra(UtilsSecurity.cifrarMD5(entity.getContra())); 
+        entity.setContra(UtilsSecurity.cifrarMD5(entity.getContra()));
         entity.setCorreo(entity.getCorreo().toLowerCase());
         try {
             Usuario persisted = super.persist(entity);
@@ -234,18 +231,18 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
     }
 
     private String getMessageOfUniqueContraint(Usuario entity) {
-        //buscar que atributo ya ocupado  
+        //buscar que atributo ya ocupado          
         String mensaje = "ya existen un usuario con el atributo";
         String nombre = entity.getNombre();
         String correo = entity.getCorreo();
         String telefono = entity.getTelefono();
-        if (this.stream().where(u -> u.getNombre().equals(nombre)).findFirst().isPresent()) {
+        if (this.dao.stream().where(u -> u.getNombre().equals(nombre)).findFirst().isPresent()) {
             mensaje += " nombre,";
         }
-        if (this.stream().where(u -> u.getCorreo().equals(correo.toLowerCase())).findFirst().isPresent()) {
+        if (this.dao.stream().where(u -> u.getCorreo().equals(correo.toLowerCase())).findFirst().isPresent()) {
             mensaje += " correo,";
         }
-        if (this.stream().where(u -> u.getTelefono().equals(telefono)).findFirst().isPresent()) {
+        if (this.dao.stream().where(u -> u.getTelefono().equals(telefono)).findFirst().isPresent()) {
             mensaje += " telefono,";
         }
         mensaje = mensaje.substring(0, mensaje.length() - 1);
@@ -272,10 +269,10 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
         try {
             switch (getUserIdentifierType(identifier)) {
                 case MAIL:
-                    usuarioARecuperar = this.stream().where(u -> u.getCorreo().equals(identifier.toLowerCase())).findFirst().get();
+                    usuarioARecuperar = this.dao.stream().where(u -> u.getCorreo().equals(identifier.toLowerCase())).findFirst().get();
                     break;
                 case PHONE:
-                    usuarioARecuperar = this.stream().where(u -> u.getTelefono().equals(identifier)).findFirst().get();
+                    usuarioARecuperar = this.dao.stream().where(u -> u.getTelefono().equals(identifier)).findFirst().get();
                     break;
                 default:
                     throw new ParametroInvalidoException("el identificador proporsionado no es váliodo. Debe de utilizar un correo electronico ó número de teléfono de 10 dígitos");
@@ -314,17 +311,16 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
         managerBitacoraContra.setUsuario(userId);
 
         BitacoraContras bitacoraContra = new BitacoraContras(userId, pass);
-        
+
         if (managerBitacoraContra.stream().anyMatch(e -> e.equals(bitacoraContra))) {
             throw new ParametroInvalidoException("La contraseña que esta ingresando ya fué utilizada, intente con otra");
         }
 
-        ManagerUsuario managerUsuario = new ManagerUsuario();
-        managerUsuario.setUsuario(usuario);
+        DaoUsuario daoUsuario = new DaoUsuario();
 
         Usuario u = dao.findOne(userId);
         u.setContra(pass);
-        managerUsuario.update(u);
+        daoUsuario.update(u);
 
         List<BitacoraContras> bitacoraContras = managerBitacoraContra.stream()
                 .filter(b -> b.getBitacoraContrasPK().getUsuario().equals(u.getId()))
@@ -337,7 +333,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
         // lastPassword.size() >= maxNumber -> resize de lastPassword con los ultimos maxNumber contraseñas                        
 
         bitacoraContra.setUsuario1(u);
-        
+
         if (bitacoraContras.size() < maxNumber) {
             managerBitacoraContra.persist(bitacoraContra); //añadir la bitacora de la contra usada            
         } else {
@@ -368,7 +364,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
     }
 
     public String nombreDeUsuario(Integer usuarioId) {
-        return this.stream().where(u -> u.getId().equals(usuarioId)).findFirst().get().getNombre();
+        return dao.stream().where(u -> u.getId().equals(usuarioId)).findFirst().get().getNombre();
     }
 
     private enum userIdentifierType {
