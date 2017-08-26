@@ -27,13 +27,16 @@ public class ApplicationConfig extends Application {
         resources.add(com.machineAdmin.services.cg.administracion.Configuraciones.class);
         resources.add(com.machineAdmin.services.cg.administracion.Correos.class);
         resources.add(com.machineAdmin.services.cg.administracion.GruposPerfiles.class);
-        resources.add(com.machineAdmin.services.cg.administracion.MongoPruebas.class);
         resources.add(com.machineAdmin.services.cg.administracion.Perfiles.class);
         resources.add(com.machineAdmin.services.cg.administracion.Usuarios.class);
+        resources.add(com.machineAdmin.services.cg.commons.ServiceFacade.class);
+        resources.add(com.machineAdmin.services.cg.commons.ServiceFacadeCatalogMongo.class);
         resources.add(com.machineAdmin.services.cg.generales.Accesos.class);
         resources.add(com.machineAdmin.services.cg.generales.Commons.class);
         resources.add(com.machineAdmin.services.cg.generales.Permisos.class);
         resources.add(com.machineAdmin.services.cg.generales.Tests.class);
+        resources.add(com.machineAdmin.services.cg.pruebas.MongoPruebas.class);
+        resources.add(com.machineAdmin.services.cg.pruebas.SqlPruebas.class);
         resources.add(com.webcohesion.enunciate.rt.EnunciateJaxbContextResolver.class);
         resources.add(org.netbeans.rest.application.config.CORSFilter.class);
     }

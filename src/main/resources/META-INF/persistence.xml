@@ -14,6 +14,7 @@
         <class>com.machineAdmin.entities.cg.admin.postgres.Usuario</class>
         <class>com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil</class>
         <class>com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos</class>
+        <class>com.machineAdmin.entities.cg.admin.postgres.SqlPrueba</class>
         <properties>
             <!-- jdbc -->
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>

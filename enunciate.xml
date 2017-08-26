@@ -8,6 +8,7 @@
   <api-classes>
       <exclude pattern="com.machineAdmin.services.cg.commons.*"/>
       <include pattern="com.machineAdmin.services.cg.administracion.*"/>
+      <include pattern="com.machineAdmin.services.cg.pruebas.*"/>
       <include pattern="com.machineAdmin.services.cg.generales.*"/>
   </api-classes>
 <!--

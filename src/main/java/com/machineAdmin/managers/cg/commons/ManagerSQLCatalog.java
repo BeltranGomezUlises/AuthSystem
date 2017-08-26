@@ -10,10 +10,13 @@ import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
 import com.machineAdmin.entities.cg.commons.Profundidad;
 import com.machineAdmin.managers.cg.exceptions.AccesoDenegadoException;
 import com.machineAdmin.managers.cg.exceptions.ElementosSinAccesoException;
+import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.ProfundidadNoAsignadaException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.utils.UtilsPermissions;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -60,13 +63,15 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
     @Override
     public void delete(K id) throws Exception {
         T t;
+        int usuarioId = this.usuario;
         switch (profundidad) {
             case TODOS:
                 dao.delete(id);
                 break;
             case PROPIOS_MAS_PERFILES:
                 t = dao.findOne(id);
-                if (UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuario).contains(t.getUsuarioCreador())) {
+                Set<Integer> idsDeUsuariosConPerfilesDelUsuario = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuarioId);
+                if (idsDeUsuariosConPerfilesDelUsuario.contains(t.getUsuarioCreador())) {
                     dao.delete(id);
                 } else {
                     throw new AccesoDenegadoException("No tiene permiso de actualizar ésta entidad");
@@ -74,7 +79,7 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
                 break;
             case PROPIOS:
                 t = dao.findOne(id);
-                if (t.getId().equals(this.usuario)) {
+                if (t.getId().equals(usuarioId)) {
                     dao.delete(id);
                 } else {
                     throw new AccesoDenegadoException("No tiene permiso de actualizar ésta entidad");
@@ -137,7 +142,8 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
                 dao.update(entity);
                 break;
             case PROPIOS_MAS_PERFILES:
-                if (UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuario).contains(entity.getUsuarioCreador())) {
+                Set<Integer> idsDeUsuariosConPerfilesDelUsuario = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(this.usuario);
+                if (idsDeUsuariosConPerfilesDelUsuario.contains(entity.getUsuarioCreador())) {
                     dao.update(entity);
                 } else {
                     throw new AccesoDenegadoException("No tiene permiso de actualizar ésta entidad");
@@ -158,10 +164,43 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
     @Override
     public T findOne(K id) throws Exception {
         try {
-            return this.stream().findFirst().get();
+            T t = null;
+            if (id instanceof Integer) {
+                int idInt = Integer.parseInt(id.toString());
+                t = this.dao.stream().where(tElement -> tElement.getId().equals(idInt)).findFirst().get();
+            } else {
+                if (id instanceof Long) {
+                    long idLong = Long.parseLong(id.toString());
+                    t = this.dao.stream().where(tElement -> tElement.getId().equals(idLong)).findFirst().get();
+                } else {
+                    if (id instanceof String) {
+                        String idString = id.toString();
+                        t = this.stream().where(tElement -> tElement.getId().equals(idString)).findFirst().get();
+                    }
+                }
+            }
+            switch (profundidad) {
+                case TODOS:
+                    return t;                    
+                case PROPIOS:
+                    if (t.getUsuarioCreador().equals(this.usuario)) {
+                        return t;
+                    }else{
+                        throw new AccesoDenegadoException("No tiene permiso de ver los detalles de ésta entidad");
+                    }                    
+                case PROPIOS_MAS_PERFILES:
+                    Set<Integer> idsDeUsuariosConPerfilesDelUsuario = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(this.usuario);                    
+                    if (idsDeUsuariosConPerfilesDelUsuario.contains(t.getUsuarioCreador())) {
+                        return t;
+                    }else{
+                        throw new AccesoDenegadoException("No tiene permiso de ver los detalles de ésta entidad");
+                    }                    
+                default:
+                    throw new AssertionError();
+            }
         } catch (NoSuchElementException e) {
-            return null;
-        }
+            throw new ParametroInvalidoException("No existe una entidad con el parametro enviado");
+        }        
     }
 
     @Override
@@ -197,18 +236,19 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
      * @throws
      * com.machineAdmin.managers.cg.exceptions.ProfundidadNoAsignadaException
      */
-    public JPAJinqStream<T> stream() throws ProfundidadNoAsignadaException {
+    public JPAJinqStream<T> stream() throws ProfundidadNoAsignadaException, Exception {
         if (this.profundidad == null) {
             throw new ProfundidadNoAsignadaException();
         }
-
+        int usuarioId = this.usuario;
         switch (this.profundidad) {
             case TODOS:
                 return dao.stream();
             case PROPIOS_MAS_PERFILES:
-                return dao.stream().where(t -> UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(this.usuario).contains(t.getUsuarioCreador()));
+                Set<Integer> idsDeUsuariosConPerfilesDelUsuario = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuarioId);
+                return dao.stream().where(t -> idsDeUsuariosConPerfilesDelUsuario.contains(t.getUsuarioCreador()));
             case PROPIOS:
-                return dao.stream().where(t -> t.getUsuarioCreador().equals(this.usuario));
+                return dao.stream().where(t -> t.getUsuarioCreador().equals(usuarioId));
             default:
                 throw new AssertionError();
         }

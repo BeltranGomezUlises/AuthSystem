@@ -23,6 +23,7 @@ import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
+import com.machineAdmin.services.cg.commons.ServiceFacadeCatalogSQL;
 import static com.machineAdmin.utils.UtilsService.*;
 import com.machineAdmin.utils.UtilsJWT;
 import com.machineAdmin.utils.UtilsPermissions;
@@ -39,7 +40,7 @@ import javax.ws.rs.PathParam;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/perfiles")
-public class Perfiles extends ServiceFacade<Perfil, Integer> {
+public class Perfiles extends ServiceFacadeCatalogSQL<Perfil, Integer> {
 
     public Perfiles() {
         super(new ManagerPerfil());
@@ -61,7 +62,7 @@ public class Perfiles extends ServiceFacade<Perfil, Integer> {
     }
 
     @Override
-    public Response detalle(HttpServletRequest request, String token, String id) {
+    public Response detalle(HttpServletRequest request, String token, String id) {        
         return super.detalle(request, token, id);
     }
 

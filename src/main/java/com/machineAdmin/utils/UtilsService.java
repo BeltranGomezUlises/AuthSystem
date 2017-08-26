@@ -21,7 +21,11 @@ import com.machineAdmin.managers.cg.exceptions.ElementosSinAccesoException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
+import com.machineAdmin.services.cg.commons.ServiceFacadeCatalogSQL;
 import static com.machineAdmin.utils.UtilsService.SistemaOperativo.*;
+import com.sun.media.jfxmedia.logging.Logger;
+import java.util.Arrays;
+import java.util.logging.Level;
 
 /**
  *
@@ -38,12 +42,14 @@ public class UtilsService {
     public static final void setCauseMessage(Response response, Throwable e) {
         String anterior = response.getMeta().getDevMessage();
         if (anterior == null) {
-            response.setDevMessage("CAUSE: " + e.getMessage());
+            response.setDevMessage("ERROR: "+ e.toString() + " CAUSE: " + e.getMessage());
         } else {
             response.setDevMessage(response.getMeta().getDevMessage() + " CAUSE: " + e.getMessage());
         }
         if (e.getCause() != null) {
             setCauseMessage(response, e.getCause());
+        }else{
+            response.setDevMessage(response.getMeta().getDevMessage() + " STACK: " + Arrays.toString(e.getStackTrace()));
         }
     }
 
@@ -132,6 +138,7 @@ public class UtilsService {
         res.setStatus(Status.ERROR);
         setCauseMessage(res, err);
         res.setMessage(message);
+        java.util.logging.Logger.getLogger("ERROR").log(Level.SEVERE, null, err);
     }
 
     /**
@@ -144,6 +151,7 @@ public class UtilsService {
         res.setStatus(Status.ERROR);
         res.setMessage("Existió un error de programación, consultar con el administrador del sistema");
         setCauseMessage(res, err);
+        java.util.logging.Logger.getLogger("ERROR").log(Level.SEVERE, null, err);
     }
 
     /**

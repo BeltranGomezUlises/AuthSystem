@@ -22,7 +22,7 @@ import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlGrupoPerfil;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.commons.ServiceFacade;
+import com.machineAdmin.services.cg.commons.ServiceFacadeCatalogSQL;
 import static com.machineAdmin.utils.UtilsService.*;
 import com.machineAdmin.utils.UtilsJWT;
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +35,7 @@ import javax.ws.rs.Path;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/gruposPerfiles")
-public class GruposPerfiles extends ServiceFacade<GrupoPerfiles, Integer> {
+public class GruposPerfiles extends ServiceFacadeCatalogSQL<GrupoPerfiles, Integer> {
 
     public GruposPerfiles() {
         super(new ManagerGrupoPerfil());

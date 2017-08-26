@@ -30,8 +30,8 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
     private final Class<T> claseEntity;
     private final Class<K> clasePK;
     private final EntityManagerFactory eMFactory;
-    private final JinqJPAStreamProvider streamProvider
-;
+    private final JinqJPAStreamProvider streamProvider;
+
     /**
      * al sobreescribir considerar la fabrica de EntityManager, que sea la que
      * apunte a la base de datos adecuada, que la clase entidad sea correcta y
@@ -49,6 +49,22 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
 
         streamProvider = new JinqJPAStreamProvider(eMFactory);
         streamProvider.registerAttributeConverterType(UUID.class);
+    }
+
+    public Class<T> getClaseEntity() {
+        return claseEntity;
+    }
+
+    public Class<K> getClasePK() {
+        return clasePK;
+    }
+
+    public EntityManagerFactory geteMFactory() {
+        return eMFactory;
+    }
+
+    public JinqJPAStreamProvider getStreamProvider() {
+        return streamProvider;
     }
 
     /**
@@ -78,12 +94,12 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
      * @return strema de datos de la entidad con la cual operar
      */
     public JPAJinqStream<T> stream() {
-        JPAJinqStream<T> stream= streamProvider.streamAll(eMFactory.createEntityManager(), claseEntity);
+        JPAJinqStream<T> stream = streamProvider.streamAll(eMFactory.createEntityManager(), claseEntity);
         stream.setHint(
                 "queryLogger", (JPAQueryLogger) (String query, Map<Integer, Object> positionParameters, Map<String, Object> namedParameters) -> {
                     System.out.println("queryLogr -> " + query);
                 });
-        return  stream;
+        return stream;
     }
 
     /**
@@ -195,7 +211,7 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
             return findAll(false, 1, 0).get(0);
         } catch (ArrayIndexOutOfBoundsException e) {
             return null;
-        }        
+        }
     }
 
     public T findOne(K id) throws Exception {
@@ -220,17 +236,17 @@ public abstract class DaoSQLFacade<T extends IEntity, K> {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
             cq.select(cq.from(claseEntity));
             Query q = em.createQuery(cq);
-            if (!all) {                
+            if (!all) {
                 q.setMaxResults(maxResults);
                 q.setFirstResult(firstResult);
             }
             return q.getResultList();
-        }catch(Exception e){
+        } catch (Exception e) {
             throw e;
-        }finally {
+        } finally {
             if (em != null) {
                 em.close();
-            }            
+            }
         }
     }
 

@@ -104,8 +104,12 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
 
     public void altaUsuario(ModelAltaUsuario model) throws UserException.UsuarioYaExistente, ParametroInvalidoException, Exception {
         //validar que venga minimo un perfil
-        if (model.getPerfiles().isEmpty()) {
+        if (model.getPerfiles() == null) {
             throw new ParametroInvalidoException("Debe de asignar por lo menos 1 perfil cuando crea un usuario");
+        }else{
+            if (model.getPerfiles().isEmpty()) {
+                throw new ParametroInvalidoException("Debe de asignar por lo menos 1 perfil cuando crea un usuario");
+            }
         }
 
         Usuario nuevoUsuario = new Usuario();
@@ -181,7 +185,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
         try {
             String identi = usuario.getNombre();
 
-            Usuario intentoLogin = this.stream().where(u
+            Usuario intentoLogin = this.dao.stream().where(u
                     -> u.getCorreo().equals(identi.toLowerCase())
                     || u.getNombre().equals(identi)
                     || u.getTelefono().equals(identi)).findFirst().get();
@@ -215,10 +219,10 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
                 if (intentoLogin.getNumeroIntentosLogin() > UtilsConfig.getMaxNumberLoginAttempt()) {
                     intentoLogin.setBloqueado(true);
                     intentoLogin.setBloqueadoHastaFecha(UtilsConfig.getDateUtilUserStillBlocked());
-                    this.update(intentoLogin);
+                    this.dao.update(intentoLogin);
                     throw new UsuarioBlockeadoException("El usuario fue blockeado por el número de intentos fallidos hasta " + UtilsDate.format_D_MM_YYYY_HH_MM(intentoLogin.getBloqueadoHastaFecha()));
                 } else {
-                    this.update(intentoLogin);
+                    this.dao.update(intentoLogin);
                 }
             } catch (UsuarioBlockeadoException e) {
                 throw e;

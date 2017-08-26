@@ -16,32 +16,90 @@
  */
 package com.machineAdmin.entities.cg.commons;
 
+import java.io.Serializable;
+import java.util.Objects;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
+
 /**
- * clase padre para entidades sql que tienen un usuario creador y puedes acceder con profundidad
+ * clase padre para entidades sql que tienen un usuario creador y puedes acceder
+ * con profundidad
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public abstract class EntitySQLCatalog extends IEntity {
+@MappedSuperclass
+public abstract class EntitySQLCatalog extends IEntity implements Serializable {
 
-    /**
-     * la propiedad uuid del usuario creador de esta
-     * entidad, es necesario para poder registrar la alta de esta entidad en
-     * base de datos y poder operar con la produndidad de los permisos de la
-     * configuracion general, si NO se requiere en esta entidad registrar el
-     * usuario creador retornar null en igual de la propiedad.
-     *
-     *
-     *
-     * @return id del usuario que crea esta entidad
-     */
-    public abstract Integer getUsuarioCreador() throws UnsupportedOperationException;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    protected Integer id;
 
-    /**
-     * sobreescribir para asignar un UUID a la propiedad del usuario que creará
-     * esta entidad, si No se requiere en esta entidad registrar el usuario
-     * creador dejar vacío.
-     *
-     * @param usuarioCreador id del usuario que crea esta entidad
-     */
-    public abstract void setUsuarioCreador(Integer usuarioCreador) throws UnsupportedOperationException;
+    @Column(name = "usuario_creador")
+    private Integer usuarioCreador;
+
+    public EntitySQLCatalog() {
+    }
+
+    public EntitySQLCatalog(Integer id) {
+        this.id = id;
+    }
+
+    public EntitySQLCatalog(Integer id, Integer usuarioCreador) {
+        this.id = id;
+        this.usuarioCreador = usuarioCreador;
+    }
+        
+    //@Override
+    @Override
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getUsuarioCreador() {
+        return usuarioCreador;
+    }
+
+    public void setUsuarioCreador(Integer usuarioCreador) {
+        this.usuarioCreador = usuarioCreador;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final EntitySQLCatalog other = (EntitySQLCatalog) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 
 }

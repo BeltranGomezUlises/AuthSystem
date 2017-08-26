@@ -20,13 +20,11 @@ import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -36,10 +34,8 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.annotation.Generated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import org.eclipse.persistence.annotations.Convert;
 
 /**
  *

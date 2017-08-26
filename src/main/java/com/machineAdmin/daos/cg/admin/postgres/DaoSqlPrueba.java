@@ -14,12 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.services.cg.administracion;
+package com.machineAdmin.daos.cg.admin.postgres;
+
+import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
+import com.machineAdmin.entities.cg.admin.postgres.SqlPrueba;
+import com.machineAdmin.utils.UtilsDB;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class SQLPruebas {
+public class DaoSqlPrueba extends DaoSQLFacade<SqlPrueba, Integer>{
+    
+    public DaoSqlPrueba() {
+        super(UtilsDB.getEMFactoryCG(), SqlPrueba.class, Integer.class);
+    }
     
 }
