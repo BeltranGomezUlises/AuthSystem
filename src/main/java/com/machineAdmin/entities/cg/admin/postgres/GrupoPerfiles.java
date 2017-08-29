@@ -48,20 +48,13 @@ import javax.validation.constraints.Size;
 public class GrupoPerfiles extends EntitySQLCatalog implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull    
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
     @Size(max = 2147483647)
     @Column(name = "nombre")
     private String nombre;
     @Size(max = 2147483647)
     @Column(name = "descripcion")
     private String descripcion;       
-    @Column(name = "usuario_creador")
-    private Integer usuarioCreador;
+
     @JoinTable(name = "perfil_grupo_perfiles", joinColumns = {
         @JoinColumn(name = "grupo_perfiles", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "perfil", referencedColumnName = "id")})
@@ -71,18 +64,9 @@ public class GrupoPerfiles extends EntitySQLCatalog implements Serializable {
     public GrupoPerfiles() {        
     }
 
-    public GrupoPerfiles(int id) {
+    public GrupoPerfiles(Long id) {
         this.id = id;
-    }
-
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    }   
 
     public String getNombre() {
         return nombre;
@@ -98,17 +82,7 @@ public class GrupoPerfiles extends EntitySQLCatalog implements Serializable {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    @Override
-    public Integer getUsuarioCreador() {
-        return usuarioCreador;
-    }
-
-    @Override
-    public void setUsuarioCreador(Integer usuarioCreador) {
-        this.usuarioCreador = usuarioCreador;
-    }
+    }  
     
     @JsonIgnore
     public List<Perfil> getPerfilList() {

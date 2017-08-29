@@ -20,19 +20,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -47,21 +42,13 @@ import javax.validation.constraints.Size;
     , @NamedQuery(name = "Perfil.findByDescripcion", query = "SELECT p FROM Perfil p WHERE p.descripcion = :descripcion")})
 public class Perfil extends EntitySQLCatalog implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull    
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
+    private static final long serialVersionUID = 1L;   
     @Size(max = 2147483647)
     @Column(name = "nombre")
     private String nombre;
     @Size(max = 2147483647)
     @Column(name = "descripcion")
     private String descripcion;        
-    @Column(name = "usuario_creador")
-    private Integer usuarioCreador;
     @ManyToMany(mappedBy = "perfilList")
     private List<GrupoPerfiles> grupoPerfilesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "perfil1")
@@ -72,19 +59,10 @@ public class Perfil extends EntitySQLCatalog implements Serializable {
     public Perfil() {
     }
 
-    public Perfil(Integer id) {
+    public Perfil(Long id) {
         this.id = id;
     }
-
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
+   
     public String getNombre() {
         return nombre;
     }
@@ -99,16 +77,6 @@ public class Perfil extends EntitySQLCatalog implements Serializable {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    @Override
-    public Integer getUsuarioCreador() {
-        return usuarioCreador;
-    }
-
-    @Override
-    public void setUsuarioCreador(Integer usuarioCreador) {
-        this.usuarioCreador = usuarioCreador;
     }
    
     @JsonIgnore

@@ -18,7 +18,6 @@ package com.machineAdmin.entities.cg.admin.postgres;
 
 import com.machineAdmin.entities.cg.commons.EntitySQL;
 import java.io.Serializable;
-import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -58,7 +57,7 @@ public class UsuariosPerfil extends EntitySQL implements Serializable {
         this.usuariosPerfilPK = usuariosPerfilPK;
     }
 
-    public UsuariosPerfil(Integer usuario, Integer perfil) {
+    public UsuariosPerfil(Long usuario, Long perfil) {
         this.usuariosPerfilPK = new UsuariosPerfilPK(usuario, perfil);
     }
 

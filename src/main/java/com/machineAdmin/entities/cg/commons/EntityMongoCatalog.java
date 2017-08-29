@@ -22,13 +22,13 @@ package com.machineAdmin.entities.cg.commons;
  */
 public class EntityMongoCatalog extends EntityMongo {
        
-    private Integer usuarioCreador;
+    private Long usuarioCreador;
 
-    public Integer getUsuarioCreador() {
+    public Long getUsuarioCreador() {
         return usuarioCreador;
     }
 
-    public void setUsuarioCreador(Integer usuarioCreador) {        
+    public void setUsuarioCreador(Long usuarioCreador) {        
         this.usuarioCreador = usuarioCreador;
     }
 

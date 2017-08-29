@@ -24,10 +24,10 @@ import com.machineAdmin.utils.UtilsDB;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class DaoUsuario extends DaoSQLFacade<Usuario, Integer>{
+public class DaoUsuario extends DaoSQLFacade<Usuario, Long>{
 
     public DaoUsuario() {
-        super(UtilsDB.getEMFactoryCG(),Usuario.class, Integer.class);
+        super(UtilsDB.getEMFactoryCG(),Usuario.class, Long.class);
     }
 
 }

@@ -32,33 +32,33 @@ public class UsuariosPerfilPK implements Serializable {
     @Basic(optional = false)
     @NotNull    
     @Column(name = "usuario")
-    private Integer usuario;
+    private Long usuario;
     @Basic(optional = false)
     @NotNull    
     @Column(name = "perfil")
-    private Integer perfil;
+    private Long perfil;
 
     public UsuariosPerfilPK() {
     }
 
-    public UsuariosPerfilPK(Integer usuario, Integer perfil) {
+    public UsuariosPerfilPK(Long usuario, Long perfil) {
         this.usuario = usuario;
         this.perfil = perfil;
     }
 
-    public Integer getUsuario() {
+    public Long getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(Integer usuario) {
+    public void setUsuario(Long usuario) {
         this.usuario = usuario;
     }
 
-    public Integer getPerfil() {
+    public Long getPerfil() {
         return perfil;
     }
 
-    public void setPerfil(Integer perfil) {
+    public void setPerfil(Long perfil) {
         this.perfil = perfil;
     }
 

@@ -73,7 +73,7 @@ public class PerfilesPermisos extends EntitySQL implements Serializable {
         this.profundidad = profundidad;
     }
 
-    public PerfilesPermisos(Integer perfil, String permiso) {
+    public PerfilesPermisos(Long perfil, String permiso) {
         this.perfilesPermisosPK = new PerfilesPermisosPK(perfil, permiso);
     }
 

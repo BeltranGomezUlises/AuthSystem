@@ -40,38 +40,37 @@ public abstract class EntitySQLCatalog extends IEntity implements Serializable {
     @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    protected Integer id;
+    protected Long id;
 
     @Column(name = "usuario_creador")
-    private Integer usuarioCreador;
+    private Long usuarioCreador;
 
     public EntitySQLCatalog() {
     }
 
-    public EntitySQLCatalog(Integer id) {
+    public EntitySQLCatalog(Long id) {
         this.id = id;
     }
 
-    public EntitySQLCatalog(Integer id, Integer usuarioCreador) {
+    public EntitySQLCatalog(Long id, Long usuarioCreador) {
         this.id = id;
         this.usuarioCreador = usuarioCreador;
     }
         
-    //@Override
     @Override
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Integer getUsuarioCreador() {
+    public Long getUsuarioCreador() {
         return usuarioCreador;
     }
 
-    public void setUsuarioCreador(Integer usuarioCreador) {
+    public void setUsuarioCreador(Long usuarioCreador) {
         this.usuarioCreador = usuarioCreador;
     }
 

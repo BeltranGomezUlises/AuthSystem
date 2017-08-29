@@ -33,7 +33,7 @@ public class UsuariosPermisosPK implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "usuario")
-    private Integer usuario;
+    private Long usuario;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
@@ -43,16 +43,16 @@ public class UsuariosPermisosPK implements Serializable {
     public UsuariosPermisosPK() {
     }
 
-    public UsuariosPermisosPK(Integer usuario, String permiso) {
+    public UsuariosPermisosPK(Long usuario, String permiso) {
         this.usuario = usuario;
         this.permiso = permiso;
     }
 
-    public Integer getUsuario() {
+    public Long getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(Integer usuario) {
+    public void setUsuario(Long usuario) {
         this.usuario = usuario;
     }
 

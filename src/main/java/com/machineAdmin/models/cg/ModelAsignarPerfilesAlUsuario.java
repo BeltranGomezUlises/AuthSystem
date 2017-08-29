@@ -25,14 +25,14 @@ import java.util.List;
  */
 public class ModelAsignarPerfilesAlUsuario {
 
-    private Integer userId;
+    private Long userId;
     private List<ModelPerfilYHereda> perfiles;
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

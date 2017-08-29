@@ -52,8 +52,8 @@ public class ManagerPerfil extends ManagerSQLCatalog<Perfil, Integer> {
     public void asignarPermisos(ModelAsignarPermisos model) throws Exception {
         ManagerPerfilesPermisos managerPerfilesPermisos = new ManagerPerfilesPermisos();
         //borrar los actuales
-        Integer perfilId = model.getId();
-        int idPerfil = model.getId();
+        Long perfilId = model.getId();
+        Long idPerfil = model.getId();
         managerPerfilesPermisos.deleteAll(managerPerfilesPermisos.stream()
                 .where( pp -> pp.getPerfilesPermisosPK().getPerfil().equals(idPerfil))
                 .select( pp -> pp.getPerfilesPermisosPK())

@@ -23,10 +23,10 @@ import com.machineAdmin.managers.cg.exceptions.*;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.utils.UtilsBitacora;
 import com.machineAdmin.utils.UtilsPermissions;
-import com.machineAdmin.utils.UtilsService;
 import static com.machineAdmin.utils.UtilsService.*;
 import java.util.Date;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -45,13 +45,13 @@ import javax.ws.rs.core.Context;
  * @param <K>
  */
 public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends ServiceBitacoraFacade<T, K> {
-    
+
     private final ManagerSQLCatalog<T, K> manager;
 
     public ServiceFacadeCatalogSQL(ManagerSQLCatalog<T, K> manager) {
         this.manager = manager;
     }
-            
+
     @Override
     public final ManagerFacade<T, K> getManager() {
         return manager;
@@ -71,7 +71,7 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
     public Response listar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token) {
         Response response = new Response();
         try {
-            this.manager.setToken(token);       
+            this.manager.setToken(token);
             this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
 
@@ -87,15 +87,14 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
             //UtilsAuditoria.ModeloAuditoria auditoria = new UtilsAuditoria.ModeloAuditoria(manager.getUsuario(), "Listar", null);
             //UtilsAuditoria.auditar(manager.nombreColeccionParaRegistros(), auditoria);
             //</editor-fold>
-
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(response);
         } catch (Exception ex) {
             setErrorResponse(response, ex);
         }
         return response;
-    }   
-    
+    }
+
     /**
      * obtiene una entidad en particular por su identificador de esta clase
      * servicio
@@ -113,9 +112,9 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
         Response response = new Response();
         try {
             this.manager.setToken(token);
-            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));            
-            setOkResponse(response,manager.findOne(manager.stringToKey(id)), "Entidad encontrada");
-            
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
+            setOkResponse(response, manager.findOne(manager.stringToKey(id)), "Entidad encontrada");
+
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
                 UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Detalle", request);
@@ -144,7 +143,7 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
      * @param token token de sesion
      * @param t entidad a persistir en base de datos
      * @return response con el estatus y el mensaje
-     */    
+     */
     //@com.webcohesion.enunciate.metadata.Ignore
     @POST
     public Response alta(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, T t) {
@@ -152,7 +151,7 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
         try {
             this.manager.setToken(token);
             this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
-            setOkResponse(response, manager.persist(t), "Entidad persistida");                        
+            setOkResponse(response, manager.persist(t), "Entidad persistida");
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
                 UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Alta", request);
@@ -185,9 +184,9 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
         Response response = new Response();
         try {
             this.manager.setToken(token);
-            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));           
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
             manager.update(t);
-            setOkResponse(response, t, "Entidad actualizada");                                                            
+            setOkResponse(response, t, "Entidad actualizada");
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
                 UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", request);
@@ -202,32 +201,31 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
             setAccesDeniedResponse(response, e);
         } catch (ParametroInvalidoException e) {
             setParametroInvalidoResponse(response, e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             setErrorResponse(response, e);
         }
         return response;
     }
-    
+
     /**
-     * actualiza la entidad proporsionada a su equivalente en base de datos,
+     * actualiza las entidades proporsionadas a su equivalente en base de datos,
      * tomando como referencia su identificador
      *
      * @param request contexto de peticion necesario para obtener datos como ip,
      * sistema operativo y navegador del cliente
      * @param token token de sesion
-     * @param t entidad con los datos actualizados
+     * @param ts entidades con los datos actualizados
      * @return Response, en data asignado con la entidad que se actualizó
      */
-//    @com.webcohesion.enunciate.metadata.Ignore
     @Path("/varios")
     @PUT
-    public Response modificarVarios(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, List<T> t) {
+    public Response modificarVarios(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, List<T> ts) {
         Response response = new Response();
         try {
             this.manager.setToken(token);
-            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));           
-            //manager.update(t);
-            setOkResponse(response, t, "Entidad actualizada");                                                            
+            this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
+            manager.updateAll(ts);
+            setOkResponse(response, ts, "Entidad actualizada");
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
                 UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", request);
@@ -238,7 +236,11 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
-        } catch (Exception e) {
+        } catch (AccesoDenegadoException e) {
+            setAccesDeniedResponse(response, e);
+        } catch(ElementosSinAccesoException e){
+            setElementosSinAccesoResponse(response, e);
+        }catch (Exception e) {
             setErrorResponse(response, e);
         }
         return response;
@@ -260,9 +262,9 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
         try {
             this.manager.setToken(token);
             this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
-            manager.delete((K) t.getId());            
-            setOkResponse(response, "Entidad eliminada");  
-            
+            manager.delete((K) t.getId());
+            setOkResponse(response, "Entidad eliminada");
+
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
                 UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Eliminar", request);
@@ -273,31 +275,34 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
+        } catch (AccesoDenegadoException e) {
+            setAccesDeniedResponse(response, e);
+        } catch (ParametroInvalidoException e) {
+            setParametroInvalidoResponse(response, e);
         } catch (Exception e) {
             setErrorResponse(response, e);
         }
         return response;
     }
-    
+
     /**
-     * eliminar la entidad proporsionada
+     * eliminar las entidades proporsionadas
      *
      * @param request contexto de peticion necesario para obtener datos como ip,
      * sistema operativo y navegador del cliente
      * @param token token de sesion
-     * @param t entidad proporsionada
+     * @param ts entidades proporsionadas para eliminar
      * @return
      */
-//    @com.webcohesion.enunciate.metadata.Ignore
     @Path("/varios")
     @DELETE
-    public Response eliminarVarios(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, List<T> t) {
+    public Response eliminarVarios(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, List<T> ts) {
         Response response = new Response();
         try {
             this.manager.setToken(token);
             this.manager.setProfundidad(UtilsPermissions.obtenerProfundidad(token, UtilsPermissions.accionActual()));
-            //manager.delete((K) t.getId());            
-            setOkResponse(response, "Entidad eliminada");            
+            manager.deleteAll((List<K>) ts.stream().map( t -> t.getId()).collect(toList()));
+            setOkResponse(response, "Entidad eliminada");
             //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
             try {
                 UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Eliminar", request);
@@ -308,10 +313,14 @@ public class ServiceFacadeCatalogSQL<T extends EntitySQLCatalog, K> extends Serv
 
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
+        } catch (AccesoDenegadoException e) {
+            setAccesDeniedResponse(response, e);
+        } catch(ElementosSinAccesoException e){
+            setElementosSinAccesoResponse(response, e);
         } catch (Exception e) {
             setErrorResponse(response, e);
         }
         return response;
     }
-    
+
 }

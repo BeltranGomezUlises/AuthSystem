@@ -21,9 +21,7 @@ import com.machineAdmin.managers.cg.exceptions.ElementosSinAccesoException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.models.cg.enums.Status;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.commons.ServiceFacadeCatalogSQL;
 import static com.machineAdmin.utils.UtilsService.SistemaOperativo.*;
-import com.sun.media.jfxmedia.logging.Logger;
 import java.util.Arrays;
 import java.util.logging.Level;
 

@@ -22,7 +22,6 @@ import com.machineAdmin.entities.cg.commons.EntityMongo;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -90,7 +89,7 @@ public class UtilsBitacora {
     public static class ModeloBitacora extends EntityMongo {
 
         @JsonIgnore
-        private Integer usuarioId;
+        private Long usuarioId;
 
         private String usuario;
         private Date fecha;
@@ -101,17 +100,17 @@ public class UtilsBitacora {
         public ModeloBitacora() {
         }
 
-        public ModeloBitacora(Integer usuarioId, Date fecha, String accion) {
+        public ModeloBitacora(Long usuarioId, Date fecha, String accion) {
             this.usuarioId = usuarioId;
             this.fecha = fecha;
             this.accion = accion;
         }
 
-        public ModeloBitacora(Integer usuarioId, Date fecha, String accion, HttpServletRequest request) {
+        public ModeloBitacora(Long usuarioId, Date fecha, String accion, HttpServletRequest request) {
             this.usuarioId = usuarioId;
             this.fecha = fecha;
             this.accion = accion;
-            this.ipCliente = request.getRemoteAddr();
+            this.ipCliente = request.getRemoteHost();
             this.sistemaOperativoCliente = UtilsService.obtenerSistemaOperativo(request.getHeader("User-Agent"));
         }
 
@@ -155,11 +154,11 @@ public class UtilsBitacora {
             this.accion = accion;
         }
 
-        public Integer getUsuarioId() {
+        public Long getUsuarioId() {
             return usuarioId;
         }
 
-        public void setUsuarioId(Integer usuarioId) {
+        public void setUsuarioId(Long usuarioId) {
             this.usuarioId = usuarioId;
         }
 

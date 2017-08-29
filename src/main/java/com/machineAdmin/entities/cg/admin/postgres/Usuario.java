@@ -81,14 +81,7 @@ public class Usuario extends EntitySQLCatalog implements Serializable {
     @Column(name = "bloqueado_hasta_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date bloqueadoHastaFecha;
-    @Id
-    @Basic(optional = false)
-    @NotNull    
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;    
-    @Column(name = "usuario_creador")
-    private Integer usuarioCreador;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
     private List<BitacoraContras> bitacoraContrasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
@@ -97,10 +90,10 @@ public class Usuario extends EntitySQLCatalog implements Serializable {
     private List<UsuariosPerfil> usuariosPerfilList;
 
     public Usuario() {
-        id = 0;        
+        id = 0l;        
     }
 
-    public Usuario(Integer id) {
+    public Usuario(Long id) {
         this.id = id;
     }
 
@@ -174,25 +167,6 @@ public class Usuario extends EntitySQLCatalog implements Serializable {
 
     public void setBloqueadoHastaFecha(Date bloqueadoHastaFecha) {
         this.bloqueadoHastaFecha = bloqueadoHastaFecha;
-    }
-
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @Override
-    public Integer getUsuarioCreador() {
-        return usuarioCreador;
-    }
-
-    @Override
-    public void setUsuarioCreador(Integer usuarioCreador) {
-        this.usuarioCreador = usuarioCreador;
     }
     
     @JsonIgnore

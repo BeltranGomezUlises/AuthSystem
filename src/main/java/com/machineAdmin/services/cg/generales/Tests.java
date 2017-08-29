@@ -55,7 +55,7 @@ public class Tests {
         System.out.println(authorization);
         System.out.println("----");
         
-        UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(1, new Date(), "test", request);
+        UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(1l, new Date(), "test", request);
         
         UtilsBitacora.bitacorizar("test", bitacora);                        
         return r;

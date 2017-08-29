@@ -56,7 +56,7 @@ import org.apache.commons.mail.EmailException;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
+public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Long> {
 
     public ManagerUsuario() {
         super(new DaoUsuario());
@@ -71,7 +71,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
         entity.setContra(UtilsSecurity.cifrarMD5(entity.getContra()));
         entity.setCorreo(entity.getCorreo().toLowerCase());
         try {
-            Usuario persisted = super.persist(entity);
+            Usuario persisted = super.persist(entity);            
             //bitacorizar la contraseña
             BitacoraContras bc = new BitacoraContras(persisted.getId(), persisted.getContra());
             bc.setUsuario1(persisted);
@@ -96,7 +96,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
     }
 
     @Override
-    public void delete(Integer id) throws Exception {
+    public void delete(Long id) throws Exception {
         Usuario u = this.findOne(id);
         u.setInhabilitado(Boolean.TRUE);
         this.update(u);
@@ -119,7 +119,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
         ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();
         UsuariosPerfil up;
         List<UsuariosPerfil> usuariosPerfilesRelacion = new ArrayList<>();
-        for (Integer perfilId : model.getPerfiles()) {
+        for (Long perfilId : model.getPerfiles()) {
             up = new UsuariosPerfil();
             up.setHereda(Boolean.TRUE);
             up.setUsuariosPerfilPK(new UsuariosPerfilPK(nuevoUsuario.getId(), perfilId));
@@ -308,7 +308,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
         }
     }
 
-    public void resetPassword(Integer userId, String pass) throws Exception {
+    public void resetPassword(Long userId, String pass) throws Exception {
         pass = UtilsSecurity.cifrarMD5(pass);
 
         ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra();
@@ -349,7 +349,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
     public void asignarPermisos(ModelAsignarPermisos modelo) throws Exception {
         ManagerUsuariosPermisos managerUsuariosPermisos = new ManagerUsuariosPermisos();
         //eliminar los permisos anteriores
-        Integer usuarioId = modelo.getId();
+        Long usuarioId = modelo.getId();
         managerUsuariosPermisos.deleteAll(managerUsuariosPermisos.stream()
                 .where(up -> up.getUsuariosPermisosPK().getUsuario().equals(usuarioId))
                 .select(up -> up.getUsuariosPermisosPK())
@@ -367,7 +367,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Integer> {
         managerUsuariosPermisos.persistAll(permisosNuevos);
     }
 
-    public String nombreDeUsuario(Integer usuarioId) {
+    public String nombreDeUsuario(Long usuarioId) {
         return dao.stream().where(u -> u.getId().equals(usuarioId)).findFirst().get().getNombre();
     }
 

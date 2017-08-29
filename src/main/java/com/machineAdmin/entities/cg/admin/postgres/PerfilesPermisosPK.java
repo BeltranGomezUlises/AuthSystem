@@ -33,7 +33,7 @@ public class PerfilesPermisosPK implements Serializable {
     @Basic(optional = false)
     @NotNull    
     @Column(name = "perfil")
-    private Integer perfil;
+    private Long perfil;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
@@ -43,16 +43,16 @@ public class PerfilesPermisosPK implements Serializable {
     public PerfilesPermisosPK() {
     }
 
-    public PerfilesPermisosPK(Integer perfil, String permiso) {
+    public PerfilesPermisosPK(Long perfil, String permiso) {
         this.perfil = perfil;
         this.permiso = permiso;
     }
 
-    public Integer getPerfil() {
+    public Long getPerfil() {
         return perfil;
     }
 
-    public void setPerfil(Integer perfil) {
+    public void setPerfil(Long perfil) {
         this.perfil = perfil;
     }
 

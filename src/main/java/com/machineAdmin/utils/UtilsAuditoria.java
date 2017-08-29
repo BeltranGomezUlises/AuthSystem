@@ -20,7 +20,6 @@ import com.machineAdmin.entities.cg.commons.EntityMongo;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.mongojack.DBQuery;
@@ -72,7 +71,7 @@ public class UtilsAuditoria {
 
     public static class ModeloAuditoria extends EntityMongo {
 
-        private Integer usuarioId;
+        private Long usuarioId;
         private String usuario;
         private Date fecha;
         private String accion;
@@ -83,7 +82,7 @@ public class UtilsAuditoria {
         public ModeloAuditoria() {
         }
 
-        public ModeloAuditoria(Integer usuarioId, Date fecha, String accion, Object objetoAnterior, Object objetoNuevo, Object objectoReferencia) {
+        public ModeloAuditoria(Long usuarioId, Date fecha, String accion, Object objetoAnterior, Object objetoNuevo, Object objectoReferencia) {
             this.usuarioId = usuarioId;
             this.fecha = fecha;
             this.accion = accion;
@@ -92,7 +91,7 @@ public class UtilsAuditoria {
             this.objectoReferencia = objectoReferencia;
         }
 
-        public ModeloAuditoria(Integer usuarioId, String accion, Object objectoReferencia) {
+        public ModeloAuditoria(Long usuarioId, String accion, Object objectoReferencia) {
             this.usuarioId = usuarioId;
             this.fecha = new Date();
             this.accion = accion;
@@ -147,11 +146,11 @@ public class UtilsAuditoria {
             this.objectoReferencia = objectoReferencia;
         }
 
-        public Integer getUsuarioId() {
+        public Long getUsuarioId() {
             return usuarioId;
         }
 
-        public void setUsuarioId(Integer usuarioId) {
+        public void setUsuarioId(Long usuarioId) {
             this.usuarioId = usuarioId;
         }
 

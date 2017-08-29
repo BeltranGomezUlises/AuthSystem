@@ -19,7 +19,6 @@ package com.machineAdmin.entities.cg.admin.postgres;
 import com.machineAdmin.entities.cg.commons.EntitySQL;
 import com.machineAdmin.entities.cg.commons.Profundidad;
 import java.io.Serializable;
-import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -74,7 +73,7 @@ public class UsuariosPermisos extends EntitySQL implements Serializable {
         this.profundidad = profundidad;
     }
 
-    public UsuariosPermisos(Integer usuario, String permiso) {
+    public UsuariosPermisos(Long usuario, String permiso) {
         this.usuariosPermisosPK = new UsuariosPermisosPK(usuario, permiso);
     }
 

@@ -39,7 +39,7 @@ public class SqlPrueba  extends EntitySQLCatalog implements Serializable {
     public SqlPrueba() {
     }
 
-    public SqlPrueba(Integer id) {
+    public SqlPrueba(Long id) {
         super(id);
     }
             

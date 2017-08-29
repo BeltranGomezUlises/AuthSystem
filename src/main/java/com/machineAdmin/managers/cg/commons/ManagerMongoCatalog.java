@@ -102,7 +102,7 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
                 }
                 break;
             case PROPIOS_MAS_PERFILES:
-                Set<Integer> usuariosConPerfilesDeUsuarioActual = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuario);
+                Set<Long> usuariosConPerfilesDeUsuarioActual = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuario);
                 queryDelete = DBQuery.and(query, DBQuery.in("_id", usuariosConPerfilesDeUsuarioActual));
                 elementosSinAcceso = dao.findAll(
                         DBQuery.and(query,
@@ -144,7 +144,7 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
                 }
                 break;
             case PROPIOS_MAS_PERFILES:
-                Set<Integer> usuariosConPerfilesDeUsuarioActual = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuario);
+                Set<Long> usuariosConPerfilesDeUsuarioActual = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuario);
                 //mandar borrar aquellos que solo sean del usuario actual                                                                
                 queryDelete = DBQuery.and(
                         DBQuery.in("_id", ids),
@@ -222,7 +222,7 @@ public abstract class ManagerMongoCatalog<T extends EntityMongoCatalog> extends 
                 break;
             case PROPIOS_MAS_PERFILES:
                 //elementos sin acceso
-                Set<Integer> usuariosConPerfilesDeUsuarioActual = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuario);
+                Set<Long> usuariosConPerfilesDeUsuarioActual = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuario);
                 querySinAcceso = DBQuery.and(
                         DBQuery.in("_id", entities.stream().map(e -> e.getId()).collect(toList())),
                         DBQuery.notIn("usuarioCreador", usuariosConPerfilesDeUsuarioActual)

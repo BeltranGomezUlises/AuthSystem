@@ -198,7 +198,7 @@ public class Accesos {
         Response res = new Response();
         try {
             UtilsJWT.validateSessionToken(tokenRestablecer);
-            Integer userId = UtilsJWT.getUserIdFrom(tokenRestablecer);
+            Long userId = UtilsJWT.getUserIdFrom(tokenRestablecer);
             String pass = UtilsSecurity.decryptBase64ByPrivateKey(content.getContent());
 
             ManagerUsuario managerUsuario = new ManagerUsuario(tokenRestablecer, Profundidad.TODOS);

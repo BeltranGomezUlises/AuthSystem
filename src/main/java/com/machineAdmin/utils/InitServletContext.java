@@ -100,6 +100,7 @@ public class InitServletContext implements ServletContextListener {
             usuarioDB.setCorreo("ubg700@gmail.com");
             usuarioDB.setTelefono("6671007264");
             usuarioDB.setContra(UtilsSecurity.cifrarMD5("1234"));
+            usuarioDB.setUsuarioCreador(0l);
             daoUsuario.persist(usuarioDB);
 
             usuarioDB.setUsuarioCreador(usuarioDB.getId());

@@ -70,7 +70,7 @@ public class UtilsPermissions {
     }
 
     public static Profundidad obtenerProfundidad(String token, String accion) throws TokenInvalidoException, TokenExpiradoException, AccesoDenegadoException {
-        Integer userId = UtilsJWT.getUserIdFrom(token);
+        Long userId = UtilsJWT.getUserIdFrom(token);
         DaoUsuariosPermisos daoUsuariosPermisos = new DaoUsuariosPermisos();
         // el usuario puede tener permiso por permisos del usuario o por permisos de los perfiles, juntarlos todos aqui
         List<Profundidad> profundidadesDelPermisoDelUsuario = new ArrayList<>();
@@ -92,7 +92,7 @@ public class UtilsPermissions {
         throw new AccesoDenegadoException("No Tiene permiso para ejecutar esta acción");
     }
 
-    private static List<Profundidad> profundidadesPorPerfilesDelUsuario(Integer userId, String accion) {
+    private static List<Profundidad> profundidadesPorPerfilesDelUsuario(Long userId, String accion) {
         DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
         return daoUsuariosPerfil.stream()
                 .where(up -> up.getUsuariosPerfilPK().getUsuario().equals(userId) && up.getHereda().equals(Boolean.TRUE))
@@ -102,18 +102,18 @@ public class UtilsPermissions {
                 .collect(toList());
     }
 
-    public static Set<Integer> idsDeUsuariosConLosPerfilesQueTieneElUsuario(Integer usuarioId) throws Exception {
+    public static Set<Long> idsDeUsuariosConLosPerfilesQueTieneElUsuario(Long usuarioId) throws Exception {
         //buscar los id de los usuarios con mis perfiles 
         DaoUsuario daoUsuario = new DaoUsuario();
         Usuario u = daoUsuario.findOne(usuarioId);
         //ids de perfiles del usuario
-        List<Integer> perfilesDelUsuario = u.getUsuariosPerfilList().stream()
+        List<Long> perfilesDelUsuario = u.getUsuariosPerfilList().stream()
                 .map(up -> up.getUsuariosPerfilPK().getPerfil())
                 .collect(toList());
         //ids de usuarios con esos perfiles
         DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
 
-        Set<Integer> usuariosDeLosPerfiles = daoUsuariosPerfil.stream()
+        Set<Long> usuariosDeLosPerfiles = daoUsuariosPerfil.stream()
                 .where(up -> perfilesDelUsuario.contains(up.getUsuariosPerfilPK().getPerfil()))
                 .select(up -> up.getUsuariosPerfilPK().getUsuario())
                 .collect(toSet());        
@@ -313,7 +313,7 @@ public class UtilsPermissions {
      * @return modelo con los permisos asignados
      * @throws java.lang.Exception
      */
-    public static ModelPermisosAsignados permisosConmutadosDelUsuario(Integer usuarioId) throws Exception {
+    public static ModelPermisosAsignados permisosConmutadosDelUsuario(Long usuarioId) throws Exception {
         DaoSeccion daoSeccion = new DaoSeccion();
 
         DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();

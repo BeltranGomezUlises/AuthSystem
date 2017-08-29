@@ -19,20 +19,20 @@ import java.util.List;
  */
 public abstract class ManagerFacade<T extends IEntity, K> {
 
-    protected Integer usuario;
+    protected Long usuario;
 
     public ManagerFacade() {
     }
 
     public ManagerFacade(String token) throws TokenInvalidoException, TokenExpiradoException {
-        this.usuario =UtilsJWT.getUserIdFrom(token);
+        this.usuario = UtilsJWT.getUserIdFrom(token);
     }
 
-    public Integer getUsuario() {
+    public Long getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(Integer usuario) {
+    public void setUsuario(Long usuario) {
         this.usuario = usuario;
     }    
 

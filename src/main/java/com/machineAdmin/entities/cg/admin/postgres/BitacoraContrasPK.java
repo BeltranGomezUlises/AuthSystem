@@ -34,7 +34,7 @@ public class BitacoraContrasPK implements Serializable {
     @Basic(optional = false)
     @NotNull      
     @Column(name = "usuario")
-    private Integer usuario;
+    private Long usuario;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
@@ -44,16 +44,16 @@ public class BitacoraContrasPK implements Serializable {
     public BitacoraContrasPK() {
     }
 
-    public BitacoraContrasPK(Integer usuario, String contra) {
+    public BitacoraContrasPK(Long usuario, String contra) {
         this.usuario = usuario;
         this.contra = contra;
     }
 
-    public Integer getUsuario() {
+    public Long getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(Integer usuario) {
+    public void setUsuario(Long usuario) {
         this.usuario = usuario;
     }
 
@@ -68,8 +68,8 @@ public class BitacoraContrasPK implements Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 97 * hash + this.usuario;
-        hash = 97 * hash + Objects.hashCode(this.contra);
+        hash = 31 * hash + Objects.hashCode(this.usuario);
+        hash = 31 * hash + Objects.hashCode(this.contra);
         return hash;
     }
 
@@ -85,17 +85,15 @@ public class BitacoraContrasPK implements Serializable {
             return false;
         }
         final BitacoraContrasPK other = (BitacoraContrasPK) obj;
-        if (this.usuario != other.usuario) {
+        if (!Objects.equals(this.contra, other.contra)) {
             return false;
         }
-        if (!Objects.equals(this.contra, other.contra)) {
+        if (!Objects.equals(this.usuario, other.usuario)) {
             return false;
         }
         return true;
     }
-
-    
-
+       
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.BitacoraContrasPK[ usuario=" + usuario + ", contra=" + contra + " ]";

@@ -15,8 +15,6 @@ import com.machineAdmin.managers.cg.exceptions.ProfundidadNoAsignadaException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.utils.UtilsPermissions;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -63,26 +61,34 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
     @Override
     public void delete(K id) throws Exception {
         T t;
-        int usuarioId = this.usuario;
+        long usuarioId = this.usuario;
         switch (profundidad) {
             case TODOS:
                 dao.delete(id);
                 break;
             case PROPIOS_MAS_PERFILES:
                 t = dao.findOne(id);
-                Set<Integer> idsDeUsuariosConPerfilesDelUsuario = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuarioId);
-                if (idsDeUsuariosConPerfilesDelUsuario.contains(t.getUsuarioCreador())) {
-                    dao.delete(id);
+                if (t != null) {
+                    Set<Long> idsDeUsuariosConPerfilesDelUsuario = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuarioId);
+                    if (idsDeUsuariosConPerfilesDelUsuario.contains(t.getUsuarioCreador())) {
+                        dao.delete(id);
+                    } else {
+                        throw new AccesoDenegadoException("No tiene permiso de eliminar ésta entidad");
+                    }
                 } else {
-                    throw new AccesoDenegadoException("No tiene permiso de actualizar ésta entidad");
+                    throw new ParametroInvalidoException("No existe la entidad que intenta eliminar");
                 }
                 break;
             case PROPIOS:
                 t = dao.findOne(id);
-                if (t.getId().equals(usuarioId)) {
-                    dao.delete(id);
+                if (t != null) {
+                    if (t.getId().equals(usuarioId)) {
+                        dao.delete(id);
+                    } else {
+                        throw new AccesoDenegadoException("No tiene permiso de eliminar ésta entidad");
+                    }
                 } else {
-                    throw new AccesoDenegadoException("No tiene permiso de actualizar ésta entidad");
+                    throw new ParametroInvalidoException("No existe la entidad que intenta eliminar");
                 }
                 break;
             default:
@@ -114,7 +120,7 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
                 }
                 break;
             case PROPIOS_MAS_PERFILES:
-                Set<Integer> usuariosConPerfilesDeUsuarioActual = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuario);
+                Set<Long> usuariosConPerfilesDeUsuarioActual = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuario);
                 //mandar borrar aquellos que solo sean del usuario actual                                                                
                 idsConAcceso = dao.stream()
                         .where(t -> usuariosConPerfilesDeUsuarioActual.contains(t.getUsuarioCreador()) && ids.contains(t.getId()))
@@ -133,7 +139,7 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
             default:
                 throw new ProfundidadNoAsignadaException();
         }
-    }
+    }       
 
     @Override
     public void update(T entity) throws Exception {
@@ -142,7 +148,7 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
                 dao.update(entity);
                 break;
             case PROPIOS_MAS_PERFILES:
-                Set<Integer> idsDeUsuariosConPerfilesDelUsuario = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(this.usuario);
+                Set<Long> idsDeUsuariosConPerfilesDelUsuario = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(this.usuario);
                 if (idsDeUsuariosConPerfilesDelUsuario.contains(entity.getUsuarioCreador())) {
                     dao.update(entity);
                 } else {
@@ -150,11 +156,27 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
                 }
                 break;
             case PROPIOS:
-                if (entity.getId().equals(this.usuario)) {
+                if (entity.getUsuarioCreador().equals(this.usuario)) {
                     dao.update(entity);
                 } else {
                     throw new AccesoDenegadoException("No tiene permiso de actualizar ésta entidad");
                 }
+                break;
+            default:
+                throw new AssertionError();
+        }
+    }
+       
+    public void updateAll(List<T> entities) throws ElementosSinAccesoException, AccesoDenegadoException, Exception {
+        switch (profundidad) {
+            case TODOS:
+                
+                break;
+            case PROPIOS_MAS_PERFILES:
+                
+                break;
+            case PROPIOS:
+               
                 break;
             default:
                 throw new AssertionError();
@@ -181,26 +203,26 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
             }
             switch (profundidad) {
                 case TODOS:
-                    return t;                    
+                    return t;
                 case PROPIOS:
                     if (t.getUsuarioCreador().equals(this.usuario)) {
                         return t;
-                    }else{
+                    } else {
                         throw new AccesoDenegadoException("No tiene permiso de ver los detalles de ésta entidad");
-                    }                    
+                    }
                 case PROPIOS_MAS_PERFILES:
-                    Set<Integer> idsDeUsuariosConPerfilesDelUsuario = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(this.usuario);                    
+                    Set<Long> idsDeUsuariosConPerfilesDelUsuario = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(this.usuario);
                     if (idsDeUsuariosConPerfilesDelUsuario.contains(t.getUsuarioCreador())) {
                         return t;
-                    }else{
+                    } else {
                         throw new AccesoDenegadoException("No tiene permiso de ver los detalles de ésta entidad");
-                    }                    
+                    }
                 default:
                     throw new AssertionError();
             }
         } catch (NoSuchElementException e) {
             throw new ParametroInvalidoException("No existe una entidad con el parametro enviado");
-        }        
+        }
     }
 
     @Override
@@ -240,12 +262,12 @@ public abstract class ManagerSQLCatalog<T extends EntitySQLCatalog, K> extends M
         if (this.profundidad == null) {
             throw new ProfundidadNoAsignadaException();
         }
-        int usuarioId = this.usuario;
+        long usuarioId = this.usuario;
         switch (this.profundidad) {
             case TODOS:
                 return dao.stream();
             case PROPIOS_MAS_PERFILES:
-                Set<Integer> idsDeUsuariosConPerfilesDelUsuario = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuarioId);
+                Set<Long> idsDeUsuariosConPerfilesDelUsuario = UtilsPermissions.idsDeUsuariosConLosPerfilesQueTieneElUsuario(usuarioId);
                 return dao.stream().where(t -> idsDeUsuariosConPerfilesDelUsuario.contains(t.getUsuarioCreador()));
             case PROPIOS:
                 return dao.stream().where(t -> t.getUsuarioCreador().equals(usuarioId));
