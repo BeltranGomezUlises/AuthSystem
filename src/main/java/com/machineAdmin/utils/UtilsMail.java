@@ -5,7 +5,7 @@
  */
 package com.machineAdmin.utils;
 
-import com.machineAdmin.entities.cg.admin.ConfigMail;
+import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
@@ -63,15 +63,15 @@ public class UtilsMail {
         
         HtmlEmail email = new HtmlEmail();
         email.setHostName(configMail.getHostName());
-        email.setSmtpPort(465);
+        email.setSmtpPort(configMail.getPort());
         email.setAuthentication(configMail.getAuth().getMail(), configMail.getAuth().getPass());
-        email.setSSL(true);
+        email.setSSL(configMail.isSsl());
         email.setFrom(configMail.getAuth().getMail());
         email.setSubject("Recuperar Contraseña");
         email.addTo(toMail);
 
         // embed the image and get the content id to see it in-line
-        URL url = new URL("http://localhost/pruebas/esoft-transparent.png");
+        URL url = new URL("http://192.168.10.8:8480/pruebas/esoft-transparent.png");
         String cid = email.embed(url, "esoftLogo");
 
         String htmlCadena

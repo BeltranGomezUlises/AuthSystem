@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.machineAdmin.models.cg.enums.Status;
 
 /**
- *
+ * modelo contenedor de los metadatos de una respuesta
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @JsonInclude(Include.NON_NULL)

@@ -16,12 +16,12 @@
  */
 package com.machineAdmin.utils;
 
-import com.machineAdmin.daos.cg.admin.DaoConfig;
-import com.machineAdmin.entities.cg.admin.CGConfig;
-import com.machineAdmin.entities.cg.admin.CGConfig.AccessConfig;
-import com.machineAdmin.entities.cg.admin.CGConfig.SMSConfig;
-import com.machineAdmin.entities.cg.admin.ConfigMail;
-import com.machineAdmin.managers.cg.admin.ManagerConfigMail;
+import com.machineAdmin.daos.cg.admin.mongo.DaoCGConfig;
+import com.machineAdmin.daos.cg.admin.mongo.DaoConfigMail;
+import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
+import com.machineAdmin.entities.cg.admin.mongo.CGConfig.AccessConfig;
+import com.machineAdmin.entities.cg.admin.mongo.CGConfig.SMSConfig;
+import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -32,7 +32,7 @@ import java.util.GregorianCalendar;
  */
 public class UtilsConfig {
         
-    private static final DaoConfig DAO = new DaoConfig();
+    private static final DaoCGConfig DAO = new DaoCGConfig();
 
     public static int getSecondsSessionJwtExp() {
         return DAO.findFirst().getJwtConfig().getSecondsSessionJwtExp();
@@ -43,9 +43,9 @@ public class UtilsConfig {
     }
 
     public static ConfigMail getResetPasswordConfigMail() {
-        String mailId = DAO.findFirst().getMailConfig().getResetPasswordMailId();
-        ManagerConfigMail managerConfigMail = new ManagerConfigMail();
-        return managerConfigMail.findOne(mailId);
+        String mailId = DAO.findFirst().getMailConfig().getResetPasswordMailId();        
+        DaoConfigMail daoConfigMail = new DaoConfigMail();        
+        return daoConfigMail.findOne(mailId);
     }
 
     public static SMSConfig getSMSConfig() {

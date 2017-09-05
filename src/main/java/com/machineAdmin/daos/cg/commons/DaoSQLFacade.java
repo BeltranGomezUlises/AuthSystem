@@ -5,116 +5,232 @@
  */
 package com.machineAdmin.daos.cg.commons;
 
-import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
-import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
+import com.machineAdmin.entities.cg.commons.IEntity;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import org.jinq.jpa.JPAJinqStream;
+import org.jinq.jpa.JPAQueryLogger;
 import org.jinq.jpa.JinqJPAStreamProvider;
 
 /**
+ * Facade Data Access Object para entidades SQL
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
- * @param <E> Entidad JPA a utilizar por el controlador C JPA respaldado de DaoSQLFacade
+ * @param <T> Entidad JPA a utilizar por el controlador C JPA respaldado de
+ * DaoSQLFacade
+ * @param <K> Tipo de dato de la llave primaria de la entidad
  */
-public abstract class DaoSQLFacade<E extends Serializable>{
-    
-    private final Class<?> claseController;
-    private final Class<E> claseEntity;
+public abstract class DaoSQLFacade<T extends IEntity, K> {
+
+    private final Class<T> claseEntity;
+    private final Class<K> clasePK;
     private final EntityManagerFactory eMFactory;
-    private final JinqJPAStreamProvider streams;    
-    private final String binnacleName;    
-        
-    public DaoSQLFacade(EntityManagerFactory eMFactory, Class<?> claseController, Class<E> claseEntity, String binnacleName){
+    private final JinqJPAStreamProvider streamProvider;
+
+    /**
+     * al sobreescribir considerar la fabrica de EntityManager, que sea la que
+     * apunte a la base de datos adecuada, que la clase entidad sea correcta y
+     * la clase que represente la llave primaria tambien corresponda
+     *
+     * @param eMFactory fabrica de manejadores de entidad EntityManager que
+     * corresponda a la base de datos con la cual trabajar
+     * @param claseEntity clase de la entidad con la cual operar
+     * @param clasePk clase que represente la llave primaria de la entidad
+     */
+    public DaoSQLFacade(EntityManagerFactory eMFactory, Class<T> claseEntity, Class<K> clasePk) {
         this.eMFactory = eMFactory;
-        this.claseController = claseController;        
         this.claseEntity = claseEntity;
-        this.binnacleName = binnacleName;
-        streams = new JinqJPAStreamProvider(eMFactory);
+        this.clasePK = clasePk;
+
+        streamProvider = new JinqJPAStreamProvider(eMFactory);
+        streamProvider.registerAttributeConverterType(UUID.class);
     }
-        
-    protected abstract Class<?> getIdAttributeType();
-               
-    public void persist(E entity) throws SQLPersistenceException{                     
+
+    public Class<T> getClaseEntity() {
+        return claseEntity;
+    }
+
+    public Class<K> getClasePK() {
+        return clasePK;
+    }
+
+    public EntityManagerFactory geteMFactory() {
+        return eMFactory;
+    }
+
+    public JinqJPAStreamProvider getStreamProvider() {
+        return streamProvider;
+    }
+
+    /**
+     * obtiene una nueva instancia de un EntityManager de la fabrica
+     * proporsionada al construir el objeto
+     *
+     * @return EntityManager de la fabrica de este Data Access Object
+     */
+    public EntityManager getEM() {
+        return eMFactory.createEntityManager();
+    }
+
+    /**
+     * construye un JPQL Query con el parametro obtenido
+     *
+     * @param jpql cadena con el JPQL para construir un query
+     * @return query contruido con el JPQL
+     */
+    protected Query createQuery(String jpql) {
+        return this.getEM().createQuery(jpql);
+    }
+
+    /**
+     * construye un Stream de datos de tipo JPAJinq, esto para poder realizar
+     * consultas con funciones lambda
+     *
+     * @return strema de datos de la entidad con la cual operar
+     */
+    public JPAJinqStream<T> stream() {
+        JPAJinqStream<T> stream = streamProvider.streamAll(eMFactory.createEntityManager(), claseEntity);
+        stream.setHint(
+                "queryLogger", (JPAQueryLogger) (String query, Map<Integer, Object> positionParameters, Map<String, Object> namedParameters) -> {
+                    System.out.println("queryLogr -> " + query);
+                });
+        return stream;
+    }
+
+    /**
+     * transforma una cadena serializada en pk (UUID, Long, Integer)
+     *
+     * @param s cadena representativa de la pk
+     * @return K tipo de dato asignado a la llave primaria de la entidad
+     */
+    public K stringToPK(String s) {
+        if (clasePK.getName().equals(Integer.class.getName())) {
+            return (K) Integer.valueOf(s);
+        } else {
+            if (clasePK.getName().equals(Long.class.getName())) {
+                return (K) Long.valueOf(s);
+            } else {
+                if (clasePK.getName().equals(UUID.class.getName())) {
+                    return (K) UUID.fromString(s);
+                }
+            }
+        }
+        return (K) s;
+    }
+
+    //<editor-fold defaultstate="collapsed" desc="¡LEEME!">
+    //Todos los metodos siguientes tiene con objetivo hacer y solo hacer lo que su nombre indica       
+    //</editor-fold>
+    public void persist(T entity) throws Exception {
+        EntityManager em = this.getEM();
         try {
-            Method method = claseController.getMethod("create", claseEntity);
-            Constructor constructor = claseController.getConstructor(EntityManagerFactory.class);
-            Object t = constructor.newInstance(eMFactory);            
-            method.setAccessible(true);
-            method.invoke(t,entity);            
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {            
-            throw new SQLPersistenceException("No fue posible persistir la entidad, cause: " + e.getMessage());
-        }                        
+            em.getTransaction().begin();
+            em.persist(entity);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
     }
-    
-    public List<E> persistAll(List<E> entities){
+
+    public List<T> persistAll(List<T> entities) throws Exception {
+        EntityManager em = this.getEM();
+        try {
+            em.getTransaction().begin();
+            for (T entity : entities) {
+                em.persist(entity);
+            }
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
         return entities;
     }
-    
-    public List<E> persistAll(E... entities){
-        return Arrays.asList(entities);
-    }       
-    
-    public void delete(Object id) throws SQLPersistenceException{        
+
+    public void delete(K id) throws Exception {
+        EntityManager em = this.getEM();
         try {
-            Method method = claseController.getMethod("destroy", this.getIdAttributeType());
-            Constructor constructor = claseController.getConstructor(EntityManagerFactory.class);
-            Object t = constructor.newInstance(eMFactory);            
-            method.setAccessible(true);
-            method.invoke(t,id);            
-        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            throw new SQLPersistenceException("No fue posible eliminar la entidad, cause: " + e.getMessage());
-        }          
+            em.getTransaction().begin();
+            em.remove(em.getReference(claseEntity, id));
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
     }
-    
-    public List<E> deleteAll(List<E> entities){
-        return entities;
-    }
-    
-    public List<E> deleteAll(E... entities){
-        return Arrays.asList(entities);
-    }
-    
-    public void update(E entity) throws SQLPersistenceException{
+
+    public void deleteAll(List<K> ids) throws Exception {
+        EntityManager em = this.getEM();
         try {
-            Method method = claseController.getMethod("edit", claseEntity);
-            Constructor constructor = claseController.getConstructor(EntityManagerFactory.class);
-            Object t = constructor.newInstance(eMFactory);            
-            method.setAccessible(true);
-            method.invoke(t,entity);            
-        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            throw new SQLPersistenceException("No fue posible actualizar la entidad, cause: " + e.getMessage());
-        }          
+            em.getTransaction().begin();
+            for (Object id : ids) {
+                em.remove(em.getReference(claseEntity, id));
+            }
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
     }
-        
-    public E findFirst(){
-        return findAll(false, 1, 0).get(0);
+
+    public void update(T entity) throws Exception {
+        EntityManager em = this.getEM();
+        try {
+            em.getTransaction().begin();
+            em.merge(entity);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
     }
-    
-    public E findOne(Object id){
-        return getEM().find(claseEntity, id);        
+
+    public T findFirst() throws Exception {
+        try {
+            return findAll(false, 1, 0).get(0);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
-   
-    public List<E> findAll(int max){
+
+    public T findOne(K id) throws Exception {
+        return getEM().find(claseEntity, id);
+    }
+
+    public List<T> findAll(int max) throws Exception {
         return findAll(false, max, 0);
     }
-    
-    public List<E> findAll() {
+
+    public List<T> findAll() throws Exception {
         return findAll(true, -1, -1);
     }
 
-    public List<E> findAll(int maxResults, int firstResult) {
+    public List<T> findAll(int maxResults, int firstResult) throws Exception {
         return findAll(false, maxResults, firstResult);
     }
 
-    private List<E> findAll(boolean all, int maxResults, int firstResult) {
+    private List<T> findAll(boolean all, int maxResults, int firstResult) throws Exception {
         EntityManager em = getEM();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
@@ -123,35 +239,24 @@ public abstract class DaoSQLFacade<E extends Serializable>{
             if (!all) {
                 q.setMaxResults(maxResults);
                 q.setFirstResult(firstResult);
-            }            
+            }
             return q.getResultList();
+        } catch (Exception e) {
+            throw e;
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
-    
-    public long count(){
+
+    public long count() throws Exception {
         EntityManager em = getEM();
-        long count = streams.streamAll(getEM(), claseEntity).count();        
-        if (em != null) em.close();        
+        long count = streamProvider.streamAll(getEM(), claseEntity).count();
+        if (em != null) {
+            em.close();
+        }
         return count;
     }
-        
-    public EntityManager getEM(){
-        return eMFactory.createEntityManager();
-    }
-    
-    protected Query createQuery(String query){
-        return this.getEM().createQuery(query);
-    }
-    
-    public String getBinnacleName(){
-        return binnacleName;
-    }
-     
-            
-    public JPAJinqStream<E> stream() {
-        return new JinqJPAStreamProvider(eMFactory).streamAll(eMFactory.createEntityManager(), claseEntity);        
-    }
-    
+
 }

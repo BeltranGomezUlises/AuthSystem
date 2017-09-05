@@ -1,8 +1,8 @@
 package com.machineAdmin.daos.cg.commons;
 
 import com.machineAdmin.entities.cg.commons.EntityMongo;
-import com.machineAdmin.utils.UtilsDB;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
 import java.util.List;
 import org.mongojack.DBProjection;
 import org.mongojack.DBQuery;
@@ -11,25 +11,38 @@ import org.mongojack.JacksonDBCollection;
 import org.mongojack.WriteResult;
 
 /**
- *
+ * Facade Data Access Object para entidades mongo
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> entidad que extienda de la clase EntityMongo
  */
-public class DaoMongoFacade<T extends EntityMongo>{
-
-    protected final String collectionName;
+public class DaoMongoFacade<T extends EntityMongo> {
+    
     protected JacksonDBCollection<T, String> coll;
+    private final DBCollection dbCollection;
 
-    public DaoMongoFacade(String collectionName, Class<T> clazz) {
-        this.collectionName = collectionName;
-        this.coll = JacksonDBCollection.wrap(UtilsDB.getCollection(collectionName), clazz, String.class);
+    /**
+     * al sobreescribir, consigerar el nombre de la colección categorizada -ej:
+     * {nombreNegocio}.{modulo}.{nombreColeccion} -ej: cg.config.correo
+     *     
+     * @param dbCollection collection con la cual operar esta entidad, debe de provenir de UtilsDB de una base de datos especifica
+     * @param clazz calse de la entidad con la cual operar
+     */
+    public DaoMongoFacade(DBCollection dbCollection, Class<T> clazz) {
+        this.coll = JacksonDBCollection.wrap(dbCollection, clazz, String.class);
+        this.dbCollection = dbCollection;
     }
 
+    /**
+     * obtiene la coleccion de tiop JacksonDB para poder operar directamente con
+     * los metodos particulares del conector
+     *
+     * @return contenedor de coleccion de MongoDB de la entidad a operar
+     */
     public JacksonDBCollection<T, String> getCollection() {
         return coll;
     }
 
-    public T persist(T entity) {
+    public T persist(T entity) {        
         return coll.insert(entity).getSavedObject();
     }
 
@@ -37,12 +50,8 @@ public class DaoMongoFacade<T extends EntityMongo>{
         return coll.insert(entities).getSavedObjects();
     }
 
-    public List<T> persistAll(T... entities) {
-        return coll.insert(entities).getSavedObjects();
-    }
-
     public boolean delete(Object id) {
-        WriteResult<T, String> result = coll.removeById(id.toString());        
+        WriteResult<T, String> result = coll.removeById(id.toString());
         return true;
     }
 
@@ -55,30 +64,29 @@ public class DaoMongoFacade<T extends EntityMongo>{
         coll.remove(q);
     }
 
-    public void deleteAll(Object... ids) {       
-        Query q = DBQuery.in("_id", ids);
-        coll.remove(q);
+    public void update(T entity) throws Exception {        
+        coll.updateById(entity.getId(), entity);
+    }
+    
+    public void updateAll(List<T> entities) throws Exception{
+        for (T entity : entities) {
+            coll.updateById(entity.getId(), entity);
+        }
+    }
+    
+
+    public List<T> update(Query query, T t) {
+        return coll.update(query, t).getSavedObjects();
     }
 
-    public void update(T entity) throws Exception {
-//        try {
-//            T toUpdate = coll.findOneById(entity.getId());
-//            BeanUtils.copyProperties(toUpdate, entity);
-//            coll.updateById(entity.getId(), toUpdate);            
-//        } catch (IllegalAccessException | InvocationTargetException ex) {
-//            throw new Exception("No fue posible actualizar la entidad, Causa: " + ex.getMessage());
-//        }
-          coll.updateById(entity.getId(), entity);            
+    public T findFirst() {
+        try {
+            return coll.findOne();
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
-    public List<T> update(Query query, T t) {                   
-        return coll.update(query, t).getSavedObjects();       
-    }
-
-    public T findFirst(){
-        return coll.findOne();
-    }
-        
     public T findOne(Object id) {
         return coll.findOneById(id.toString());
     }
@@ -97,6 +105,10 @@ public class DaoMongoFacade<T extends EntityMongo>{
 
     public List<T> findAll() {
         return coll.find().toArray();
+    }
+    
+    public List<T> findAll(Query query) {
+        return coll.find(query).toArray();       
     }
 
     public List<T> findAll(String... attributesProject) {

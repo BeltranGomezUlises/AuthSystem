@@ -19,6 +19,7 @@ package com.machineAdmin.models.cg;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
+ * modelo de respuesta del usuario logeado
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
@@ -26,10 +27,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class ModelUsuarioLogeado {
 
     private String id;
-    private String user;
-    private String mail;
-    private Object permissions;
-    private String phone;
+    private String nombre;
+    private String correo;
+    private Object permisos;
+    private String telefono;
 
     public String getId() {
         return id;
@@ -39,36 +40,36 @@ public class ModelUsuarioLogeado {
         this.id = id;
     }
 
-    public String getUser() {
-        return user;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public String getMail() {
-        return mail;
+    public String getCorreo() {
+        return correo;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
-    public Object getPermissions() {
-        return permissions;
+    public Object getPermisos() {
+        return permisos;
     }
 
-    public void setPermissions(Object permissions) {
-        this.permissions = permissions;
+    public void setPermisos(Object permisos) {
+        this.permisos = permisos;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getTelefono() {
+        return telefono;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
 
 }

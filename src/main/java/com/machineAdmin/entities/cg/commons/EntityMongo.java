@@ -5,22 +5,22 @@
  */
 package com.machineAdmin.entities.cg.commons;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 import org.mongojack.ObjectId;
 
 /**
+ * clase padre de entidades de mongo
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class EntityMongo{
-                
+public class EntityMongo extends IEntity {
+
     @ObjectId
     @JsonProperty("_id")
     protected String id;
-
+        
+    @Override
     public String getId() {
         return id;
     }
@@ -53,6 +53,5 @@ public class EntityMongo{
         }
         return true;
     }
-    
-    
+
 }

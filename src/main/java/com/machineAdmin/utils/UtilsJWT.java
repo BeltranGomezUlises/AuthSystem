@@ -6,14 +6,11 @@
 package com.machineAdmin.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.machineAdmin.entities.cg.admin.User;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
-import com.machineAdmin.models.cg.ModelRecoverCodeUser;
-import io.jsonwebtoken.Claims;
+import com.machineAdmin.models.cg.ModelCodigoRecuperacionUsuario;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -22,7 +19,6 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
 import java.io.IOException;
 import java.security.Key;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
@@ -50,7 +46,7 @@ public class UtilsJWT {
         return builder.signWith(SignatureAlgorithm.HS512, STRING_KEY).compact();
     }
 
-    public static String generateValidateUserToken(ModelRecoverCodeUser model) throws JsonProcessingException {
+    public static String generateValidateUserToken(ModelCodigoRecuperacionUsuario model) throws JsonProcessingException {
         JwtBuilder builder = Jwts.builder();
         Calendar cal = new GregorianCalendar();        //calendario de tiempos                
         cal.add(Calendar.SECOND, UtilsConfig.getSecondsRecoverJwtExp());
@@ -60,13 +56,13 @@ public class UtilsJWT {
         return builder.signWith(SignatureAlgorithm.HS512, STRING_KEY).compact();
     }
 
-    public static String generateTokenResetPassword(String token, String code) throws IOException, ParametroInvalidoException {
+    public static String generateTokenResetPassword(String token, String code) throws IOException, ParametroInvalidoException, TokenInvalidoException, TokenExpiradoException {
         JwtBuilder builder = Jwts.builder();
         Calendar cal = new GregorianCalendar();        //calendario de tiempos                
         cal.add(Calendar.SECOND, UtilsConfig.getSecondsRecoverJwtExp());
         builder.setExpiration(cal.getTime());
 
-        ModelRecoverCodeUser codeUser = UtilsJson.jsonDeserialize(UtilsJWT.getBodyToken(token), ModelRecoverCodeUser.class);
+        ModelCodigoRecuperacionUsuario codeUser = UtilsJson.jsonDeserialize(UtilsJWT.getBodyToken(token), ModelCodigoRecuperacionUsuario.class);
         if (!codeUser.getCode().equals(code)) {
             throw new ParametroInvalidoException("El código proporsionado no es válido");
         }
@@ -75,13 +71,30 @@ public class UtilsJWT {
         return builder.signWith(SignatureAlgorithm.HS512, STRING_KEY).compact();
     }
 
-    public static String getBodyToken(String token) {
-        return Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token).getBody().getSubject();
+    public static String getBodyToken(String token) throws TokenInvalidoException, TokenExpiradoException {
+        try {
+            return Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token).getBody().getSubject();            
+        } catch (SignatureException | IllegalArgumentException e) {
+            throw new TokenInvalidoException("Token Invalido");
+        }catch ( ExpiredJwtException exe){
+            throw new TokenExpiradoException("Token expirado");
+        }        
+    }
+    
+    public static Long getUserIdFrom(String token) throws TokenInvalidoException, TokenExpiradoException {
+        try {
+            return Long.parseLong(Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token).getBody().getSubject()); 
+        } catch (SignatureException | IllegalArgumentException e) {
+            throw new TokenInvalidoException("Token Invalido");
+        }catch ( ExpiredJwtException exe){
+            throw new TokenExpiradoException("Token expirado");
+        }        
     }
 
+    
     public static void validateSessionToken(String token) throws TokenExpiradoException, TokenInvalidoException {
         try {
-            Jws<Claims> jws = Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token);
         } catch (SignatureException | IllegalArgumentException e) {
             throw new TokenInvalidoException("Token Invalido");
         }catch ( ExpiredJwtException exe){

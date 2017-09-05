@@ -6,9 +6,9 @@
 package com.machineAdmin.models.cg.enums;
 
 /**
- *
+ * enumerador de estado de operacion
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public enum Status {
-    OK,ERROR,WARNING
+    OK,ERROR,WARNING, ACCES_DENIED, INVALID_PARAM, PARCIAL_ACCESS
 }
