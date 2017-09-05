@@ -16,8 +16,7 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.machineAdmin.entities.cg.commons.IEntity;
+import com.machineAdmin.entities.cg.commons.EntitySQL;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
@@ -42,8 +41,7 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "BitacoraContras.findAll", query = "SELECT b FROM BitacoraContras b")
     , @NamedQuery(name = "BitacoraContras.findByContra", query = "SELECT b FROM BitacoraContras b WHERE b.bitacoraContrasPK.contra = :contra")
     , @NamedQuery(name = "BitacoraContras.findByFechaAsignada", query = "SELECT b FROM BitacoraContras b WHERE b.fechaAsignada = :fechaAsignada")})
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class BitacoraContras implements Serializable, IEntity {
+public class BitacoraContras extends EntitySQL implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -56,14 +54,17 @@ public class BitacoraContras implements Serializable, IEntity {
     private Usuario usuario1;
 
     public BitacoraContras() {
+        fechaAsignada = new Date();
     }
 
     public BitacoraContras(BitacoraContrasPK bitacoraContrasPK) {
         this.bitacoraContrasPK = bitacoraContrasPK;
+        fechaAsignada = new Date();
     }
 
-    public BitacoraContras(UUID usuario, String contra) {
+    public BitacoraContras(Long usuario, String contra) {
         this.bitacoraContrasPK = new BitacoraContrasPK(usuario, contra);
+        fechaAsignada = new Date();
     }
 
     public BitacoraContrasPK getBitacoraContrasPK() {
@@ -116,5 +117,5 @@ public class BitacoraContras implements Serializable, IEntity {
     public Object getId() {
         return bitacoraContrasPK;
     }
-
+    
 }

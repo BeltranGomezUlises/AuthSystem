@@ -16,31 +16,24 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
-import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.io.Serializable;
-import java.util.Objects;
-import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Converter;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Embeddable
-@Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
 public class UsuariosPermisosPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
-    @Convert("uuidConverter")
     @Column(name = "usuario")
-    private UUID usuario;
+    private Long usuario;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
@@ -50,16 +43,16 @@ public class UsuariosPermisosPK implements Serializable {
     public UsuariosPermisosPK() {
     }
 
-    public UsuariosPermisosPK(UUID usuario, String permiso) {
+    public UsuariosPermisosPK(Long usuario, String permiso) {
         this.usuario = usuario;
         this.permiso = permiso;
     }
 
-    public UUID getUsuario() {
+    public Long getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(UUID usuario) {
+    public void setUsuario(Long usuario) {
         this.usuario = usuario;
     }
 
@@ -73,33 +66,31 @@ public class UsuariosPermisosPK implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 97 * hash + Objects.hashCode(this.usuario);
-        hash = 97 * hash + Objects.hashCode(this.permiso);
+        int hash = 0;
+        hash += (usuario != null ? usuario.hashCode() : 0);
+        hash += (permiso != null ? permiso.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof UsuariosPermisosPK)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        UsuariosPermisosPK other = (UsuariosPermisosPK) object;
+        if ((this.usuario == null && other.usuario != null) || (this.usuario != null && !this.usuario.equals(other.usuario))) {
             return false;
         }
-        final UsuariosPermisosPK other = (UsuariosPermisosPK) obj;
-        if (!Objects.equals(this.permiso, other.permiso)) {
+        if ((this.permiso == null && other.permiso != null) || (this.permiso != null && !this.permiso.equals(other.permiso))) {
             return false;
         }
-        return Objects.equals(this.usuario, other.usuario);
+        return true;
     }
 
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisosPK[ usuario=" + usuario + ", permiso=" + permiso + " ]";
     }
-
+    
 }

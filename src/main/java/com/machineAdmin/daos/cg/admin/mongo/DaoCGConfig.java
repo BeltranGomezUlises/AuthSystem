@@ -18,16 +18,16 @@ package com.machineAdmin.daos.cg.admin.mongo;
 
 import com.machineAdmin.daos.cg.commons.DaoMongoFacade;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
+import com.machineAdmin.utils.UtilsDB;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class DaoCGConfig extends DaoMongoFacade<CGConfig>{
-
+    
     public DaoCGConfig() {
-        super("cg.config.general", CGConfig.class);
+        super(UtilsDB.getCGCollection("config.general"), CGConfig.class);
     }
-    
-    
+        
 }

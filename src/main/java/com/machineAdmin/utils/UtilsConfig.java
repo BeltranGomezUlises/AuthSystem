@@ -17,11 +17,11 @@
 package com.machineAdmin.utils;
 
 import com.machineAdmin.daos.cg.admin.mongo.DaoCGConfig;
+import com.machineAdmin.daos.cg.admin.mongo.DaoConfigMail;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig.AccessConfig;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig.SMSConfig;
 import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
-import com.machineAdmin.managers.cg.admin.mongo.ManagerConfigMail;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -43,9 +43,9 @@ public class UtilsConfig {
     }
 
     public static ConfigMail getResetPasswordConfigMail() {
-        String mailId = DAO.findFirst().getMailConfig().getResetPasswordMailId();
-        ManagerConfigMail managerConfigMail = new ManagerConfigMail();
-        return managerConfigMail.findOne(mailId);
+        String mailId = DAO.findFirst().getMailConfig().getResetPasswordMailId();        
+        DaoConfigMail daoConfigMail = new DaoConfigMail();        
+        return daoConfigMail.findOne(mailId);
     }
 
     public static SMSConfig getSMSConfig() {

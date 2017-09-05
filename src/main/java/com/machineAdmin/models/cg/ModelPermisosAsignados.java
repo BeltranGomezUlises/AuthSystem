@@ -25,13 +25,20 @@ import java.util.List;
  */
 public class ModelPermisosAsignados {
 
-    private List<Seccion> secciones;
+    private List<ModelSeccion> secciones;
 
-    public List<Seccion> getSecciones() {
+    public ModelPermisosAsignados(List<ModelSeccion> secciones) {
+        this.secciones = secciones;
+    }
+
+    public ModelPermisosAsignados() {
+    }
+
+    public List<ModelSeccion> getSecciones() {
         return secciones;
     }
 
-    public void setSecciones(List<Seccion> secciones) {
+    public void setSecciones(List<ModelSeccion> secciones) {
         this.secciones = secciones;
     }
 
@@ -43,52 +50,79 @@ public class ModelPermisosAsignados {
     /**
      * modelo de seccion represtativo de una seccion del sistema
      */
-    public static class Seccion {
+    public static class ModelSeccion {
 
-        private String name;
-        private List<Module> modulos;
+        private String nombre;
+        private String id;
 
-        public Seccion(String name) {
-            this.name = name;
+        private List<ModelModulo> modulos;
+
+        public ModelSeccion() {
         }
 
-        public Seccion() {
-        }
-
-        public List<Module> getModulos() {
-            return modulos;
-        }
-
-        public void setModulos(List<Module> modulos) {
+        public ModelSeccion(String nombre, String id, List<ModelModulo> modulos) {
+            this.nombre = nombre;
+            this.id = id;
             this.modulos = modulos;
         }
 
-        public String getName() {
-            return name;
+        public String getNombre() {
+            return nombre;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public void setNombre(String nombre) {
+            this.nombre = nombre;
         }
 
-        @Override
-        public String toString() {
-            return "Seccion{" + "name=" + name + ", modulos=" + modulos + '}';
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public List<ModelModulo> getModulos() {
+            return modulos;
+        }
+
+        public void setModulos(List<ModelModulo> modulos) {
+            this.modulos = modulos;
         }
 
         /**
          * modelo de modulo representativo a un modulo de una seccion del
          * sistema
          */
-        public static class Module {
+        public static class ModelModulo {
 
             private String name;
-            private List<Menu> menus;
+            private String id;
+            private List<ModelMenu> menus;
 
-            public Module() {
+            public ModelModulo() {
             }
 
-            public Module(String name) {
+            public ModelModulo(String name, String id) {
+                this.name = name;
+                this.id = id;
+            }
+
+            public ModelModulo(String name, String id, List<ModelMenu> menus) {
+                this.name = name;
+                this.id = id;
+                this.menus = menus;
+            }
+
+            public String getId() {
+                return id;
+            }
+
+            public void setId(String id) {
+                this.id = id;
+            }
+
+            public ModelModulo(String name) {
                 this.name = name;
             }
 
@@ -100,11 +134,11 @@ public class ModelPermisosAsignados {
                 this.name = name;
             }
 
-            public List<Menu> getMenus() {
+            public List<ModelMenu> getMenus() {
                 return menus;
             }
 
-            public void setMenus(List<Menu> menus) {
+            public void setMenus(List<ModelMenu> menus) {
                 this.menus = menus;
             }
 
@@ -116,31 +150,47 @@ public class ModelPermisosAsignados {
             /**
              * modelo de menu representativo de un menu de un modulo del sistema
              */
-            public static class Menu {
+            public static class ModelMenu {
 
-                private String name;
-                private List<Permiso> permisos;
+                private String nombre;
+                private String id;
 
-                public Menu(String name) {
-                    this.name = name;
+                private List<ModelPermiso> permisos;
+
+                public ModelMenu() {
                 }
 
-                public Menu() {
+                public ModelMenu(String nombre, String id, List<ModelPermiso> permisos) {
+                    this.nombre = nombre;
+                    this.id = id;
+                    this.permisos = permisos;
                 }
 
-                public String getName() {
-                    return name;
+                public ModelMenu(String id) {
+                    this.id = id;
                 }
 
-                public void setName(String name) {
-                    this.name = name;
+                public String getNombre() {
+                    return nombre;
                 }
 
-                public List<Permiso> getPermisos() {
+                public void setNombre(String nombre) {
+                    this.nombre = nombre;
+                }
+
+                public String getId() {
+                    return id;
+                }
+
+                public void setId(String id) {
+                    this.id = id;
+                }
+
+                public List<ModelPermiso> getPermisos() {
                     return permisos;
                 }
 
-                public void setPermisos(List<Permiso> permisos) {
+                public void setPermisos(List<ModelPermiso> permisos) {
                     this.permisos = permisos;
                 }
 
@@ -148,18 +198,31 @@ public class ModelPermisosAsignados {
                  * modelo de accion representativa a un accion de un modulo del
                  * sistema
                  */
-                public static class Permiso {
+                public static class ModelPermiso {
 
-                    private String name;
+                    private String nombre;
                     private String id;
-                    private Profundidad types;
+                    private Profundidad profundidad;
 
-                    public String getName() {
-                        return name;
+                    public ModelPermiso() {
                     }
 
-                    public void setName(String name) {
-                        this.name = name;
+                    public ModelPermiso(String nombre, String id, Profundidad profundidad) {
+                        this.nombre = nombre;
+                        this.id = id;
+                        this.profundidad = profundidad;
+                    }
+
+                    public ModelPermiso(String id) {
+                        this.id = id;
+                    }
+
+                    public String getNombre() {
+                        return nombre;
+                    }
+
+                    public void setNombre(String nombre) {
+                        this.nombre = nombre;
                     }
 
                     public String getId() {
@@ -170,12 +233,12 @@ public class ModelPermisosAsignados {
                         this.id = id;
                     }
 
-                    public Profundidad getTypes() {
-                        return types;
+                    public Profundidad getProfundidad() {
+                        return profundidad;
                     }
 
-                    public void setTypes(Profundidad types) {
-                        this.types = types;
+                    public void setProfundidad(Profundidad profundidad) {
+                        this.profundidad = profundidad;
                     }
 
                 }

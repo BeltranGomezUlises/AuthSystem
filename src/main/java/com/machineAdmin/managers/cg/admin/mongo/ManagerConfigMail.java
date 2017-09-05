@@ -7,16 +7,28 @@ package com.machineAdmin.managers.cg.admin.mongo;
 
 import com.machineAdmin.daos.cg.admin.mongo.DaoConfigMail;
 import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
-import com.machineAdmin.managers.cg.commons.ManagerMongoFacade;
+import com.machineAdmin.entities.cg.commons.Profundidad;
+import com.machineAdmin.managers.cg.commons.ManagerMongoCatalog;
+import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerConfigMail extends ManagerMongoFacade<ConfigMail> {
+public class ManagerConfigMail extends ManagerMongoCatalog<ConfigMail> {
 
-    public ManagerConfigMail() {
+    public ManagerConfigMail(){
         super(new DaoConfigMail());
     }
-     
+        
+    public ManagerConfigMail(String token, Profundidad profundidad) throws TokenInvalidoException, TokenExpiradoException {
+        super(new DaoConfigMail(), token, profundidad);
+    }
+
+    @Override
+    public String nombreColeccionParaRegistros() {
+        return "correos";
+    }
+        
 }

@@ -14,16 +14,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.daos.cg.exceptions;
+package com.machineAdmin.managers.cg.exceptions;
+
+import java.util.List;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class SQLPersistenceException extends Exception{
+public class ElementosSinAccesoException extends Exception {
 
-    public SQLPersistenceException(String message) {
-        super(message);
+    List elementosSinAcceso;
+
+    public ElementosSinAccesoException() {
     }
-        
+    
+    public ElementosSinAccesoException(List elementosSinAcceso, String mensaje) {
+        super(mensaje);
+        this.elementosSinAcceso = elementosSinAcceso;
+    }
+
+    public List getElementosSinAcceso() {
+        return elementosSinAcceso;
+    }
+
+    public void setElementosSinAcceso(List elementosSinAcceso) {
+        this.elementosSinAcceso = elementosSinAcceso;
+    }
+
 }

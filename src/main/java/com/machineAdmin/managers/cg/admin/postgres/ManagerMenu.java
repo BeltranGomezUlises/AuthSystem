@@ -17,17 +17,29 @@
 package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoMenu;
+import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.Menu;
-import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import com.machineAdmin.managers.cg.commons.ManagerSQL;
+import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerMenu extends ManagerSQLFacade<Menu, String>{
-    
+public class ManagerMenu extends ManagerSQL<Menu, String> {
+
     public ManagerMenu() {
         super(new DaoMenu());
     }
+
+    public ManagerMenu(DaoSQLFacade dao, String token) throws TokenInvalidoException, TokenExpiradoException {
+        super(dao, token);
+    }
     
+    @Override
+    public String nombreColeccionParaRegistros() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

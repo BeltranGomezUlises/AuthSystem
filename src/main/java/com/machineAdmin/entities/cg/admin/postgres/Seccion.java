@@ -16,9 +16,11 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
+import com.machineAdmin.entities.cg.commons.EntitySQL;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -28,9 +30,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.machineAdmin.entities.cg.commons.IEntity;
-import java.util.Objects;
 
 /**
  *
@@ -38,13 +37,11 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "seccion")
-
 @NamedQueries({
     @NamedQuery(name = "Seccion.findAll", query = "SELECT s FROM Seccion s")
     , @NamedQuery(name = "Seccion.findById", query = "SELECT s FROM Seccion s WHERE s.id = :id")
     , @NamedQuery(name = "Seccion.findByNombre", query = "SELECT s FROM Seccion s WHERE s.nombre = :nombre")})
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class Seccion implements Serializable, IEntity {
+public class Seccion extends EntitySQL implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -56,7 +53,7 @@ public class Seccion implements Serializable, IEntity {
     @Size(max = 2147483647)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(mappedBy = "seccion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seccion")
     private List<Modulo> moduloList;
 
     public Seccion() {
@@ -82,8 +79,7 @@ public class Seccion implements Serializable, IEntity {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
-        
+    
     public List<Modulo> getModuloList() {
         return moduloList;
     }
@@ -94,29 +90,27 @@ public class Seccion implements Serializable, IEntity {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 89 * hash + Objects.hashCode(this.id);
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Seccion)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        Seccion other = (Seccion) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
-        final Seccion other = (Seccion) obj;
-        return Objects.equals(this.id, other.id);
+        return true;
     }
 
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.Seccion[ id=" + id + " ]";
     }
-
+    
 }

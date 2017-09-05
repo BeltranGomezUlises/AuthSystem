@@ -25,14 +25,14 @@ import java.util.List;
  */
 public class ModelAsignarPermisos {
 
-    private String id;
+    private Long id;
     private List<ModelPermisoAsignado> permisos;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

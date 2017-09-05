@@ -14,20 +14,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.managers.cg.admin.postgres;
+package com.machineAdmin.entities.cg.admin.postgres;
 
-import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
-import com.machineAdmin.entities.cg.admin.postgres.Permiso;
-import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.validation.constraints.Size;
+
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerPermiso extends ManagerSQLFacade<Permiso, String>{
-    
-    public ManagerPermiso() {
-        super(new DaoPermiso());
+@Entity
+@Table(name = "sql_prueba")
+public class SqlPrueba  extends EntitySQLCatalog implements Serializable {
+
+    @Size(max = 2147483647)
+    @Column(name = "texto")
+    private String texto;
+
+    public SqlPrueba() {
     }
-    
+
+    public SqlPrueba(Long id) {
+        super(id);
+    }
+            
+    public String getTexto() {
+        return texto;
+    }
+
+    public void setTexto(String texto) {
+        this.texto = texto;
+    }
+
 }

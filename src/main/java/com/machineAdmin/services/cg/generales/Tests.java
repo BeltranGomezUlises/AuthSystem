@@ -16,26 +16,15 @@
  */
 package com.machineAdmin.services.cg.generales;
 
-import com.machineAdmin.daos.cg.exceptions.ConstraintException;
-import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
-import com.machineAdmin.entities.cg.admin.postgres.Permiso;
-import com.machineAdmin.entities.cg.admin.postgres.Usuario;
-import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos;
-import com.machineAdmin.entities.cg.commons.Profundidad;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuariosPermisos;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.commons.ServiceFacade;
-import com.machineAdmin.utils.UtilsPermissions;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.machineAdmin.utils.UtilsBitacora;
+import java.util.Date;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -48,39 +37,65 @@ import javax.ws.rs.core.MediaType;
 public class Tests {
 
     @GET
+    @Path("/info")
+    public Response explotarServidor(@Context HttpServletRequest request) {
+        Response r = new Response();
+                
+        String ip = request.getRemoteAddr();
+        String agent = request.getHeader("User-Agent");
+        String authorization = request.getHeader("authorization");
+        
+        
+        r.setData(ip);
+        r.setMessage(agent);
+        r.setDevMessage(authorization);
+        System.out.println("----");        
+        System.out.println(ip);
+        System.out.println(agent);
+        System.out.println(authorization);
+        System.out.println("----");
+        
+        UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(1l, new Date(), "test", request);
+        
+        UtilsBitacora.bitacorizar("test", bitacora);                        
+        return r;
+    }
+    
+    @GET
     @Path("/explotar")
     public Response explotarServidor() {
         Response r = new Response();
 
-        ManagerUsuario managerUsuario = new ManagerUsuario();        
-        Usuario u;
-        for (int i = 0; i < 1000000; i++) {
-            try {
-                u = new Usuario();
-                u.setNombre(UUID.randomUUID().toString());
-                u.setCorreo(UUID.randomUUID().toString());
-                u.setContra(UUID.randomUUID().toString());
-                
-                managerUsuario.persist(u);
-                
-                //persistir una relacion de usuarios con permisos
-                
-                ManagerUsuariosPermisos managerUsuariosPermisos = new ManagerUsuariosPermisos();
-                List<UsuariosPermisos> usuariosPermisoses = new ArrayList<>(100);
-                UsuariosPermisos usuariosPermisos;
-                for (Permiso existingPermission : UtilsPermissions.getExistingPermissions()) {
-                    usuariosPermisos = new UsuariosPermisos(u.getId(), existingPermission.getId());
-                    usuariosPermisos.setProfundidad(Profundidad.PROPIOS);
-                    usuariosPermisoses.add(usuariosPermisos);
-                }
-                                
-                managerUsuariosPermisos.persistAll(usuariosPermisoses);
-            } catch (Exception ex) {
-                ServiceFacade.setErrorResponse(r, ex);
-                Logger.getLogger(Tests.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+//        ManagerUsuario managerUsuario = new ManagerUsuario();        
+//        Usuario u;
+//        for (int i = 0; i < 1000000; i++) {
+//            try {
+//                u = new Usuario();
+//                u.setNombre(UUID.randomUUID().toString());
+//                u.setCorreo(UUID.randomUUID().toString());
+//                u.setContra(UUID.randomUUID().toString());
+//                
+//                managerUsuario.persist(u);
+//                
+//                //persistir una relacion de usuarios con permisos
+//                
+//                ManagerUsuariosPermisos managerUsuariosPermisos = new ManagerUsuariosPermisos();
+//                List<UsuariosPermisos> usuariosPermisoses = new ArrayList<>(100);
+//                UsuariosPermisos usuariosPermisos;
+//                for (Permiso existingPermission : UtilsPermissions.getExistingPermissions()) {
+//                    usuariosPermisos = new UsuariosPermisos(u.getId(), existingPermission.getId());
+//                    usuariosPermisos.setProfundidad(Profundidad.PROPIOS);
+//                    usuariosPermisoses.add(usuariosPermisos);
+//                }
+//                                
+//                managerUsuariosPermisos.persistAll(usuariosPermisoses);
+//            } catch (Exception ex) {
+//                ServiceFacade.setErrorResponse(r, ex);
+//                Logger.getLogger(Tests.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
 
         return r;
     }
+    
 }

@@ -18,34 +18,35 @@ package com.machineAdmin.utils;
 
 import com.machineAdmin.daos.cg.admin.mongo.DaoCGConfig;
 import com.machineAdmin.daos.cg.admin.mongo.DaoConfigMail;
+import com.machineAdmin.daos.cg.admin.postgres.DaoGrupoPerfiles;
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.entities.cg.admin.mongo.ConfigMail;
 import com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles;
 import com.machineAdmin.entities.cg.admin.postgres.Menu;
 import com.machineAdmin.entities.cg.admin.postgres.Modulo;
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
-import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos;
 import com.machineAdmin.entities.cg.admin.postgres.Permiso;
 import com.machineAdmin.entities.cg.admin.postgres.Seccion;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil;
+import com.machineAdmin.daos.cg.admin.postgres.DaoMenu;
+import com.machineAdmin.daos.cg.admin.postgres.DaoModulo;
+import com.machineAdmin.daos.cg.admin.postgres.DaoPerfil;
+import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
+import com.machineAdmin.daos.cg.admin.postgres.DaoSeccion;
+import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
+import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPerfil;
+import com.machineAdmin.entities.cg.admin.mongo.CGConfig.BitacorasConfig;
+import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos;
 import com.machineAdmin.entities.cg.commons.Profundidad;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerGrupoPerfil;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerMenu;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerModulo;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerPerfil;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerPerfilesPermisos;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerPermiso;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerSeccion;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuariosPerfil;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuariosPermisos;
-import com.machineAdmin.services.cg.commons.ServiceFacade;
+import static com.machineAdmin.entities.cg.commons.Profundidad.TODOS;
+import com.machineAdmin.services.cg.commons.ServiceBitacoraFacade;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -78,7 +79,7 @@ public class InitServletContext implements ServletContextListener {
     }
 
     /**
-     * inicio de configuracion del sistema en base de datos
+     * inicio de configuración del sistema en base de datos
      *
      * @throws Exception
      */
@@ -87,88 +88,91 @@ public class InitServletContext implements ServletContextListener {
 
         this.initDBPermissions();
 
-        //<editor-fold defaultstate="collapsed" desc="Creacion del perfil Master">
-        //crear perfil master
-        ManagerPerfil managerPerfil = new ManagerPerfil();
-
-        Perfil perfilMaster = managerPerfil.findFirst();
-        if (perfilMaster == null) {
-            perfilMaster = new Perfil();
-            perfilMaster.setNombre("Master");
-            perfilMaster.setDescripcion("Perfil de control total del sistema");
-            managerPerfil.persist(perfilMaster);
-        }
-        //</editor-fold>
-
-        //<editor-fold defaultstate="collapsed" desc="Creacion del grupo de perfiles">
-        ManagerGrupoPerfil managerGrupoPerfil = new ManagerGrupoPerfil();
-
-        GrupoPerfiles gp = managerGrupoPerfil.findFirst();
-        if (gp == null) {
-            gp = new GrupoPerfiles();
-            gp.setNombre("Administradores del sistema");
-            gp.setDescripcoin("Este grupo de roles puede administrar las configuraciones del sistemas, ademas de poder realizar las operaciones de negocio de toda la aplicacion");
-
-            List<Perfil> perfilesDelRol = new ArrayList<>();
-            perfilesDelRol.add(perfilMaster);
-            gp.setPerfilList(perfilesDelRol);
-            managerGrupoPerfil.persist(gp);
-        }
-        //</editor-fold>
-
-        //<editor-fold defaultstate="collapsed" desc="Asignacion de permisos al perfil">
-        //crear relacion de perfil con permisos disponibles
-        ManagerPerfilesPermisos managerPerfilesPermisos = new ManagerPerfilesPermisos();
-        //asignar permisos al perfil
-        for (Permiso permiso : UtilsPermissions.getExistingPermissions()) {
-            PerfilesPermisos perfilPermisoRelacion = new PerfilesPermisos(perfilMaster.getId(), permiso.getId());
-
-            if (!managerPerfilesPermisos.stream().anyMatch(pp -> pp.equals(perfilPermisoRelacion))) { // si no existe la relacion
-                perfilPermisoRelacion.setPerfil1(perfilMaster);
-                perfilPermisoRelacion.setPermiso1(permiso);
-                perfilPermisoRelacion.setProfundidad(Profundidad.TODOS);
-                managerPerfilesPermisos.persist(perfilPermisoRelacion);
-            }
-
-        }
-        //</editor-fold>
-
         //<editor-fold defaultstate="collapsed" desc="Creacion de usuario default master">
-        ManagerUsuario managerUsuario = new ManagerUsuario();
+        DaoUsuario daoUsuario = new DaoUsuario();
 
-        Usuario usuarioDB = managerUsuario.findFirst();
-        if (usuarioDB == null) {
+        Usuario usuarioDB;
+        try {
+            usuarioDB = daoUsuario.stream().where(u -> u.getNombre().equals("Administrador")).findFirst().get();
+        } catch (NoSuchElementException e) {
             usuarioDB = new Usuario();
             usuarioDB.setNombre("Administrador");
             usuarioDB.setCorreo("ubg700@gmail.com");
             usuarioDB.setTelefono("6671007264");
-            usuarioDB.setContra("1234");
-            managerUsuario.persist(usuarioDB);
-        }
-        //</editor-fold>        
+            usuarioDB.setContra(UtilsSecurity.cifrarMD5("1234"));
+            usuarioDB.setUsuarioCreador(0l);
+            daoUsuario.persist(usuarioDB);
 
-        //<editor-fold defaultstate="collapsed" desc="Asignacion de perfil al usuario">
-        ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();
-        if (managerUsuariosPerfil.findFirst() == null) {
-            UsuariosPerfil usuariosPerfil = new UsuariosPerfil(usuarioDB.getId(), perfilMaster.getId());
-            usuariosPerfil.setHereda(true);
-            managerUsuariosPerfil.persist(usuariosPerfil);
+            usuarioDB.setUsuarioCreador(usuarioDB.getId());
+            daoUsuario.update(usuarioDB);
+        }
+
+        //</editor-fold>  
+        
+        //<editor-fold defaultstate="collapsed" desc="Creacion del perfil Master">
+        //crear perfil master
+        DaoPerfil daoPerfil = new DaoPerfil();
+
+        Perfil perfilMaster;
+        try {
+            perfilMaster = daoPerfil.stream().where(p -> p.getNombre().equals("Master")).findFirst().get();
+        } catch (NoSuchElementException e) {
+            perfilMaster = new Perfil();
+            perfilMaster.setNombre("Master");
+            perfilMaster.setDescripcion("Perfil de control total del sistema");
+            perfilMaster.setUsuarioCreador(usuarioDB.getId());
+            daoPerfil.persist(perfilMaster);
         }
 
         //</editor-fold>
-        //<editor-fold defaultstate="collapsed" desc="Asignaion de permisos al usuario">
-        ManagerUsuariosPermisos managerUsuariosPermisos = new ManagerUsuariosPermisos();
-        UsuariosPermisos usuariosPermisos;
-        for (Permiso existingPermission : UtilsPermissions.getExistingPermissions()) {
+        
+        //<editor-fold defaultstate="collapsed" desc="Creacion del grupo de perfiles">
+        DaoGrupoPerfiles daoGrupoPerfil = new DaoGrupoPerfiles();
 
-            usuariosPermisos = new UsuariosPermisos(usuarioDB.getId(), existingPermission.getId());
-            usuariosPermisos.setProfundidad(Profundidad.TODOS);
+        GrupoPerfiles gp = daoGrupoPerfil.findFirst();
+        if (gp == null) {
+            gp = new GrupoPerfiles();
+            gp.setNombre("Administradores del sistema");
+            gp.setDescripcion("Este grupo de roles puede administrar las configuraciones del sistemas, ademas de poder realizar las operaciones de negocio de toda la aplicacion");
 
-            UsuariosPermisos checkDB = new UsuariosPermisos(usuarioDB.getId(), existingPermission.getId());
-            if (!managerUsuariosPermisos.stream().anyMatch(up -> up.equals(checkDB))) {
-                managerUsuariosPermisos.persist(usuariosPermisos);
+            List<Perfil> perfilesDelRol = new ArrayList<>();
+            perfilesDelRol.add(perfilMaster);
+            gp.setPerfilList(perfilesDelRol);
+            gp.setUsuarioCreador(usuarioDB.getId());            
+            daoGrupoPerfil.persist(gp);
+        }
+        //</editor-fold>
+
+        //<editor-fold defaultstate="collapsed" desc="Asignacion de permisos al perfil">        
+        for (Permiso permiso : UtilsPermissions.getExistingPermissions()) {
+            PerfilesPermisos perfilesPermisosRelacion = new PerfilesPermisos(perfilMaster.getId(), permiso.getId());
+            perfilesPermisosRelacion.setProfundidad(Profundidad.TODOS);
+            if (!perfilMaster.getPerfilesPermisosList().contains(perfilesPermisosRelacion)) {
+                perfilMaster.getPerfilesPermisosList().add(perfilesPermisosRelacion);
             }
         }
+        daoPerfil.update(perfilMaster);
+        //</editor-fold>
+
+        //<editor-fold defaultstate="collapsed" desc="Asignacion de perfil al usuario">
+        DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
+        if (daoUsuariosPerfil.findFirst() == null) {
+            UsuariosPerfil usuariosPerfil = new UsuariosPerfil(usuarioDB.getId(), perfilMaster.getId());
+            usuariosPerfil.setHereda(true);
+            daoUsuariosPerfil.persist(usuariosPerfil);
+        }
+
+        //</editor-fold>
+        
+        //<editor-fold defaultstate="collapsed" desc="Asignaion de permisos al usuario">
+        for (Permiso existingPermission : UtilsPermissions.getExistingPermissions()) {
+            UsuariosPermisos usuariosPermisosRelacion = new UsuariosPermisos(usuarioDB.getId(), existingPermission.getId());
+            usuariosPermisosRelacion.setProfundidad(TODOS);
+            if (!usuarioDB.getUsuariosPermisosList().contains(usuariosPermisosRelacion)) {
+                usuarioDB.getUsuariosPermisosList().add(usuariosPermisosRelacion);
+            }
+        }
+        daoUsuario.update(usuarioDB);
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="Creacion de correo por default"> 
@@ -177,7 +181,7 @@ public class InitServletContext implements ServletContextListener {
         ConfigMail mail = daoMail.findFirst();
         if (mail == null) {
             mail = new ConfigMail();
-            ConfigMail.AuthMail authMail = new ConfigMail.AuthMail("usuariosexpertos@gmail.com", "90Y8Byh$");
+            ConfigMail.AuthMail authMail = new ConfigMail.AuthMail("usuariosexpertos@gmail.com", "usuarios$1234");
             mail.setAuth(authMail);
             mail.setHostName("smtp.googlemail.com");
             mail.setPort(465);
@@ -228,6 +232,12 @@ public class InitServletContext implements ServletContextListener {
             configuracionGeneral.setSmsConfig(sMSConfig);
             //</editor-fold>
 
+            //<editor-fold defaultstate="collapsed" desc="BITACORAS CONFIG">
+            BitacorasConfig bitacorasConfig = new BitacorasConfig();
+            bitacorasConfig.setMesesAPersistir(6);
+            configuracionGeneral.setBitacorasConfig(bitacorasConfig);
+
+            //</editor-fold>
             daoConfig.persist(configuracionGeneral);
 
             System.out.println("configuracion generales instaladas:");
@@ -243,11 +253,12 @@ public class InitServletContext implements ServletContextListener {
      */
     private void initDBPermissions() {
         //ESTRUCTURA DE ORGANIZACION DE SECCIONES
-        // com.{nombre negocio}.services.{seccion}.{modulo}.{menu}
-        ManagerPermiso managerPermiso = new ManagerPermiso();
-        ManagerMenu managerMenu = new ManagerMenu();
-        ManagerModulo managerModulo = new ManagerModulo();
-        ManagerSeccion managerSeccion = new ManagerSeccion();
+        // com.{nombre negocio}.services.{seccion}.{modulo}.{menu}        
+        DaoPermiso daoPermiso = new DaoPermiso();
+        DaoMenu daoMenu = new DaoMenu();
+        DaoModulo daoModulo = new DaoModulo();
+
+        DaoSeccion daoSeccion = new DaoSeccion();
 
         Package[] paquetes = Package.getPackages();
         List<String> paquetesServicios = Arrays.stream(paquetes)
@@ -260,16 +271,22 @@ public class InitServletContext implements ServletContextListener {
                 .map(seccion -> seccion.split("\\.")[3])
                 .collect(Collectors.toSet());
 
+        //para obtener los secciones, modulos, menus y permisos actuales
+        List<Permiso> permisosActuales = new ArrayList<>();
+        List<Modulo> modulosActuales = new ArrayList<>();
+        List<Menu> menusActuales = new ArrayList<>();
+        List<Seccion> seccionesActuales = new ArrayList<>();
         for (String nombreSeccion : nombreSecciones) {
             try {
                 String packageSeccionName = PACKAGE_SERVICES + "." + nombreSeccion;
 
-                Seccion seccion = managerSeccion.findOne(packageSeccionName);
+                Seccion seccion = daoSeccion.findOne(packageSeccionName);
                 if (seccion == null) {
                     seccion = new Seccion(packageSeccionName);
                     seccion.setNombre(nombreSeccion);
-                    managerSeccion.persist(seccion);
+                    daoSeccion.persist(seccion);
                 }
+                seccionesActuales.add(seccion);
 
                 List<String> modulosPackageNombre = Arrays.stream(paquetes)
                         .map(p -> p.getName())
@@ -280,41 +297,42 @@ public class InitServletContext implements ServletContextListener {
                         .filter(packageName -> !packageName.endsWith(nombreSeccion))
                         .map(n -> n.split("\\.")[4])
                         .collect(toList());
-                //<editor-fold defaultstate="collapsed" desc="MODULOS">
+                //<editor-fold defaultstate="collapsed" desc="MODULOS">                
                 for (String nombreModulo : modulosNombres) {
                     if (nombreModulo.equals("commons") || nombreModulo.equals("generales")) { //omitir paquete commons
                         continue;
                     }
                     try {
-                        String packageModuleName = packageSeccionName + "." + nombreModulo;
+                        String packageModuleName = seccion.getNombre() + "." + nombreModulo;
 
-                        Modulo module = managerModulo.findOne(packageModuleName);
+                        Modulo module = daoModulo.findOne(packageModuleName);
                         if (module == null) {
                             module = new Modulo(packageModuleName);
                             module.setNombre(nombreModulo);
                             module.setSeccion(seccion);
-                            managerModulo.persist(module);
+                            daoModulo.persist(module);
                         }
 
-                        List<String> menusNames = getClasesSimpleNameFromPackage2(packageModuleName);
+                        modulosActuales.add(module);
+                        List<String> menusNames = getClasesSimpleNameFromPackage2(packageSeccionName + "." + nombreModulo);
 
-                        //<editor-fold defaultstate="collapsed" desc="MENUS">
+                        //<editor-fold defaultstate="collapsed" desc="MENUS">                        
                         for (String menusName : menusNames) {
                             try {
                                 String packageClassName = packageModuleName + "." + menusName;
 
-                                Menu menu = managerMenu.findOne(packageClassName);
+                                Menu menu = daoMenu.findOne(packageClassName);
                                 if (menu == null) {
                                     menu = new Menu(packageClassName);
                                     menu.setNombre(this.generatePublicMenuName(menusName));
                                     menu.setModulo(module);
-                                    managerMenu.persist(menu);
+                                    daoMenu.persist(menu);
                                 }
-
-                                //<editor-fold defaultstate="collapsed" desc="ACCIONES">
+                                menusActuales.add(menu);
+                                //<editor-fold defaultstate="collapsed" desc="PERMISOS">
                                 List<Permiso> permisos = new ArrayList<>();
                                 try {
-                                    Class<?> clase = Class.forName(packageClassName);
+                                    Class<?> clase = Class.forName(seccion.getId() + "." + module.getNombre() + "." + menusName);
                                     Method[] methods = clase.getDeclaredMethods();
                                     for (Method method : methods) {
                                         try {
@@ -329,17 +347,16 @@ public class InitServletContext implements ServletContextListener {
                                             }
 
                                             String permisoId = menu.getId() + "." + method.getName();
-                                            Permiso permiso = managerPermiso.findOne(permisoId);
+                                            Permiso permiso = daoPermiso.findOne(permisoId);
 
                                             if (permiso == null) {
                                                 permiso = new Permiso(permisoId);
                                                 permiso.setNombre(generatePublicMenuName(method.getName()));
-                                                permisos.add(permiso);
                                                 permiso.setMenu(menu);
-
-                                                managerPermiso.persist(permiso);
+                                                daoPermiso.persist(permiso);
                                             }
-
+                                            permisos.add(permiso);
+                                            permisosActuales.add(permiso);
                                         } catch (Exception ex) {
                                             Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
                                         }
@@ -363,13 +380,62 @@ public class InitServletContext implements ServletContextListener {
             }
             //</editor-fold>
         }
+
+        try {
+            //<editor-fold defaultstate="collapsed" desc="PURGA DE ACCIONES, MENUS, MODULOS Y SECCIONES">
+            //verificar que no existan secciones, modulos, menus y permisos en base de datos, que no esten en los actuales generados
+            //permisos
+            List<Permiso> permisosEnDB = daoPermiso.findAll();
+            permisosEnDB.stream().filter((p) -> (!permisosActuales.contains(p))).forEach((p) -> {
+                try {
+                    daoPermiso.delete(p.getId());
+                } catch (Exception ex) {
+                    Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            //menus
+            List<Menu> menusEnDB = daoMenu.findAll();
+            menusEnDB.stream().filter((m) -> (!menusActuales.contains(m))).forEach((m) -> {
+                try {
+                    daoMenu.delete(m.getId());
+                } catch (Exception ex) {
+                    Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+
+            //modulos
+            List<Modulo> modulosEnDB = daoModulo.findAll();
+            modulosEnDB.stream().filter((m) -> (!modulosActuales.contains(m))).forEach((m) -> {
+                try {
+                    daoModulo.delete(m.getId());
+                } catch (Exception ex) {
+                    Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+
+            //verificar secciones
+            List<Seccion> seccionesEnDB = daoSeccion.findAll();
+            seccionesEnDB.stream().filter((seccion) -> (!seccionesActuales.contains(seccion))).forEach((seccion) -> {
+                try {
+                    daoSeccion.delete(seccion.getId());
+                } catch (Exception ex) {
+                    Logger.getLogger(InitServletContext.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            //</editor-fold>
+        } catch (Exception e) {
+        }
     }
 
     private List<String> getClasesSimpleNameFromPackage2(String packageName) {
         Reflections reflections = new Reflections(packageName);
-        Set<Class<? extends ServiceFacade>> subtypes = reflections.getSubTypesOf(ServiceFacade.class);
+        Set<Class<? extends ServiceBitacoraFacade>> subtypes = reflections.getSubTypesOf(ServiceBitacoraFacade.class);
 
-        return subtypes.stream().map(c -> c.getSimpleName()).collect(toList());
+        return subtypes.stream().filter(s -> {
+            return !s.getSimpleName().equals("ServiceFacadeCatalogMongo")
+                    && !s.getSimpleName().equals("ServiceFacadeCatalogSQL")
+                    && !s.getSimpleName().equals("ServiceFacade");
+        }).map(c -> c.getSimpleName()).collect(toList());
     }
 
     private String generatePublicMenuName(String menuName) {

@@ -17,18 +17,55 @@
 package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoPerfil;
+import com.machineAdmin.daos.cg.commons.DaoSQLFacade;
 import com.machineAdmin.entities.cg.admin.postgres.Perfil;
-import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
-import java.util.UUID;
+import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos;
+import com.machineAdmin.entities.cg.commons.Profundidad;
+import com.machineAdmin.managers.cg.commons.ManagerSQLCatalog;
+import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
+import com.machineAdmin.models.cg.ModelAsignarPermisos;
+import com.machineAdmin.models.cg.ModelPermisoAsignado;
+import java.util.ArrayList;
+import java.util.List;
+import static java.util.stream.Collectors.toList;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerPerfil extends ManagerSQLFacade<Perfil, UUID>{
-    
+public class ManagerPerfil extends ManagerSQLCatalog<Perfil, Integer> {
+
     public ManagerPerfil() {
         super(new DaoPerfil());
+    }   
+
+    public ManagerPerfil(DaoSQLFacade dao, String token, Profundidad profundidad) throws TokenInvalidoException, TokenExpiradoException {
+        super(dao, token, profundidad);
+    }
+   
+    @Override
+    public String nombreColeccionParaRegistros() {
+        return "perfiles";
     }
 
+    public void asignarPermisos(ModelAsignarPermisos model) throws Exception {
+        ManagerPerfilesPermisos managerPerfilesPermisos = new ManagerPerfilesPermisos();
+        //borrar los actuales
+        Long perfilId = model.getId();
+        Long idPerfil = model.getId();
+        managerPerfilesPermisos.deleteAll(managerPerfilesPermisos.stream()
+                .where( pp -> pp.getPerfilesPermisosPK().getPerfil().equals(idPerfil))
+                .select( pp -> pp.getPerfilesPermisosPK())
+                .collect(toList()));                
+        //ingresar los nuevos
+        List<PerfilesPermisos> permisosNuevos = new ArrayList<>();        
+        for (ModelPermisoAsignado permiso : model.getPermisos()) {
+            PerfilesPermisos pp = new PerfilesPermisos(perfilId, permiso.getId());
+            pp.setProfundidad(permiso.getProfundidad());
+            permisosNuevos.add(pp);                       
+        }
+        managerPerfilesPermisos.persistAll(permisosNuevos);
+        
+    }
 }

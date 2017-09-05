@@ -14,19 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.machineAdmin.utils;
-
-import org.mongojack.JacksonDBCollection;
+package com.machineAdmin.entities.cg.commons;
 
 /**
- *
+ * clase padre de entidades mongo con usuario creador para acceder con profundiad
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class UtilsBinnacle {
-        
-    public static void bitacorizar(String collectionName, Object objectToPersist){
-        JacksonDBCollection<Object, String> coll = JacksonDBCollection.wrap(UtilsDB.getCGCollection(collectionName), Object.class, String.class);
-        coll.insert(objectToPersist);
-    }        
-            
+public class EntityMongoCatalog extends EntityMongo {
+       
+    private Long usuarioCreador;
+
+    public Long getUsuarioCreador() {
+        return usuarioCreador;
+    }
+
+    public void setUsuarioCreador(Long usuarioCreador) {        
+        this.usuarioCreador = usuarioCreador;
+    }
+
 }

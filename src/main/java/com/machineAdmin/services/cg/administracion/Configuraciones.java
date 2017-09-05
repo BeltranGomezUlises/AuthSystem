@@ -18,14 +18,9 @@ package com.machineAdmin.services.cg.administracion;
 
 import com.machineAdmin.entities.cg.admin.mongo.CGConfig;
 import com.machineAdmin.managers.cg.admin.mongo.ManagerCGConfig;
-import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
-import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.responsesCG.Response;
 import com.machineAdmin.services.cg.commons.ServiceFacade;
-import com.machineAdmin.utils.UtilsConfig;
-import com.machineAdmin.utils.UtilsJWT;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
 
 /**
@@ -38,29 +33,10 @@ public class Configuraciones extends ServiceFacade<CGConfig, Object>{
     public Configuraciones() {
         super(new ManagerCGConfig());
     }
-
+   
     @Override
-    public Response modificar(String token, CGConfig t) {
-        return super.modificar(token, t);
+    public Response modificar( HttpServletRequest request, String token, CGConfig t) {
+        return super.modificar(request, token, t);
     }
-    
-    /**
-     * sirve para obtener las configuraciones generales del sistema
-     * @param token
-     * @return contenedor de configuraciones generales
-     */
-    @Path("/generales")
-    @GET    
-    public Response getConfigGenerales(@HeaderParam("Authorization") String token){
-        Response res = new Response();
-        try {            
-            UtilsJWT.validateSessionToken(token);
-            res.setData(UtilsConfig.getCGConfig());
-        } catch (TokenExpiradoException | TokenInvalidoException e) {
-            setInvalidTokenResponse(res);
-        } catch (Exception e) {
-            setErrorResponse(res, e);
-        }        
-        return res;
-    }
+        
 }

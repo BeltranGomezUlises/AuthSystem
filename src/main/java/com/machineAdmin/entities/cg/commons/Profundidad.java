@@ -17,7 +17,7 @@
 package com.machineAdmin.entities.cg.commons;
 
 /**
- *
+ * enumerador de las profundidades de acceso a entidades
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public enum Profundidad {

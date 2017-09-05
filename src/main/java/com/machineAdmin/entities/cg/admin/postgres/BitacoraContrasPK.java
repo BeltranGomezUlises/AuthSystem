@@ -16,31 +16,25 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
-import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Converter;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Embeddable
-@Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
 public class BitacoraContrasPK implements Serializable {
 
     @Basic(optional = false)
-    @NotNull
-    @Convert("uuidConverter")
+    @NotNull      
     @Column(name = "usuario")
-    private UUID usuario;
+    private Long usuario;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
@@ -50,16 +44,16 @@ public class BitacoraContrasPK implements Serializable {
     public BitacoraContrasPK() {
     }
 
-    public BitacoraContrasPK(UUID usuario, String contra) {
+    public BitacoraContrasPK(Long usuario, String contra) {
         this.usuario = usuario;
         this.contra = contra;
     }
 
-    public UUID getUsuario() {
+    public Long getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(UUID usuario) {
+    public void setUsuario(Long usuario) {
         this.usuario = usuario;
     }
 
@@ -73,9 +67,9 @@ public class BitacoraContrasPK implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 11 * hash + Objects.hashCode(this.usuario);
-        hash = 11 * hash + Objects.hashCode(this.contra);
+        int hash = 7;
+        hash = 31 * hash + Objects.hashCode(this.usuario);
+        hash = 31 * hash + Objects.hashCode(this.contra);
         return hash;
     }
 
@@ -99,10 +93,10 @@ public class BitacoraContrasPK implements Serializable {
         }
         return true;
     }
-
+       
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.BitacoraContrasPK[ usuario=" + usuario + ", contra=" + contra + " ]";
     }
-
+    
 }

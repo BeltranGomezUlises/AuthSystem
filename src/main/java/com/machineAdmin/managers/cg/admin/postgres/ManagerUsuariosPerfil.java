@@ -17,9 +17,13 @@
 package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPerfil;
+import com.machineAdmin.entities.cg.admin.postgres.Perfil;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil;
 import com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfilPK;
-import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import com.machineAdmin.managers.cg.commons.ManagerSQL;
+import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
+import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlUsuario;
 import com.machineAdmin.models.cg.ModelPerfilYHereda;
 import java.util.ArrayList;
@@ -31,31 +35,52 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerUsuariosPerfil extends  ManagerSQLFacade<UsuariosPerfil, UsuariosPerfilPK>{
-    
-    public ManagerUsuariosPerfil() {
+public class ManagerUsuariosPerfil extends ManagerSQL<UsuariosPerfil, UsuariosPerfilPK> {
+
+    public ManagerUsuariosPerfil(){
         super(new DaoUsuariosPerfil());
     }
 
+    public ManagerUsuariosPerfil(String token) throws TokenInvalidoException, TokenExpiradoException {
+        super(new DaoUsuariosPerfil(), token);
+    }
+       
     public void asignarPerfilesAlUsuario(ModelAsignarPerfilesAlUsuario modelo) throws Exception {
+        
+        if (modelo.getPerfiles().isEmpty()) {
+            throw new ParametroInvalidoException("No puede dejar un usuario sin ningun perfil");
+        }
+        
         //remover los perfiles actuales
         List<UsuariosPerfilPK> idsActuales = this.stream()
-                .filter( up -> up.getUsuariosPerfilPK().getUsuario().equals(UUID.fromString(modelo.getUserId())))
-                .map( up-> up.getUsuariosPerfilPK())
+                .filter(up -> up.getUsuariosPerfilPK().getUsuario().equals(modelo.getUserId()))
+                .map(up -> up.getUsuariosPerfilPK())
                 .collect(toList());
-        
-        this.deleteAll(idsActuales);
-                
+
+        dao.deleteAll(idsActuales);
+
         //asignar los perfiles del modelo
         List<UsuariosPerfil> usuariosPerfilNuevos = new ArrayList<>();
         UsuariosPerfil entidadRelacion;
         for (ModelPerfilYHereda perfil : modelo.getPerfiles()) {
-            entidadRelacion = new UsuariosPerfil(UUID.fromString(modelo.getUserId()), UUID.fromString(perfil.getPerfilId()));
+            entidadRelacion = new UsuariosPerfil(modelo.getUserId(), perfil.getPerfilId());
             entidadRelacion.setHereda(perfil.isHereda());
             usuariosPerfilNuevos.add(entidadRelacion);
         }
-        
-        this.persistAll(usuariosPerfilNuevos);
+
+        dao.persistAll(usuariosPerfilNuevos);
     }
-    
+
+    public List<Perfil> perfilesDeUsuario(UUID usuarioId) {
+        return dao.stream()
+                .where(up -> up.getUsuariosPerfilPK().getUsuario().equals(usuarioId))
+                .map(up -> up.getPerfil1())
+                .collect(toList());
+    }
+
+    @Override
+    public String nombreColeccionParaRegistros() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

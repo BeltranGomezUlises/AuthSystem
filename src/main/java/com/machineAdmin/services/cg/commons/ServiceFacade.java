@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.machineAdmin.services.cg.commons;
 
 import com.machineAdmin.entities.cg.commons.IEntity;
@@ -5,9 +21,11 @@ import com.machineAdmin.managers.cg.commons.ManagerFacade;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.models.cg.enums.Status;
-import com.machineAdmin.utils.UtilsJWT;
-import javax.ws.rs.Consumes;
+import static com.machineAdmin.utils.UtilsService.*;
+import com.machineAdmin.utils.UtilsAuditoria;
+import com.machineAdmin.utils.UtilsBitacora;
+import java.util.Date;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -15,38 +33,56 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Context;
 
 /**
+ * clase de servicios generales LCRUD para entidades que no requiere profundidad
+ * de acceso
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
- * @param <T> is a Entity that workw with de manager
- * @param <K> tipo de dato del identificador de la entidad manejada
+ * @param <T> entidad a manejar por esta clase servicio
+ * @param <K> tipo de dato de llave primaria de la entidad a menejar por esta
+ * clase servicio
  */
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-public class ServiceFacade<T extends IEntity, K> {
+public class ServiceFacade<T extends IEntity, K> extends ServiceBitacoraFacade<T, K> {
 
-    ManagerFacade<T, K> manager;
+    protected ManagerFacade<T, K> manager;
 
     public ServiceFacade(ManagerFacade<T, K> manager) {
         this.manager = manager;
     }
 
+    @Override
+    public final ManagerFacade<T, K> getManager() {
+        return manager;
+    }
+
     /**
      * proporciona el listado de las entidades de esta clase servicio
      *
+     * @param request contexto de peticion necesario para obtener datos como ip,
+     * sistema operativo y navegador del cliente
      * @param token token de sesion
      * @return reponse, con su campo data asignado con una lista de las
      * entidades de esta clase servicio
      */
-    @GET
-    public Response listar(@HeaderParam("Authorization") String token) {
+    @GET    
+    public Response listar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token) {
         Response response = new Response();
         try {
-            UtilsJWT.validateSessionToken(token);
+            this.manager.setToken(token);
             setOkResponse(response, manager.findAll(), "Entidades encontradas");
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Listar", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException e) {
+            }
+            //</editor-fold>
+            //<editor-fold defaultstate="collapsed" desc="AUDITAR">
+            UtilsAuditoria.ModeloAuditoria auditoria = new UtilsAuditoria.ModeloAuditoria(manager.getUsuario(), "Listar", null);
+            UtilsAuditoria.auditar(manager.nombreColeccionParaRegistros(), auditoria);
+            //</editor-fold>
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(response);
         } catch (Exception ex) {
@@ -59,18 +95,29 @@ public class ServiceFacade<T extends IEntity, K> {
      * obtiene una entidad en particular por su identificador de esta clase
      * servicio
      *
+     * @param request contexto de peticion necesario para obtener datos como ip,
+     * sistema operativo y navegador del cliente
      * @param token token de sesion
      * @param id identificador de la entidad buscada
      * @return response, con su campo data asignado con la entidad buscada
      */
     @GET
     @Path("/{id}")
-    public Response obtener(@HeaderParam("Authorization") String token, @PathParam("id") String id) {
+    public Response detalle(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, @PathParam("id") String id) {
         Response response = new Response();
         try {
-            UtilsJWT.validateSessionToken(token);
+            this.manager.setToken(token);
             response.setData(manager.findOne(manager.stringToKey(id)));
             response.setMessage("Entidad encontrada");
+
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Detalle", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException e) {
+            }
+
+            //</editor-fold>
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
         } catch (Exception e) {
@@ -82,16 +129,28 @@ public class ServiceFacade<T extends IEntity, K> {
     /**
      * persiste la entidad de esta clase servicio en base de datos
      *
+     * @param request contexto de peticion necesario para obtener datos como ip,
+     * sistema operativo y navegador del cliente
      * @param token token de sesion
      * @param t entidad a persistir en base de datos
      * @return response con el estatus y el mensaje
      */
     @POST
-    public Response alta(@HeaderParam("Authorization") String token, T t) {
+    public Response alta(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
         try {
+            this.manager.setToken(token);
             response.setData(manager.persist(t));
             response.setMessage("Entidad persistida");
+
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Alta", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException e) {
+            }
+
+            //</editor-fold>
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
         } catch (Exception e) {
@@ -104,18 +163,29 @@ public class ServiceFacade<T extends IEntity, K> {
      * actualiza la entidad proporsionada a su equivalente en base de datos,
      * tomando como referencia su identificador
      *
+     * @param request contexto de peticion necesario para obtener datos como ip,
+     * sistema operativo y navegador del cliente
      * @param token token de sesion
      * @param t entidad con los datos actualizados
      * @return Response, en data asignado con la entidad que se actualizó
      */
     @PUT
-    public Response modificar(@HeaderParam("Authorization") String token, T t) {
+    public Response modificar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
         try {
-            UtilsJWT.validateSessionToken(token);
+            this.manager.setToken(token);
             manager.update(t);
             response.setData(t);
             response.setMessage("Entidad actualizada");
+
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException e) {
+            }
+
+            //</editor-fold>    
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
         } catch (Exception e) {
@@ -127,17 +197,28 @@ public class ServiceFacade<T extends IEntity, K> {
     /**
      * eliminar la entidad proporsionada
      *
+     * @param request contexto de peticion necesario para obtener datos como ip,
+     * sistema operativo y navegador del cliente
      * @param token token de sesion
      * @param t entidad proporsionada
      * @return
      */
     @DELETE
-    public Response eliminar(@HeaderParam("Authorization") String token, T t) {
+    public Response eliminar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, T t) {
         Response response = new Response();
         try {
-            UtilsJWT.validateSessionToken(token);
+            this.manager.setToken(token);
             manager.delete((K) t.getId());
             response.setMessage("Entidad eliminada");
+
+            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
+            try {
+                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Eliminar", request);
+                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
+            } catch (UnsupportedOperationException e) {
+            }
+            //</editor-fold>
+
         } catch (TokenExpiradoException | TokenInvalidoException ex) {
             setInvalidTokenResponse(response);
         } catch (Exception e) {
@@ -146,138 +227,4 @@ public class ServiceFacade<T extends IEntity, K> {
         return response;
     }
 
-    /**
-     * asigna al modelo response, la pila de causas del error de la exception e
-     *
-     * @param response response a asignar la pila de causas
-     * @param e la exception lanzada
-     */
-    public static final void setCauseMessage(Response response, Throwable e) {
-        String anterior = response.getMeta().getDevMessage();
-        if (anterior == null) {
-            response.setDevMessage("CAUSE: " + e.getMessage());
-        } else {
-            response.setDevMessage(response.getMeta().getDevMessage() + " CAUSE: " + e.getMessage());
-        }
-        if (e.getCause() != null) {
-            setCauseMessage(response, e.getCause());
-        }
-    }
-
-    /**
-     * asigna a response el estatus y el mensaje de un token invalido, se
-     * utiliza cuando se lanzá una exception de tipo TokenInvalidoException
-     *
-     * @param response res
-     */
-    public static final void setInvalidTokenResponse(Response response) {
-        response.setStatus(Status.WARNING);
-        response.setDevMessage("Token inválido");
-    }
-
-    /**
-     * asignar a response el estatus WARNING y los mensajes proporcionados
-     *
-     * @param res modelo response generico a asignar valores
-     * @param message mensaje para el usuario
-     * @param devMessage mensaje para el desarrollador
-     */
-    public static final void setWarningResponse(Response res, String message, String devMessage) {
-        res.setStatus(Status.WARNING);
-        res.setMessage(message);
-        res.setDevMessage(devMessage);
-    }
-
-    /**
-     * asignar a response el estatus WARNING y el mensaje proporsionado
-     *
-     * @param res modelo response generico a asignar valores
-     * @param devMessage mensaje para el desarrollador
-     */
-    public static final void setWarningResponse(Response res, String devMessage) {
-        res.setStatus(Status.WARNING);
-        res.setDevMessage(devMessage);
-    }
-
-    /**
-     * asignar a response el estatus ERROR y el mensaje proporsionado para el
-     * usuario
-     *
-     * @param res modelo response generico a asignar valores
-     * @param err exception lanzada
-     * @param message mensaje para el usuario
-     */
-    public static final void setErrorResponse(Response res, Throwable err, String message) {
-        res.setStatus(Status.ERROR);
-        setCauseMessage(res, err);
-        res.setMessage(message);
-    }
-
-    /**
-     * asignar a response el estatus ERROR asi como un mensaje generico
-     *
-     * @param res modelo response generico a asignar valores
-     * @param err exception lanzada
-     */
-    public static final void setErrorResponse(Response res, Throwable err) {
-        res.setStatus(Status.ERROR);
-        res.setMessage("Existió un error de programación, consultar con el administrador del sistema");
-        setCauseMessage(res, err);
-
-    }
-
-    /**
-     * asigna a response el estatus OK y los mensajes proporcionados
-     *
-     * @param res modelo response generico
-     * @param message
-     * @param devMessage
-     */
-    public static final void setOkResponse(Response res, String message, String devMessage) {
-        res.setStatus(Status.OK);
-        res.setMessage(message);
-        res.setDevMessage(devMessage);
-    }
-
-    /**
-     * asigna a response el estatus OK mas los mensajes proporcionados, ademas
-     * de poner en metadata el objeto data proporsionado
-     *
-     * @param res
-     * @param data
-     * @param message
-     * @param devMessage
-     */
-    public static final void setOkResponse(Response res, Object data, String message, String devMessage) {
-        res.setStatus(Status.OK);
-        res.setData(data);
-        res.setMessage(message);
-        res.setDevMessage(devMessage);
-    }
-
-    /**
-     * asignar a response el estatus OK, el metadata y un mensaje para el
-     * desarrollador
-     *
-     * @param res
-     * @param data
-     * @param devMessage
-     */
-    public static final void setOkResponse(Response res, Object data, String devMessage) {
-        res.setStatus(Status.OK);
-        res.setData(data);
-        res.setDevMessage(devMessage);
-    }
-
-    /**
-     * asigna solo le estatus OK a response y le añade el mensaje para el
-     * desarrollador
-     *
-     * @param res
-     * @param devMessage
-     */
-    public static final void setOkResponse(Response res, String devMessage) {
-        res.setStatus(Status.OK);
-        res.setDevMessage(devMessage);
-    }
 }

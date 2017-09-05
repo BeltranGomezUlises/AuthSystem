@@ -16,10 +16,10 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
-import com.machineAdmin.entities.cg.commons.IEntity;
+import com.machineAdmin.entities.cg.commons.EntitySQL;
 import com.machineAdmin.entities.cg.commons.Profundidad;
 import java.io.Serializable;
-import java.util.UUID;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -30,6 +30,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -41,11 +43,14 @@ import javax.persistence.Table;
     @NamedQuery(name = "PerfilesPermisos.findAll", query = "SELECT p FROM PerfilesPermisos p")
     , @NamedQuery(name = "PerfilesPermisos.findByPermiso", query = "SELECT p FROM PerfilesPermisos p WHERE p.perfilesPermisosPK.permiso = :permiso")
     , @NamedQuery(name = "PerfilesPermisos.findByProfundidad", query = "SELECT p FROM PerfilesPermisos p WHERE p.profundidad = :profundidad")})
-public class PerfilesPermisos implements Serializable, IEntity {
+public class PerfilesPermisos extends EntitySQL implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected PerfilesPermisosPK perfilesPermisosPK;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 2147483647)
     @Column(name = "profundidad")
     @Enumerated(EnumType.STRING)
     private Profundidad profundidad;
@@ -63,7 +68,12 @@ public class PerfilesPermisos implements Serializable, IEntity {
         this.perfilesPermisosPK = perfilesPermisosPK;
     }
 
-    public PerfilesPermisos(UUID perfil, String permiso) {
+    public PerfilesPermisos(PerfilesPermisosPK perfilesPermisosPK, Profundidad profundidad) {
+        this.perfilesPermisosPK = perfilesPermisosPK;
+        this.profundidad = profundidad;
+    }
+
+    public PerfilesPermisos(Long perfil, String permiso) {
         this.perfilesPermisosPK = new PerfilesPermisosPK(perfil, permiso);
     }
 
@@ -113,7 +123,10 @@ public class PerfilesPermisos implements Serializable, IEntity {
             return false;
         }
         PerfilesPermisos other = (PerfilesPermisos) object;
-        return !((this.perfilesPermisosPK == null && other.perfilesPermisosPK != null) || (this.perfilesPermisosPK != null && !this.perfilesPermisosPK.equals(other.perfilesPermisosPK)));
+        if ((this.perfilesPermisosPK == null && other.perfilesPermisosPK != null) || (this.perfilesPermisosPK != null && !this.perfilesPermisosPK.equals(other.perfilesPermisosPK))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -125,5 +138,5 @@ public class PerfilesPermisos implements Serializable, IEntity {
     public Object getId() {
         return perfilesPermisosPK;
     }
-
+    
 }

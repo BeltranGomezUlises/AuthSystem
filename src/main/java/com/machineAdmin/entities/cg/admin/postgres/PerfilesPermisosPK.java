@@ -16,31 +16,24 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
-import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.io.Serializable;
-import java.util.Objects;
-import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Converter;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Embeddable
-@Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
 public class PerfilesPermisosPK implements Serializable {
 
     @Basic(optional = false)
-    @NotNull
-    @Convert("uuidConverter")
+    @NotNull    
     @Column(name = "perfil")
-    private UUID perfil;
+    private Long perfil;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
@@ -50,16 +43,16 @@ public class PerfilesPermisosPK implements Serializable {
     public PerfilesPermisosPK() {
     }
 
-    public PerfilesPermisosPK(UUID perfil, String permiso) {
+    public PerfilesPermisosPK(Long perfil, String permiso) {
         this.perfil = perfil;
         this.permiso = permiso;
     }
 
-    public UUID getPerfil() {
+    public Long getPerfil() {
         return perfil;
     }
 
-    public void setPerfil(UUID perfil) {
+    public void setPerfil(Long perfil) {
         this.perfil = perfil;
     }
 
@@ -73,28 +66,23 @@ public class PerfilesPermisosPK implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.perfil);
-        hash = 97 * hash + Objects.hashCode(this.permiso);
+        int hash = 0;
+        hash += (perfil != null ? perfil.hashCode() : 0);
+        hash += (permiso != null ? permiso.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof PerfilesPermisosPK)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        PerfilesPermisosPK other = (PerfilesPermisosPK) object;
+        if ((this.perfil == null && other.perfil != null) || (this.perfil != null && !this.perfil.equals(other.perfil))) {
             return false;
         }
-        final PerfilesPermisosPK other = (PerfilesPermisosPK) obj;
-        if (!Objects.equals(this.permiso, other.permiso)) {
-            return false;
-        }
-        if (!Objects.equals(this.perfil, other.perfil)) {
+        if ((this.permiso == null && other.permiso != null) || (this.permiso != null && !this.permiso.equals(other.permiso))) {
             return false;
         }
         return true;
@@ -104,5 +92,5 @@ public class PerfilesPermisosPK implements Serializable {
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisosPK[ perfil=" + perfil + ", permiso=" + permiso + " ]";
     }
-
+    
 }

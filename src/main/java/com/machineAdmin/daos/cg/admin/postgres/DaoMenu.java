@@ -27,7 +27,7 @@ import com.machineAdmin.utils.UtilsDB;
 public class DaoMenu extends DaoSQLFacade<Menu, String>{
 
     public DaoMenu() {
-        super(UtilsDB.getEMFactoryCG(), Menu.class, String.class, "menus");
+        super(UtilsDB.getEMFactoryCG(), Menu.class, String.class);
     }
 
 }

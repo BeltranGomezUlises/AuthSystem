@@ -14,12 +14,13 @@
         <class>com.machineAdmin.entities.cg.admin.postgres.Usuario</class>
         <class>com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil</class>
         <class>com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos</class>
+        <class>com.machineAdmin.entities.cg.admin.postgres.SqlPrueba</class>
         <properties>
             <!-- jdbc -->
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://192.168.10.8:5532/cg"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://192.168.10.10:5532/cg"/>
             <property name="javax.persistence.jdbc.user" value="postgres"/>
-            <property name="javax.persistence.jdbc.password" value="postgres.90Y9B8yh$"/>
+            <property name="javax.persistence.jdbc.password" value="postgres.90Y9B8yh$123"/>
             <!-- eclipse link -->
             <property name="eclipselink.ddl-generation" value="create-tables"/>
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>
@@ -32,9 +33,9 @@
         <properties>
             <!-- jdbc -->
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://192.168.10.8:5532/machineAdmin"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://192.168.10.10:5532/machineAdmin"/>
             <property name="javax.persistence.jdbc.user" value="postgres"/>
-            <property name="javax.persistence.jdbc.password" value="postgres.90Y9B8yh$"/>
+            <property name="javax.persistence.jdbc.password" value="postgres.90Y9B8yh$123"/>
             <!-- eclipse link -->
             <property name="eclipselink.ddl-generation" value="create-tables"/>
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>

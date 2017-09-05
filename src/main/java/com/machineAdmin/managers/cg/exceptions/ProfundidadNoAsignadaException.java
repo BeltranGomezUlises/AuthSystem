@@ -20,10 +20,10 @@ package com.machineAdmin.managers.cg.exceptions;
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class AccessDenied extends Exception{
+public class ProfundidadNoAsignadaException extends Exception{
 
-    public AccessDenied(String message) {
-        super(message);
+    public ProfundidadNoAsignadaException() {
+        super("No asignó profundidad de acceso al manejador");        
     }
-    
+       
 }

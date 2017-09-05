@@ -16,11 +16,15 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -30,14 +34,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.machineAdmin.entities.cg.commons.IEntity;
-import com.machineAdmin.entities.cg.commons.UUIDConverter;
-import java.util.Objects;
-import java.util.UUID;
-import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Converter;
 
 /**
  *
@@ -48,46 +44,29 @@ import org.eclipse.persistence.annotations.Converter;
 @NamedQueries({
     @NamedQuery(name = "GrupoPerfiles.findAll", query = "SELECT g FROM GrupoPerfiles g")
     , @NamedQuery(name = "GrupoPerfiles.findByNombre", query = "SELECT g FROM GrupoPerfiles g WHERE g.nombre = :nombre")
-    , @NamedQuery(name = "GrupoPerfiles.findByDescripcoin", query = "SELECT g FROM GrupoPerfiles g WHERE g.descripcoin = :descripcoin")})
-@Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class GrupoPerfiles implements Serializable, IEntity {
+    , @NamedQuery(name = "GrupoPerfiles.findByDescripcion", query = "SELECT g FROM GrupoPerfiles g WHERE g.descripcion = :descripcion")})
+public class GrupoPerfiles extends EntitySQLCatalog implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Convert("uuidConverter")
-    @Column(name = "id")
-    private UUID id;
     @Size(max = 2147483647)
     @Column(name = "nombre")
     private String nombre;
     @Size(max = 2147483647)
-    @Column(name = "descripcoin")
-    private String descripcoin;
+    @Column(name = "descripcion")
+    private String descripcion;       
+
     @JoinTable(name = "perfil_grupo_perfiles", joinColumns = {
         @JoinColumn(name = "grupo_perfiles", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "perfil", referencedColumnName = "id")})
     @ManyToMany
     private List<Perfil> perfilList;
 
-    public GrupoPerfiles() {
-        this.id = UUID.randomUUID();
+    public GrupoPerfiles() {        
     }
 
-    public GrupoPerfiles(UUID id) {
+    public GrupoPerfiles(Long id) {
         this.id = id;
-    }
-
-    @Override
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
+    }   
 
     public String getNombre() {
         return nombre;
@@ -97,14 +76,14 @@ public class GrupoPerfiles implements Serializable, IEntity {
         this.nombre = nombre;
     }
 
-    public String getDescripcoin() {
-        return descripcoin;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setDescripcoin(String descripcoin) {
-        this.descripcoin = descripcoin;
-    }
-
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }  
+    
     @JsonIgnore
     public List<Perfil> getPerfilList() {
         return perfilList;
@@ -116,24 +95,19 @@ public class GrupoPerfiles implements Serializable, IEntity {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 23 * hash + Objects.hashCode(this.id);
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof GrupoPerfiles)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final GrupoPerfiles other = (GrupoPerfiles) obj;
-        if (!Objects.equals(this.id, other.id)) {
+        GrupoPerfiles other = (GrupoPerfiles) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;

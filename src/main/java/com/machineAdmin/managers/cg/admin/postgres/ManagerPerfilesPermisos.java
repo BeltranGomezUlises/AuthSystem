@@ -17,52 +17,23 @@
 package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoPerfilesPermisos;
-import com.machineAdmin.daos.cg.exceptions.ConstraintException;
-import com.machineAdmin.daos.cg.exceptions.SQLPersistenceException;
 import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos;
 import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisosPK;
-import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
-import com.machineAdmin.models.cg.ModelAsignarPermisos;
-import com.machineAdmin.models.cg.ModelPermisoAsignado;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import static java.util.stream.Collectors.toList;
+import com.machineAdmin.managers.cg.commons.ManagerSQL;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerPerfilesPermisos extends ManagerSQLFacade<PerfilesPermisos, PerfilesPermisosPK>{
-    
+public class ManagerPerfilesPermisos extends ManagerSQL<PerfilesPermisos, PerfilesPermisosPK>{
+
     public ManagerPerfilesPermisos() {
         super(new DaoPerfilesPermisos());
     }
-    
-    public void asignarPermisosAlPerfil(ModelAsignarPermisos model) throws SQLPersistenceException, ConstraintException, Exception{               
-        ManagerPerfil managerPerfil = new ManagerPerfil();
-        ManagerPermiso managerPermiso = new ManagerPermiso();
-              
-        //borrar las relaciones actuales                
-        List<PerfilesPermisosPK> permisosDelPerfilPk = this.stream()
-                .filter( p -> p.getPerfilesPermisosPK().getPerfil().equals(UUID.fromString(model.getId())))
-                .map( p -> p.getPerfilesPermisosPK())
-                .collect(toList());
-        
-        this.deleteAll(permisosDelPerfilPk);
-        
-        List<PerfilesPermisos> perfilesPermisos = new ArrayList<>();
-        PerfilesPermisos perfilesPermisosRelacion;
-        //asignar las nuevas relaciones        
-        for (ModelPermisoAsignado permiso : model.getPermisos()) {
-            perfilesPermisosRelacion = new PerfilesPermisos(UUID.fromString(model.getId()),permiso.getId());                                                            
-            perfilesPermisosRelacion.setProfundidad(permiso.getProfundidad());                       
-            perfilesPermisos.add(perfilesPermisosRelacion);
-        }                                                   
-        this.persistAll(perfilesPermisos);
-        
+
+    @Override
+    public String nombreColeccionParaRegistros() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-        
-    
     
 }

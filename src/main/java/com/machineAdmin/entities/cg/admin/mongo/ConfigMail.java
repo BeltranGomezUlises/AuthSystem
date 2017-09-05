@@ -5,14 +5,14 @@
  */
 package com.machineAdmin.entities.cg.admin.mongo;
 
-import com.machineAdmin.entities.cg.commons.EntityMongo;
+import com.machineAdmin.entities.cg.commons.EntityMongoCatalog;
 
 /**
- *
+ * entidad de configuracion de correo para su uso por el sistema
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
- * configuracion de correo para su uso por el sistema
+ * 
  */
-public class ConfigMail extends EntityMongo {
+public class ConfigMail extends EntityMongoCatalog {
 
     private String hostName;
     private int port;

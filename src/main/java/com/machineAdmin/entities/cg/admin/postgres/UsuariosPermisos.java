@@ -16,10 +16,9 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
-import com.machineAdmin.entities.cg.commons.IEntity;
+import com.machineAdmin.entities.cg.commons.EntitySQL;
 import com.machineAdmin.entities.cg.commons.Profundidad;
 import java.io.Serializable;
-import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -34,19 +33,17 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Entity
 @Table(name = "usuarios_permisos")
-
 @NamedQueries({
     @NamedQuery(name = "UsuariosPermisos.findAll", query = "SELECT u FROM UsuariosPermisos u")
     , @NamedQuery(name = "UsuariosPermisos.findByPermiso", query = "SELECT u FROM UsuariosPermisos u WHERE u.usuariosPermisosPK.permiso = :permiso")
     , @NamedQuery(name = "UsuariosPermisos.findByProfundidad", query = "SELECT u FROM UsuariosPermisos u WHERE u.profundidad = :profundidad")})
-public class UsuariosPermisos implements Serializable, IEntity {
+public class UsuariosPermisos extends EntitySQL implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -76,7 +73,7 @@ public class UsuariosPermisos implements Serializable, IEntity {
         this.profundidad = profundidad;
     }
 
-    public UsuariosPermisos(UUID usuario, String permiso) {
+    public UsuariosPermisos(Long usuario, String permiso) {
         this.usuariosPermisosPK = new UsuariosPermisosPK(usuario, permiso);
     }
 
@@ -126,7 +123,10 @@ public class UsuariosPermisos implements Serializable, IEntity {
             return false;
         }
         UsuariosPermisos other = (UsuariosPermisos) object;
-        return !((this.usuariosPermisosPK == null && other.usuariosPermisosPK != null) || (this.usuariosPermisosPK != null && !this.usuariosPermisosPK.equals(other.usuariosPermisosPK)));
+        if ((this.usuariosPermisosPK == null && other.usuariosPermisosPK != null) || (this.usuariosPermisosPK != null && !this.usuariosPermisosPK.equals(other.usuariosPermisosPK))) {
+            return false;
+        }
+        return true;
     }
 
     @Override

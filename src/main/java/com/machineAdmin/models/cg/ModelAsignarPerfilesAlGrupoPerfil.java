@@ -24,22 +24,22 @@ import java.util.List;
  */
 public class ModelAsignarPerfilesAlGrupoPerfil {
 
-    private String grupoPerfilId;
-    private List<String> perfilesIds;
+    private Integer grupoPerfilId;
+    private List<Integer> perfilesIds;
 
-    public String getGrupoPerfilId() {
+    public Integer getGrupoPerfilId() {
         return grupoPerfilId;
     }
 
-    public void setGrupoPerfilId(String grupoPerfilId) {
+    public void setGrupoPerfilId(Integer grupoPerfilId) {
         this.grupoPerfilId = grupoPerfilId;
     }
 
-    public List<String> getPerfilesIds() {
+    public List<Integer> getPerfilesIds() {
         return perfilesIds;
     }
 
-    public void setPerfilesIds(List<String> perfilesIds) {
+    public void setPerfilesIds(List<Integer> perfilesIds) {
         this.perfilesIds = perfilesIds;
     }
 

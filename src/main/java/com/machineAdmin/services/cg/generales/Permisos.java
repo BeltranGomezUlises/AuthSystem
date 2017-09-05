@@ -21,8 +21,9 @@ import com.machineAdmin.managers.cg.admin.postgres.ManagerSeccion;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import static com.machineAdmin.services.cg.commons.ServiceFacade.*;
 import com.machineAdmin.utils.UtilsJWT;
+import static com.machineAdmin.utils.UtilsService.setErrorResponse;
+import static com.machineAdmin.utils.UtilsService.setInvalidTokenResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -52,9 +53,9 @@ public class Permisos {
     public Response getPermisosDisponibles(@HeaderParam("Authorization") String token) {
         Response res = new Response();
         try {
-            UtilsJWT.validateSessionToken(token);
             ManagerSeccion managerSeccion = new ManagerSeccion();
-            res.setData(managerSeccion.findAll());
+            managerSeccion.setToken(token);
+            res.setData(managerSeccion.findAll());            
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
         } catch (Exception ex) {
@@ -63,6 +64,11 @@ public class Permisos {
         return res;
     }
 
+    /**
+     * obtiene las profundides permitidas para asignar
+     * @param token token de sesion
+     * @return  en data, la lista de profundidaes disponibles
+     */
     @GET
     @Path("/profundidades")
     public Response getProfundidades(@HeaderParam("Authorization") String token){
@@ -73,8 +79,6 @@ public class Permisos {
             res.setDevMessage("profundidades disponibles para los permisos");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             setInvalidTokenResponse(res);
-        } catch (Exception ex) {
-            setErrorResponse(res, ex);
         }
         return res;
     }

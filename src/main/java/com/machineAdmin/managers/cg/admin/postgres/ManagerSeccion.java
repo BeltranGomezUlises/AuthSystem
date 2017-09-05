@@ -18,16 +18,27 @@ package com.machineAdmin.managers.cg.admin.postgres;
 
 import com.machineAdmin.daos.cg.admin.postgres.DaoSeccion;
 import com.machineAdmin.entities.cg.admin.postgres.Seccion;
-import com.machineAdmin.managers.cg.commons.ManagerSQLFacade;
+import com.machineAdmin.managers.cg.commons.ManagerSQL;
+import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
-public class ManagerSeccion extends ManagerSQLFacade<Seccion, String> {
-    
+public class ManagerSeccion extends ManagerSQL<Seccion, String> {
+
     public ManagerSeccion() {
         super(new DaoSeccion());
     }
-    
+
+    public ManagerSeccion(String token) throws TokenInvalidoException, TokenExpiradoException {
+        super(new DaoSeccion(), token);
+    }
+        
+    @Override
+    public String nombreColeccionParaRegistros() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

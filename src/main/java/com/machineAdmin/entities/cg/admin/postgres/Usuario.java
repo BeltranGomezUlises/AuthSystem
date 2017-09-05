@@ -16,14 +16,10 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.machineAdmin.entities.cg.commons.IEntity;
-import com.machineAdmin.entities.cg.commons.UUIDConverter;
+import com.machineAdmin.entities.cg.commons.EntitySQLCatalog;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -37,8 +33,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Converter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 
 /**
  *
@@ -57,8 +54,7 @@ import org.eclipse.persistence.annotations.Converter;
     , @NamedQuery(name = "Usuario.findByNumeroIntentosLogin", query = "SELECT u FROM Usuario u WHERE u.numeroIntentosLogin = :numeroIntentosLogin")
     , @NamedQuery(name = "Usuario.findByBloqueado", query = "SELECT u FROM Usuario u WHERE u.bloqueado = :bloqueado")
     , @NamedQuery(name = "Usuario.findByBloqueadoHastaFecha", query = "SELECT u FROM Usuario u WHERE u.bloqueadoHastaFecha = :bloqueadoHastaFecha")})
-@Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
-public class Usuario implements Serializable, IEntity {
+public class Usuario extends EntitySQLCatalog implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Size(max = 2147483647)
@@ -74,23 +70,18 @@ public class Usuario implements Serializable, IEntity {
     @Column(name = "contra")
     private String contra;
     @Column(name = "inhabilitado")
-    private Boolean inhabilitado;
+    private boolean inhabilitado;
     @Column(name = "fecha_ultimo_intento_login")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaUltimoIntentoLogin;
     @Column(name = "numero_intentos_login")
-    private Integer numeroIntentosLogin;
+    private int numeroIntentosLogin;
     @Column(name = "bloqueado")
-    private Boolean bloqueado;
+    private boolean bloqueado;
     @Column(name = "bloqueado_hasta_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date bloqueadoHastaFecha;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Convert("uuidConverter")
-    @Column(name = "id")
-    private UUID id;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
     private List<BitacoraContras> bitacoraContrasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
@@ -99,13 +90,10 @@ public class Usuario implements Serializable, IEntity {
     private List<UsuariosPerfil> usuariosPerfilList;
 
     public Usuario() {
-        this.bloqueado = false;
-        this.inhabilitado = false;
-        this.id = UUID.randomUUID();
-        this.numeroIntentosLogin = 0;
+        id = 0l;        
     }
 
-    public Usuario(UUID id) {
+    public Usuario(Long id) {
         this.id = id;
     }
 
@@ -180,16 +168,7 @@ public class Usuario implements Serializable, IEntity {
     public void setBloqueadoHastaFecha(Date bloqueadoHastaFecha) {
         this.bloqueadoHastaFecha = bloqueadoHastaFecha;
     }
-
-    @Override
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
+    
     @JsonIgnore
     public List<BitacoraContras> getBitacoraContrasList() {
         return bitacoraContrasList;
@@ -198,7 +177,7 @@ public class Usuario implements Serializable, IEntity {
     public void setBitacoraContrasList(List<BitacoraContras> bitacoraContrasList) {
         this.bitacoraContrasList = bitacoraContrasList;
     }
-
+    
     @JsonIgnore
     public List<UsuariosPermisos> getUsuariosPermisosList() {
         return usuariosPermisosList;
@@ -219,33 +198,27 @@ public class Usuario implements Serializable, IEntity {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + Objects.hashCode(this.id);
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Usuario)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        Usuario other = (Usuario) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
-        final Usuario other = (Usuario) obj;
-        return Objects.equals(this.id, other.id);
+        return true;
     }
 
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.Usuario[ id=" + id + " ]";
-    }
-
-    public void aumentarNumeroDeIntentosLogin() {
-        this.numeroIntentosLogin++;
     }
 
 }

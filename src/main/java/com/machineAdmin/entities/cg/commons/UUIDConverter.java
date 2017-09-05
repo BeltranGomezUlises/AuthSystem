@@ -24,7 +24,7 @@ import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.sessions.Session;
 
 /**
- *
+ * convertidor de tipo de dato UUID a cadena para poder serializar a uuid en base de datos 
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class UUIDConverter implements Converter {

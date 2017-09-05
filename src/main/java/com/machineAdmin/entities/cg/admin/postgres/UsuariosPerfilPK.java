@@ -16,89 +16,79 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
-import com.machineAdmin.entities.cg.commons.UUIDConverter;
 import java.io.Serializable;
-import java.util.Objects;
-import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
-import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Converter;
 
 /**
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Embeddable
-@Converter(name = "uuidConverter", converterClass = UUIDConverter.class)
 public class UsuariosPerfilPK implements Serializable {
 
     @Basic(optional = false)
-    @NotNull
-    @Convert("uuidConverter")
+    @NotNull    
     @Column(name = "usuario")
-    private UUID usuario;
+    private Long usuario;
     @Basic(optional = false)
-    @NotNull
-    @Convert("uuidConverter")
+    @NotNull    
     @Column(name = "perfil")
-    private UUID perfil;
+    private Long perfil;
 
     public UsuariosPerfilPK() {
     }
 
-    public UsuariosPerfilPK(UUID usuario, UUID perfil) {
+    public UsuariosPerfilPK(Long usuario, Long perfil) {
         this.usuario = usuario;
         this.perfil = perfil;
     }
 
-    public UUID getUsuario() {
+    public Long getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(UUID usuario) {
+    public void setUsuario(Long usuario) {
         this.usuario = usuario;
     }
 
-    public UUID getPerfil() {
+    public Long getPerfil() {
         return perfil;
     }
 
-    public void setPerfil(UUID perfil) {
+    public void setPerfil(Long perfil) {
         this.perfil = perfil;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + Objects.hashCode(this.usuario);
-        hash = 67 * hash + Objects.hashCode(this.perfil);
+        int hash = 0;
+        hash += (usuario != null ? usuario.hashCode() : 0);
+        hash += (perfil != null ? perfil.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof UsuariosPerfilPK)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        UsuariosPerfilPK other = (UsuariosPerfilPK) object;
+        if ((this.usuario == null && other.usuario != null) || (this.usuario != null && !this.usuario.equals(other.usuario))) {
             return false;
         }
-        final UsuariosPerfilPK other = (UsuariosPerfilPK) obj;
-        if (!Objects.equals(this.usuario, other.usuario)) {
+        if ((this.perfil == null && other.perfil != null) || (this.perfil != null && !this.perfil.equals(other.perfil))) {
             return false;
         }
-        return Objects.equals(this.perfil, other.perfil);
+        return true;
     }
 
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfilPK[ usuario=" + usuario + ", perfil=" + perfil + " ]";
     }
-
+    
 }

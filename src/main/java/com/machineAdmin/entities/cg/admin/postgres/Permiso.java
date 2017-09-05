@@ -16,6 +16,7 @@
  */
 package com.machineAdmin.entities.cg.admin.postgres;
 
+import com.machineAdmin.entities.cg.commons.EntitySQL;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -31,12 +32,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.machineAdmin.entities.cg.commons.IEntity;
-import java.util.Objects;
 
 /**
  *
@@ -48,8 +44,7 @@ import java.util.Objects;
     @NamedQuery(name = "Permiso.findAll", query = "SELECT p FROM Permiso p")
     , @NamedQuery(name = "Permiso.findById", query = "SELECT p FROM Permiso p WHERE p.id = :id")
     , @NamedQuery(name = "Permiso.findByNombre", query = "SELECT p FROM Permiso p WHERE p.nombre = :nombre")})
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class Permiso implements Serializable, IEntity{
+public class Permiso extends EntitySQL implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -66,7 +61,7 @@ public class Permiso implements Serializable, IEntity{
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "permiso1")
     private List<UsuariosPermisos> usuariosPermisosList;
     @JoinColumn(name = "menu", referencedColumnName = "id")
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Menu menu;
 
     public Permiso() {
@@ -92,7 +87,6 @@ public class Permiso implements Serializable, IEntity{
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
     
     @JsonIgnore
     public List<PerfilesPermisos> getPerfilesPermisosList() {
@@ -102,7 +96,6 @@ public class Permiso implements Serializable, IEntity{
     public void setPerfilesPermisosList(List<PerfilesPermisos> perfilesPermisosList) {
         this.perfilesPermisosList = perfilesPermisosList;
     }
-
     
     @JsonIgnore
     public List<UsuariosPermisos> getUsuariosPermisosList() {
@@ -124,29 +117,27 @@ public class Permiso implements Serializable, IEntity{
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + Objects.hashCode(this.id);
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Permiso)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        Permiso other = (Permiso) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
-        final Permiso other = (Permiso) obj;
-        return Objects.equals(this.id, other.id);
+        return true;
     }
 
     @Override
     public String toString() {
         return "com.machineAdmin.entities.cg.admin.postgres.Permiso[ id=" + id + " ]";
     }
-
+    
 }
