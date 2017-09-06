@@ -85,10 +85,11 @@ public class UtilsDB {
     private static final String CG_UNIT_NAME = "cg";
     private static final String MACHINE_ADMIN_UNIT_NAME = "machineAdmin";
 
+    //<editor-fold defaultstate="collapsed" desc="Fabricas y proveedores">
     /**
-     * fabricas y proveedores
+     * metodo fábrica de manejadores de entidad de de la base de datos "cg"
      *
-     * @return
+     * @return entityManagerFactory de la conexion a la base de datos CG
      */
     public static EntityManagerFactory getEMFactoryCG() {
         if (eMFactoryCG == null) {
@@ -97,11 +98,19 @@ public class UtilsDB {
         return eMFactoryCG;
     }
 
+    /**
+     * metodo fábrica de manejadores de entidad de de la base de datos
+     * "machineAdmin"
+     *
+     * @return entityManagerFactory de la conexion a la bade de datos
+     * MachineAdmin
+     */
     public static EntityManagerFactory getEMFactoryMachineAdmin() {
         if (eMFactoryMachineAdmin == null) {
             eMFactoryMachineAdmin = Persistence.createEntityManagerFactory(MACHINE_ADMIN_UNIT_NAME);
         }
         return eMFactoryMachineAdmin;
     }
+    //</editor-fold>
 
 }

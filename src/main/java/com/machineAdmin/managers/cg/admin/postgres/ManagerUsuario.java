@@ -16,6 +16,7 @@
  */
 package com.machineAdmin.managers.cg.admin.postgres;
 
+import com.machineAdmin.daos.cg.admin.postgres.DaoPerfil;
 import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
 import com.machineAdmin.entities.cg.admin.postgres.BitacoraContras;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
@@ -71,7 +72,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Long> {
         entity.setContra(UtilsSecurity.cifrarMD5(entity.getContra()));
         entity.setCorreo(entity.getCorreo().toLowerCase());
         try {
-            Usuario persisted = super.persist(entity);            
+            Usuario persisted = super.persist(entity);
             //bitacorizar la contraseña
             BitacoraContras bc = new BitacoraContras(persisted.getId(), persisted.getContra());
             bc.setUsuario1(persisted);
@@ -106,7 +107,7 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Long> {
         //validar que venga minimo un perfil
         if (model.getPerfiles() == null) {
             throw new ParametroInvalidoException("Debe de asignar por lo menos 1 perfil cuando crea un usuario");
-        }else{
+        } else {
             if (model.getPerfiles().isEmpty()) {
                 throw new ParametroInvalidoException("Debe de asignar por lo menos 1 perfil cuando crea un usuario");
             }
@@ -114,18 +115,28 @@ public class ManagerUsuario extends ManagerSQLCatalog<Usuario, Long> {
 
         Usuario nuevoUsuario = new Usuario();
         BeanUtils.copyProperties(nuevoUsuario, model);
-        this.persist(nuevoUsuario);
-        //generar relacion con los ids de los perfiles del usuario
-        ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();
-        UsuariosPerfil up;
-        List<UsuariosPerfil> usuariosPerfilesRelacion = new ArrayList<>();
-        for (Long perfilId : model.getPerfiles()) {
-            up = new UsuariosPerfil();
-            up.setHereda(Boolean.TRUE);
-            up.setUsuariosPerfilPK(new UsuariosPerfilPK(nuevoUsuario.getId(), perfilId));
-            usuariosPerfilesRelacion.add(up);
+        //validar lista de perfiles
+        List<Long> perfilesIds = model.getPerfiles();
+        DaoPerfil daoPerfil = new DaoPerfil();
+        long inexistentes = daoPerfil.stream().where(p -> !perfilesIds.contains(p.getId())).count();
+
+        if (inexistentes != 0) { //mandaron un perfil que no existe en base de datos, por lo que no se puede persistir esta peticion
+            throw new ParametroInvalidoException("No existe algún perfil de los indicados para asignar al usuario");
+        } else {
+            this.persist(nuevoUsuario);
+            //generar relacion con los ids de los perfiles del usuario
+            ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();
+            UsuariosPerfil up;
+            List<UsuariosPerfil> usuariosPerfilesRelacion = new ArrayList<>();
+            for (Long perfilId : model.getPerfiles()) {
+                up = new UsuariosPerfil();
+                up.setHereda(Boolean.TRUE);
+                up.setUsuariosPerfilPK(new UsuariosPerfilPK(nuevoUsuario.getId(), perfilId));
+                usuariosPerfilesRelacion.add(up);
+            }
+            managerUsuariosPerfil.persistAll(usuariosPerfilesRelacion);
         }
-        managerUsuariosPerfil.persistAll(usuariosPerfilesRelacion);
+
     }
 
     /**
