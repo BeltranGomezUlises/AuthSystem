@@ -22,7 +22,6 @@ import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelAsignarPermisos;
 import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.commons.ServiceFacade;
 import com.machineAdmin.services.cg.commons.ServiceFacadeCatalogSQL;
 import static com.machineAdmin.utils.UtilsService.*;
 import com.machineAdmin.utils.UtilsJWT;

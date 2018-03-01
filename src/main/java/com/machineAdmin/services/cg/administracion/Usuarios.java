@@ -19,6 +19,7 @@ package com.machineAdmin.services.cg.administracion;
 import com.machineAdmin.entities.cg.admin.postgres.Usuario;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuario;
 import com.machineAdmin.managers.cg.admin.postgres.ManagerUsuariosPerfil;
+import com.machineAdmin.managers.cg.exceptions.AccesoDenegadoException;
 import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
 import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
 import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
@@ -97,6 +98,10 @@ public class Usuarios extends ServiceFacadeCatalogSQL<Usuario, Long> {
             setInvalidTokenResponse(response);
         }catch(UserException.UsuarioYaExistente ee){
             setWarningResponse(response, ee.getMessage(), ee.getMessage());
+        } catch (AccesoDenegadoException e) {
+            setAccesDeniedResponse(response, e);
+        } catch (ParametroInvalidoException e) {
+            setParametroInvalidoResponse(response, e);
         } catch (Exception e) {
             setErrorResponse(response, e);
         }
