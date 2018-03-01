@@ -24,12 +24,12 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(com.machineAdmin.services.cg.administracion.GruposPerfiles.class);
-        resources.add(com.machineAdmin.services.cg.administracion.Perfiles.class);
-        resources.add(com.machineAdmin.services.cg.administracion.Usuarios.class);
-        resources.add(com.machineAdmin.services.cg.generales.Accesos.class);
-        resources.add(com.machineAdmin.services.cg.generales.Commons.class);
-        resources.add(com.machineAdmin.services.cg.generales.Permisos.class);
+        resources.add(com.auth.services.Accesos.class);
+        resources.add(com.auth.services.Commons.class);
+        resources.add(com.auth.services.GruposPerfiles.class);
+        resources.add(com.auth.services.Perfiles.class);
+        resources.add(com.auth.services.Permisos.class);
+        resources.add(com.auth.services.Usuarios.class);
     }
     
 }
