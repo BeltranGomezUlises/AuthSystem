@@ -16,26 +16,26 @@ package com.machineAdmin.utils;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import com.machineAdmin.daos.cg.admin.postgres.DaoPerfil;
-import com.machineAdmin.daos.cg.admin.postgres.DaoPerfilesPermisos;
-import com.machineAdmin.daos.cg.admin.postgres.DaoPermiso;
-import com.machineAdmin.daos.cg.admin.postgres.DaoSeccion;
-import com.machineAdmin.daos.cg.admin.postgres.DaoUsuario;
-import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPermisos;
-import com.machineAdmin.daos.cg.admin.postgres.DaoUsuariosPerfil;
-import com.machineAdmin.entities.cg.admin.postgres.Menu;
-import com.machineAdmin.entities.cg.admin.postgres.Modulo;
-import com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos;
-import com.machineAdmin.entities.cg.admin.postgres.Permiso;
-import com.machineAdmin.entities.cg.admin.postgres.Seccion;
-import com.machineAdmin.entities.cg.admin.postgres.Usuario;
-import com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos;
-import com.machineAdmin.entities.cg.commons.Profundidad;
-import static com.machineAdmin.entities.cg.commons.Profundidad.*;
-import com.machineAdmin.managers.cg.exceptions.AccesoDenegadoException;
-import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
-import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
-import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
+import com.machineAdmin.daos.admin.DaoPerfil;
+import com.machineAdmin.daos.admin.DaoPerfilesPermisos;
+import com.machineAdmin.daos.admin.DaoPermiso;
+import com.machineAdmin.daos.admin.DaoSeccion;
+import com.machineAdmin.daos.admin.DaoUsuario;
+import com.machineAdmin.daos.admin.DaoUsuariosPermisos;
+import com.machineAdmin.daos.admin.DaoUsuariosPerfil;
+import com.machineAdmin.entities.admin.Menu;
+import com.machineAdmin.entities.admin.Modulo;
+import com.machineAdmin.entities.admin.PerfilesPermisos;
+import com.machineAdmin.entities.admin.Permiso;
+import com.machineAdmin.entities.admin.Seccion;
+import com.machineAdmin.entities.admin.Usuario;
+import com.machineAdmin.entities.admin.UsuariosPermisos;
+import com.machineAdmin.entities.commons.Profundidad;
+import static com.machineAdmin.entities.commons.Profundidad.*;
+import com.machineAdmin.managers.exceptions.AccesoDenegadoException;
+import com.machineAdmin.managers.exceptions.ParametroInvalidoException;
+import com.machineAdmin.managers.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelPermisoAsignado;
 import com.machineAdmin.models.cg.ModelPermisosAsignados;
 import com.machineAdmin.models.cg.ModelPermisosAsignados.ModelSeccion;
@@ -70,29 +70,29 @@ public class UtilsPermissions {
     }
 
     public static Profundidad obtenerProfundidad(String token, String accion) throws TokenInvalidoException, TokenExpiradoException, AccesoDenegadoException {
-        Long userId = UtilsJWT.getUserIdFrom(token);
+        Integer userId = UtilsJWT.getUserIdFrom(token);
         DaoUsuariosPermisos daoUsuariosPermisos = new DaoUsuariosPermisos();
         // el usuario puede tener permiso por permisos del usuario o por permisos de los perfiles, juntarlos todos aqui
         List<Profundidad> profundidadesDelPermisoDelUsuario = new ArrayList<>();
         try {
             //buscar profundidad de la accion por usuario           
             try {
-                profundidadesDelPermisoDelUsuario.add( daoUsuariosPermisos.stream()
+                profundidadesDelPermisoDelUsuario.add(daoUsuariosPermisos.stream()
                         .where(up -> up.getUsuariosPermisosPK().getUsuario().equals(userId) && up.getUsuariosPermisosPK().getPermiso().equals(accion))
-                        .findFirst().get().getProfundidad() );                
+                        .findFirst().get().getProfundidad());
             } catch (NoSuchElementException e) {
-            }                      
+            }
             //buscar la profundidad de la accion por perfiles (cada perfil, puede tener el mismo permiso, pero con distintas profundidades                                         
             List<Profundidad> profundidadesPorPerfiles = profundidadesPorPerfilesDelUsuario(userId, accion);
             profundidadesDelPermisoDelUsuario.addAll(profundidadesPorPerfiles);
 
-            return profundidadMayor(profundidadesDelPermisoDelUsuario);            
+            return profundidadMayor(profundidadesDelPermisoDelUsuario);
         } catch (ParametroInvalidoException e) {
         }
         throw new AccesoDenegadoException("No Tiene permiso para ejecutar esta acción");
     }
 
-    private static List<Profundidad> profundidadesPorPerfilesDelUsuario(Long userId, String accion) {
+    private static List<Profundidad> profundidadesPorPerfilesDelUsuario(Integer userId, String accion) {
         DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
         return daoUsuariosPerfil.stream()
                 .where(up -> up.getUsuariosPerfilPK().getUsuario().equals(userId) && up.getHereda().equals(Boolean.TRUE))
@@ -102,21 +102,21 @@ public class UtilsPermissions {
                 .collect(toList());
     }
 
-    public static Set<Long> idsDeUsuariosConLosPerfilesQueTieneElUsuario(Long usuarioId) throws Exception {
+    public static Set<Integer> idsDeUsuariosConLosPerfilesQueTieneElUsuario(Integer usuarioId) throws Exception {
         //buscar los id de los usuarios con mis perfiles 
         DaoUsuario daoUsuario = new DaoUsuario();
         Usuario u = daoUsuario.findOne(usuarioId);
         //ids de perfiles del usuario
-        List<Long> perfilesDelUsuario = u.getUsuariosPerfilList().stream()
+        List<Integer> perfilesDelUsuario = u.getUsuariosPerfilList().stream()
                 .map(up -> up.getUsuariosPerfilPK().getPerfil())
                 .collect(toList());
         //ids de usuarios con esos perfiles
         DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
 
-        Set<Long> usuariosDeLosPerfiles = daoUsuariosPerfil.stream()
+        Set<Integer> usuariosDeLosPerfiles = daoUsuariosPerfil.stream()
                 .where(up -> perfilesDelUsuario.contains(up.getUsuariosPerfilPK().getPerfil()))
                 .select(up -> up.getUsuariosPerfilPK().getUsuario())
-                .collect(toSet());        
+                .collect(toSet());
         return usuariosDeLosPerfiles;
     }
 
@@ -131,8 +131,7 @@ public class UtilsPermissions {
     }
 
     /**
-     * genera una lista de los permisos que un usuario tiene asignados con su
-     * profundidad de acceso
+     * genera una lista de los permisos que un usuario tiene asignados con su profundidad de acceso
      *
      * @param usuarioId id del usuario a obtener sus permisos
      * @return lista modelos con id de permiso y profundidad
@@ -191,8 +190,7 @@ public class UtilsPermissions {
      * genera los permisos del usuario con su profundidad de acceso
      *
      * @param userId id de usuario
-     * @return modelo con la lista de permisos categorizados por seccion,
-     * modulo, menu y accion
+     * @return modelo con la lista de permisos categorizados por seccion, modulo, menu y accion
      * @throws Exception
      */
     public static ModelPermisosAsignados permisosAsignadosAlUsuarioConProfundidad(Integer userId) throws Exception {
@@ -246,8 +244,7 @@ public class UtilsPermissions {
     }
 
     /**
-     * genera una lista de los permisos que un perfil tiene asignados con su
-     * profundidad de acceso
+     * genera una lista de los permisos que un perfil tiene asignados con su profundidad de acceso
      *
      * @param perfilId id del perfil a obtener sus permisos
      * @return lista modelos con id de permiso y profundidad
@@ -306,14 +303,13 @@ public class UtilsPermissions {
     }
 
     /**
-     * genera los permisos conmutados del usuario con los permisos por perfiles
-     * con su profundidad de acceso mayoritaria
+     * genera los permisos conmutados del usuario con los permisos por perfiles con su profundidad de acceso mayoritaria
      *
      * @param usuarioId id de usuario a generar permisos conmutados
      * @return modelo con los permisos asignados
      * @throws java.lang.Exception
      */
-    public static ModelPermisosAsignados permisosConmutadosDelUsuario(Long usuarioId) throws Exception {
+    public static ModelPermisosAsignados permisosConmutadosDelUsuario(Integer usuarioId) throws Exception {
         DaoSeccion daoSeccion = new DaoSeccion();
 
         DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();

@@ -28,7 +28,7 @@ public class ModelAltaUsuario {
     private String correo;
     private String telefono;
     private String contra;
-    private List<Long> perfiles;
+    private List<Integer> perfiles;
 
     public ModelAltaUsuario() {
     }
@@ -65,11 +65,11 @@ public class ModelAltaUsuario {
         this.contra = contra;
     }
 
-    public List<Long> getPerfiles() {
+    public List<Integer> getPerfiles() {
         return perfiles;
     }
 
-    public void setPerfiles(List<Long> perfiles) {
+    public void setPerfiles(List<Integer> perfiles) {
         this.perfiles = perfiles;
     }
             

@@ -16,7 +16,7 @@
  */
 package com.machineAdmin.models.cg;
 
-import com.machineAdmin.entities.cg.commons.Profundidad;
+import com.machineAdmin.entities.commons.Profundidad;
 
 /**
  * modelo contenedor de la accion y la profundidad del permiso

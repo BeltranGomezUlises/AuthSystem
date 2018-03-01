@@ -16,14 +16,13 @@
  */
 package com.machineAdmin.services.cg.generales;
 
-import com.machineAdmin.entities.cg.commons.Profundidad;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerSeccion;
-import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
-import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
-import com.machineAdmin.models.cg.responsesCG.Response;
+import com.machineAdmin.entities.admin.Seccion;
+import com.machineAdmin.entities.commons.Profundidad;
+import com.machineAdmin.managers.admin.ManagerSeccion;
+import com.machineAdmin.managers.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.exceptions.TokenInvalidoException;
 import com.machineAdmin.utils.UtilsJWT;
-import static com.machineAdmin.utils.UtilsService.setErrorResponse;
-import static com.machineAdmin.utils.UtilsService.setInvalidTokenResponse;
+import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -42,45 +41,30 @@ import javax.ws.rs.core.MediaType;
 public class Permisos {
 
     /**
-     * sirve para obtener la lista de todos los permisos que pueden ser
-     * asignados a un usuario o perfil
+     * sirve para obtener la lista de todos los permisos que pueden ser asignados a un usuario o perfil
      *
      * @param token token de sesion
      * @return retorna en data modelo "Seccion"
      */
     @GET
     @Path("/disponibles")
-    public Response getPermisosDisponibles(@HeaderParam("Authorization") String token) {
-        Response res = new Response();
-        try {
-            ManagerSeccion managerSeccion = new ManagerSeccion();
-            managerSeccion.setToken(token);
-            res.setData(managerSeccion.findAll());            
-        } catch (TokenExpiradoException | TokenInvalidoException e) {
-            setInvalidTokenResponse(res);
-        } catch (Exception ex) {
-            setErrorResponse(res, ex);
-        }
-        return res;
+    public List<Seccion> getPermisosDisponibles(@HeaderParam("Authorization") String token) throws TokenInvalidoException, TokenExpiradoException, Exception {
+        ManagerSeccion managerSeccion = new ManagerSeccion();
+        managerSeccion.setToken(token);
+        return managerSeccion.findAll();
     }
 
     /**
      * obtiene las profundides permitidas para asignar
+     *
      * @param token token de sesion
-     * @return  en data, la lista de profundidaes disponibles
+     * @return en data, la lista de profundidaes disponibles
      */
     @GET
     @Path("/profundidades")
-    public Response getProfundidades(@HeaderParam("Authorization") String token){
-        Response res = new Response();
-        try {
-            UtilsJWT.validateSessionToken(token);            
-            res.setData(Profundidad.values());
-            res.setDevMessage("profundidades disponibles para los permisos");
-        } catch (TokenExpiradoException | TokenInvalidoException e) {
-            setInvalidTokenResponse(res);
-        }
-        return res;
+    public Profundidad[] getProfundidades(@HeaderParam("Authorization") String token) throws TokenExpiradoException, TokenInvalidoException {
+        UtilsJWT.validateSessionToken(token);
+        return Profundidad.values();
     }
-    
+
 }

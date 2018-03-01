@@ -5,10 +5,7 @@
  */
 package com.machineAdmin.services.cg.generales;
 
-import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.utils.UtilsConfig;
 import com.machineAdmin.utils.UtilsDate.DateClass;
-import static com.machineAdmin.utils.UtilsService.setErrorResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -34,19 +31,4 @@ public class Commons {
         return new DateClass();
     }
         
-     /**
-     * sirve para obtener las configuraciones generales del sistema     
-     * @return contenedor de configuraciones generales
-     */
-    @Path("/generales")
-    @GET    
-    public Response getConfigGenerales(){
-        Response res = new Response();
-        try {            
-            res.setData(UtilsConfig.getCGConfig());
-        }catch (Exception e) {
-            setErrorResponse(res, e);
-        }        
-        return res;
-    }
 }

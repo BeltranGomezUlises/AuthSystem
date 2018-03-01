@@ -16,16 +16,11 @@
  */
 package com.machineAdmin.services.cg.administracion;
 
-import com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles;
-import com.machineAdmin.managers.cg.admin.postgres.ManagerGrupoPerfil;
-import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
-import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
+import com.machineAdmin.entities.admin.GrupoPerfiles;
+import com.machineAdmin.managers.admin.ManagerGrupoPerfil;
 import com.machineAdmin.models.cg.ModelAsignarPerfilesAlGrupoPerfil;
-import com.machineAdmin.models.cg.responsesCG.Response;
-import com.machineAdmin.services.cg.commons.ServiceFacadeCatalogSQL;
-import static com.machineAdmin.utils.UtilsService.*;
+import com.machineAdmin.services.cg.commons.ServiceFacade;
 import com.machineAdmin.utils.UtilsJWT;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -35,63 +30,27 @@ import javax.ws.rs.Path;
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 @Path("/gruposPerfiles")
-public class GruposPerfiles extends ServiceFacadeCatalogSQL<GrupoPerfiles, Integer> {
+public class GruposPerfiles extends ServiceFacade<GrupoPerfiles, Integer> {
 
     public GruposPerfiles() {
         super(new ManagerGrupoPerfil());
     }
 
-    @Override
-    public Response eliminar(HttpServletRequest request, String token, GrupoPerfiles t) {
-        return super.eliminar(request, token, t);
-    }
 
-    @Override
-    public Response modificar(HttpServletRequest request, String token, GrupoPerfiles t) {
-        return super.modificar(request, token, t);
-    }
-
-    @Override
-    public Response alta(HttpServletRequest request, String token, GrupoPerfiles t) {
-        return super.alta(request, token, t);
-    }
-
-    @Override
-    public Response detalle(HttpServletRequest request, String token, String id) {
-        return super.detalle(request, token, id);
-    }
-
-    @Override
-    public Response listar(HttpServletRequest request, String token) {
-        return super.listar(request, token);
-    }
-       
     /**
-     * sirve para asignar a un grupo de perfiles, una lista de perfiles para
-     * agruparlos
+     * sirve para asignar a un grupo de perfiles, una lista de perfiles para agruparlos
      *
      * @param token token de sesion
-     * @param modelo modelos contenedor para asignar perfiles, debe contener el
-     * id del grupo perfil y la lista de ids de los perfiles a agrupar
+     * @param modelo modelos contenedor para asignar perfiles, debe contener el id del grupo perfil y la lista de ids de los perfiles a agrupar
      * @return retorna mensaje de éxito
+     * @throws java.lang.Exception
      */
     @Path("/asignarPerfiles")
     @POST
-    public Response asignarPerfiles(@HeaderParam("Authorization") String token, ModelAsignarPerfilesAlGrupoPerfil modelo) {
-        Response res = new Response();
-        try {
-            UtilsJWT.validateSessionToken(token);
-            ManagerGrupoPerfil managerGrupoPerfil = new ManagerGrupoPerfil();            
-            managerGrupoPerfil.asignarPerfiles(modelo);
-            res.setMessage("Los Permisos fuéron asignados al perfil con éxito");
-            res.setDevMessage("Permisos asignado al perfil");
-        } catch (TokenExpiradoException | TokenInvalidoException ex) {
-            setInvalidTokenResponse(res);
-        } catch (Exception e) {
-            setErrorResponse(res, e);
-        }
-        return res;
-
+    public GrupoPerfiles asignarPerfiles(@HeaderParam("Authorization") String token, ModelAsignarPerfilesAlGrupoPerfil modelo) throws Exception {
+        UtilsJWT.validateSessionToken(token);
+        ManagerGrupoPerfil managerGrupoPerfil = new ManagerGrupoPerfil();
+        return managerGrupoPerfil.asignarPerfiles(modelo);
     }
 
 }

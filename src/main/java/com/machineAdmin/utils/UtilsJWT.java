@@ -6,9 +6,9 @@
 package com.machineAdmin.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.machineAdmin.managers.cg.exceptions.ParametroInvalidoException;
-import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
-import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
+import com.machineAdmin.managers.exceptions.ParametroInvalidoException;
+import com.machineAdmin.managers.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.exceptions.TokenInvalidoException;
 import com.machineAdmin.models.cg.ModelCodigoRecuperacionUsuario;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtBuilder;
@@ -38,7 +38,7 @@ public class UtilsJWT {
         Calendar cal = new GregorianCalendar();        //calendario de tiempos        
         builder.setIssuedAt(cal.getTime());     //fecha de expedicion        
 
-        cal.add(Calendar.SECOND, UtilsConfig.getSecondsSessionJwtExp()); //aumentar tiempo para asignar expiracion
+        cal.add(Calendar.SECOND, 6000);//aumentar tiempo para asignar expiracion
         builder.setExpiration(cal.getTime());
 
         builder.setSubject(userId); //poner el sujeto en jwt
@@ -48,8 +48,8 @@ public class UtilsJWT {
 
     public static String generateValidateUserToken(ModelCodigoRecuperacionUsuario model) throws JsonProcessingException {
         JwtBuilder builder = Jwts.builder();
-        Calendar cal = new GregorianCalendar();        //calendario de tiempos                
-        cal.add(Calendar.SECOND, UtilsConfig.getSecondsRecoverJwtExp());
+        Calendar cal = new GregorianCalendar();//calendario de tiempos                
+        cal.add(Calendar.SECOND, 500);
         builder.setExpiration(cal.getTime());
         builder.setSubject(UtilsJson.jsonSerialize(model));
 
@@ -59,7 +59,7 @@ public class UtilsJWT {
     public static String generateTokenResetPassword(String token, String code) throws IOException, ParametroInvalidoException, TokenInvalidoException, TokenExpiradoException {
         JwtBuilder builder = Jwts.builder();
         Calendar cal = new GregorianCalendar();        //calendario de tiempos                
-        cal.add(Calendar.SECOND, UtilsConfig.getSecondsRecoverJwtExp());
+        cal.add(Calendar.SECOND, 500);
         builder.setExpiration(cal.getTime());
 
         ModelCodigoRecuperacionUsuario codeUser = UtilsJson.jsonDeserialize(UtilsJWT.getBodyToken(token), ModelCodigoRecuperacionUsuario.class);
@@ -81,9 +81,9 @@ public class UtilsJWT {
         }        
     }
     
-    public static Long getUserIdFrom(String token) throws TokenInvalidoException, TokenExpiradoException {
+    public static Integer getUserIdFrom(String token) throws TokenInvalidoException, TokenExpiradoException {
         try {
-            return Long.parseLong(Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token).getBody().getSubject()); 
+            return Integer.parseInt(Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token).getBody().getSubject()); 
         } catch (SignatureException | IllegalArgumentException e) {
             throw new TokenInvalidoException("Token Invalido");
         }catch ( ExpiredJwtException exe){

@@ -16,16 +16,12 @@
  */
 package com.machineAdmin.services.cg.commons;
 
-import com.machineAdmin.entities.cg.commons.IEntity;
-import com.machineAdmin.managers.cg.commons.ManagerFacade;
-import com.machineAdmin.managers.cg.exceptions.TokenExpiradoException;
-import com.machineAdmin.managers.cg.exceptions.TokenInvalidoException;
-import com.machineAdmin.models.cg.responsesCG.Response;
-import static com.machineAdmin.utils.UtilsService.*;
-import com.machineAdmin.utils.UtilsAuditoria;
-import com.machineAdmin.utils.UtilsBitacora;
-import java.util.Date;
-import javax.servlet.http.HttpServletRequest;
+import com.machineAdmin.entities.commons.IEntity;
+import com.machineAdmin.managers.commons.ManagerFacade;
+import com.machineAdmin.managers.commons.ManagerSQL;
+import com.machineAdmin.managers.exceptions.TokenExpiradoException;
+import com.machineAdmin.managers.exceptions.TokenInvalidoException;
+import java.util.List;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -33,26 +29,22 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
 
 /**
- * clase de servicios generales LCRUD para entidades que no requiere profundidad
- * de acceso
+ * clase de servicios generales LCRUD para entidades que no requiere profundidad de acceso
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  * @param <T> entidad a manejar por esta clase servicio
- * @param <K> tipo de dato de llave primaria de la entidad a menejar por esta
- * clase servicio
+ * @param <K> tipo de dato de llave primaria de la entidad a menejar por esta clase servicio
  */
-public class ServiceFacade<T extends IEntity, K> extends ServiceBitacoraFacade<T, K> {
+public class ServiceFacade<T extends IEntity<K>, K> {
 
-    protected ManagerFacade<T, K> manager;
+    protected ManagerSQL<T, K> manager;
 
-    public ServiceFacade(ManagerFacade<T, K> manager) {
+    public ServiceFacade(ManagerSQL<T, K> manager) {
         this.manager = manager;
     }
 
-    @Override
     public final ManagerFacade<T, K> getManager() {
         return manager;
     }
@@ -60,171 +52,69 @@ public class ServiceFacade<T extends IEntity, K> extends ServiceBitacoraFacade<T
     /**
      * proporciona el listado de las entidades de esta clase servicio
      *
-     * @param request contexto de peticion necesario para obtener datos como ip,
-     * sistema operativo y navegador del cliente
      * @param token token de sesion
-     * @return reponse, con su campo data asignado con una lista de las
-     * entidades de esta clase servicio
+     * @return reponse, con su campo data asignado con una lista de las entidades de esta clase servicio
      */
-    @GET    
-    public Response listar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token) {
-        Response response = new Response();
-        try {
-            this.manager.setToken(token);
-            setOkResponse(response, manager.findAll(), "Entidades encontradas");
-            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
-            try {
-                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Listar", request);
-                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
-            } catch (UnsupportedOperationException e) {
-            }
-            //</editor-fold>
-            //<editor-fold defaultstate="collapsed" desc="AUDITAR">
-            UtilsAuditoria.ModeloAuditoria auditoria = new UtilsAuditoria.ModeloAuditoria(manager.getUsuario(), "Listar", null);
-            UtilsAuditoria.auditar(manager.nombreColeccionParaRegistros(), auditoria);
-            //</editor-fold>
-        } catch (TokenExpiradoException | TokenInvalidoException e) {
-            setInvalidTokenResponse(response);
-        } catch (Exception ex) {
-            setErrorResponse(response, ex);
-        }
-        return response;
+    @GET
+    public List<T> listar(@HeaderParam("Authorization") String token) throws TokenInvalidoException, TokenExpiradoException, Exception {
+        this.manager.setToken(token);
+        return manager.findAll();
     }
 
     /**
-     * obtiene una entidad en particular por su identificador de esta clase
-     * servicio
+     * obtiene una entidad en particular por su identificador de esta clase servicio
      *
-     * @param request contexto de peticion necesario para obtener datos como ip,
-     * sistema operativo y navegador del cliente
      * @param token token de sesion
      * @param id identificador de la entidad buscada
      * @return response, con su campo data asignado con la entidad buscada
      */
     @GET
     @Path("/{id}")
-    public Response detalle(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, @PathParam("id") String id) {
-        Response response = new Response();
-        try {
-            this.manager.setToken(token);
-            response.setData(manager.findOne(manager.stringToKey(id)));
-            response.setMessage("Entidad encontrada");
-
-            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
-            try {
-                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Detalle", request);
-                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
-            } catch (UnsupportedOperationException e) {
-            }
-
-            //</editor-fold>
-        } catch (TokenExpiradoException | TokenInvalidoException ex) {
-            setInvalidTokenResponse(response);
-        } catch (Exception e) {
-            setErrorResponse(response, e);
-        }
-        return response;
+    public T detalle(@HeaderParam("Authorization") String token, @PathParam("id") K id) throws TokenInvalidoException, TokenExpiradoException, Exception {
+        this.manager.setToken(token);
+        return manager.findOne(id);
     }
 
     /**
      * persiste la entidad de esta clase servicio en base de datos
      *
-     * @param request contexto de peticion necesario para obtener datos como ip,
-     * sistema operativo y navegador del cliente
      * @param token token de sesion
      * @param t entidad a persistir en base de datos
      * @return response con el estatus y el mensaje
      */
     @POST
-    public Response alta(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, T t) {
-        Response response = new Response();
-        try {
-            this.manager.setToken(token);
-            response.setData(manager.persist(t));
-            response.setMessage("Entidad persistida");
-
-            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
-            try {
-                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Alta", request);
-                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
-            } catch (UnsupportedOperationException e) {
-            }
-
-            //</editor-fold>
-        } catch (TokenExpiradoException | TokenInvalidoException ex) {
-            setInvalidTokenResponse(response);
-        } catch (Exception e) {
-            setErrorResponse(response, e);
-        }
-        return response;
+    public T alta(@HeaderParam("Authorization") String token, T t) throws Exception {
+        this.manager.setToken(token);
+        manager.persist(t);
+        return t;
     }
 
     /**
-     * actualiza la entidad proporsionada a su equivalente en base de datos,
-     * tomando como referencia su identificador
+     * actualiza la entidad proporsionada a su equivalente en base de datos, tomando como referencia su identificador
      *
-     * @param request contexto de peticion necesario para obtener datos como ip,
-     * sistema operativo y navegador del cliente
      * @param token token de sesion
      * @param t entidad con los datos actualizados
      * @return Response, en data asignado con la entidad que se actualizó
      */
     @PUT
-    public Response modificar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, T t) {
-        Response response = new Response();
-        try {
-            this.manager.setToken(token);
-            manager.update(t);
-            response.setData(t);
-            response.setMessage("Entidad actualizada");
-
-            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
-            try {
-                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Modificar", request);
-                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
-            } catch (UnsupportedOperationException e) {
-            }
-
-            //</editor-fold>    
-        } catch (TokenExpiradoException | TokenInvalidoException ex) {
-            setInvalidTokenResponse(response);
-        } catch (Exception e) {
-            setErrorResponse(response, e);
-        }
-        return response;
+    public T modificar(@HeaderParam("Authorization") String token, T t) throws TokenInvalidoException, TokenExpiradoException, Exception {
+        this.manager.setToken(token);
+        manager.update(t);
+        return t;
     }
 
     /**
      * eliminar la entidad proporsionada
      *
-     * @param request contexto de peticion necesario para obtener datos como ip,
-     * sistema operativo y navegador del cliente
      * @param token token de sesion
      * @param t entidad proporsionada
      * @return
      */
     @DELETE
-    public Response eliminar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, T t) {
-        Response response = new Response();
-        try {
-            this.manager.setToken(token);
-            manager.delete((K) t.getId());
-            response.setMessage("Entidad eliminada");
-
-            //<editor-fold defaultstate="collapsed" desc="BITACORIZAR">
-            try {
-                UtilsBitacora.ModeloBitacora bitacora = new UtilsBitacora.ModeloBitacora(manager.getUsuario(), new Date(), "Eliminar", request);
-                UtilsBitacora.bitacorizar(manager.nombreColeccionParaRegistros(), bitacora);
-            } catch (UnsupportedOperationException e) {
-            }
-            //</editor-fold>
-
-        } catch (TokenExpiradoException | TokenInvalidoException ex) {
-            setInvalidTokenResponse(response);
-        } catch (Exception e) {
-            setErrorResponse(response, e);
-        }
-        return response;
+    public T eliminar(@HeaderParam("Authorization") String token, T t) throws TokenInvalidoException, TokenExpiradoException, Exception {
+        this.manager.setToken(token);
+        manager.delete((K) t.getId());
+        return t;
     }
 
 }

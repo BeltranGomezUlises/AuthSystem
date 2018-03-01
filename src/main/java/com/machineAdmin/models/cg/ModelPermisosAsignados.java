@@ -16,7 +16,7 @@
  */
 package com.machineAdmin.models.cg;
 
-import com.machineAdmin.entities.cg.commons.Profundidad;
+import com.machineAdmin.entities.commons.Profundidad;
 import java.util.List;
 
 /**
