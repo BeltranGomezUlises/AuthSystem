@@ -13,7 +13,6 @@
     <class>com.auth.entities.admin.PerfilesPermisos</class>
     <class>com.auth.entities.admin.Perfil</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
-    <class>com.machineAdmin.entities.cg.admin.postgres.SqlPrueba</class>
     <properties>
       <!-- jdbc -->
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
