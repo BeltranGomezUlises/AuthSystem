@@ -18,12 +18,12 @@ package com.auth.models;
 
 /**
  * modelo de reseteo de contraseña
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ModelReseteoContra {
-    
+
     private String pass;
-    private String jwt;
 
     public String getPass() {
         return pass;
@@ -33,12 +33,4 @@ public class ModelReseteoContra {
         this.pass = pass;
     }
 
-    public String getJwt() {
-        return jwt;
-    }
-
-    public void setJwt(String jwt) {
-        this.jwt = jwt;
-    }    
-    
 }

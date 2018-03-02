@@ -103,6 +103,13 @@
             <type>jar</type>
         </dependency> 
         
+        <!-- APACHE commons - EMAIL--> 
+        <dependency> 
+            <groupId>org.apache.commons</groupId> 
+            <artifactId>commons-email</artifactId> 
+            <version>1.2</version> 
+        </dependency>   
+        
         <!-- REFLECTIONS -->
         <dependency>
             <groupId>org.reflections</groupId>

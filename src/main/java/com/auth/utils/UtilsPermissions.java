@@ -311,10 +311,7 @@ public class UtilsPermissions {
      */
     public static ModelPermisosAsignados permisosConmutadosDelUsuario(Integer usuarioId) throws Exception {
         DaoSeccion daoSeccion = new DaoSeccion();
-
         DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
-        DaoPerfilesPermisos daoPerfilesPermisos = new DaoPerfilesPermisos();
-
         DaoUsuariosPermisos daoUsuarioPermisos = new DaoUsuariosPermisos();
 
         //permisos por usuario
@@ -349,13 +346,10 @@ public class UtilsPermissions {
         List<ModelSeccion> seccionesDeUsuario = new ArrayList<>();
         ModelPermisosAsignados asignados = new ModelPermisosAsignados(seccionesDeUsuario);
         for (Seccion seccion : secciones) {
-
             List<ModelModulo> modulos = new ArrayList<>();
             for (Modulo modulo : seccion.getModuloList()) {
-
                 List<ModelMenu> menus = new ArrayList<>();
                 for (Menu menu : modulo.getMenuList()) {
-
                     List<ModelPermiso> permisos = new ArrayList<>();
                     for (Permiso permiso : menu.getPermisoList()) {
                         try {
@@ -374,7 +368,6 @@ public class UtilsPermissions {
                                         .forEach(p -> profundidades.add(p.getProfundidad()));
                             } catch (NoSuchElementException e) { //omitir si no existe
                             }
-
                             permisos.add(new ModelPermiso(permiso.getNombre(), permiso.getId(), profundidadMayor(profundidades)));
                         } catch (ParametroInvalidoException e) {//no tiene el permiso                            
                         }

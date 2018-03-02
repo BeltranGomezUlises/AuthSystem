@@ -32,13 +32,11 @@ import com.auth.models.ModelPermisosAsignados;
 import com.auth.utils.UtilsJWT;
 import com.auth.utils.UtilsPermissions;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
 
 /**
  * servicios de administracion de usuarios del sistema
@@ -54,7 +52,7 @@ public class Usuarios extends ServiceFacade<Usuario, Integer> {
 
     @POST
     @Path("/registrar")
-    public Usuario registrar(@Context HttpServletRequest request, @HeaderParam("Authorization") String token, ModelAltaUsuario model) throws TokenInvalidoException, TokenExpiradoException, ParametroInvalidoException, Exception {
+    public Usuario registrar(@HeaderParam("Authorization") String token, ModelAltaUsuario model) throws TokenInvalidoException, TokenExpiradoException, ParametroInvalidoException, Exception {
         ManagerUsuario managerUsuario = new ManagerUsuario();
         managerUsuario.setToken(token);
         return managerUsuario.altaUsuario(model);

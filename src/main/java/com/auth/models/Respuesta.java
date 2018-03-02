@@ -17,12 +17,14 @@
 package com.auth.models;
 
 import com.auth.models.enums.Status;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * Modelo de respuesta para notificar el estatus de la petición
  *
  * @author Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Respuesta<T> {
 
     private Status estado;

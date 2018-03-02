@@ -34,7 +34,9 @@ import com.auth.models.ModelAsignarPermisos;
 import com.auth.models.ModelCodigoRecuperacionUsuario;
 import com.auth.models.ModelLogin;
 import com.auth.models.ModelPermisoAsignado;
+import com.auth.utils.UtilsConfig;
 import com.auth.utils.UtilsDate;
+import com.auth.utils.UtilsMail;
 import com.auth.utils.UtilsSecurity;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -45,6 +47,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import static java.util.stream.Collectors.toList;
+import org.apache.commons.mail.EmailException;
 
 /**
  *
@@ -182,7 +185,6 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
 
     private void numberAttemptVerification(String identi) throws UsuarioInexistenteException, UsuarioBlockeadoException, Exception {
         try {
-
             Usuario intentoLogin = this.dao.stream().where(u
                     -> u.getCorreo().equals(identi.toLowerCase())
                     || u.getNombre().equals(identi)
@@ -203,24 +205,19 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
                 intentoLogin.setFechaUltimoIntentoLogin(new Date());
             } else {
                 long intervaloDeIntento = (new Date().getTime() - intentoLogin.getFechaUltimoIntentoLogin().getTime());
-                if (intervaloDeIntento < 60 * 1000) { //es un intento fuera del rango permitido de tiempo 
+                if (intervaloDeIntento < UtilsConfig.getSecondsBetweenLoginAttempt()) { //es un intento fuera del rango permitido de tiempo 
                     intentoLogin.setNumeroIntentosLogin(intentoLogin.getNumeroIntentosLogin() + 1);
                 } else { //es un intento dentro del rango permitido de tiempo 
                     intentoLogin.setNumeroIntentosLogin(1);
                     intentoLogin.setFechaUltimoIntentoLogin(new Date());
                 }
             }
-            /**
-             * si el numero de intentos excede el permitido, bloquear usuario
-             */
+
+            //si el numero de intentos excede el permitido, bloquear usuario
             try {
                 if (intentoLogin.getNumeroIntentosLogin() > 5) {
                     intentoLogin.setBloqueado(true);
-
-                    Calendar cal = new GregorianCalendar();
-                    cal.add(Calendar.SECOND, 1600);
-                    intentoLogin.setBloqueadoHastaFecha(cal.getTime());
-
+                    intentoLogin.setBloqueadoHastaFecha(UtilsConfig.getDateUtilUserStillBlocked());
                     this.dao.update(intentoLogin);
                     throw new UsuarioBlockeadoException("El usuario fue blockeado por el número de intentos fallidos hasta " + UtilsDate.format_D_MM_YYYY_HH_MM(intentoLogin.getBloqueadoHastaFecha()));
                 } else {
@@ -267,7 +264,7 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
         }
     }
 
-    public ModelCodigoRecuperacionUsuario enviarCodigo(String identifier) throws UsuarioInexistenteException, ParametroInvalidoException, MalformedURLException {
+    public ModelCodigoRecuperacionUsuario enviarCodigo(String identifier) throws UsuarioInexistenteException, ParametroInvalidoException, MalformedURLException, EmailException {
         Usuario usuarioARecuperar = null;
         try {
             switch (getUserIdentifierType(identifier)) {
@@ -307,15 +304,11 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
 
         ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra();
         managerBitacoraContra.setUsuario(userId);
-
         BitacoraContras bitacoraContra = new BitacoraContras(userId, pass);
-
         if (managerBitacoraContra.stream().anyMatch(e -> e.equals(bitacoraContra))) {
             throw new ParametroInvalidoException("La contraseña que esta ingresando ya fué utilizada, intente con otra");
         }
-
         DaoUsuario daoUsuario = new DaoUsuario();
-
         Usuario u = dao.findOne(userId);
         u.setContra(pass);
         daoUsuario.update(u);
@@ -326,7 +319,7 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
                 .collect(toList());
 
         //obtener el numero maximo de contraseñas a guardar para impedir repeticion
-        int maxNumber = 10;
+        int maxNumber = UtilsConfig.getMaxPasswordRecords();
         // lastPassword.size() < maxNumber -> agregar pass actual al registro
         // lastPassword.size() >= maxNumber -> resize de lastPassword con los ultimos maxNumber contraseñas                        
 

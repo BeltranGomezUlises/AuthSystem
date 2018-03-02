@@ -7,20 +7,23 @@ package com.auth.services;
 
 import com.auth.entities.admin.Usuario;
 import com.auth.managers.admin.ManagerUsuario;
+import com.auth.managers.exceptions.ContraseñaIncorrectaException;
 import com.auth.managers.exceptions.ParametroInvalidoException;
 import com.auth.managers.exceptions.TokenExpiradoException;
 import com.auth.managers.exceptions.TokenInvalidoException;
+import com.auth.managers.exceptions.UsuarioBlockeadoException;
 import com.auth.managers.exceptions.UsuarioInexistenteException;
 import com.auth.models.ModelCodigoRecuperacionUsuario;
 import com.auth.models.ModelContenidoCifrado;
 import com.auth.models.ModelLogin;
+import com.auth.models.ModelReseteoContra;
 import com.auth.models.ModelUsuarioLogeado;
 import com.auth.models.Respuesta;
 import com.auth.models.enums.Status;
 import com.auth.utils.UtilsJWT;
-import com.auth.utils.UtilsJson;
 import com.auth.utils.UtilsPermissions;
 import com.auth.utils.UtilsSecurity;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import javax.ws.rs.Consumes;
@@ -31,6 +34,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.apache.commons.mail.EmailException;
 
 /**
  * servicios de accesos al sistema
@@ -47,27 +51,35 @@ public class Accesos {
      *
      * @param modelLogin Modelo de inicio de sesion
      * @return en data: el usuario logeado, en metadata: el token de sesion
-     * @throws java.lang.Exception
      */
     @POST
     @Path("/iniciarSesion")
-    public ModelUsuarioLogeado login(ModelLogin modelLogin) throws Exception {
-        ManagerUsuario managerUsuario = new ManagerUsuario();
+    public Respuesta<ModelUsuarioLogeado> login(ModelLogin modelLogin) {
+        Respuesta r;
+        try {
+            ManagerUsuario managerUsuario = new ManagerUsuario();
 
-        modelLogin.setPass(UtilsSecurity.cifrarMD5(modelLogin.getPass()));
-        Usuario usuarioLogeado = managerUsuario.login(modelLogin);
+            modelLogin.setPass(UtilsSecurity.cifrarMD5(modelLogin.getPass()));
+            Usuario usuarioLogeado = managerUsuario.login(modelLogin);
 
-        ModelUsuarioLogeado modelUsuarioLogeado = new ModelUsuarioLogeado();
-        modelUsuarioLogeado.setPermisos(UtilsPermissions.permisosConmutadosDelUsuario(usuarioLogeado.getId()));
+            ModelUsuarioLogeado modelUsuarioLogeado = new ModelUsuarioLogeado();
+            modelUsuarioLogeado.setPermisos(UtilsPermissions.permisosConmutadosDelUsuario(usuarioLogeado.getId()));
 
-        modelUsuarioLogeado.setNombre(usuarioLogeado.getNombre());
-        modelUsuarioLogeado.setTelefono(usuarioLogeado.getTelefono());
-        modelUsuarioLogeado.setId(usuarioLogeado.getId());
-        modelUsuarioLogeado.setCorreo(usuarioLogeado.getCorreo());
-        modelUsuarioLogeado.setToken(UtilsJWT.generateSessionToken(usuarioLogeado.getId().toString()));
+            modelUsuarioLogeado.setNombre(usuarioLogeado.getNombre());
+            modelUsuarioLogeado.setTelefono(usuarioLogeado.getTelefono());
+            modelUsuarioLogeado.setId(usuarioLogeado.getId());
+            modelUsuarioLogeado.setCorreo(usuarioLogeado.getCorreo());
+            modelUsuarioLogeado.setToken(UtilsJWT.generateSessionToken(usuarioLogeado.getId().toString()));
 
-        return modelUsuarioLogeado;
-
+            r = new Respuesta(Status.OK, "login exitoso", modelUsuarioLogeado);
+        } catch (UsuarioInexistenteException | ContraseñaIncorrectaException e) {
+            r = new Respuesta(Status.WARNING, "Usuario y/o contraseña incorrecto");
+        } catch (UsuarioBlockeadoException e) {
+            r = new Respuesta(Status.WARNING, "El usuario se encuentra bloqueado " + e.getMessage());
+        } catch (Exception e) {
+            r = new Respuesta(Status.ERROR, "Error de programación: " + e.getMessage());
+        }
+        return r;
     }
 
     /**
@@ -109,6 +121,8 @@ public class Accesos {
                     UtilsJWT.generateValidateUserToken(recoverCode));
         } catch (UsuarioInexistenteException | ParametroInvalidoException ex) {
             r = new Respuesta(Status.WARNING, "No se reconoce como un correo válido");
+        } catch (EmailException ex) {
+            r = new Respuesta(Status.ERROR, "Error de envio de correo electronico, verificar con el proveedor de correo del sistema: " + ex.getMessage());
         } catch (Exception ex) {
             r = new Respuesta(Status.ERROR, "Error de programación: " + ex.getMessage());
         }
@@ -143,21 +157,17 @@ public class Accesos {
      * sirve para restablecer la contraseña de un usuario
      *
      * @param tokenRestablecer token para restaurar de contraseña
-     * @param content contenido cifrado con la clave publica con el texto de la nueva contraseña a asignar
+     * @param modelReseteo modelo con la nueva contraseña a resetear
      * @return retorna mensaje de éxito
      */
     @POST
     @Path("/restablecerContra")
-    public Respuesta resetPassword(@HeaderParam("Authorization") String tokenRestablecer, ModelContenidoCifrado content) {
+    public Respuesta resetPassword(@HeaderParam("Authorization") String tokenRestablecer, ModelReseteoContra modelReseteo) {
         Respuesta res;
-        try {
-            UtilsJWT.validateSessionToken(tokenRestablecer);
-            Integer userId = UtilsJWT.getUserIdFrom(tokenRestablecer);
-            String pass = UtilsSecurity.decryptBase64ByPrivateKey(content.getContent());
-
+        try {            
+            Integer userId = UtilsJWT.getUserIdFrom(tokenRestablecer);            
             ManagerUsuario managerUsuario = new ManagerUsuario();
-            managerUsuario.setToken(tokenRestablecer);
-            managerUsuario.resetPassword(userId, pass);
+            managerUsuario.resetPassword(userId, modelReseteo.getPass());
             res = new Respuesta(Status.OK, "Contraseña reestablecida con éxito");
         } catch (TokenExpiradoException | TokenInvalidoException e) {
             res = new Respuesta(Status.WARNING, "El token expiró o es es invalido, intente el proceso completo de nuevo");
