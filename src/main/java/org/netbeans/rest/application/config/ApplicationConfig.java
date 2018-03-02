@@ -29,6 +29,7 @@ public class ApplicationConfig extends Application {
         resources.add(com.auth.services.GruposPerfiles.class);
         resources.add(com.auth.services.Perfiles.class);
         resources.add(com.auth.services.Permisos.class);
+        resources.add(com.auth.services.ServiceFacade.class);
         resources.add(com.auth.services.Usuarios.class);
     }
     

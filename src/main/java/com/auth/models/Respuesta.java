@@ -23,10 +23,11 @@ import com.auth.models.enums.Status;
  *
  * @author Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
-public class Respuesta {
+public class Respuesta<T> {
 
     private Status estado;
     private String mensaje;
+    private T data;
 
     public Respuesta() {
     }
@@ -34,6 +35,20 @@ public class Respuesta {
     public Respuesta(Status estado, String mensaje) {
         this.estado = estado;
         this.mensaje = mensaje;
+    }
+
+    public Respuesta(Status estado, String mensaje, T data) {
+        this.estado = estado;
+        this.mensaje = mensaje;
+        this.data = data;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
     }
 
     public Status getEstado() {

@@ -18,12 +18,21 @@ package com.auth.models;
 
 /**
  * modelo contenedor de usuario y codigo de recuperacion
+ *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
 public class ModelCodigoRecuperacionUsuario {
 
     private String code;
     private String idUser;
+
+    public ModelCodigoRecuperacionUsuario() {
+    }
+
+    public ModelCodigoRecuperacionUsuario(String code, String idUser) {
+        this.code = code;
+        this.idUser = idUser;
+    }
 
     public String getCode() {
         return code;

@@ -177,9 +177,9 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
         return loged;
     }
 
-    public void logout(String tokenSession){
+    public void logout(String tokenSession) {
     }
-    
+
     private void numberAttemptVerification(String identi) throws UsuarioInexistenteException, UsuarioBlockeadoException, Exception {
         try {
 
@@ -267,11 +267,8 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
         }
     }
 
-    public ModelCodigoRecuperacionUsuario enviarCodigo(String identifier) throws UsuarioInexistenteException,
-            ParametroInvalidoException, MalformedURLException {
-
+    public ModelCodigoRecuperacionUsuario enviarCodigo(String identifier) throws UsuarioInexistenteException, ParametroInvalidoException, MalformedURLException {
         Usuario usuarioARecuperar = null;
-
         try {
             switch (getUserIdentifierType(identifier)) {
                 case MAIL:
@@ -283,7 +280,6 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
                 default:
                     throw new ParametroInvalidoException("el identificador proporsionado no es váliodo. Debe de utilizar un correo electronico ó número de teléfono de 10 dígitos");
             }
-
             Random r = new Random();
             //generar codigo de 8 digitos aleatorios
             String code = String.valueOf(r.nextInt(99));
@@ -293,18 +289,14 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
             //enviar correo con codigo de recuperacion
             switch (getUserIdentifierType(identifier)) {
                 case MAIL:
-                    //UtilsMail.sendRecuperarContraseñaHTMLMail(identifier, usuarioARecuperar.getNombre(), code);
+                    UtilsMail.sendRecuperarContraseñaHTMLMail(identifier, usuarioARecuperar.getNombre(), code);
                     break;
                 case PHONE:
                     //UtilsSMS.sendSMS(identifier, "Hola " + usuarioARecuperar.getNombre() + " su código de recuperacion de contraseña es: " + code);
                     break;
             }
-            ModelCodigoRecuperacionUsuario model = new ModelCodigoRecuperacionUsuario();
-            model.setCode(code);
-            model.setIdUser(usuarioARecuperar.getId().toString());
-
+            ModelCodigoRecuperacionUsuario model = new ModelCodigoRecuperacionUsuario(code, usuarioARecuperar.getId().toString());
             return model;
-
         } catch (NoSuchElementException e) {
             throw new UsuarioInexistenteException("No se encontro usuario con el identificador proporsionado");
         }
