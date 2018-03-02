@@ -11,7 +11,7 @@ import java.io.IOException;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class UtilsJson {
     

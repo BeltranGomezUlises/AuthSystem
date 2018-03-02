@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * fachada de manager general
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  * @param <T> class entity used to restrict the class of use
  * @param <K>
  */

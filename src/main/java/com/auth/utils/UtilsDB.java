@@ -6,7 +6,7 @@ import org.jinq.jpa.JinqJPAStreamProvider;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class UtilsDB {
 

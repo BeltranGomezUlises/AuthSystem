@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 
 /**
  * servicios comunes para toma de referencias
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 @Path("/commons")
 @Consumes(MediaType.APPLICATION_JSON)

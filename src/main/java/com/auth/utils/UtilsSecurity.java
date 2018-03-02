@@ -28,7 +28,7 @@ import org.apache.commons.codec.binary.Base64;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class UtilsSecurity {
 

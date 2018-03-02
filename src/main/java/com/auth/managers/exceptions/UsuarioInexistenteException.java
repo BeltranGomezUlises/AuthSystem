@@ -7,7 +7,7 @@ package com.auth.managers.exceptions;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class UsuarioInexistenteException extends Exception{
 

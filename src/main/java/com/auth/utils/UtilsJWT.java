@@ -23,7 +23,7 @@ import java.util.GregorianCalendar;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class UtilsJWT {
 

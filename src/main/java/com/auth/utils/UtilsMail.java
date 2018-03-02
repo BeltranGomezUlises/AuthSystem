@@ -18,7 +18,7 @@ import org.apache.commons.mail.SimpleEmail;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class UtilsMail {
 

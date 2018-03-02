@@ -18,7 +18,7 @@ package com.auth.models;
 
 /**
  * modelo de comunicacion de contenido cirado (login y reset password)
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class ModelContenidoCifrado {
 

@@ -20,7 +20,7 @@ import org.jinq.jpa.JinqJPAStreamProvider;
 /**
  * Facade Data Access Object para entidades SQL
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  * @param <T> Entidad JPA a utilizar por el controlador C JPA respaldado de DaoSQLFacade
  * @param <K> Tipo de dato de la llave primaria de la entidad
  */

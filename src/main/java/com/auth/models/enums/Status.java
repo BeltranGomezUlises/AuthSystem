@@ -7,7 +7,7 @@ package com.auth.models.enums;
 
 /**
  * enumerador de estado de operacion
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public enum Status {
     OK,ERROR,WARNING, ACCES_DENIED, INVALID_PARAM, PARCIAL_ACCESS

@@ -7,7 +7,7 @@ package com.auth.models.enums;
 
 /**
  * enumerador de estado de pago
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public enum Pagado {
     PAGADO, NO_PAGADO, TODOS

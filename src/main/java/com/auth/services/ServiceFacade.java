@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ import javax.ws.rs.core.MediaType;
 /**
  * clase de servicios generales LCRUD para entidades que no requiere profundidad de acceso
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  * @param <T> entidad a manejar por esta clase servicio
  * @param <K> tipo de dato de llave primaria de la entidad a menejar por esta clase servicio
  */
