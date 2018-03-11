@@ -18,6 +18,7 @@ package com.auth.entities.commons;
 
 /**
  * enumerador de las profundidades de acceso a entidades
+ *
  * @author Alonso --- alonso@kriblet.com
  */
 public enum Profundidad {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 ulises
+ * Copyright (C) 2017
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@ package com.auth.models;
 
 /**
  * modelo de comunicacion de contenido cirado (login y reset password)
+ *
  * @author Alonso --- alonso@kriblet.com
  */
 public class ModelContenidoCifrado {

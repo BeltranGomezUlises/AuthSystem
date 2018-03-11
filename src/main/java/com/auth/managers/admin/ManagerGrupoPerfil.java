@@ -37,14 +37,13 @@ public class ManagerGrupoPerfil extends ManagerSQL<GrupoPerfiles, Integer> {
     public GrupoPerfiles asignarPerfiles(ModelAsignarPerfilesAlGrupoPerfil model) throws Exception {
         GrupoPerfiles gp = this.findOne(model.getGrupoPerfilId());
         ManagerPerfil managerPerfil = new ManagerPerfil();
-        managerPerfil.setUsuario(this.getUsuario());
 
         List<Perfil> perfiles = new ArrayList<>();
         model.getPerfilesIds().forEach(pId -> {
             try {
                 perfiles.add(managerPerfil.findOne(pId));
             } catch (Exception e) {
-            }            
+            }
         });
         gp.setPerfilList(perfiles);
         this.update(gp);

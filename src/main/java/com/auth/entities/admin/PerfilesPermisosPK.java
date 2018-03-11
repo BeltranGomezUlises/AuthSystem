@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alonso --- alonso@kriblet.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author Alonso --- alonso@kriblet.com
+ * @author
  */
 @Embeddable
 public class PerfilesPermisosPK implements Serializable {
@@ -33,7 +33,7 @@ public class PerfilesPermisosPK implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "perfil")
-    private Integer perfil;
+    private int perfil;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
@@ -43,16 +43,16 @@ public class PerfilesPermisosPK implements Serializable {
     public PerfilesPermisosPK() {
     }
 
-    public PerfilesPermisosPK(Integer perfil, String permiso) {
+    public PerfilesPermisosPK(int perfil, String permiso) {
         this.perfil = perfil;
         this.permiso = permiso;
     }
 
-    public Integer getPerfil() {
+    public int getPerfil() {
         return perfil;
     }
 
-    public void setPerfil(Integer perfil) {
+    public void setPerfil(int perfil) {
         this.perfil = perfil;
     }
 
@@ -67,26 +67,30 @@ public class PerfilesPermisosPK implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (perfil != null ? perfil.hashCode() : 0);
+        hash += (int) perfil;
         hash += (permiso != null ? permiso.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof PerfilesPermisosPK)) {
             return false;
         }
         PerfilesPermisosPK other = (PerfilesPermisosPK) object;
-        if (!this.perfil.equals(other.perfil)) {
+        if (this.perfil != other.perfil) {
             return false;
         }
-        return this.permiso.equals(other.permiso);
+        if ((this.permiso == null && other.permiso != null) || (this.permiso != null && !this.permiso.equals(other.permiso))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisosPK[ perfil=" + perfil + ", permiso=" + permiso + " ]";
+        return "com.auth.entities.admin.PerfilesPermisosPK[ perfil=" + perfil + ", permiso=" + permiso + " ]";
     }
 
 }

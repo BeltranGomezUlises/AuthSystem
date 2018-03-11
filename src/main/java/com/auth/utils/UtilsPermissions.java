@@ -16,13 +16,12 @@ package com.auth.utils;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import com.auth.daos.admin.DaoPerfil;
 import com.auth.daos.admin.DaoPerfilesPermisos;
 import com.auth.daos.admin.DaoPermiso;
 import com.auth.daos.admin.DaoSeccion;
 import com.auth.daos.admin.DaoUsuario;
-import com.auth.daos.admin.DaoUsuariosPermisos;
 import com.auth.daos.admin.DaoUsuariosPerfil;
+import com.auth.daos.admin.DaoUsuariosPermisos;
 import com.auth.entities.admin.Menu;
 import com.auth.entities.admin.Modulo;
 import com.auth.entities.admin.PerfilesPermisos;
@@ -37,6 +36,8 @@ import com.auth.managers.exceptions.ParametroInvalidoException;
 import com.auth.managers.exceptions.TokenExpiradoException;
 import com.auth.managers.exceptions.TokenInvalidoException;
 import com.auth.models.ModelPermisoAsignado;
+import com.auth.models.ModelPermisoProfundidad;
+import com.auth.models.ModelPermisoValido;
 import com.auth.models.ModelPermisosAsignados;
 import com.auth.models.ModelPermisosAsignados.ModelSeccion;
 import com.auth.models.ModelPermisosAsignados.ModelSeccion.ModelModulo;
@@ -48,6 +49,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import org.jinq.orm.stream.JinqStream;
 import org.jinq.tuples.Pair;
 
@@ -78,7 +81,7 @@ public class UtilsPermissions {
             //buscar profundidad de la accion por usuario           
             try {
                 profundidadesDelPermisoDelUsuario.add(daoUsuariosPermisos.stream()
-                        .where(up -> up.getUsuariosPermisosPK().getUsuario().equals(userId) && up.getUsuariosPermisosPK().getPermiso().equals(accion))
+                        .where(up -> up.getUsuariosPermisosPK().getUsuario() == (userId) && up.getUsuariosPermisosPK().getPermiso().equals(accion))
                         .findFirst().get().getProfundidad());
             } catch (NoSuchElementException e) {
             }
@@ -95,7 +98,7 @@ public class UtilsPermissions {
     private static List<Profundidad> profundidadesPorPerfilesDelUsuario(Integer userId, String accion) {
         DaoUsuariosPerfil daoUsuariosPerfil = new DaoUsuariosPerfil();
         return daoUsuariosPerfil.stream()
-                .where(up -> up.getUsuariosPerfilPK().getUsuario().equals(userId) && up.getHereda().equals(Boolean.TRUE))
+                .where(up -> up.getUsuariosPerfilPK().getUsuario() == (userId) && up.getHereda().equals(Boolean.TRUE))
                 .joinList(up -> up.getPerfil1().getPerfilesPermisosList())
                 .where(pp -> pp.getTwo().getPerfilesPermisosPK().getPermiso().equals(accion))
                 .select(pp -> pp.getTwo().getProfundidad())
@@ -124,10 +127,10 @@ public class UtilsPermissions {
      * sirve para obtener los permisos existentes disponibles en el sistem
      *
      * @return lista de permisos existentes
+     * @throws java.lang.Exception
      */
-    public static List<Permiso> getExistingPermissions() {
-        DaoPermiso dao = new DaoPermiso();
-        return dao.stream().collect(toList());
+    public static List<Permiso> getExistingPermissions() throws Exception {
+        return new DaoPermiso().findAll();
     }
 
     /**
@@ -142,7 +145,7 @@ public class UtilsPermissions {
         DaoSeccion daoSeccion = new DaoSeccion();
 
         DaoUsuariosPermisos daoUsuarioPermisos = new DaoUsuariosPermisos();
-        List<String> permisosUsuario = daoUsuarioPermisos.stream().where(e -> e.getUsuariosPermisosPK().getUsuario().equals(usuarioId)).map(e -> e.getUsuariosPermisosPK().getPermiso()).collect(toList());
+        List<String> permisosUsuario = daoUsuarioPermisos.stream().where(e -> e.getUsuariosPermisosPK().getUsuario() == (usuarioId)).map(e -> e.getUsuariosPermisosPK().getPermiso()).collect(toList());
 
         //secciones disponibles -> eliminar todos los permisos que el usuario no tenga               
         List<Seccion> secciones = daoSeccion.findAll();
@@ -194,51 +197,47 @@ public class UtilsPermissions {
      * @throws Exception
      */
     public static ModelPermisosAsignados permisosAsignadosAlUsuarioConProfundidad(Integer userId) throws Exception {
-        DaoUsuario daoUsuario = new DaoUsuario();
         DaoSeccion daoSeccion = new DaoSeccion();
 
         DaoUsuariosPermisos daoUsuarioPermisos = new DaoUsuariosPermisos();
-        List<UsuariosPermisos> permisosUsuario = daoUsuarioPermisos.stream().where(e -> e.getUsuariosPermisosPK().getUsuario().equals(userId)).collect(toList());
+        List<UsuariosPermisos> permisosUsuario = daoUsuarioPermisos.stream().where(e -> e.getUsuariosPermisosPK().getUsuario() == (userId)).collect(toList());
 
         //secciones disponibles -> eliminar todos los permisos que el usuario no tenga               
         List<Seccion> secciones = daoSeccion.findAll();
 
         List<ModelSeccion> seccionesDeUsuario = new ArrayList<>();
         ModelPermisosAsignados asignados = new ModelPermisosAsignados(seccionesDeUsuario);
-        for (Seccion seccion : secciones) {
-
+        secciones.forEach((seccion) -> {
             List<ModelModulo> modulos = new ArrayList<>();
-            for (Modulo modulo : seccion.getModuloList()) {
-
+            seccion.getModuloList().forEach((modulo) -> {
                 List<ModelMenu> menus = new ArrayList<>();
-                for (Menu menu : modulo.getMenuList()) {
-
+                modulo.getMenuList().forEach((menu) -> {
                     List<ModelPermiso> permisos = new ArrayList<>();
-                    for (Permiso permiso : menu.getPermisoList()) {
+                    menu.getPermisoList().forEach((permiso) -> {
                         try {
                             String permisoId = permiso.getId();
                             UsuariosPermisos usuarioPermiso = permisosUsuario.stream().filter(up -> up.getUsuariosPermisosPK().getPermiso().equals(permiso.getId())).findFirst().get();
                             permisos.add(new ModelPermiso(permiso.getNombre(), permiso.getId(), usuarioPermiso.getProfundidad()));
                         } catch (NoSuchElementException e) {//no tiene el permiso
                         }
-                    }
+                    });
                     //si tiene permisos del menu agregar el menu
                     if (!permisos.isEmpty()) {
                         ModelMenu m = new ModelMenu(menu.getNombre(), menu.getId(), permisos);
                         menus.add(m);
                     }
-                }
+                });
                 //si tiene menus en el modulo, agregar el modulo
                 if (!menus.isEmpty()) {
                     ModelModulo m = new ModelModulo(modulo.getNombre(), modulo.getId(), menus);
                     modulos.add(m);
                 }
-            }
+            });
             if (!modulos.isEmpty()) {
                 ModelSeccion s = new ModelSeccion(seccion.getNombre(), seccion.getId(), modulos);
                 seccionesDeUsuario.add(s);
             }
-        }
+        });
 
         return asignados;
     }
@@ -251,13 +250,11 @@ public class UtilsPermissions {
      * @throws java.lang.Exception
      */
     public static ModelPermisosAsignados permisosAsignadosAlPerfil(Integer perfilId) throws Exception {
-        DaoPerfil daoPerfil = new DaoPerfil();
         DaoSeccion daoSeccion = new DaoSeccion();
-
         DaoPerfilesPermisos daoPerfilesPermisos = new DaoPerfilesPermisos();
 
         List<PerfilesPermisos> perfilesPermisos = daoPerfilesPermisos.stream()
-                .where(e -> e.getPerfilesPermisosPK().getPerfil().equals(perfilId))
+                .where(e -> e.getPerfilesPermisosPK().getPerfil() == (perfilId))
                 .collect(toList());
 
         //secciones disponibles -> eliminar todos los permisos que el usuario no tenga               
@@ -265,15 +262,13 @@ public class UtilsPermissions {
 
         List<ModelSeccion> seccionesDePerfil = new ArrayList<>();
         ModelPermisosAsignados asignados = new ModelPermisosAsignados(seccionesDePerfil);
-        for (Seccion seccion : secciones) {
+        secciones.forEach(seccion -> {
             List<ModelModulo> modulos = new ArrayList<>();
-            for (Modulo modulo : seccion.getModuloList()) {
-
+            seccion.getModuloList().forEach((modulo) -> {
                 List<ModelMenu> menus = new ArrayList<>();
-                for (Menu menu : modulo.getMenuList()) {
-
+                modulo.getMenuList().forEach((menu) -> {
                     List<ModelPermiso> permisos = new ArrayList<>();
-                    for (Permiso permiso : menu.getPermisoList()) {
+                    menu.getPermisoList().forEach((permiso) -> {
                         try {
                             String permisoId = permiso.getId();
                             PerfilesPermisos perfilConPermiso = perfilesPermisos.stream().filter(pp -> pp.getPerfilesPermisosPK().getPermiso().equals(permisoId)).findFirst().get();
@@ -281,24 +276,24 @@ public class UtilsPermissions {
                             permisos.add(modelPermiso);
                         } catch (NoSuchElementException e) {//no encontro el permiso en ese perfil
                         }
-                    }
+                    });
                     //si tiene permisos del menu agregar el menu
                     if (!permisos.isEmpty()) {
                         ModelMenu m = new ModelMenu(menu.getNombre(), menu.getId(), permisos);
                         menus.add(m);
                     }
-                }
+                });
                 //si tiene menus en el modulo, agregar el modulo
                 if (!menus.isEmpty()) {
                     ModelModulo m = new ModelModulo(modulo.getNombre(), modulo.getId(), menus);
                     modulos.add(m);
                 }
-            }
+            });
             if (!modulos.isEmpty()) {
                 ModelSeccion s = new ModelSeccion(seccion.getNombre(), seccion.getId(), modulos);
                 seccionesDePerfil.add(s);
             }
-        }
+        });
         return asignados;
     }
 
@@ -316,7 +311,7 @@ public class UtilsPermissions {
 
         //permisos por usuario
         List<ModelPermisoAsignado> permisosPorUsuario = daoUsuarioPermisos.stream()
-                .where(e -> e.getUsuariosPermisosPK().getUsuario().equals(usuarioId))
+                .where(e -> e.getUsuariosPermisosPK().getUsuario() == (usuarioId))
                 .select(e -> new Pair<>(e.getUsuariosPermisosPK().getPermiso(), e.getProfundidad()))
                 .map(pair -> {
                     ModelPermisoAsignado model = new ModelPermisoAsignado();
@@ -328,7 +323,7 @@ public class UtilsPermissions {
 
         //permisos por perfiles
         List<ModelPermisoAsignado> permisosDeLosPerfiles = daoUsuariosPerfil.stream()
-                .where(up -> up.getUsuariosPerfilPK().getUsuario().equals(usuarioId) && up.getHereda().equals(Boolean.TRUE))
+                .where(up -> up.getUsuariosPerfilPK().getUsuario() == (usuarioId) && up.getHereda().equals(Boolean.TRUE))
                 .join(up -> JinqStream.of(up.getPerfil1()))
                 .joinList(p -> p.getTwo().getPerfilesPermisosList())
                 .select(p -> p.getTwo())
@@ -345,13 +340,13 @@ public class UtilsPermissions {
 
         List<ModelSeccion> seccionesDeUsuario = new ArrayList<>();
         ModelPermisosAsignados asignados = new ModelPermisosAsignados(seccionesDeUsuario);
-        for (Seccion seccion : secciones) {
+        secciones.forEach((seccion) -> {
             List<ModelModulo> modulos = new ArrayList<>();
-            for (Modulo modulo : seccion.getModuloList()) {
+            seccion.getModuloList().forEach((modulo) -> {
                 List<ModelMenu> menus = new ArrayList<>();
-                for (Menu menu : modulo.getMenuList()) {
+                modulo.getMenuList().forEach((menu) -> {
                     List<ModelPermiso> permisos = new ArrayList<>();
-                    for (Permiso permiso : menu.getPermisoList()) {
+                    menu.getPermisoList().forEach((permiso) -> {
                         try {
                             String permisoId = permiso.getId();
                             List<Profundidad> profundidades = new ArrayList<>();
@@ -371,25 +366,24 @@ public class UtilsPermissions {
                             permisos.add(new ModelPermiso(permiso.getNombre(), permiso.getId(), profundidadMayor(profundidades)));
                         } catch (ParametroInvalidoException e) {//no tiene el permiso                            
                         }
-                    }
+                    });
                     //si tiene permisos del menu agregar el menu
                     if (!permisos.isEmpty()) {
                         ModelMenu m = new ModelMenu(menu.getNombre(), menu.getId(), permisos);
                         menus.add(m);
                     }
-                }
+                });
                 //si tiene menus en el modulo, agregar el modulo
                 if (!menus.isEmpty()) {
                     ModelModulo m = new ModelModulo(modulo.getNombre(), modulo.getId(), menus);
                     modulos.add(m);
                 }
-            }
+            });
             if (!modulos.isEmpty()) {
                 ModelSeccion s = new ModelSeccion(seccion.getNombre(), seccion.getId(), modulos);
                 seccionesDeUsuario.add(s);
             }
-        }
-
+        });
         return asignados;
     }
 
@@ -404,5 +398,41 @@ public class UtilsPermissions {
             return PROPIOS;
         }
         throw new ParametroInvalidoException("No existe una profundidad valida en la lista proporsionada");
+    }
+
+    /**
+     * Consulta si el usuario dueño del token de sesion tiene un permiso en particular
+     *
+     * @param tokenSesion token de sesion
+     * @param permisoId identificador del permiso
+     * @return modelo con la profundidad del permiso y
+     */
+    public static ModelPermisoValido tienePermiso(final String tokenSesion, final String permisoId) throws TokenInvalidoException, TokenExpiradoException, ParametroInvalidoException {
+        EntityManager em = UtilsDB.getEMFactory().createEntityManager();
+        int usuarioId = UtilsJWT.getUserIdFrom(tokenSesion);
+        List<ModelPermisoProfundidad> permisosValidosUsuario = new ArrayList<>();
+        //obtener las profundidades por parte del usuario        
+        try {
+            permisosValidosUsuario.add(em.createQuery("SELECT NEW com.auth.models.ModelPermisoProfundidad(usp.profundidad) FROM UsuariosPermisos usp WHERE usp.usuariosPermisosPK.permiso = :permisoId AND usp.usuariosPermisosPK.usuario = :usuarioId", ModelPermisoProfundidad.class)
+                    .setParameter("permisoId", permisoId)
+                    .setParameter("usuarioId", usuarioId)
+                    .getSingleResult()
+            );
+        } catch (NoResultException e) {
+        }
+        try {
+            permisosValidosUsuario.addAll(
+                    em.createQuery("SELECT NEW com.auth.models.ModelPermisoProfundidad(pep.profundidad) FROM PerfilesPermisos pep WHERE pep.perfilesPermisosPK.permiso = :permisoId AND pep.perfilesPermisosPK.perfil in ( SELECT usp.usuariosPerfilPK.perfil FROM UsuariosPerfil usp WHERE usp.usuariosPerfilPK.usuario = :usuarioId )", ModelPermisoProfundidad.class)
+                            .setParameter("permisoId", permisoId)
+                            .setParameter("usuarioId", usuarioId)
+                            .getResultList()
+            );
+        } catch (NoResultException e) {
+        }
+        if (permisosValidosUsuario.isEmpty()) {
+            return new ModelPermisoValido(false, null);
+        } else {
+            return new ModelPermisoValido(profundidadMayor(permisosValidosUsuario.stream().map(e -> e.getProfundidad()).collect(toList())));
+        }
     }
 }

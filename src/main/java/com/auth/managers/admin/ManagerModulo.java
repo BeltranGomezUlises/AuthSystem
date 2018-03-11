@@ -19,8 +19,6 @@ package com.auth.managers.admin;
 import com.auth.daos.admin.DaoModulo;
 import com.auth.entities.admin.Modulo;
 import com.auth.managers.commons.ManagerSQL;
-import com.auth.managers.exceptions.TokenExpiradoException;
-import com.auth.managers.exceptions.TokenInvalidoException;
 
 /**
  *
@@ -32,8 +30,4 @@ public class ManagerModulo extends ManagerSQL<Modulo, String> {
         super(new DaoModulo());
     }
 
-    public ManagerModulo(String token) throws TokenInvalidoException, TokenExpiradoException {
-        super(new DaoModulo(), token);
-    }
-    
 }

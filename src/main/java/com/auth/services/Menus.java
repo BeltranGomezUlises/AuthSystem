@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alonso --- alonso@kriblet.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,31 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.auth.models;
+package com.auth.services;
+
+import com.auth.entities.admin.Menu;
+import com.auth.managers.admin.ManagerMenu;
+import com.auth.services.commons.ServiceFacade;
+import javax.ws.rs.Path;
 
 /**
- * modelo contenedor de usuario para asignar a perfil
- * @author Alonso --- alonso@kriblet.com
+ * Servicios LCRUD de menus del sistema
+ *
+ * @author
  */
-public class ModelUsuarioAsignado {
+@Path("/menus")
+public class Menus extends ServiceFacade<Menu, String> {
 
-    private String userId;
-    private boolean heritage;
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public boolean isHeritage() {
-        return heritage;
-    }
-
-    public void setHeritage(boolean heritage) {
-        this.heritage = heritage;
+    public Menus() {
+        super(new ManagerMenu());
     }
 
 }

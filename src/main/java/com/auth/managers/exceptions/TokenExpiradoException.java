@@ -20,10 +20,10 @@ package com.auth.managers.exceptions;
  *
  * @author Alonso --- alonso@kriblet.com
  */
-public class TokenExpiradoException extends Exception{
+public class TokenExpiradoException extends Exception {
 
     public TokenExpiradoException(String message) {
         super(message);
-    }    
-    
+    }
+
 }

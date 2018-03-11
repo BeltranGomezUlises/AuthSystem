@@ -17,13 +17,16 @@
 package com.auth.services;
 
 import com.auth.entities.admin.Perfil;
+import com.auth.entities.admin.PerfilesPermisos;
 import com.auth.managers.admin.ManagerPerfil;
 import com.auth.managers.exceptions.TokenExpiradoException;
 import com.auth.managers.exceptions.TokenInvalidoException;
 import com.auth.models.ModelAsignarPermisos;
 import com.auth.models.ModelPermisosAsignados;
+import com.auth.services.commons.ServiceFacade;
 import com.auth.utils.UtilsJWT;
 import com.auth.utils.UtilsPermissions;
+import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -47,15 +50,16 @@ public class Perfiles extends ServiceFacade<Perfil, Integer> {
      *
      * @param token token de sesion
      * @param modelo modelo contenedor del perfil y la lista de permisos a asignar
-     * @return sin data
+     * @throws com.auth.managers.exceptions.TokenInvalidoException si el token proporsionado no es valido
+     * @throws com.auth.managers.exceptions.TokenExpiradoException si el token proporsionado ya caducó
+     * @return asignacion de permisos al perfil
      */
     @POST
     @Path("/asignarPermisos")
-    public Perfil asignarPermisos(@HeaderParam("Authorization") String token, ModelAsignarPermisos modelo) throws TokenInvalidoException, TokenExpiradoException, Exception {
+    public List<PerfilesPermisos> reemplazarPermisosDelPerfil(@HeaderParam("Authorization") String token, ModelAsignarPermisos modelo) throws TokenInvalidoException, TokenExpiradoException, Exception {
+        UtilsJWT.validateSessionToken(token);
         ManagerPerfil managerPerfil = new ManagerPerfil();
-        managerPerfil.setToken(token);
-        managerPerfil.asignarPermisos(modelo);
-        return this.detalle(token, modelo.getId());
+        return managerPerfil.reemplazarPermisosDelPerfil(modelo);
     }
 
     /**
@@ -63,6 +67,8 @@ public class Perfiles extends ServiceFacade<Perfil, Integer> {
      *
      * @param token token de sesion
      * @param perfilId id del perfil del cual buscar sus permisos
+     * @throws com.auth.managers.exceptions.TokenInvalidoException si el token proporsionado no es valido
+     * @throws com.auth.managers.exceptions.TokenExpiradoException si el token proporsionado ya caducó
      * @return en data, la lista de permisos a obtener
      */
     @GET

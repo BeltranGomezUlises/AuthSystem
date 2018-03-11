@@ -20,18 +20,12 @@ import com.auth.daos.admin.DaoBitacoraContra;
 import com.auth.entities.admin.BitacoraContras;
 import com.auth.entities.admin.BitacoraContrasPK;
 import com.auth.managers.commons.ManagerSQL;
-import com.auth.managers.exceptions.TokenExpiradoException;
-import com.auth.managers.exceptions.TokenInvalidoException;
 
 /**
  *
  * @author Alonso --- alonso@kriblet.com
  */
 public class ManagerBitacoraContra extends ManagerSQL<BitacoraContras, BitacoraContrasPK> {
-
-    public ManagerBitacoraContra(String token) throws TokenInvalidoException, TokenExpiradoException {
-        super(new DaoBitacoraContra(), token);
-    }
 
     public ManagerBitacoraContra() {
         super(new DaoBitacoraContra());

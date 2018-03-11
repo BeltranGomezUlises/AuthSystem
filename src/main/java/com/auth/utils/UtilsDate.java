@@ -151,8 +151,8 @@ public class UtilsDate {
         public DateClass() {
             this.date = new Date();
         }
-        
-        public DateClass(Date date){
+
+        public DateClass(Date date) {
             this.date = date;
         }
     }

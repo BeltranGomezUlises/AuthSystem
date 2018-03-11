@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alonso --- alonso@kriblet.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@ package com.auth.entities.admin;
 import com.auth.entities.commons.IEntity;
 import com.auth.entities.commons.Profundidad;
 import java.io.Serializable;
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -30,17 +29,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
  *
- * @author Alonso --- alonso@kriblet.com
+ * @author
  */
 @Entity
 @Table(name = "usuarios_permisos")
 @NamedQueries({
     @NamedQuery(name = "UsuariosPermisos.findAll", query = "SELECT u FROM UsuariosPermisos u")
+    , @NamedQuery(name = "UsuariosPermisos.findByUsuario", query = "SELECT u FROM UsuariosPermisos u WHERE u.usuariosPermisosPK.usuario = :usuario")
     , @NamedQuery(name = "UsuariosPermisos.findByPermiso", query = "SELECT u FROM UsuariosPermisos u WHERE u.usuariosPermisosPK.permiso = :permiso")
     , @NamedQuery(name = "UsuariosPermisos.findByProfundidad", query = "SELECT u FROM UsuariosPermisos u WHERE u.profundidad = :profundidad")})
 public class UsuariosPermisos extends IEntity<UsuariosPermisosPK> implements Serializable {
@@ -48,9 +47,7 @@ public class UsuariosPermisos extends IEntity<UsuariosPermisosPK> implements Ser
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected UsuariosPermisosPK usuariosPermisosPK;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 2147483647)
+    @Size(max = 2147483647)
     @Column(name = "profundidad")
     @Enumerated(EnumType.STRING)
     private Profundidad profundidad;
@@ -68,13 +65,13 @@ public class UsuariosPermisos extends IEntity<UsuariosPermisosPK> implements Ser
         this.usuariosPermisosPK = usuariosPermisosPK;
     }
 
-    public UsuariosPermisos(UsuariosPermisosPK usuariosPermisosPK, Profundidad profundidad) {
-        this.usuariosPermisosPK = usuariosPermisosPK;
-        this.profundidad = profundidad;
+    public UsuariosPermisos(int usuario, String permiso) {
+        this.usuariosPermisosPK = new UsuariosPermisosPK(usuario, permiso);
     }
 
-    public UsuariosPermisos(Integer usuario, String permiso) {
+    public UsuariosPermisos(int usuario, String permiso, Profundidad profundidad) {
         this.usuariosPermisosPK = new UsuariosPermisosPK(usuario, permiso);
+        this.setProfundidad(profundidad);
     }
 
     public UsuariosPermisosPK getUsuariosPermisosPK() {
@@ -131,12 +128,12 @@ public class UsuariosPermisos extends IEntity<UsuariosPermisosPK> implements Ser
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisos[ usuariosPermisosPK=" + usuariosPermisosPK + " ]";
+        return "com.auth.entities.admin.UsuariosPermisos[ usuariosPermisosPK=" + usuariosPermisosPK + " ]";
     }
 
     @Override
-    public UsuariosPermisosPK getId() {
+    public UsuariosPermisosPK obtenerIdentificador() {
         return usuariosPermisosPK;
     }
-    
+
 }

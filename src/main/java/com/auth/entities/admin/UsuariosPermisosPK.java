@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alonso --- alonso@kriblet.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author Alonso --- alonso@kriblet.com
+ * @author
  */
 @Embeddable
 public class UsuariosPermisosPK implements Serializable {
@@ -33,7 +33,7 @@ public class UsuariosPermisosPK implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "usuario")
-    private Integer usuario;
+    private int usuario;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
@@ -43,16 +43,16 @@ public class UsuariosPermisosPK implements Serializable {
     public UsuariosPermisosPK() {
     }
 
-    public UsuariosPermisosPK(Integer usuario, String permiso) {
+    public UsuariosPermisosPK(int usuario, String permiso) {
         this.usuario = usuario;
         this.permiso = permiso;
     }
 
-    public Integer getUsuario() {
+    public int getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(Integer usuario) {
+    public void setUsuario(int usuario) {
         this.usuario = usuario;
     }
 
@@ -67,7 +67,7 @@ public class UsuariosPermisosPK implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (usuario != null ? usuario.hashCode() : 0);
+        hash += (int) usuario;
         hash += (permiso != null ? permiso.hashCode() : 0);
         return hash;
     }
@@ -79,12 +79,18 @@ public class UsuariosPermisosPK implements Serializable {
             return false;
         }
         UsuariosPermisosPK other = (UsuariosPermisosPK) object;
-        return this.usuario.equals(other.usuario) && this.permiso.equals(other.permiso);
+        if (this.usuario != other.usuario) {
+            return false;
+        }
+        if ((this.permiso == null && other.permiso != null) || (this.permiso != null && !this.permiso.equals(other.permiso))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisosPK[ usuario=" + usuario + ", permiso=" + permiso + " ]";
+        return "com.auth.entities.admin.UsuariosPermisosPK[ usuario=" + usuario + ", permiso=" + permiso + " ]";
     }
-    
+
 }

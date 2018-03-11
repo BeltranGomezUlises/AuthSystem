@@ -17,11 +17,8 @@
 package com.auth.managers.admin;
 
 import com.auth.daos.admin.DaoMenu;
-import com.auth.daos.commons.DaoSQLFacade;
 import com.auth.entities.admin.Menu;
 import com.auth.managers.commons.ManagerSQL;
-import com.auth.managers.exceptions.TokenExpiradoException;
-import com.auth.managers.exceptions.TokenInvalidoException;
 
 /**
  *
@@ -31,10 +28,6 @@ public class ManagerMenu extends ManagerSQL<Menu, String> {
 
     public ManagerMenu() {
         super(new DaoMenu());
-    }
-
-    public ManagerMenu(DaoSQLFacade dao, String token) throws TokenInvalidoException, TokenExpiradoException {
-        super(dao, token);
     }
 
 }

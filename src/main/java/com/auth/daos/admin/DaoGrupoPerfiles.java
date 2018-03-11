@@ -18,16 +18,15 @@ package com.auth.daos.admin;
 
 import com.auth.daos.commons.DaoSQLFacade;
 import com.auth.entities.admin.GrupoPerfiles;
-import com.auth.utils.UtilsDB;
 
 /**
  *
  * @author Alonso --- alonso@kriblet.com
  */
-public class DaoGrupoPerfiles extends DaoSQLFacade<GrupoPerfiles, Integer>{
+public class DaoGrupoPerfiles extends DaoSQLFacade<GrupoPerfiles, Integer> {
 
     public DaoGrupoPerfiles() {
-        super(UtilsDB.getEMFactoryCG(), GrupoPerfiles.class, Integer.class);
+        super(GrupoPerfiles.class, Integer.class);
     }
 
 }

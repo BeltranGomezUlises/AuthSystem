@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alonso --- alonso@kriblet.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,25 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.auth.models;
+package com.auth.managers.admin;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.auth.daos.admin.DaoPermiso;
+import com.auth.entities.admin.Permiso;
+import com.auth.managers.commons.ManagerSQL;
 
 /**
- * modelo para comunicar el id de un usuario
- * @author Alonso --- alonso@kriblet.com
+ * manejador de permisos
+ *
+ * @author
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ModelUsuarioId {
+public class ManagerPermiso extends ManagerSQL<Permiso, String> {
 
-    private String id;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public ManagerPermiso() {
+        super(new DaoPermiso());
     }
 
 }

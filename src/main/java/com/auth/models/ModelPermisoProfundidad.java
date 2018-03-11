@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alonso --- alonso@kriblet.com
+ * Copyright (C) 2018 Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +14,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.auth.managers.exceptions;
+package com.auth.models;
+
+import com.auth.entities.commons.Profundidad;
 
 /**
  *
- * @author Alonso --- alonso@kriblet.com
+ * @author Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
-public class ContraseñaIncorrectaException extends Exception{
+public class ModelPermisoProfundidad {
 
-    public ContraseñaIncorrectaException(String message) {
-        super(message);
+    private Profundidad profundidad;
+
+    public ModelPermisoProfundidad(Profundidad profundidad) {
+        this.profundidad = profundidad;
     }
-        
+
+    public ModelPermisoProfundidad() {
+    }
+
+    public Profundidad getProfundidad() {
+        return profundidad;
+    }
+
+    public void setProfundidad(Profundidad profundidad) {
+        this.profundidad = profundidad;
+    }
+
 }

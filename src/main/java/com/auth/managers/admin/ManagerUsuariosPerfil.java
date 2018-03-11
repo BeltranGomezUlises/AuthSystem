@@ -22,11 +22,7 @@ import com.auth.entities.admin.UsuariosPerfil;
 import com.auth.entities.admin.UsuariosPerfilPK;
 import com.auth.managers.commons.ManagerSQL;
 import com.auth.managers.exceptions.ParametroInvalidoException;
-import com.auth.managers.exceptions.TokenExpiradoException;
-import com.auth.managers.exceptions.TokenInvalidoException;
 import com.auth.models.ModelAsignarPerfilesAlUsuario;
-import com.auth.models.ModelPerfilYHereda;
-import java.util.ArrayList;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
 
@@ -36,45 +32,22 @@ import static java.util.stream.Collectors.toList;
  */
 public class ManagerUsuariosPerfil extends ManagerSQL<UsuariosPerfil, UsuariosPerfilPK> {
 
-    public ManagerUsuariosPerfil(){
+    public ManagerUsuariosPerfil() {
         super(new DaoUsuariosPerfil());
     }
 
-    public ManagerUsuariosPerfil(String token) throws TokenInvalidoException, TokenExpiradoException {
-        super(new DaoUsuariosPerfil(), token);
-    }
-       
     public List<UsuariosPerfil> asignarPerfilesAlUsuario(ModelAsignarPerfilesAlUsuario modelo) throws Exception {
-        
         if (modelo.getPerfiles().isEmpty()) {
             throw new ParametroInvalidoException("No puede dejar un usuario sin ningun perfil");
         }
-        
-        //remover los perfiles actuales
-        List<UsuariosPerfilPK> idsActuales = this.stream()
-                .filter(up -> up.getUsuariosPerfilPK().getUsuario().equals(modelo.getUserId()))
-                .map(up -> up.getUsuariosPerfilPK())
-                .collect(toList());
-
-        dao.deleteAll(idsActuales);
-
-        //asignar los perfiles del modelo
-        List<UsuariosPerfil> usuariosPerfilNuevos = new ArrayList<>();
-        UsuariosPerfil entidadRelacion;
-        for (ModelPerfilYHereda perfil : modelo.getPerfiles()) {
-            entidadRelacion = new UsuariosPerfil(modelo.getUserId(), perfil.getPerfilId());
-            entidadRelacion.setHereda(perfil.isHereda());
-            usuariosPerfilNuevos.add(entidadRelacion);
-        }
-
-        return dao.persistAll(usuariosPerfilNuevos);
+        return new DaoUsuariosPerfil().reemplazarPerfilesUsuario(modelo.getUserId(), modelo.getPerfiles());
     }
 
-    public List<Perfil> perfilesDeUsuario(Integer usuarioId) {
+    public List<Perfil> perfilesDeUsuario(final Integer usuarioId) {
         return dao.stream()
-                .where(up -> up.getUsuariosPerfilPK().getUsuario().equals(usuarioId))
+                .where(up -> up.getUsuariosPerfilPK().getUsuario() == usuarioId)
                 .map(up -> up.getPerfil1())
                 .collect(toList());
-    }   
+    }
 
 }

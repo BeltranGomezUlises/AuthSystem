@@ -25,7 +25,7 @@ import com.auth.managers.commons.ManagerSQL;
  *
  * @author Alonso --- alonso@kriblet.com
  */
-public class ManagerUsuariosPermisos extends ManagerSQL<UsuariosPermisos, UsuariosPermisosPK>{
+public class ManagerUsuariosPermisos extends ManagerSQL<UsuariosPermisos, UsuariosPermisosPK> {
 
     public ManagerUsuariosPermisos() {
         super(new DaoUsuariosPermisos());

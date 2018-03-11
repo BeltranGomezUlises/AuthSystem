@@ -18,6 +18,7 @@ package com.auth.models;
 
 /**
  * modelo contenedor de perfil y herencia de permisos
+ *
  * @author Alonso --- alonso@kriblet.com
  */
 public class ModelPerfilYHereda {

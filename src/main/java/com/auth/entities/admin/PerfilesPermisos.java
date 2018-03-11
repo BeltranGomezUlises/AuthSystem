@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alonso --- alonso@kriblet.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@ package com.auth.entities.admin;
 import com.auth.entities.commons.IEntity;
 import com.auth.entities.commons.Profundidad;
 import java.io.Serializable;
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -30,17 +29,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
  *
- * @author Alonso --- alonso@kriblet.com
+ * @author
  */
 @Entity
 @Table(name = "perfiles_permisos")
 @NamedQueries({
     @NamedQuery(name = "PerfilesPermisos.findAll", query = "SELECT p FROM PerfilesPermisos p")
+    , @NamedQuery(name = "PerfilesPermisos.findByPerfil", query = "SELECT p FROM PerfilesPermisos p WHERE p.perfilesPermisosPK.perfil = :perfil")
     , @NamedQuery(name = "PerfilesPermisos.findByPermiso", query = "SELECT p FROM PerfilesPermisos p WHERE p.perfilesPermisosPK.permiso = :permiso")
     , @NamedQuery(name = "PerfilesPermisos.findByProfundidad", query = "SELECT p FROM PerfilesPermisos p WHERE p.profundidad = :profundidad")})
 public class PerfilesPermisos extends IEntity<PerfilesPermisosPK> implements Serializable {
@@ -48,9 +47,7 @@ public class PerfilesPermisos extends IEntity<PerfilesPermisosPK> implements Ser
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected PerfilesPermisosPK perfilesPermisosPK;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 2147483647)
+    @Size(max = 2147483647)
     @Column(name = "profundidad")
     @Enumerated(EnumType.STRING)
     private Profundidad profundidad;
@@ -68,13 +65,13 @@ public class PerfilesPermisos extends IEntity<PerfilesPermisosPK> implements Ser
         this.perfilesPermisosPK = perfilesPermisosPK;
     }
 
-    public PerfilesPermisos(PerfilesPermisosPK perfilesPermisosPK, Profundidad profundidad) {
-        this.perfilesPermisosPK = perfilesPermisosPK;
-        this.profundidad = profundidad;
+    public PerfilesPermisos(int perfil, String permiso) {
+        this.perfilesPermisosPK = new PerfilesPermisosPK(perfil, permiso);
     }
 
-    public PerfilesPermisos(Integer perfil, String permiso) {
+    public PerfilesPermisos(int perfil, String permiso, Profundidad profundidad) {
         this.perfilesPermisosPK = new PerfilesPermisosPK(perfil, permiso);
+        this.setProfundidad(profundidad);
     }
 
     public PerfilesPermisosPK getPerfilesPermisosPK() {
@@ -123,16 +120,19 @@ public class PerfilesPermisos extends IEntity<PerfilesPermisosPK> implements Ser
             return false;
         }
         PerfilesPermisos other = (PerfilesPermisos) object;
-        return this.perfilesPermisosPK.equals(other.perfilesPermisosPK);
+        if ((this.perfilesPermisosPK == null && other.perfilesPermisosPK != null) || (this.perfilesPermisosPK != null && !this.perfilesPermisosPK.equals(other.perfilesPermisosPK))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.PerfilesPermisos[ perfilesPermisosPK=" + perfilesPermisosPK + " ]";
+        return "com.auth.entities.admin.PerfilesPermisos[ perfilesPermisosPK=" + perfilesPermisosPK + " ]";
     }
 
     @Override
-    public PerfilesPermisosPK getId() {
+    public PerfilesPermisosPK obtenerIdentificador() {
         return perfilesPermisosPK;
     }
 

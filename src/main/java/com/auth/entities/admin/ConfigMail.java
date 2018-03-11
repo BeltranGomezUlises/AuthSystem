@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ulises Beltrán Gómez - beltrangomezulises@gmail.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ package com.auth.entities.admin;
 
 /**
  *
- * @author Ulises Beltrán Gómez - beltrangomezulises@gmail.com
+ * @author
  */
 public class ConfigMail {
 

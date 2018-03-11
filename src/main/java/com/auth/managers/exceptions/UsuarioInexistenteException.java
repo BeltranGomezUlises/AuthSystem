@@ -9,10 +9,10 @@ package com.auth.managers.exceptions;
  *
  * @author Alonso --- alonso@kriblet.com
  */
-public class UsuarioInexistenteException extends Exception{
+public class UsuarioInexistenteException extends Exception {
 
-        public UsuarioInexistenteException(String menssage) {
-            super(menssage);
-        }        
-    
+    public UsuarioInexistenteException(String menssage) {
+        super(menssage);
+    }
+
 }

@@ -7,8 +7,9 @@ package com.auth.models.enums;
 
 /**
  * enumerador de estado de operacion
+ *
  * @author Alonso --- alonso@kriblet.com
  */
 public enum Status {
-    OK,ERROR,WARNING, ACCES_DENIED, INVALID_PARAM, PARCIAL_ACCESS
+    OK, ERROR, WARNING, ACCES_DENIED, INVALID_PARAM, PARCIAL_ACCESS
 }

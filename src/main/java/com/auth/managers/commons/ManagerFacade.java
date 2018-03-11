@@ -6,9 +6,6 @@
 package com.auth.managers.commons;
 
 import com.auth.entities.commons.IEntity;
-import com.auth.managers.exceptions.TokenExpiradoException;
-import com.auth.managers.exceptions.TokenInvalidoException;
-import com.auth.utils.UtilsJWT;
 import java.util.List;
 
 /**
@@ -20,32 +17,7 @@ import java.util.List;
  */
 public abstract class ManagerFacade<T extends IEntity, K> {
 
-    protected Integer usuario;
-
     public ManagerFacade() {
-    }
-
-    public ManagerFacade(String token) throws TokenInvalidoException, TokenExpiradoException {
-        this.usuario = UtilsJWT.getUserIdFrom(token);
-    }
-
-    public Integer getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Integer usuario) {
-        this.usuario = usuario;
-    }
-
-    /**
-     * asignar un token de sesion a este manager, con la intencion de validar el usuario en pemisos y registros de bitacoras
-     *
-     * @param token token de sesion
-     * @throws TokenInvalidoException si el token proporsionado no es válido
-     * @throws TokenExpiradoException si el token proporsionado ya expiró
-     */
-    public void setToken(String token) throws TokenInvalidoException, TokenExpiradoException {
-        this.setUsuario(UtilsJWT.getUserIdFrom(token));
     }
 
     /**

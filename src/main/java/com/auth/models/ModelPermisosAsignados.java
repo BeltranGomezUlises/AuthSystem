@@ -91,8 +91,7 @@ public class ModelPermisosAsignados {
         }
 
         /**
-         * modelo de modulo representativo a un modulo de una seccion del
-         * sistema
+         * modelo de modulo representativo a un modulo de una seccion del sistema
          */
         public static class ModelModulo {
 
@@ -195,8 +194,7 @@ public class ModelPermisosAsignados {
                 }
 
                 /**
-                 * modelo de accion representativa a un accion de un modulo del
-                 * sistema
+                 * modelo de accion representativa a un accion de un modulo del sistema
                  */
                 public static class ModelPermiso {
 

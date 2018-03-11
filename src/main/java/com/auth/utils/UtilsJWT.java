@@ -5,11 +5,11 @@
  */
 package com.auth.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.auth.managers.exceptions.ParametroInvalidoException;
 import com.auth.managers.exceptions.TokenExpiradoException;
 import com.auth.managers.exceptions.TokenInvalidoException;
 import com.auth.models.ModelCodigoRecuperacionUsuario;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -35,7 +35,7 @@ public class UtilsJWT {
 
     public static String generateSessionToken(String userId) throws JsonProcessingException {
         JwtBuilder builder = Jwts.builder();
-        Calendar cal = new GregorianCalendar();        //calendario de tiempos        
+        Calendar cal = new GregorianCalendar();  //calendario de tiempos        
         builder.setIssuedAt(cal.getTime());     //fecha de expedicion        
 
         cal.add(Calendar.SECOND, 6000);//aumentar tiempo para asignar expiracion
@@ -48,7 +48,7 @@ public class UtilsJWT {
 
     public static String generateValidateUserToken(ModelCodigoRecuperacionUsuario model) throws JsonProcessingException {
         JwtBuilder builder = Jwts.builder();
-        Calendar cal = new GregorianCalendar();//calendario de tiempos                
+        Calendar cal = new GregorianCalendar(); //calendario de tiempos                
         cal.add(Calendar.SECOND, 500);
         builder.setExpiration(cal.getTime());
         builder.setSubject(UtilsJson.jsonSerialize(model));
@@ -58,7 +58,7 @@ public class UtilsJWT {
 
     public static String generateTokenResetPassword(String token, String code) throws IOException, ParametroInvalidoException, TokenInvalidoException, TokenExpiradoException {
         JwtBuilder builder = Jwts.builder();
-        Calendar cal = new GregorianCalendar();        //calendario de tiempos                
+        Calendar cal = new GregorianCalendar(); //calendario de tiempos                
         cal.add(Calendar.SECOND, 500);
         builder.setExpiration(cal.getTime());
 
@@ -73,31 +73,30 @@ public class UtilsJWT {
 
     public static String getBodyToken(String token) throws TokenInvalidoException, TokenExpiradoException {
         try {
-            return Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token).getBody().getSubject();            
+            return Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token).getBody().getSubject();
         } catch (SignatureException | IllegalArgumentException e) {
             throw new TokenInvalidoException("Token Invalido");
-        }catch ( ExpiredJwtException exe){
+        } catch (ExpiredJwtException exe) {
             throw new TokenExpiradoException("Token expirado");
-        }        
-    }
-    
-    public static Integer getUserIdFrom(String token) throws TokenInvalidoException, TokenExpiradoException {
-        try {
-            return Integer.parseInt(Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token).getBody().getSubject()); 
-        } catch (SignatureException | IllegalArgumentException e) {
-            throw new TokenInvalidoException("Token Invalido");
-        }catch ( ExpiredJwtException exe){
-            throw new TokenExpiradoException("Token expirado");
-        }        
+        }
     }
 
-    
+    public static Integer getUserIdFrom(String token) throws TokenInvalidoException, TokenExpiradoException {
+        try {
+            return Integer.parseInt(Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token).getBody().getSubject());
+        } catch (SignatureException | IllegalArgumentException e) {
+            throw new TokenInvalidoException("Token Invalido");
+        } catch (ExpiredJwtException exe) {
+            throw new TokenExpiradoException("Token expirado");
+        }
+    }
+
     public static void validateSessionToken(String token) throws TokenExpiradoException, TokenInvalidoException {
         try {
             Jwts.parser().setSigningKey(STRING_KEY).parseClaimsJws(token);
         } catch (SignatureException | IllegalArgumentException e) {
             throw new TokenInvalidoException("Token Invalido");
-        }catch ( ExpiredJwtException exe){
+        } catch (ExpiredJwtException exe) {
             throw new TokenExpiradoException("Token expirado");
         }
     }

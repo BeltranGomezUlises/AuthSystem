@@ -25,10 +25,10 @@ import com.auth.managers.commons.ManagerSQL;
  *
  * @author Alonso --- alonso@kriblet.com
  */
-public class ManagerPerfilesPermisos extends ManagerSQL<PerfilesPermisos, PerfilesPermisosPK>{
+public class ManagerPerfilesPermisos extends ManagerSQL<PerfilesPermisos, PerfilesPermisosPK> {
 
     public ManagerPerfilesPermisos() {
         super(new DaoPerfilesPermisos());
     }
-    
+
 }

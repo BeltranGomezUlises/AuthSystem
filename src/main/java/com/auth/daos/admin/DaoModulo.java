@@ -18,16 +18,15 @@ package com.auth.daos.admin;
 
 import com.auth.daos.commons.DaoSQLFacade;
 import com.auth.entities.admin.Modulo;
-import com.auth.utils.UtilsDB;
 
 /**
  *
  * @author Alonso --- alonso@kriblet.com
  */
-public class DaoModulo extends DaoSQLFacade<Modulo, String>{
+public class DaoModulo extends DaoSQLFacade<Modulo, String> {
 
     public DaoModulo() {
-        super(UtilsDB.getEMFactoryCG(), Modulo.class, String.class);
+        super(Modulo.class, String.class);
     }
 
 }

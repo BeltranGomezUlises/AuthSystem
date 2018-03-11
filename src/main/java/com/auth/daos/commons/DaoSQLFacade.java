@@ -6,15 +6,13 @@
 package com.auth.daos.commons;
 
 import com.auth.entities.commons.IEntity;
+import com.auth.utils.UtilsDB;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import org.jinq.jpa.JPAJinqStream;
-import org.jinq.jpa.JPAQueryLogger;
 import org.jinq.jpa.JinqJPAStreamProvider;
 
 /**
@@ -28,22 +26,19 @@ public abstract class DaoSQLFacade<T extends IEntity<K>, K> {
 
     private final Class<T> claseEntity;
     private final Class<K> clasePK;
-    private final EntityManagerFactory eMFactory;
     private final JinqJPAStreamProvider streamProvider;
 
     /**
      * al sobreescribir considerar la fabrica de EntityManager, que sea la que apunte a la base de datos adecuada, que la clase entidad sea correcta y la clase que represente la llave primaria tambien corresponda
      *
-     * @param eMFactory fabrica de manejadores de entidad EntityManager que corresponda a la base de datos con la cual trabajar
      * @param claseEntity clase de la entidad con la cual operar
      * @param clasePk clase que represente la llave primaria de la entidad
      */
-    public DaoSQLFacade(EntityManagerFactory eMFactory, Class<T> claseEntity, Class<K> clasePk) {
-        this.eMFactory = eMFactory;
+    public DaoSQLFacade(Class<T> claseEntity, Class<K> clasePk) {
         this.claseEntity = claseEntity;
         this.clasePK = clasePk;
 
-        streamProvider = new JinqJPAStreamProvider(eMFactory);
+        streamProvider = new JinqJPAStreamProvider(UtilsDB.getEMFactory());
         streamProvider.registerAttributeConverterType(UUID.class);
     }
 
@@ -53,10 +48,6 @@ public abstract class DaoSQLFacade<T extends IEntity<K>, K> {
 
     public Class<K> getClasePK() {
         return clasePK;
-    }
-
-    public EntityManagerFactory geteMFactory() {
-        return eMFactory;
     }
 
     public JinqJPAStreamProvider getStreamProvider() {
@@ -69,7 +60,7 @@ public abstract class DaoSQLFacade<T extends IEntity<K>, K> {
      * @return EntityManager de la fabrica de este Data Access Object
      */
     public EntityManager getEM() {
-        return eMFactory.createEntityManager();
+        return UtilsDB.getEMFactory().createEntityManager();
     }
 
     /**
@@ -88,14 +79,7 @@ public abstract class DaoSQLFacade<T extends IEntity<K>, K> {
      * @return strema de datos de la entidad con la cual operar
      */
     public JPAJinqStream<T> stream() {
-        JPAJinqStream<T> stream = streamProvider.streamAll(eMFactory.createEntityManager(), claseEntity);
-
-        stream.setHint(
-                "queryLogger", (JPAQueryLogger) (String query, Map<Integer, Object> positionParameters, Map<String, Object> namedParameters) -> {
-                    System.out.println("queryLogr -> " + query);
-                });
-
-        return stream;
+        return streamProvider.streamAll(UtilsDB.getEMFactory().createEntityManager(), claseEntity);
     }
 
     //<editor-fold defaultstate="collapsed" desc="¡LEEME!">

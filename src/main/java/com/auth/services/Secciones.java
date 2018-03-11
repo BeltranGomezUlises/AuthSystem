@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alonso --- alonso@kriblet.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.auth.managers.exceptions;
+package com.auth.services;
+
+import com.auth.entities.admin.Seccion;
+import com.auth.managers.admin.ManagerSeccion;
+import com.auth.services.commons.ServiceFacade;
+import javax.ws.rs.Path;
 
 /**
+ * Servicios LCRUD de secciones
  *
- * @author Alonso --- alonso@kriblet.com
+ * @author
  */
-public class ParametroInvalidoException extends Exception {
+@Path("/secciones")
+public class Secciones extends ServiceFacade<Seccion, String> {
 
-    public ParametroInvalidoException(String msg) {
-        super(msg);
+    public Secciones() {
+        super(new ManagerSeccion());
     }
 
 }

@@ -29,6 +29,7 @@ import com.auth.models.ModelAltaUsuario;
 import com.auth.models.ModelAsignarPerfilesAlUsuario;
 import com.auth.models.ModelAsignarPermisos;
 import com.auth.models.ModelPermisosAsignados;
+import com.auth.services.commons.ServiceFacadeLRUD;
 import com.auth.utils.UtilsJWT;
 import com.auth.utils.UtilsPermissions;
 import java.util.List;
@@ -44,18 +45,28 @@ import javax.ws.rs.PathParam;
  * @author Alonso --- alonso@kriblet.com
  */
 @Path("/usuarios")
-public class Usuarios extends ServiceFacade<Usuario, Integer> {
+public class Usuarios extends ServiceFacadeLRUD<Usuario, Integer> {
 
     public Usuarios() {
         super(new ManagerUsuario());
     }
 
+    /**
+     * Da de alta un usuario al sistema
+     *
+     * @param token token de sesion
+     * @param model modelo de alta de usuario, todos los campos necesarios
+     * @return Usuario dado de alta en el sistema
+     * @throws TokenInvalidoException si el token proporsionado no es valido
+     * @throws TokenExpiradoException si el token proporsionado ya caducó
+     * @throws ParametroInvalidoException si los datos proporcionados no son validos para un usuario del sistema
+     * @throws Exception si existe un error de I/O
+     */
     @POST
     @Path("/registrar")
     public Usuario registrar(@HeaderParam("Authorization") String token, ModelAltaUsuario model) throws TokenInvalidoException, TokenExpiradoException, ParametroInvalidoException, Exception {
-        ManagerUsuario managerUsuario = new ManagerUsuario();
-        managerUsuario.setToken(token);
-        return managerUsuario.altaUsuario(model);
+        UtilsJWT.validateSessionToken(token);
+        return new ManagerUsuario().altaUsuario(model);
     }
 
     /**
@@ -63,14 +74,15 @@ public class Usuarios extends ServiceFacade<Usuario, Integer> {
      *
      * @param token token de sesion
      * @param modelo modelo contener del usuario y los permisos a asignar
+     * @throws com.auth.managers.exceptions.TokenInvalidoException si el token proporsionado no es valido
+     * @throws com.auth.managers.exceptions.TokenExpiradoException si el token proporsionado ya caducó
      * @return sin data
      */
     @POST
     @Path("/asignarPermisos")
     public List<UsuariosPermisos> asignarPermisos(@HeaderParam("Authorization") String token, ModelAsignarPermisos modelo) throws TokenInvalidoException, TokenExpiradoException, Exception {
-        ManagerUsuario managerUsuario = new ManagerUsuario();
-        managerUsuario.setToken(token);
-        return managerUsuario.asignarPermisos(modelo);
+        UtilsJWT.validateSessionToken(token);
+        return new ManagerUsuario().reemplazarPermisos(modelo);
     }
 
     /**
@@ -78,14 +90,15 @@ public class Usuarios extends ServiceFacade<Usuario, Integer> {
      *
      * @param token token de sesion
      * @param modelo modelo generico para relacionar los permisos al usuario
+     * @throws com.auth.managers.exceptions.TokenInvalidoException si el token proporsionado no es valido
+     * @throws com.auth.managers.exceptions.TokenExpiradoException si el token proporsionado ya caducó
      * @return sin data
      */
     @POST
     @Path("/asignarPerfiles")
     public List<UsuariosPerfil> asignarPerfiles(@HeaderParam("Authorization") String token, ModelAsignarPerfilesAlUsuario modelo) throws TokenExpiradoException, TokenInvalidoException, Exception {
         UtilsJWT.validateSessionToken(token);
-        ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();
-        return managerUsuariosPerfil.asignarPerfilesAlUsuario(modelo);
+        return new ManagerUsuariosPerfil().asignarPerfilesAlUsuario(modelo);
     }
 
     /**
@@ -93,6 +106,8 @@ public class Usuarios extends ServiceFacade<Usuario, Integer> {
      *
      * @param token token de sesion
      * @param usuario id de usuario a obtener permisos
+     * @throws com.auth.managers.exceptions.TokenInvalidoException si el token proporsionado no es valido
+     * @throws com.auth.managers.exceptions.TokenExpiradoException si el token proporsionado ya caducó
      * @return retorna en data, la lista de permisos asignados al usuario
      */
     @GET
@@ -107,13 +122,15 @@ public class Usuarios extends ServiceFacade<Usuario, Integer> {
      *
      * @param token token de sesion
      * @param usuario id de usuario a obtener sus perfiles
+     * @throws com.auth.managers.exceptions.TokenInvalidoException si el token proporsionado no es valido
+     * @throws com.auth.managers.exceptions.TokenExpiradoException si el token proporsionado ya caducó
      * @return retorna en data, la lista de perfiles asignados al usuario
      */
     @GET
     @Path("/perfiles/{userId}")
     public List<Perfil> obtenerPerfilesAsignados(@HeaderParam("Authorization") String token, @PathParam("userId") int usuario) throws TokenInvalidoException, TokenExpiradoException {
-        ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();
-        managerUsuariosPerfil.setToken(token);
-        return managerUsuariosPerfil.perfilesDeUsuario(usuario);
+        UtilsJWT.validateSessionToken(token);
+        return new ManagerUsuariosPerfil().perfilesDeUsuario(usuario);
     }
+
 }

@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 
 /**
  * servicios comunes para toma de referencias
+ *
  * @author Alonso --- alonso@kriblet.com
  */
 @Path("/commons")
@@ -23,6 +24,7 @@ public class Commons {
 
     /**
      * sirve para obtener la hora actual del servidor
+     *
      * @return modelo dateclass que contiene la hora actual del servidor
      */
     @GET
@@ -30,5 +32,5 @@ public class Commons {
     public DateClass serverDate() {
         return new DateClass();
     }
-        
+
 }

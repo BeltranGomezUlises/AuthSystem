@@ -20,12 +20,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * clase padre de cualquier entidad de la configuracion general
+ *
  * @author Alonso --- alonso@kriblet.com
  * @param <K> primary key type
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class IEntity<K> {
-     
-    public abstract K getId();
-                
+
+    public abstract K obtenerIdentificador();
+
 }

@@ -23,7 +23,7 @@ import java.util.List;
  * @author Alonso --- alonso@kriblet.com
  */
 public class ModelAltaUsuario {
-    
+
     private String nombre;
     private String correo;
     private String telefono;
@@ -72,5 +72,5 @@ public class ModelAltaUsuario {
     public void setPerfiles(List<Integer> perfiles) {
         this.perfiles = perfiles;
     }
-            
+
 }

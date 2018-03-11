@@ -18,16 +18,15 @@ package com.auth.daos.admin;
 
 import com.auth.daos.commons.DaoSQLFacade;
 import com.auth.entities.admin.Menu;
-import com.auth.utils.UtilsDB;
 
 /**
  *
  * @author Alonso --- alonso@kriblet.com
  */
-public class DaoMenu extends DaoSQLFacade<Menu, String>{
+public class DaoMenu extends DaoSQLFacade<Menu, String> {
 
     public DaoMenu() {
-        super(UtilsDB.getEMFactoryCG(), Menu.class, String.class);
+        super(Menu.class, String.class);
     }
 
 }

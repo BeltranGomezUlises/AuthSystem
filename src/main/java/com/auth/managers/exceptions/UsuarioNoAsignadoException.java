@@ -20,10 +20,10 @@ package com.auth.managers.exceptions;
  *
  * @author Alonso --- alonso@kriblet.com
  */
-public class UsuarioNoAsignadoException extends Exception{
+public class UsuarioNoAsignadoException extends Exception {
 
     public UsuarioNoAsignadoException() {
         super("No asignó un usuario de token de sesion al manager");
     }
-            
+
 }

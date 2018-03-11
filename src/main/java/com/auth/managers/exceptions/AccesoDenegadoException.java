@@ -20,10 +20,10 @@ package com.auth.managers.exceptions;
  *
  * @author Alonso --- alonso@kriblet.com
  */
-public class AccesoDenegadoException extends Exception{
+public class AccesoDenegadoException extends Exception {
 
     public AccesoDenegadoException(String message) {
         super(message);
     }
-    
+
 }

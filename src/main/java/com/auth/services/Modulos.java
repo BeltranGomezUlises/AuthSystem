@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alonso --- alonso@kriblet.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,33 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.auth.models;
+package com.auth.services;
 
-import java.util.List;
+import com.auth.entities.admin.Modulo;
+import com.auth.managers.admin.ManagerModulo;
+import com.auth.services.commons.ServiceFacade;
+import javax.ws.rs.Path;
 
 /**
- * modelo para asignar usuarios a un perfil
- * @author Alonso --- alonso@kriblet.com
+ * Servicios LCRUD de modulos
+ *
+ * @author
  */
-public class ModelAsignarUsuariosAlPerfil {
+@Path("/modulos")
+public class Modulos extends ServiceFacade<Modulo, String> {
 
-    private String id;
-    private List<ModelUsuarioAsignado> usuarios;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public List<ModelUsuarioAsignado> getUsuarios() {
-        return usuarios;
-    }
-
-    public void setUsuarios(List<ModelUsuarioAsignado> usuarios) {
-        this.usuarios = usuarios;
+    public Modulos() {
+        super(new ManagerModulo());
     }
 
 }

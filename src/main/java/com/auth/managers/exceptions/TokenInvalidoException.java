@@ -20,10 +20,10 @@ package com.auth.managers.exceptions;
  *
  * @author Alonso --- alonso@kriblet.com
  */
-public class TokenInvalidoException extends Exception{
+public class TokenInvalidoException extends Exception {
 
     public TokenInvalidoException(String message) {
         super(message);
     }
-        
+
 }

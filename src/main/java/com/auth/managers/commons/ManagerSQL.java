@@ -18,13 +18,11 @@ package com.auth.managers.commons;
 
 import com.auth.daos.commons.DaoSQLFacade;
 import com.auth.entities.commons.IEntity;
-import com.auth.managers.exceptions.TokenExpiradoException;
-import com.auth.managers.exceptions.TokenInvalidoException;
 import java.util.List;
 import org.jinq.jpa.JPAJinqStream;
 
 /**
- * fachada para manejar entidades sql 
+ * fachada para manejar entidades sql
  *
  * @author Alonso --- alonso@kriblet.com
  * @param <T> Entidad a manejar
@@ -33,35 +31,31 @@ import org.jinq.jpa.JPAJinqStream;
 public abstract class ManagerSQL<T extends IEntity<K>, K> extends ManagerFacade<T, K> {
 
     protected final DaoSQLFacade<T, K> dao;
-    
+
     public ManagerSQL(DaoSQLFacade<T, K> dao) {
         super();
         this.dao = dao;
     }
-    
-    public ManagerSQL(DaoSQLFacade dao, String token) throws TokenInvalidoException, TokenExpiradoException {
-        super(token);
-        this.dao = dao;
-    }
-    
+
     @Override
-    public List<T> persistAll(List<T> entities) throws Exception {        
-        return dao.persistAll(entities);        
+    public List<T> persistAll(List<T> entities) throws Exception {
+        return dao.persistAll(entities);
     }
 
     @Override
     public T persist(T entity) throws Exception {
-       
+
         dao.persist(entity);
         return entity;
     }
+
     @Override
-    public void delete(K id) throws Exception {        
+    public void delete(K id) throws Exception {
         dao.delete(id);
     }
 
     @Override
-    public void deleteAll(List<K> ids) throws Exception {        
+    public void deleteAll(List<K> ids) throws Exception {
         dao.deleteAll(ids);
     }
 
@@ -71,7 +65,7 @@ public abstract class ManagerSQL<T extends IEntity<K>, K> extends ManagerFacade<
     }
 
     @Override
-    public T findOne(K id) throws Exception {                  
+    public T findOne(K id) throws Exception {
         return dao.findOne(id);
     }
 
@@ -81,20 +75,20 @@ public abstract class ManagerSQL<T extends IEntity<K>, K> extends ManagerFacade<
     }
 
     @Override
-    public List<T> findAll(int max) throws Exception{
+    public List<T> findAll(int max) throws Exception {
         return dao.findAll(max);
     }
 
     @Override
-    public long count()throws Exception {
+    public long count() throws Exception {
         return dao.count();
     }
 
     @Override
-    public T findFirst() throws Exception{
+    public T findFirst() throws Exception {
         return (T) dao.findFirst();
     }
-    
+
     public JPAJinqStream<T> stream() {
         return dao.stream();
     }

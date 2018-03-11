@@ -18,7 +18,6 @@ package com.auth.daos.admin;
 
 import com.auth.daos.commons.DaoSQLFacade;
 import com.auth.entities.admin.Permiso;
-import com.auth.utils.UtilsDB;
 
 /**
  *
@@ -27,7 +26,7 @@ import com.auth.utils.UtilsDB;
 public class DaoPermiso extends DaoSQLFacade<Permiso, String> {
 
     public DaoPermiso() {
-        super(UtilsDB.getEMFactoryCG(), Permiso.class, String.class);
+        super(Permiso.class, String.class);
     }
 
 }

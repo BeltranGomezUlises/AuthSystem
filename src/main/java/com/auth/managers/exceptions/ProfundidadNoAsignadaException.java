@@ -20,10 +20,10 @@ package com.auth.managers.exceptions;
  *
  * @author Alonso --- alonso@kriblet.com
  */
-public class ProfundidadNoAsignadaException extends Exception{
+public class ProfundidadNoAsignadaException extends Exception {
 
     public ProfundidadNoAsignadaException() {
-        super("No asignó profundidad de acceso al manejador");        
+        super("No asignó profundidad de acceso al manejador");
     }
-       
+
 }

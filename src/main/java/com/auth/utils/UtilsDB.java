@@ -2,7 +2,6 @@ package com.auth.utils;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import org.jinq.jpa.JinqJPAStreamProvider;
 
 /**
  *
@@ -10,31 +9,17 @@ import org.jinq.jpa.JinqJPAStreamProvider;
  */
 public class UtilsDB {
 
-    //<editor-fold defaultstate="collapsed" desc="JPA utils">
-    /*
-        the jpa clients are defined here,
-        you need to add the factories and streams providers
-        for each persistence unit you nedd
-     */
-    //</editor-fold>
     private static EntityManagerFactory eMFactoryCG;
-    private static EntityManagerFactory eMFactoryMachineAdmin;
-    private static JinqJPAStreamProvider streamProviderCG;
+    private static final String UNIT_NAME = "auth";
 
     /**
-     * PERSISTENCE UNIT NAMES
-     */
-    private static final String CG_UNIT_NAME = "auth";
-
-    //<editor-fold defaultstate="collapsed" desc="Fabricas y proveedores">
-    /**
-     * metodo fábrica de manejadores de entidad de de la base de datos "cg"
+     * metodo fábrica de manejadores de entidad de de la base de datos "auth"
      *
-     * @return entityManagerFactory de la conexion a la base de datos CG
+     * @return entityManagerFactory de la conexion a la base de datos auth
      */
-    public static EntityManagerFactory getEMFactoryCG() {
+    public static EntityManagerFactory getEMFactory() {
         if (eMFactoryCG == null) {
-            eMFactoryCG = Persistence.createEntityManagerFactory(CG_UNIT_NAME);
+            eMFactoryCG = Persistence.createEntityManagerFactory(UNIT_NAME);
         }
         return eMFactoryCG;
     }

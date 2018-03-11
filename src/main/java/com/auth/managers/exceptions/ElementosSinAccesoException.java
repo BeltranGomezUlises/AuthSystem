@@ -28,7 +28,7 @@ public class ElementosSinAccesoException extends Exception {
 
     public ElementosSinAccesoException() {
     }
-    
+
     public ElementosSinAccesoException(List elementosSinAcceso, String mensaje) {
         super(mensaje);
         this.elementosSinAcceso = elementosSinAcceso;
