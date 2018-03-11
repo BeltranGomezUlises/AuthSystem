@@ -25,15 +25,33 @@ import com.auth.entities.commons.Profundidad;
  */
 public class ModelPermisoAsignado {
 
-    private String id;
+    private String permisoId;
     private Profundidad profundidad;
+    private Integer sucursalId;    
+
+    public ModelPermisoAsignado() {
+    }
+
+    public ModelPermisoAsignado(String id, Profundidad profundidad, Integer sucursalId) {
+        this.permisoId = id;
+        this.profundidad = profundidad;
+        this.sucursalId = sucursalId;
+    }
+
+    public Integer getSucursalId() {
+        return sucursalId;
+    }
+
+    public void setSucursalId(Integer sucursalId) {
+        this.sucursalId = sucursalId;
+    }
 
     public String getId() {
-        return id;
+        return permisoId;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.permisoId = id;
     }
 
     public Profundidad getProfundidad() {

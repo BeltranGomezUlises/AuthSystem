@@ -35,7 +35,6 @@ import com.auth.managers.exceptions.AccesoDenegadoException;
 import com.auth.managers.exceptions.ParametroInvalidoException;
 import com.auth.managers.exceptions.TokenExpiradoException;
 import com.auth.managers.exceptions.TokenInvalidoException;
-import com.auth.models.ModelPermisoAsignado;
 import com.auth.models.ModelPermisoProfundidad;
 import com.auth.models.ModelPermisoValido;
 import com.auth.models.ModelPermisosAsignados;
@@ -43,16 +42,22 @@ import com.auth.models.ModelPermisosAsignados.ModelSeccion;
 import com.auth.models.ModelPermisosAsignados.ModelSeccion.ModelModulo;
 import com.auth.models.ModelPermisosAsignados.ModelSeccion.ModelModulo.ModelMenu;
 import com.auth.models.ModelPermisosAsignados.ModelSeccion.ModelModulo.ModelMenu.ModelPermiso;
+import com.auth.models.ModelSesion;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import org.jinq.orm.stream.JinqStream;
-import org.jinq.tuples.Pair;
+import org.jinq.tuples.Tuple3;
 
 /**
  * clase utileria de metodos relacionados con permisos
@@ -217,7 +222,7 @@ public class UtilsPermissions {
                         try {
                             String permisoId = permiso.getId();
                             UsuariosPermisos usuarioPermiso = permisosUsuario.stream().filter(up -> up.getUsuariosPermisosPK().getPermiso().equals(permiso.getId())).findFirst().get();
-                            permisos.add(new ModelPermiso(permiso.getNombre(), permiso.getId(), usuarioPermiso.getProfundidad()));
+                            permisos.add(new ModelPermiso(permiso.getNombre(), permiso.getId(), usuarioPermiso.getProfundidad(), usuarioPermiso.getSucursal1().getId()));
                         } catch (NoSuchElementException e) {//no tiene el permiso
                         }
                     });
@@ -272,7 +277,7 @@ public class UtilsPermissions {
                         try {
                             String permisoId = permiso.getId();
                             PerfilesPermisos perfilConPermiso = perfilesPermisos.stream().filter(pp -> pp.getPerfilesPermisosPK().getPermiso().equals(permisoId)).findFirst().get();
-                            ModelPermiso modelPermiso = new ModelPermiso(permiso.getNombre(), permiso.getId(), perfilConPermiso.getProfundidad());
+                            ModelPermiso modelPermiso = new ModelPermiso(permiso.getNombre(), permiso.getId(), perfilConPermiso.getProfundidad(), perfilConPermiso.getSucursal1().getId());
                             permisos.add(modelPermiso);
                         } catch (NoSuchElementException e) {//no encontro el permiso en ese perfil
                         }
@@ -310,29 +315,17 @@ public class UtilsPermissions {
         DaoUsuariosPermisos daoUsuarioPermisos = new DaoUsuariosPermisos();
 
         //permisos por usuario
-        List<ModelPermisoAsignado> permisosPorUsuario = daoUsuarioPermisos.stream()
+        List<Tuple3<String, Profundidad, Integer>> permisosPorUsuario = daoUsuarioPermisos.stream()
                 .where(e -> e.getUsuariosPermisosPK().getUsuario() == (usuarioId))
-                .select(e -> new Pair<>(e.getUsuariosPermisosPK().getPermiso(), e.getProfundidad()))
-                .map(pair -> {
-                    ModelPermisoAsignado model = new ModelPermisoAsignado();
-                    model.setId(pair.getOne());
-                    model.setProfundidad(pair.getTwo());
-                    return model;
-                })
+                .select(e -> new Tuple3<>(e.getUsuariosPermisosPK().getPermiso(), e.getProfundidad(), e.getSucursal1().getId()))
                 .collect(toList());
 
         //permisos por perfiles
-        List<ModelPermisoAsignado> permisosDeLosPerfiles = daoUsuariosPerfil.stream()
+        List<Tuple3<String, Profundidad, Integer>> permisosDeLosPerfiles = daoUsuariosPerfil.stream()
                 .where(up -> up.getUsuariosPerfilPK().getUsuario() == (usuarioId) && up.getHereda().equals(Boolean.TRUE))
                 .join(up -> JinqStream.of(up.getPerfil1()))
                 .joinList(p -> p.getTwo().getPerfilesPermisosList())
-                .select(p -> p.getTwo())
-                .map(p -> {
-                    ModelPermisoAsignado model = new ModelPermisoAsignado();
-                    model.setId(p.getPerfilesPermisosPK().getPermiso());
-                    model.setProfundidad(p.getProfundidad());
-                    return model;
-                })
+                .select(p -> new Tuple3<>(p.getTwo().getPerfilesPermisosPK().getPermiso(), p.getTwo().getProfundidad(), p.getTwo().getSucursal1().getId()))
                 .collect(toList());
 
         //secciones disponibles -> eliminar todos los permisos que el usuario no tenga               
@@ -347,24 +340,33 @@ public class UtilsPermissions {
                 modulo.getMenuList().forEach((menu) -> {
                     List<ModelPermiso> permisos = new ArrayList<>();
                     menu.getPermisoList().forEach((permiso) -> {
-                        try {
-                            String permisoId = permiso.getId();
-                            List<Profundidad> profundidades = new ArrayList<>();
-                            //añadir la profundidad por usuario
-                            try {
-                                Profundidad profundidadPorUsuario = permisosPorUsuario.stream().filter(p -> p.getId().equals(permiso.getId())).findFirst().get().getProfundidad();
-                                profundidades.add(profundidadPorUsuario);
-                            } catch (NoSuchElementException e) { //ignorar si no tiene el permiso
+                        //añadir la profundidad por usuario
+                        Map<Integer, List<Profundidad>> profundidadesPorSucursal = new HashMap<>(); //key sucursal id, value lista de profundidades
+                        for (Tuple3<String, Profundidad, Integer> t : permisosPorUsuario) {
+                            if (t.getOne().equals(permiso.getId())) {
+                                List<Profundidad> profs = new ArrayList<>();
+                                profs.add(t.getTwo());
+                                profundidadesPorSucursal.put(t.getThree(), profs);
                             }
-                            //añadir las profundidades por perfil
-                            try {
-                                permisosDeLosPerfiles.stream()
-                                        .filter(permi -> permi.getId().equals(permiso.getId()))
-                                        .forEach(p -> profundidades.add(p.getProfundidad()));
-                            } catch (NoSuchElementException e) { //omitir si no existe
+                        }
+                        //añadir las profundidades por perfil
+                        for (Tuple3<String, Profundidad, Integer> t : permisosDeLosPerfiles) {
+                            if (t.getOne().equals(permiso.getId())) {
+                                List<Profundidad> profundidades = profundidadesPorSucursal.get(t.getThree());
+                                if (profundidades == null) {
+                                    profundidadesPorSucursal.put(t.getThree(), Arrays.asList(t.getTwo()));
+                                } else {
+                                    profundidades.add(t.getTwo());
+                                    profundidadesPorSucursal.put(t.getThree(), profundidades);
+                                }
                             }
-                            permisos.add(new ModelPermiso(permiso.getNombre(), permiso.getId(), profundidadMayor(profundidades)));
-                        } catch (ParametroInvalidoException e) {//no tiene el permiso                            
+                        }
+                        for (Map.Entry<Integer, List<Profundidad>> entry : profundidadesPorSucursal.entrySet()) {
+                            try {
+                                permisos.add(new ModelPermiso(permiso.getNombre(), permiso.getId(), profundidadMayor(entry.getValue()), entry.getKey()));
+                            } catch (ParametroInvalidoException ex) {
+                                Logger.getLogger(UtilsPermissions.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
                     });
                     //si tiene permisos del menu agregar el menu
@@ -409,22 +411,24 @@ public class UtilsPermissions {
      */
     public static ModelPermisoValido tienePermiso(final String tokenSesion, final String permisoId) throws TokenInvalidoException, TokenExpiradoException, ParametroInvalidoException {
         EntityManager em = UtilsDB.getEMFactory().createEntityManager();
-        int usuarioId = UtilsJWT.getUserIdFrom(tokenSesion);
+        ModelSesion modelSesion = UtilsJWT.getModelSesionFrom(tokenSesion);
         List<ModelPermisoProfundidad> permisosValidosUsuario = new ArrayList<>();
         //obtener las profundidades por parte del usuario        
         try {
-            permisosValidosUsuario.add(em.createQuery("SELECT NEW com.auth.models.ModelPermisoProfundidad(usp.profundidad) FROM UsuariosPermisos usp WHERE usp.usuariosPermisosPK.permiso = :permisoId AND usp.usuariosPermisosPK.usuario = :usuarioId", ModelPermisoProfundidad.class)
+            permisosValidosUsuario.add(em.createQuery("SELECT NEW com.auth.models.ModelPermisoProfundidad(usp.profundidad) FROM UsuariosPermisos usp WHERE usp.usuariosPermisosPK.permiso = :permisoId AND usp.usuariosPermisosPK.usuario = :usuarioId AND usp.usuariosPermisosPK.sucursal = :sucursalId", ModelPermisoProfundidad.class)
                     .setParameter("permisoId", permisoId)
-                    .setParameter("usuarioId", usuarioId)
+                    .setParameter("usuarioId", modelSesion.getUserId())
+                    .setParameter("sucursalId", modelSesion.getSucursalId())
                     .getSingleResult()
             );
         } catch (NoResultException e) {
         }
         try {
             permisosValidosUsuario.addAll(
-                    em.createQuery("SELECT NEW com.auth.models.ModelPermisoProfundidad(pep.profundidad) FROM PerfilesPermisos pep WHERE pep.perfilesPermisosPK.permiso = :permisoId AND pep.perfilesPermisosPK.perfil in ( SELECT usp.usuariosPerfilPK.perfil FROM UsuariosPerfil usp WHERE usp.usuariosPerfilPK.usuario = :usuarioId )", ModelPermisoProfundidad.class)
+                    em.createQuery("SELECT NEW com.auth.models.ModelPermisoProfundidad(pep.profundidad) FROM PerfilesPermisos pep WHERE pep.perfilesPermisosPK.permiso = :permisoId AND pep.perfilesPermisosPK.sucursal = :sucursalId AND pep.perfilesPermisosPK.perfil in ( SELECT usp.usuariosPerfilPK.perfil FROM UsuariosPerfil usp WHERE usp.usuariosPerfilPK.usuario = :usuarioId AND usp.hereda = true )", ModelPermisoProfundidad.class)
                             .setParameter("permisoId", permisoId)
-                            .setParameter("usuarioId", usuarioId)
+                            .setParameter("usuarioId", modelSesion.getUserId())
+                            .setParameter("sucursalId", modelSesion.getSucursalId())
                             .getResultList()
             );
         } catch (NoResultException e) {

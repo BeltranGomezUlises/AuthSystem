@@ -24,6 +24,7 @@ public class ModelLogin {
 
     private String login;
     private String pass;
+    private Integer sucursalId;
 
     public ModelLogin() {
     }
@@ -31,6 +32,20 @@ public class ModelLogin {
     public ModelLogin(String login, String pass) {
         this.login = login;
         this.pass = pass;
+    }
+
+    public ModelLogin(String login, String pass, Integer sucursalId) {
+        this.login = login;
+        this.pass = pass;
+        this.sucursalId = sucursalId;
+    }
+
+    public Integer getSucursalId() {
+        return sucursalId;
+    }
+
+    public void setSucursalId(Integer sucursalId) {
+        this.sucursalId = sucursalId;
     }
 
     public String getLogin() {

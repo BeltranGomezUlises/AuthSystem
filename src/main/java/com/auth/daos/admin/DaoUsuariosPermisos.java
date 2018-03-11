@@ -17,6 +17,7 @@
 package com.auth.daos.admin;
 
 import com.auth.daos.commons.DaoSQLFacade;
+import com.auth.entities.admin.Sucursal;
 import com.auth.entities.admin.UsuariosPermisos;
 import com.auth.entities.admin.UsuariosPermisosPK;
 import com.auth.models.ModelPermisoAsignado;
@@ -52,7 +53,8 @@ public class DaoUsuariosPermisos extends DaoSQLFacade<UsuariosPermisos, Usuarios
         List<UsuariosPermisos> usuariosPermisos = new ArrayList<>();
         UsuariosPermisos usuarioPermiso;
         for (ModelPermisoAsignado permiso : permisos) {
-            usuarioPermiso = new UsuariosPermisos(usuarioId, permiso.getId(), permiso.getProfundidad());
+            usuarioPermiso = new UsuariosPermisos(usuarioId, permiso.getId(), permiso.getSucursalId());
+            usuarioPermiso.setProfundidad(permiso.getProfundidad());
             em.persist(usuarioPermiso);
             usuariosPermisos.add(usuarioPermiso);
         }

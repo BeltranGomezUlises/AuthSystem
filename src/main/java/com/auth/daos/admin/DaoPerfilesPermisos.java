@@ -19,6 +19,7 @@ package com.auth.daos.admin;
 import com.auth.daos.commons.DaoSQLFacade;
 import com.auth.entities.admin.PerfilesPermisos;
 import com.auth.entities.admin.PerfilesPermisosPK;
+import com.auth.entities.admin.Sucursal;
 import com.auth.models.ModelPermisoAsignado;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,8 @@ public class DaoPerfilesPermisos extends DaoSQLFacade<PerfilesPermisos, Perfiles
         List<PerfilesPermisos> perfilesPermisos = new ArrayList<>();
         PerfilesPermisos perfilPermiso;
         for (ModelPermisoAsignado modelPermisoAsignado : permisosAAsignar) {
-            perfilPermiso = new PerfilesPermisos(perfilId, modelPermisoAsignado.getId(), modelPermisoAsignado.getProfundidad());
+            perfilPermiso = new PerfilesPermisos(perfilId, modelPermisoAsignado.getId(), em.find(Sucursal.class, modelPermisoAsignado.getSucursalId()).getId());
+            perfilPermiso.setProfundidad(modelPermisoAsignado.getProfundidad());
             em.persist(perfilPermiso);
             perfilesPermisos.add(perfilPermiso);
         }

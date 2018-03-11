@@ -15,6 +15,7 @@ import com.auth.managers.exceptions.UsuarioInexistenteException;
 import com.auth.models.ModelCodigoRecuperacionUsuario;
 import com.auth.models.ModelLogin;
 import com.auth.models.ModelReseteoContra;
+import com.auth.models.ModelSesion;
 import com.auth.models.ModelUsuarioLogeado;
 import com.auth.models.Respuesta;
 import com.auth.models.enums.Status;
@@ -53,6 +54,9 @@ public class Accesos {
     public Respuesta<ModelUsuarioLogeado> login(ModelLogin modelLogin) {
         Respuesta r;
         try {
+            if (modelLogin.getSucursalId() == null) {
+                throw new ParametroInvalidoException("Tiene que proporcionar una sucursal para iniciar sesión");
+            }
             ManagerUsuario managerUsuario = new ManagerUsuario();
 
             modelLogin.setPass(UtilsSecurity.cifrarMD5(modelLogin.getPass()));
@@ -65,14 +69,17 @@ public class Accesos {
             modelUsuarioLogeado.setTelefono(usuarioLogeado.getTelefono());
             modelUsuarioLogeado.setId(usuarioLogeado.getId());
             modelUsuarioLogeado.setCorreo(usuarioLogeado.getCorreo());
-            modelUsuarioLogeado.setToken(UtilsJWT.generateSessionToken(usuarioLogeado.getId().toString()));
+            modelUsuarioLogeado.setToken(UtilsJWT.generateSessionToken(new ModelSesion(usuarioLogeado.getId(), modelLogin.getSucursalId())));
 
             r = new Respuesta(Status.OK, "login exitoso", modelUsuarioLogeado);
         } catch (UsuarioInexistenteException e) {
             r = new Respuesta(Status.WARNING, "Usuario y/o contraseña incorrecto");
         } catch (UsuarioBlockeadoException e) {
             r = new Respuesta(Status.WARNING, "El usuario se encuentra bloqueado " + e.getMessage());
+        } catch (ParametroInvalidoException e) {
+            r = new Respuesta(Status.WARNING, e.getMessage());
         } catch (Exception e) {
+            e.printStackTrace();
             r = new Respuesta(Status.ERROR, "Error de programación: " + e.getMessage());
         }
         return r;

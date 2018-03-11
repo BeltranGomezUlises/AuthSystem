@@ -18,6 +18,7 @@ package com.auth.managers.admin;
 
 import com.auth.daos.admin.DaoBitacoraContra;
 import com.auth.daos.admin.DaoPerfil;
+import com.auth.daos.admin.DaoSucursal;
 import com.auth.daos.admin.DaoUsuario;
 import com.auth.daos.admin.DaoUsuariosPermisos;
 import com.auth.entities.admin.BitacoraContras;
@@ -142,6 +143,11 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
     public Usuario login(ModelLogin modelLogin) throws UsuarioInexistenteException, UsuarioBlockeadoException, Exception {
         Usuario loged;
         try {
+            //buscar la sucursal
+            if (new DaoSucursal().findOne(modelLogin.getSucursalId()) == null) {
+                throw new ParametroInvalidoException("No proporcionó una sucursal válida");
+            }
+
             DaoUsuario daoUsuario = new DaoUsuario();
             String identificador = modelLogin.getLogin();
             String contraseña = modelLogin.getPass();
@@ -278,21 +284,21 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
                 Logger.getLogger(ManagerUsuario.class.getName()).log(Level.SEVERE, null, ex);
             }
         }).start();
-        ModelCodigoRecuperacionUsuario model = new ModelCodigoRecuperacionUsuario(code, usuarioARecuperar.getId().toString());
+        ModelCodigoRecuperacionUsuario model = new ModelCodigoRecuperacionUsuario(code, usuarioARecuperar.getId());
         return model;
 
     }
 
     public void resetPassword(Integer userId, String pass) throws Exception {
         pass = UtilsSecurity.cifrarMD5(pass);
-        
+
         BitacoraContras bitacoraContra = new BitacoraContras(userId, pass);
         DaoBitacoraContra daoBitacora = new DaoBitacoraContra();
-                
+
         if (daoBitacora.exists(bitacoraContra.getBitacoraContrasPK())) {
             throw new ParametroInvalidoException("La contraseña que esta ingresando ya fué utilizada, intente con otra");
         }
-        
+
         DaoUsuario daoUsuario = new DaoUsuario();
         Usuario u = dao.findOne(userId);
         u.setContra(pass);
@@ -317,8 +323,7 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
     }
 
     public List<UsuariosPermisos> reemplazarPermisos(ModelAsignarPermisos modelo) throws Exception {
-        DaoUsuariosPermisos daoUsuariosPermisos = new DaoUsuariosPermisos();
-        return daoUsuariosPermisos.reemplazarPermisos(modelo.getId(), modelo.getPermisos());
+        return new DaoUsuariosPermisos().reemplazarPermisos(modelo.getId(), modelo.getPermisos());
     }
 
     public String nombreDeUsuario(Integer usuarioId) {

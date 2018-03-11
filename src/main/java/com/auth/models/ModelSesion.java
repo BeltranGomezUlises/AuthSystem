@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alonso --- alonso@kriblet.com
+ * Copyright (C) 2018 Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,37 +17,36 @@
 package com.auth.models;
 
 /**
- * modelo contenedor de usuario y codigo de recuperacion
- *
- * @author Alonso --- alonso@kriblet.com
+ * Modelo para contener los datos de la sesion de usuario
+ * @author Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
-public class ModelCodigoRecuperacionUsuario {
+public class ModelSesion {
 
-    private String code;
-    private Integer idUser;
+    private int userId;
+    private int sucursalId;
 
-    public ModelCodigoRecuperacionUsuario() {
+    public ModelSesion() {
     }
 
-    public ModelCodigoRecuperacionUsuario(String code, Integer idUser) {
-        this.code = code;
-        this.idUser = idUser;
+    public ModelSesion(int userId, int sucursalId) {
+        this.userId = userId;
+        this.sucursalId = sucursalId;
     }
 
-    public String getCode() {
-        return code;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public Integer getIdUser() {
-        return idUser;
+    public int getSucursalId() {
+        return sucursalId;
     }
 
-    public void setIdUser(Integer idUser) {
-        this.idUser = idUser;
+    public void setSucursalId(int sucursalId) {
+        this.sucursalId = sucursalId;
     }
 
 }

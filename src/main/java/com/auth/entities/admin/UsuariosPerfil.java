@@ -21,6 +21,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -46,10 +47,10 @@ public class UsuariosPerfil extends IEntity<UsuariosPerfilPK> implements Seriali
     @Column(name = "hereda")
     private Boolean hereda;
     @JoinColumn(name = "perfil", referencedColumnName = "id", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Perfil perfil1;
     @JoinColumn(name = "usuario", referencedColumnName = "id", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Usuario usuario1;
 
     public UsuariosPerfil() {

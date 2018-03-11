@@ -18,12 +18,14 @@ package com.auth.utils;
 
 import com.auth.daos.admin.DaoGrupoPerfiles;
 import com.auth.daos.admin.DaoPerfil;
+import com.auth.daos.admin.DaoSucursal;
 import com.auth.daos.admin.DaoUsuario;
 import com.auth.daos.admin.DaoUsuariosPerfil;
 import com.auth.entities.admin.GrupoPerfiles;
 import com.auth.entities.admin.Perfil;
 import com.auth.entities.admin.PerfilesPermisos;
 import com.auth.entities.admin.Permiso;
+import com.auth.entities.admin.Sucursal;
 import com.auth.entities.admin.Usuario;
 import com.auth.entities.admin.UsuariosPerfil;
 import com.auth.entities.admin.UsuariosPermisos;
@@ -116,11 +118,14 @@ public class InitServletContext implements ServletContextListener {
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="Asignacion de permisos al perfil">        
+        DaoSucursal daoSucursal = new DaoSucursal();
         for (Permiso permiso : UtilsPermissions.getExistingPermissions()) {
-            PerfilesPermisos perfilesPermisosRelacion = new PerfilesPermisos(perfilMaster.getId(), permiso.getId());
-            perfilesPermisosRelacion.setProfundidad(Profundidad.TODOS);
-            if (!perfilMaster.getPerfilesPermisosList().contains(perfilesPermisosRelacion)) {
-                perfilMaster.getPerfilesPermisosList().add(perfilesPermisosRelacion);
+            for (Sucursal sucursal : daoSucursal.findAll()) {
+                PerfilesPermisos perfilesPermisosRelacion = new PerfilesPermisos(perfilMaster.getId(), permiso.getId(), sucursal.getId());
+                perfilesPermisosRelacion.setProfundidad(Profundidad.TODOS);
+                if (!perfilMaster.getPerfilesPermisosList().contains(perfilesPermisosRelacion)) {
+                    perfilMaster.getPerfilesPermisosList().add(perfilesPermisosRelacion);
+                }
             }
         }
         daoPerfil.update(perfilMaster);
@@ -137,10 +142,12 @@ public class InitServletContext implements ServletContextListener {
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="Asignaion de permisos al usuario">
         for (Permiso existingPermission : UtilsPermissions.getExistingPermissions()) {
-            UsuariosPermisos usuariosPermisosRelacion = new UsuariosPermisos(usuarioDB.getId(), existingPermission.getId());
-            usuariosPermisosRelacion.setProfundidad(TODOS);
-            if (!usuarioDB.getUsuariosPermisosList().contains(usuariosPermisosRelacion)) {
-                usuarioDB.getUsuariosPermisosList().add(usuariosPermisosRelacion);
+            for (Sucursal sucursal : daoSucursal.findAll()) {
+                UsuariosPermisos usuariosPermisosRelacion = new UsuariosPermisos(usuarioDB.getId(), existingPermission.getId(), sucursal.getId());
+                usuariosPermisosRelacion.setProfundidad(TODOS);
+                if (!usuarioDB.getUsuariosPermisosList().contains(usuariosPermisosRelacion)) {
+                    usuarioDB.getUsuariosPermisosList().add(usuariosPermisosRelacion);
+                }
             }
         }
         daoUsuario.update(usuarioDB);

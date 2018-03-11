@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 
+ * Copyright (C) 2018 Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -33,7 +34,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author
+ * @author Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
 @Entity
 @Table(name = "perfiles_permisos")
@@ -41,7 +42,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "PerfilesPermisos.findAll", query = "SELECT p FROM PerfilesPermisos p")
     , @NamedQuery(name = "PerfilesPermisos.findByPerfil", query = "SELECT p FROM PerfilesPermisos p WHERE p.perfilesPermisosPK.perfil = :perfil")
     , @NamedQuery(name = "PerfilesPermisos.findByPermiso", query = "SELECT p FROM PerfilesPermisos p WHERE p.perfilesPermisosPK.permiso = :permiso")
-    , @NamedQuery(name = "PerfilesPermisos.findByProfundidad", query = "SELECT p FROM PerfilesPermisos p WHERE p.profundidad = :profundidad")})
+    , @NamedQuery(name = "PerfilesPermisos.findByProfundidad", query = "SELECT p FROM PerfilesPermisos p WHERE p.profundidad = :profundidad")
+    , @NamedQuery(name = "PerfilesPermisos.findBySucursal", query = "SELECT p FROM PerfilesPermisos p WHERE p.perfilesPermisosPK.sucursal = :sucursal")})
 public class PerfilesPermisos extends IEntity<PerfilesPermisosPK> implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -52,11 +54,14 @@ public class PerfilesPermisos extends IEntity<PerfilesPermisosPK> implements Ser
     @Enumerated(EnumType.STRING)
     private Profundidad profundidad;
     @JoinColumn(name = "perfil", referencedColumnName = "id", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Perfil perfil1;
     @JoinColumn(name = "permiso", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Permiso permiso1;
+    @JoinColumn(name = "sucursal", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    private Sucursal sucursal1;
 
     public PerfilesPermisos() {
     }
@@ -65,14 +70,9 @@ public class PerfilesPermisos extends IEntity<PerfilesPermisosPK> implements Ser
         this.perfilesPermisosPK = perfilesPermisosPK;
     }
 
-    public PerfilesPermisos(int perfil, String permiso) {
-        this.perfilesPermisosPK = new PerfilesPermisosPK(perfil, permiso);
-    }
-
-    public PerfilesPermisos(int perfil, String permiso, Profundidad profundidad) {
-        this.perfilesPermisosPK = new PerfilesPermisosPK(perfil, permiso);
-        this.setProfundidad(profundidad);
-    }
+    public PerfilesPermisos(int perfil, String permiso, int sucursal) {
+        this.perfilesPermisosPK = new PerfilesPermisosPK(perfil, permiso, sucursal);
+    }    
 
     public PerfilesPermisosPK getPerfilesPermisosPK() {
         return perfilesPermisosPK;
@@ -104,6 +104,14 @@ public class PerfilesPermisos extends IEntity<PerfilesPermisosPK> implements Ser
 
     public void setPermiso1(Permiso permiso1) {
         this.permiso1 = permiso1;
+    }
+
+    public Sucursal getSucursal1() {
+        return sucursal1;
+    }
+
+    public void setSucursal1(Sucursal sucursal1) {
+        this.sucursal1 = sucursal1;
     }
 
     @Override

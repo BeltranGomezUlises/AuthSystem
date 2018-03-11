@@ -43,10 +43,10 @@ public class ManagerUsuariosPerfil extends ManagerSQL<UsuariosPerfil, UsuariosPe
         return new DaoUsuariosPerfil().reemplazarPerfilesUsuario(modelo.getUserId(), modelo.getPerfiles());
     }
 
-    public List<Perfil> perfilesDeUsuario(final Integer usuarioId) {
+    public List<Perfil> perfilesDeUsuario(final int usuarioId) {
         return dao.stream()
                 .where(up -> up.getUsuariosPerfilPK().getUsuario() == usuarioId)
-                .map(up -> up.getPerfil1())
+                .select(up -> up.getPerfil1())
                 .collect(toList());
     }
 

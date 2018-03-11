@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 
+ * Copyright (C) 2018 Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author
+ * @author Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
 @Embeddable
 public class UsuariosPermisosPK implements Serializable {
@@ -39,13 +39,18 @@ public class UsuariosPermisosPK implements Serializable {
     @Size(min = 1, max = 2147483647)
     @Column(name = "permiso")
     private String permiso;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "sucursal")
+    private int sucursal;
 
     public UsuariosPermisosPK() {
     }
 
-    public UsuariosPermisosPK(int usuario, String permiso) {
+    public UsuariosPermisosPK(int usuario, String permiso, int sucursal) {
         this.usuario = usuario;
         this.permiso = permiso;
+        this.sucursal = sucursal;
     }
 
     public int getUsuario() {
@@ -64,11 +69,20 @@ public class UsuariosPermisosPK implements Serializable {
         this.permiso = permiso;
     }
 
+    public int getSucursal() {
+        return sucursal;
+    }
+
+    public void setSucursal(int sucursal) {
+        this.sucursal = sucursal;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (int) usuario;
         hash += (permiso != null ? permiso.hashCode() : 0);
+        hash += (int) sucursal;
         return hash;
     }
 
@@ -82,15 +96,15 @@ public class UsuariosPermisosPK implements Serializable {
         if (this.usuario != other.usuario) {
             return false;
         }
-        if ((this.permiso == null && other.permiso != null) || (this.permiso != null && !this.permiso.equals(other.permiso))) {
+        if (!this.permiso.equals(other.permiso)) {
             return false;
         }
-        return true;
+        return this.sucursal == other.sucursal;
     }
 
     @Override
     public String toString() {
-        return "com.auth.entities.admin.UsuariosPermisosPK[ usuario=" + usuario + ", permiso=" + permiso + " ]";
+        return "com.auth.entities.admin.UsuariosPermisosPK[ usuario=" + usuario + ", permiso=" + permiso + ", sucursal=" + sucursal + " ]";
     }
 
 }

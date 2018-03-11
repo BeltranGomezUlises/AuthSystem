@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 
+ * Copyright (C) 2018 Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author
+ * @author Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
 @Embeddable
 public class PerfilesPermisosPK implements Serializable {
@@ -39,13 +39,18 @@ public class PerfilesPermisosPK implements Serializable {
     @Size(min = 1, max = 2147483647)
     @Column(name = "permiso")
     private String permiso;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "sucursal")
+    private int sucursal;
 
     public PerfilesPermisosPK() {
     }
 
-    public PerfilesPermisosPK(int perfil, String permiso) {
+    public PerfilesPermisosPK(int perfil, String permiso, int sucursal) {
         this.perfil = perfil;
         this.permiso = permiso;
+        this.sucursal = sucursal;
     }
 
     public int getPerfil() {
@@ -64,11 +69,20 @@ public class PerfilesPermisosPK implements Serializable {
         this.permiso = permiso;
     }
 
+    public int getSucursal() {
+        return sucursal;
+    }
+
+    public void setSucursal(int sucursal) {
+        this.sucursal = sucursal;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (int) perfil;
         hash += (permiso != null ? permiso.hashCode() : 0);
+        hash += (int) sucursal;
         return hash;
     }
 
@@ -85,12 +99,15 @@ public class PerfilesPermisosPK implements Serializable {
         if ((this.permiso == null && other.permiso != null) || (this.permiso != null && !this.permiso.equals(other.permiso))) {
             return false;
         }
+        if (this.sucursal != other.sucursal) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "com.auth.entities.admin.PerfilesPermisosPK[ perfil=" + perfil + ", permiso=" + permiso + " ]";
+        return "com.auth.entities.admin.PerfilesPermisosPK[ perfil=" + perfil + ", permiso=" + permiso + ", sucursal=" + sucursal + " ]";
     }
-
+    
 }

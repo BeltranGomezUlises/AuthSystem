@@ -201,14 +201,24 @@ public class ModelPermisosAsignados {
                     private String nombre;
                     private String id;
                     private Profundidad profundidad;
+                    private Integer sucursalId;
 
                     public ModelPermiso() {
                     }
 
-                    public ModelPermiso(String nombre, String id, Profundidad profundidad) {
+                    public ModelPermiso(String nombre, String id, Profundidad profundidad, int sucursalId) {
                         this.nombre = nombre;
                         this.id = id;
                         this.profundidad = profundidad;
+                        this.sucursalId = sucursalId;
+                    }
+
+                    public Integer getSucursalId() {
+                        return sucursalId;
+                    }
+
+                    public void setSucursalId(Integer sucursalId) {
+                        this.sucursalId = sucursalId;
                     }
 
                     public ModelPermiso(String id) {
