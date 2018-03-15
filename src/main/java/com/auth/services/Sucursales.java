@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ulises Beltrán Gómez - beltrangomezulises@gmail.com
+ * Copyright (C) 2018 Alonso - Alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@ package com.auth.services;
 
 import com.auth.daos.admin.DaoSucursal;
 import com.auth.entities.admin.Sucursal;
-import com.auth.managers.commons.ManagerFacade;
-import com.auth.managers.commons.ManagerSQL;
 import com.auth.managers.exceptions.TokenExpiradoException;
 import com.auth.managers.exceptions.TokenInvalidoException;
 import com.auth.utils.UtilsJWT;
@@ -38,7 +36,7 @@ import javax.ws.rs.core.MediaType;
 /**
  * LCRUD de sucursales
  *
- * @author Ulises Beltrán Gómez - beltrangomezulises@gmail.com
+ * @author Alonso - Alonso@kriblet.com
  */
 @Path("/sucursales")
 @Consumes(MediaType.APPLICATION_JSON)

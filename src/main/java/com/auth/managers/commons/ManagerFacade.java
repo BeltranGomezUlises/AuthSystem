@@ -97,6 +97,15 @@ public abstract class ManagerFacade<T extends IEntity, K> {
     public abstract List<T> findAll(int max) throws Exception;
 
     /**
+     * busca las entidades comprendidas en el rango especificado por los parametros
+     *
+     * @param initialPosition posicion inicial de busqueda
+     * @param lastPosition posicion final de busqueda
+     * @return lista de entidades comprendidas entre las posiciones proporcionadas
+     */
+    public abstract List<T> findRange(final int initialPosition, final int lastPosition);
+
+    /**
      * cuenta las entidades manejadas
      *
      * @return numero de entidades existentes en base de datos

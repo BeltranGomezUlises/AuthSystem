@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ulises Beltrán Gómez - beltrangomezulises@gmail.com
+ * Copyright (C) 2018 Alonso - Alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ import javax.ws.rs.core.MediaType;
 /**
  * servicios para validacion de tokens
  *
- * @author Ulises Beltrán Gómez - beltrangomezulises@gmail.com
+ * @author Alonso - Alonso@kriblet.com
  */
 @Path("/tokens")
 @Consumes(MediaType.APPLICATION_JSON)

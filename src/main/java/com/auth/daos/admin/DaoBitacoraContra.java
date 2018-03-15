@@ -31,16 +31,16 @@ public class DaoBitacoraContra extends DaoSQLFacade<BitacoraContras, BitacoraCon
         super(BitacoraContras.class, BitacoraContrasPK.class);
     }
 
-    public boolean exists(BitacoraContrasPK bitacoraContrasPK){
+    public boolean exists(BitacoraContrasPK bitacoraContrasPK) {
         try {
             return this.getEM().createQuery("SELECT t.bitacoraContrasPK.usuario FROM BitacoraContras t WHERE t.bitacoraContrasPK.contra = :contra AND t.bitacoraContrasPK.usuario = :usuario")
-                .setParameter("contra", bitacoraContrasPK.getContra())
-                .setParameter("usuario", bitacoraContrasPK.getUsuario())
-                .setMaxResults(1)
-                .getSingleResult() != null;
+                    .setParameter("contra", bitacoraContrasPK.getContra())
+                    .setParameter("usuario", bitacoraContrasPK.getUsuario())
+                    .setMaxResults(1)
+                    .getSingleResult() != null;
         } catch (NoResultException e) {
             return false;
         }
     }
-    
+
 }

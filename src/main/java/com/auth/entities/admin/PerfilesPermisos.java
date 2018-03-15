@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ulises Beltrán Gómez - beltrangomezulises@gmail.com
+ * Copyright (C) 2018 Alonso - Alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author Ulises Beltrán Gómez - beltrangomezulises@gmail.com
+ * @author Alonso - Alonso@kriblet.com
  */
 @Entity
 @Table(name = "perfiles_permisos")
@@ -72,7 +72,7 @@ public class PerfilesPermisos extends IEntity<PerfilesPermisosPK> implements Ser
 
     public PerfilesPermisos(int perfil, String permiso, int sucursal) {
         this.perfilesPermisosPK = new PerfilesPermisosPK(perfil, permiso, sucursal);
-    }    
+    }
 
     public PerfilesPermisosPK getPerfilesPermisosPK() {
         return perfilesPermisosPK;

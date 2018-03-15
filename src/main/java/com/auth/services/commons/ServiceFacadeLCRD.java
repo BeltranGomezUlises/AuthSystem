@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ulises Beltrán Gómez - beltrangomezulises@gmail.com
+ * Copyright (C) 2018 Alonso - Alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import com.auth.managers.commons.ManagerFacade;
 import com.auth.managers.commons.ManagerSQL;
 import com.auth.managers.exceptions.TokenExpiradoException;
 import com.auth.managers.exceptions.TokenInvalidoException;
+import com.auth.models.ModelCantidad;
 import com.auth.utils.UtilsJWT;
 import java.util.List;
 import javax.ws.rs.Consumes;
@@ -35,7 +36,7 @@ import javax.ws.rs.core.MediaType;
 
 /**
  *
- * @author Ulises Beltrán Gómez - beltrangomezulises@gmail.com
+ * @author Alonso - Alonso@kriblet.com
  * @param <T> entidad a manejar por esta clase servicio
  * @param <K> tipo de dato de llave primaria de la entidad a menejar por esta clase servicio
  */
@@ -113,6 +114,57 @@ public class ServiceFacadeLCRD<T extends IEntity<K>, K> {
         UtilsJWT.validateSessionToken(token);
         manager.delete((K) t.obtenerIdentificador());
         return t;
+    }
+
+    /**
+     * cuenta la cantidad de entidades existentes
+     *
+     * @return numero con la cantidad existente de entidades actualmente
+     * @throws Exception si existe un error de I/O con la base de datos
+     */
+    @GET
+    @Path("/count")
+    public ModelCantidad contar() throws Exception {
+        return new ModelCantidad(manager.count());
+    }
+
+    /**
+     * proporciona el listado de entidades comprendidas desde la posicion {from} hasta la posicion {to}
+     *
+     * @param from posicion inicial del rango a consultar
+     * @param to posicion final del rango a consulta
+     * @return lista de entidades dentro del rango solicitado
+     */
+    @GET
+    @Path("/{from}/{to}")
+    public List<T> listarRango(@PathParam("from") final Integer from, @PathParam("to") final Integer to) {
+        return manager.findRange(from, to);
+    }
+
+    /**
+     * consulta en la entidad de este modulo, los atributos solicitados con un rango de posiciones
+     *
+     * @param from índice inferior del rango
+     * @param to índice superior del rango
+     * @param select cadena con los nombres de los atributos concatenados por un '+', ejemplo: nombre+correo+direccion
+     * @return lista de arreglos de objetos con los atributos solicitados
+     */
+    @GET
+    @Path("/select/{from}/{to}/{select}")
+    public List select(@PathParam("from") Integer from, @PathParam("t") Integer to, @PathParam("select") String select) {
+        return manager.select(from, to, select.split("\\+"));
+    }
+
+    /**
+     * consulta en la entidad de este modulo, los atributos solicitados
+     *
+     * @param select cadena con los nombres de los atributos concatenados por un '+', ejemplo: nombre+correo+direccion
+     * @return lista de arreglos con los objetos de los atributos solicitados
+     */
+    @GET
+    @Path("/select/{select}")
+    public List select(@PathParam("select") String select) {
+        return manager.select(select.split("\\+"));
     }
 
 }

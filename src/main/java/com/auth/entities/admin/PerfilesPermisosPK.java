@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ulises Beltrán Gómez - beltrangomezulises@gmail.com
+ * Copyright (C) 2018 Alonso - Alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author Ulises Beltrán Gómez - beltrangomezulises@gmail.com
+ * @author Alonso - Alonso@kriblet.com
  */
 @Embeddable
 public class PerfilesPermisosPK implements Serializable {
@@ -109,5 +109,5 @@ public class PerfilesPermisosPK implements Serializable {
     public String toString() {
         return "com.auth.entities.admin.PerfilesPermisosPK[ perfil=" + perfil + ", permiso=" + permiso + ", sucursal=" + sucursal + " ]";
     }
-    
+
 }

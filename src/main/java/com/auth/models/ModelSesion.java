@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ulises Beltrán Gómez - beltrangomezulises@gmail.com
+ * Copyright (C) 2018 Alonso - Alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@ package com.auth.models;
 
 /**
  * Modelo para contener los datos de la sesion de usuario
- * @author Ulises Beltrán Gómez - beltrangomezulises@gmail.com
+ *
+ * @author Alonso - Alonso@kriblet.com
  */
 public class ModelSesion {
 

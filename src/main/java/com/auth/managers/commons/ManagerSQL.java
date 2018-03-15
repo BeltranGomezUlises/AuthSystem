@@ -89,8 +89,35 @@ public abstract class ManagerSQL<T extends IEntity<K>, K> extends ManagerFacade<
         return (T) dao.findFirst();
     }
 
+    @Override
+    public List<T> findRange(int initialPosition, int lastPosition) {
+        return dao.findRange(initialPosition, lastPosition);
+    }
+
     public JPAJinqStream<T> stream() {
         return dao.stream();
+    }
+
+    /**
+     * consulta los atributos proporcionados en la entidad de manejador
+     *
+     * @param attributes lista de nombres de los atributos a consultar
+     * @return lista de arreglo de objetos con los atributos solicitados
+     */
+    public List select(String... attributes) {
+        return this.dao.select(attributes);
+    }
+
+    /**
+     * consulta los atributos proporcionados de la entidad de manejador con un rango de posiciones
+     *
+     * @param from indice inferior
+     * @param to indice superior
+     * @param attributes lista de nombre de los atributos a consultar
+     * @return lista de arreglo de objetos con los atributos solicitados
+     */
+    public List select(Integer from, Integer to, String... attributes) {
+        return this.dao.select(from, to, attributes);
     }
 
 }

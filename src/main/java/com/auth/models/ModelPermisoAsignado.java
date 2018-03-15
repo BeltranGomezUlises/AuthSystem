@@ -27,7 +27,7 @@ public class ModelPermisoAsignado {
 
     private String permisoId;
     private Profundidad profundidad;
-    private Integer sucursalId;    
+    private Integer sucursalId;
 
     public ModelPermisoAsignado() {
     }

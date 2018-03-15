@@ -14,20 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.auth.daos.admin;
-
-import com.auth.daos.commons.DaoSQLFacade;
-import com.auth.entities.admin.Sucursal;
+package com.auth.models;
 
 /**
- * Entidad de sucursales
  *
  * @author Alonso - Alonso@kriblet.com
  */
-public class DaoSucursal extends DaoSQLFacade<Sucursal, Integer> {
+public class ModelCantidad {
 
-    public DaoSucursal() {
-        super(Sucursal.class, Integer.class);
+    private long cantidad;
+
+    public ModelCantidad() {
+    }
+
+    public ModelCantidad(long cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public long getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
     }
 
 }
