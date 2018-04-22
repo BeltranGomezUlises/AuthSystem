@@ -6,46 +6,18 @@
 package com.auth.managers.commons;
 
 import com.auth.entities.commons.IEntity;
-import com.auth.managers.exceptions.TokenExpiradoException;
-import com.auth.managers.exceptions.TokenInvalidoException;
-import com.auth.utils.UtilsJWT;
 import java.util.List;
 
 /**
  * fachada de manager general
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  * @param <T> class entity used to restrict the class of use
  * @param <K>
  */
 public abstract class ManagerFacade<T extends IEntity, K> {
 
-    protected Integer usuario;
-
     public ManagerFacade() {
-    }
-
-    public ManagerFacade(String token) throws TokenInvalidoException, TokenExpiradoException {
-        this.usuario = UtilsJWT.getUserIdFrom(token);
-    }
-
-    public Integer getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Integer usuario) {
-        this.usuario = usuario;
-    }
-
-    /**
-     * asignar un token de sesion a este manager, con la intencion de validar el usuario en pemisos y registros de bitacoras
-     *
-     * @param token token de sesion
-     * @throws TokenInvalidoException si el token proporsionado no es válido
-     * @throws TokenExpiradoException si el token proporsionado ya expiró
-     */
-    public void setToken(String token) throws TokenInvalidoException, TokenExpiradoException {
-        this.setUsuario(UtilsJWT.getUserIdFrom(token));
     }
 
     /**
@@ -123,6 +95,15 @@ public abstract class ManagerFacade<T extends IEntity, K> {
      * @throws java.lang.Exception
      */
     public abstract List<T> findAll(int max) throws Exception;
+
+    /**
+     * busca las entidades comprendidas en el rango especificado por los parametros
+     *
+     * @param initialPosition posicion inicial de busqueda
+     * @param lastPosition posicion final de busqueda
+     * @return lista de entidades comprendidas entre las posiciones proporcionadas
+     */
+    public abstract List<T> findRange(final int initialPosition, final int lastPosition);
 
     /**
      * cuenta las entidades manejadas

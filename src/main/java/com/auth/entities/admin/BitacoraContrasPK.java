@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 package com.auth.entities.admin;
 
 import java.io.Serializable;
-import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -26,15 +25,15 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author
  */
 @Embeddable
 public class BitacoraContrasPK implements Serializable {
 
     @Basic(optional = false)
-    @NotNull      
+    @NotNull
     @Column(name = "usuario")
-    private Integer usuario;
+    private int usuario;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
@@ -44,16 +43,16 @@ public class BitacoraContrasPK implements Serializable {
     public BitacoraContrasPK() {
     }
 
-    public BitacoraContrasPK(Integer usuario, String contra) {
+    public BitacoraContrasPK(int usuario, String contra) {
         this.usuario = usuario;
         this.contra = contra;
     }
 
-    public Integer getUsuario() {
+    public int getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(Integer usuario) {
+    public void setUsuario(int usuario) {
         this.usuario = usuario;
     }
 
@@ -67,33 +66,27 @@ public class BitacoraContrasPK implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 31 * hash + Objects.hashCode(this.usuario);
-        hash = 31 * hash + Objects.hashCode(this.contra);
+        int hash = 0;
+        hash += (int) usuario;
+        hash += (contra != null ? contra.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object object) {
+        if (!(object instanceof BitacoraContrasPK)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        BitacoraContrasPK other = (BitacoraContrasPK) object;
+        if (this.usuario != other.usuario) {
             return false;
         }
-        final BitacoraContrasPK other = (BitacoraContrasPK) obj;
-        if (!Objects.equals(this.contra, other.contra)) {
-            return false;
-        }
-        return Objects.equals(this.usuario, other.usuario);
+        return this.contra.equals(other.contra);
     }
-       
+
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.BitacoraContrasPK[ usuario=" + usuario + ", contra=" + contra + " ]";
+        return "com.auth.entities.admin.BitacoraContrasPK[ usuario=" + usuario + ", contra=" + contra + " ]";
     }
-    
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,24 +17,17 @@
 package com.auth.managers.admin;
 
 import com.auth.daos.admin.DaoMenu;
-import com.auth.daos.commons.DaoSQLFacade;
 import com.auth.entities.admin.Menu;
 import com.auth.managers.commons.ManagerSQL;
-import com.auth.managers.exceptions.TokenExpiradoException;
-import com.auth.managers.exceptions.TokenInvalidoException;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class ManagerMenu extends ManagerSQL<Menu, String> {
 
     public ManagerMenu() {
         super(new DaoMenu());
-    }
-
-    public ManagerMenu(DaoSQLFacade dao, String token) throws TokenInvalidoException, TokenExpiradoException {
-        super(dao, token);
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,35 @@ package com.auth.daos.admin;
 
 import com.auth.daos.commons.DaoSQLFacade;
 import com.auth.entities.admin.Usuario;
-import com.auth.utils.UtilsDB;
+import com.auth.entities.admin.UsuariosPerfil;
+import com.auth.entities.admin.UsuariosPerfilPK;
+import java.util.List;
+import javax.persistence.EntityManager;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
-public class DaoUsuario extends DaoSQLFacade<Usuario, Integer>{
+public class DaoUsuario extends DaoSQLFacade<Usuario, Integer> {
 
     public DaoUsuario() {
-        super(UtilsDB.getEMFactoryCG(),Usuario.class, Integer.class);
+        super(Usuario.class, Integer.class);
+    }
+
+    public void registrarUsuario(Usuario nuevoUsuario, List<Integer> perfilesAsignar) {
+        EntityManager em = this.getEM();
+        em.getTransaction().begin();
+        em.persist(nuevoUsuario);
+        em.flush();        
+        //generar relacion con los ids de los perfiles del usuario
+        UsuariosPerfil up;
+        for (Integer perfilId : perfilesAsignar) {
+            up = new UsuariosPerfil();
+            up.setHereda(Boolean.TRUE);
+            up.setUsuariosPerfilPK(new UsuariosPerfilPK(nuevoUsuario.getId(), perfilId));
+            em.persist(up);
+        }
+        em.getTransaction().commit();
     }
 
 }

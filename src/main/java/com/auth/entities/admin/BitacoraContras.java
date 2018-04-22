@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@ package com.auth.entities.admin;
 import com.auth.entities.commons.IEntity;
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -29,15 +30,17 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author
  */
 @Entity
 @Table(name = "bitacora_contras")
 @NamedQueries({
     @NamedQuery(name = "BitacoraContras.findAll", query = "SELECT b FROM BitacoraContras b")
+    , @NamedQuery(name = "BitacoraContras.findByUsuario", query = "SELECT b FROM BitacoraContras b WHERE b.bitacoraContrasPK.usuario = :usuario")
     , @NamedQuery(name = "BitacoraContras.findByContra", query = "SELECT b FROM BitacoraContras b WHERE b.bitacoraContrasPK.contra = :contra")
     , @NamedQuery(name = "BitacoraContras.findByFechaAsignada", query = "SELECT b FROM BitacoraContras b WHERE b.fechaAsignada = :fechaAsignada")})
 public class BitacoraContras extends IEntity<BitacoraContrasPK> implements Serializable {
@@ -45,6 +48,8 @@ public class BitacoraContras extends IEntity<BitacoraContrasPK> implements Seria
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected BitacoraContrasPK bitacoraContrasPK;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "fecha_asignada")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaAsignada;
@@ -53,17 +58,21 @@ public class BitacoraContras extends IEntity<BitacoraContrasPK> implements Seria
     private Usuario usuario1;
 
     public BitacoraContras() {
-        fechaAsignada = new Date();
     }
 
     public BitacoraContras(BitacoraContrasPK bitacoraContrasPK) {
         this.bitacoraContrasPK = bitacoraContrasPK;
-        fechaAsignada = new Date();
+        this.fechaAsignada = new Date();
     }
 
-    public BitacoraContras(Integer usuario, String contra) {
+    public BitacoraContras(BitacoraContrasPK bitacoraContrasPK, Date fechaAsignada) {
+        this.bitacoraContrasPK = bitacoraContrasPK;
+        this.fechaAsignada = fechaAsignada;
+    }
+
+    public BitacoraContras(int usuario, String contra) {
         this.bitacoraContrasPK = new BitacoraContrasPK(usuario, contra);
-        fechaAsignada = new Date();
+        this.fechaAsignada = new Date();
     }
 
     public BitacoraContrasPK getBitacoraContrasPK() {
@@ -104,16 +113,16 @@ public class BitacoraContras extends IEntity<BitacoraContrasPK> implements Seria
             return false;
         }
         BitacoraContras other = (BitacoraContras) object;
-        return !((this.bitacoraContrasPK == null && other.bitacoraContrasPK != null) || (this.bitacoraContrasPK != null && !this.bitacoraContrasPK.equals(other.bitacoraContrasPK)));
+        return this.bitacoraContrasPK.equals(other.bitacoraContrasPK);
     }
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.BitacoraContras[ bitacoraContrasPK=" + bitacoraContrasPK + " ]";
+        return "com.auth.entities.admin.BitacoraContras[ bitacoraContrasPK=" + bitacoraContrasPK + " ]";
     }
 
     @Override
-    public BitacoraContrasPK getId() {
+    public BitacoraContrasPK obtenerIdentificador() {
         return bitacoraContrasPK;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,12 +19,10 @@ package com.auth.managers.admin;
 import com.auth.daos.admin.DaoModulo;
 import com.auth.entities.admin.Modulo;
 import com.auth.managers.commons.ManagerSQL;
-import com.auth.managers.exceptions.TokenExpiradoException;
-import com.auth.managers.exceptions.TokenInvalidoException;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class ManagerModulo extends ManagerSQL<Modulo, String> {
 
@@ -32,8 +30,4 @@ public class ManagerModulo extends ManagerSQL<Modulo, String> {
         super(new DaoModulo());
     }
 
-    public ManagerModulo(String token) throws TokenInvalidoException, TokenExpiradoException {
-        super(new DaoModulo(), token);
-    }
-    
 }

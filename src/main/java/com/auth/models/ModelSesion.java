@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2018 Alonso - Alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,31 +16,38 @@
  */
 package com.auth.models;
 
-import java.util.List;
-
 /**
- * modelo para asignar usuarios a un perfil
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Modelo para contener los datos de la sesion de usuario
+ *
+ * @author Alonso - Alonso@kriblet.com
  */
-public class ModelAsignarUsuariosAlPerfil {
+public class ModelSesion {
 
-    private String id;
-    private List<ModelUsuarioAsignado> usuarios;
+    private int userId;
+    private int sucursalId;
 
-    public String getId() {
-        return id;
+    public ModelSesion() {
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public ModelSesion(int userId, int sucursalId) {
+        this.userId = userId;
+        this.sucursalId = sucursalId;
     }
 
-    public List<ModelUsuarioAsignado> getUsuarios() {
-        return usuarios;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUsuarios(List<ModelUsuarioAsignado> usuarios) {
-        this.usuarios = usuarios;
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getSucursalId() {
+        return sucursalId;
+    }
+
+    public void setSucursalId(int sucursalId) {
+        this.sucursalId = sucursalId;
     }
 
 }

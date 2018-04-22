@@ -5,22 +5,22 @@
  */
 package com.auth.daos.commons;
 
+import com.auth.entities.admin.Usuario;
 import com.auth.entities.commons.IEntity;
+import com.auth.utils.UtilsDB;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import org.jinq.jpa.JPAJinqStream;
-import org.jinq.jpa.JPAQueryLogger;
 import org.jinq.jpa.JinqJPAStreamProvider;
 
 /**
  * Facade Data Access Object para entidades SQL
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  * @param <T> Entidad JPA a utilizar por el controlador C JPA respaldado de DaoSQLFacade
  * @param <K> Tipo de dato de la llave primaria de la entidad
  */
@@ -28,22 +28,19 @@ public abstract class DaoSQLFacade<T extends IEntity<K>, K> {
 
     private final Class<T> claseEntity;
     private final Class<K> clasePK;
-    private final EntityManagerFactory eMFactory;
     private final JinqJPAStreamProvider streamProvider;
 
     /**
      * al sobreescribir considerar la fabrica de EntityManager, que sea la que apunte a la base de datos adecuada, que la clase entidad sea correcta y la clase que represente la llave primaria tambien corresponda
      *
-     * @param eMFactory fabrica de manejadores de entidad EntityManager que corresponda a la base de datos con la cual trabajar
      * @param claseEntity clase de la entidad con la cual operar
      * @param clasePk clase que represente la llave primaria de la entidad
      */
-    public DaoSQLFacade(EntityManagerFactory eMFactory, Class<T> claseEntity, Class<K> clasePk) {
-        this.eMFactory = eMFactory;
+    public DaoSQLFacade(Class<T> claseEntity, Class<K> clasePk) {
         this.claseEntity = claseEntity;
         this.clasePK = clasePk;
 
-        streamProvider = new JinqJPAStreamProvider(eMFactory);
+        streamProvider = new JinqJPAStreamProvider(UtilsDB.getEMFactory());
         streamProvider.registerAttributeConverterType(UUID.class);
     }
 
@@ -53,10 +50,6 @@ public abstract class DaoSQLFacade<T extends IEntity<K>, K> {
 
     public Class<K> getClasePK() {
         return clasePK;
-    }
-
-    public EntityManagerFactory geteMFactory() {
-        return eMFactory;
     }
 
     public JinqJPAStreamProvider getStreamProvider() {
@@ -69,7 +62,7 @@ public abstract class DaoSQLFacade<T extends IEntity<K>, K> {
      * @return EntityManager de la fabrica de este Data Access Object
      */
     public EntityManager getEM() {
-        return eMFactory.createEntityManager();
+        return UtilsDB.getEMFactory().createEntityManager();
     }
 
     /**
@@ -88,14 +81,7 @@ public abstract class DaoSQLFacade<T extends IEntity<K>, K> {
      * @return strema de datos de la entidad con la cual operar
      */
     public JPAJinqStream<T> stream() {
-        JPAJinqStream<T> stream = streamProvider.streamAll(eMFactory.createEntityManager(), claseEntity);
-
-        stream.setHint(
-                "queryLogger", (JPAQueryLogger) (String query, Map<Integer, Object> positionParameters, Map<String, Object> namedParameters) -> {
-                    System.out.println("queryLogr -> " + query);
-                });
-
-        return stream;
+        return streamProvider.streamAll(UtilsDB.getEMFactory().createEntityManager(), claseEntity);
     }
 
     //<editor-fold defaultstate="collapsed" desc="¡LEEME!">
@@ -221,13 +207,64 @@ public abstract class DaoSQLFacade<T extends IEntity<K>, K> {
         }
     }
 
-    public long count() throws Exception {
-        EntityManager em = getEM();
-        long count = streamProvider.streamAll(getEM(), claseEntity).count();
-        if (em != null) {
-            em.close();
+    public List<T> findRange(final int rangoInicial, final int rangoFinal) {
+        int resultados = rangoFinal - rangoInicial + 1;
+        CriteriaQuery cq = getEM().getCriteriaBuilder().createQuery();
+        cq.select(cq.from(claseEntity));
+        Query q = getEM().createQuery(cq);
+        q.setMaxResults(resultados);
+        q.setFirstResult(rangoInicial);
+        return q.getResultList();
+    }
+
+    public long count() {
+        CriteriaQuery cq = getEM().getCriteriaBuilder().createQuery();
+        Root<T> rt = cq.from(claseEntity);
+        cq.select(getEM().getCriteriaBuilder().count(rt));
+        Query q = getEM().createQuery(cq);
+        return ((Long) q.getSingleResult());
+    }
+
+    /**
+     * ejecuta un select con los atributos en attributes y efectua una paginación desde from hasta to
+     *
+     * @param from indice inferior
+     * @param to indice superior
+     * @param attributes strings con los nombres de los atributos
+     * @return lista de resutados de la consulta a db
+     */
+    public List select(Integer from, Integer to, String... attributes) {
+        EntityManager em = this.getEM();
+        String selects = "";
+        for (String attribute : attributes) {
+            selects += "t." + attribute + ",";
         }
-        return count;
+        selects = selects.substring(0, selects.length() - 1);
+        Query q = em.createQuery("SELECT " + selects + " FROM " + claseEntity.getSimpleName() + " t");
+        if (from != null) {
+            q.setFirstResult(from);
+        }
+        if (to != null) {
+            q.setMaxResults(to - from + 1);
+        }
+        return q.getResultList();
+    }
+
+    /**
+     * ejecuta un select con los atributos en attributes y efectua una paginación desde from hasta to
+     *
+     * @param attributes strings con los nombres de los atributos
+     * @return lista de resutados de la consulta a db
+     */
+    public List select(String... attributes) {
+        EntityManager em = this.getEM();
+        String selects = "";
+        for (String attribute : attributes) {
+            selects += "t." + attribute + ",";
+        }
+        selects = selects.substring(0, selects.length() - 1);
+        Query q = em.createQuery("SELECT " + selects + " FROM " + claseEntity.getSimpleName() + " t");
+        return q.getResultList();
     }
 
 }

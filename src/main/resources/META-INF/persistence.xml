@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-  <persistence-unit name="auth" transaction-type="RESOURCE_LOCAL">
-    <class>com.auth.entities.admin.Usuario</class>
-    <class>com.auth.entities.admin.Permiso</class>
-    <class>com.auth.entities.admin.Menu</class>
-    <class>com.auth.entities.admin.Seccion</class>
-    <class>com.auth.entities.admin.UsuariosPermisos</class>
-    <class>com.auth.entities.admin.UsuariosPerfil</class>
-    <class>com.auth.entities.admin.BitacoraContras</class>
-    <class>com.auth.entities.admin.GrupoPerfiles</class>
-    <class>com.auth.entities.admin.Modulo</class>
-    <class>com.auth.entities.admin.PerfilesPermisos</class>
-    <class>com.auth.entities.admin.Perfil</class>
-    <exclude-unlisted-classes>true</exclude-unlisted-classes>
-    <properties>
-      <!-- jdbc -->
-      <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://192.168.10.10:5532/auth"/>
-      <property name="javax.persistence.jdbc.user" value="postgres"/>
-      <property name="javax.persistence.jdbc.password" value="postgres.90Y9B8yh$123"/>
-      <!--<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/auth"/>-->
-      <!--<property name="javax.persistence.jdbc.password" value="2424"/>-->
-      <!-- eclipse link -->
-      <property name="eclipselink.ddl-generation" value="create-tables"/>
-      <property name="eclipselink.ddl-generation.output-mode" value="database"/>
-    </properties>
-  </persistence-unit>
+    <persistence-unit name="auth" transaction-type="RESOURCE_LOCAL">
+        <class>com.auth.entities.admin.Usuario</class>
+        <class>com.auth.entities.admin.Permiso</class>
+        <class>com.auth.entities.admin.Menu</class>
+        <class>com.auth.entities.admin.Seccion</class>
+        <class>com.auth.entities.admin.UsuariosPermisos</class>
+        <class>com.auth.entities.admin.UsuariosPerfil</class>
+        <class>com.auth.entities.admin.BitacoraContras</class>
+        <class>com.auth.entities.admin.GrupoPerfiles</class>
+        <class>com.auth.entities.admin.Modulo</class>
+        <class>com.auth.entities.admin.PerfilesPermisos</class>
+        <class>com.auth.entities.admin.Perfil</class>
+        <class>com.auth.entities.admin.Sucursal</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <properties>
+            <!-- jdbc -->
+            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+            <property name="javax.persistence.jdbc.user" value="postgres"/>
+            
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5532/auth"/>
+            <property name="javax.persistence.jdbc.password" value="postgres.90Y9B8yh$123"/>
+            
+<!--            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/auth"/>
+            <property name="javax.persistence.jdbc.password" value="2424"/>-->
+            
+        </properties>
+    </persistence-unit>
 </persistence>

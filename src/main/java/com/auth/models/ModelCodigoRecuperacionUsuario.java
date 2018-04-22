@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,17 +19,17 @@ package com.auth.models;
 /**
  * modelo contenedor de usuario y codigo de recuperacion
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class ModelCodigoRecuperacionUsuario {
 
     private String code;
-    private String idUser;
+    private Integer idUser;
 
     public ModelCodigoRecuperacionUsuario() {
     }
 
-    public ModelCodigoRecuperacionUsuario(String code, String idUser) {
+    public ModelCodigoRecuperacionUsuario(String code, Integer idUser) {
         this.code = code;
         this.idUser = idUser;
     }
@@ -42,11 +42,11 @@ public class ModelCodigoRecuperacionUsuario {
         this.code = code;
     }
 
-    public String getIdUser() {
+    public Integer getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(String idUser) {
+    public void setIdUser(Integer idUser) {
         this.idUser = idUser;
     }
 

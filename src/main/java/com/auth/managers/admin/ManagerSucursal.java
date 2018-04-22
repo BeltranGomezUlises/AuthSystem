@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2018 Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,25 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.auth.models;
+package com.auth.managers.admin;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.auth.daos.admin.DaoSucursal;
+import com.auth.entities.admin.Sucursal;
+import com.auth.managers.commons.ManagerSQL;
 
 /**
- * modelo para comunicar el id de un usuario
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ *
+ * @author Alonso --- alonso@kriblet.com
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ModelUsuarioId {
+public class ManagerSucursal extends ManagerSQL<Sucursal, Integer> {
 
-    private String id;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public ManagerSucursal() {
+        super(new DaoSucursal());
     }
 
 }

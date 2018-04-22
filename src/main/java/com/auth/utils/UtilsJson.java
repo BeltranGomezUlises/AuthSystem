@@ -11,18 +11,18 @@ import java.io.IOException;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class UtilsJson {
-    
+
     public static final ObjectMapper MAPPER = new ObjectMapper();
-    
-    public static String jsonSerialize(Object o) throws JsonProcessingException{        
+
+    public static String jsonSerialize(Object o) throws JsonProcessingException {
         return MAPPER.writeValueAsString(o);
     }
-    
-    public static <T> T jsonDeserialize(String json, Class<T> clazz) throws IOException{
-        return (T) MAPPER.readValue(json, clazz);        
+
+    public static <T> T jsonDeserialize(String json, Class<T> clazz) throws IOException {
+        return (T) MAPPER.readValue(json, clazz);
     }
-    
+
 }

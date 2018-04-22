@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,42 +17,31 @@
 package com.auth.utils;
 
 import com.auth.daos.admin.DaoGrupoPerfiles;
-import com.auth.entities.admin.GrupoPerfiles;
-import com.auth.entities.admin.Menu;
-import com.auth.entities.admin.Modulo;
-import com.auth.entities.admin.Perfil;
-import com.auth.entities.admin.Permiso;
-import com.auth.entities.admin.Seccion;
-import com.auth.entities.admin.Usuario;
-import com.auth.entities.admin.UsuariosPerfil;
-import com.auth.daos.admin.DaoMenu;
-import com.auth.daos.admin.DaoModulo;
 import com.auth.daos.admin.DaoPerfil;
-import com.auth.daos.admin.DaoPermiso;
-import com.auth.daos.admin.DaoSeccion;
+import com.auth.daos.admin.DaoSucursal;
 import com.auth.daos.admin.DaoUsuario;
 import com.auth.daos.admin.DaoUsuariosPerfil;
+import com.auth.entities.admin.GrupoPerfiles;
+import com.auth.entities.admin.Perfil;
 import com.auth.entities.admin.PerfilesPermisos;
+import com.auth.entities.admin.Permiso;
+import com.auth.entities.admin.Sucursal;
+import com.auth.entities.admin.Usuario;
+import com.auth.entities.admin.UsuariosPerfil;
 import com.auth.entities.admin.UsuariosPermisos;
 import com.auth.entities.commons.Profundidad;
 import static com.auth.entities.commons.Profundidad.TODOS;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import static java.util.stream.Collectors.toList;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import org.reflections.Reflections;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class InitServletContext implements ServletContextListener {
 
@@ -97,7 +86,6 @@ public class InitServletContext implements ServletContextListener {
         }
 
         //</editor-fold>  
-        
         //<editor-fold defaultstate="collapsed" desc="Creacion del perfil Master">
         //crear perfil master
         DaoPerfil daoPerfil = new DaoPerfil();
@@ -113,7 +101,6 @@ public class InitServletContext implements ServletContextListener {
         }
 
         //</editor-fold>
-        
         //<editor-fold defaultstate="collapsed" desc="Creacion del grupo de perfiles">
         DaoGrupoPerfiles daoGrupoPerfil = new DaoGrupoPerfiles();
 
@@ -125,17 +112,20 @@ public class InitServletContext implements ServletContextListener {
 
             List<Perfil> perfilesDelRol = new ArrayList<>();
             perfilesDelRol.add(perfilMaster);
-            gp.setPerfilList(perfilesDelRol);            
+            gp.setPerfilList(perfilesDelRol);
             daoGrupoPerfil.persist(gp);
         }
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="Asignacion de permisos al perfil">        
+        DaoSucursal daoSucursal = new DaoSucursal();
         for (Permiso permiso : UtilsPermissions.getExistingPermissions()) {
-            PerfilesPermisos perfilesPermisosRelacion = new PerfilesPermisos(perfilMaster.getId(), permiso.getId());
-            perfilesPermisosRelacion.setProfundidad(Profundidad.TODOS);
-            if (!perfilMaster.getPerfilesPermisosList().contains(perfilesPermisosRelacion)) {
-                perfilMaster.getPerfilesPermisosList().add(perfilesPermisosRelacion);
+            for (Sucursal sucursal : daoSucursal.findAll()) {
+                PerfilesPermisos perfilesPermisosRelacion = new PerfilesPermisos(perfilMaster.getId(), permiso.getId(), sucursal.getId());
+                perfilesPermisosRelacion.setProfundidad(Profundidad.TODOS);
+                if (!perfilMaster.getPerfilesPermisosList().contains(perfilesPermisosRelacion)) {
+                    perfilMaster.getPerfilesPermisosList().add(perfilesPermisosRelacion);
+                }
             }
         }
         daoPerfil.update(perfilMaster);
@@ -150,13 +140,14 @@ public class InitServletContext implements ServletContextListener {
         }
 
         //</editor-fold>
-        
         //<editor-fold defaultstate="collapsed" desc="Asignaion de permisos al usuario">
         for (Permiso existingPermission : UtilsPermissions.getExistingPermissions()) {
-            UsuariosPermisos usuariosPermisosRelacion = new UsuariosPermisos(usuarioDB.getId(), existingPermission.getId());
-            usuariosPermisosRelacion.setProfundidad(TODOS);
-            if (!usuarioDB.getUsuariosPermisosList().contains(usuariosPermisosRelacion)) {
-                usuarioDB.getUsuariosPermisosList().add(usuariosPermisosRelacion);
+            for (Sucursal sucursal : daoSucursal.findAll()) {
+                UsuariosPermisos usuariosPermisosRelacion = new UsuariosPermisos(usuarioDB.getId(), existingPermission.getId(), sucursal.getId());
+                usuariosPermisosRelacion.setProfundidad(TODOS);
+                if (!usuarioDB.getUsuariosPermisosList().contains(usuariosPermisosRelacion)) {
+                    usuarioDB.getUsuariosPermisosList().add(usuariosPermisosRelacion);
+                }
             }
         }
         daoUsuario.update(usuarioDB);
@@ -179,7 +170,6 @@ public class InitServletContext implements ServletContextListener {
 //            System.out.println(mail);
 //        }
         //</editor-fold>                
-
 //        //<editor-fold defaultstate="collapsed" desc="Configuraciones generales">
 //        CGConfig configuracionGeneral = daoConfig.findFirst();
 //
@@ -231,7 +221,6 @@ public class InitServletContext implements ServletContextListener {
 //            System.out.println(configuracionGeneral);
 //        }
 //        //</editor-fold>        
-
         System.out.println("LA CONFIRUACION DE BASE DE DATOS DEFAULT TERMINÓ");
     }
 

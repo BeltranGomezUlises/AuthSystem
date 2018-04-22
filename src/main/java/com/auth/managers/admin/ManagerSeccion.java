@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ulises Beltrán Gómez - beltrangomezulises@gmail.com
+ * Copyright (C) 2018 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import com.auth.managers.commons.ManagerSQL;
 
 /**
  *
- * @author Ulises Beltrán Gómez - beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class ManagerSeccion extends ManagerSQL<Seccion, String> {
 

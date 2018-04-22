@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,16 +19,28 @@ package com.auth.daos.admin;
 import com.auth.daos.commons.DaoSQLFacade;
 import com.auth.entities.admin.BitacoraContras;
 import com.auth.entities.admin.BitacoraContrasPK;
-import com.auth.utils.UtilsDB;
+import javax.persistence.NoResultException;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class DaoBitacoraContra extends DaoSQLFacade<BitacoraContras, BitacoraContrasPK> {
 
     public DaoBitacoraContra() {
-        super(UtilsDB.getEMFactoryCG(), BitacoraContras.class, BitacoraContrasPK.class);
+        super(BitacoraContras.class, BitacoraContrasPK.class);
+    }
+
+    public boolean exists(BitacoraContrasPK bitacoraContrasPK) {
+        try {
+            return this.getEM().createQuery("SELECT t.bitacoraContrasPK.usuario FROM BitacoraContras t WHERE t.bitacoraContrasPK.contra = :contra AND t.bitacoraContrasPK.usuario = :usuario")
+                    .setParameter("contra", bitacoraContrasPK.getContra())
+                    .setParameter("usuario", bitacoraContrasPK.getUsuario())
+                    .setMaxResults(1)
+                    .getSingleResult() != null;
+        } catch (NoResultException e) {
+            return false;
+        }
     }
 
 }

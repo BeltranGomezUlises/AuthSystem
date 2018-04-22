@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2018 Alonso - Alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,28 +17,26 @@
 package com.auth.models;
 
 /**
- * modelo contenedor de usuario para asignar a perfil
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ *
+ * @author Alonso - Alonso@kriblet.com
  */
-public class ModelUsuarioAsignado {
+public class ModelCantidad {
 
-    private String userId;
-    private boolean heritage;
+    private long cantidad;
 
-    public String getUserId() {
-        return userId;
+    public ModelCantidad() {
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public ModelCantidad(long cantidad) {
+        this.cantidad = cantidad;
     }
 
-    public boolean isHeritage() {
-        return heritage;
+    public long getCantidad() {
+        return cantidad;
     }
 
-    public void setHeritage(boolean heritage) {
-        this.heritage = heritage;
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
     }
 
 }

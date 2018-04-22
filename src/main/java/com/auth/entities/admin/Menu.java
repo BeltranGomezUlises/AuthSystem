@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +16,16 @@
  */
 package com.auth.entities.admin;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.auth.entities.commons.IEntity;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -36,7 +38,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author
  */
 @Entity
 @Table(name = "menu")
@@ -44,6 +46,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Menu.findAll", query = "SELECT m FROM Menu m")
     , @NamedQuery(name = "Menu.findById", query = "SELECT m FROM Menu m WHERE m.id = :id")
     , @NamedQuery(name = "Menu.findByNombre", query = "SELECT m FROM Menu m WHERE m.nombre = :nombre")})
+@Cacheable(false)
 public class Menu extends IEntity<String> implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -56,10 +59,11 @@ public class Menu extends IEntity<String> implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "menu")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "menu", fetch = FetchType.EAGER)
     private List<Permiso> permisoList;
     @JoinColumn(name = "modulo", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Modulo modulo;
 
     public Menu() {
@@ -69,7 +73,6 @@ public class Menu extends IEntity<String> implements Serializable {
         this.id = id;
     }
 
-    @Override
     public String getId() {
         return id;
     }
@@ -85,7 +88,7 @@ public class Menu extends IEntity<String> implements Serializable {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-        
+
     public List<Permiso> getPermisoList() {
         return permisoList;
     }
@@ -94,7 +97,6 @@ public class Menu extends IEntity<String> implements Serializable {
         this.permisoList = permisoList;
     }
 
-    @JsonIgnore
     public Modulo getModulo() {
         return modulo;
     }
@@ -117,12 +119,20 @@ public class Menu extends IEntity<String> implements Serializable {
             return false;
         }
         Menu other = (Menu) object;
-        return this.id.equals(other.id);
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.Menu[ id=" + id + " ]";
+        return "com.auth.entities.admin.Menu[ id=" + id + " ]";
     }
-    
+
+    @Override
+    public String obtenerIdentificador() {
+        return id;
+    }
+
 }

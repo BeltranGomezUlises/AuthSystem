@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,18 +17,16 @@
 package com.auth.managers.admin;
 
 import com.auth.daos.admin.DaoPerfil;
+import com.auth.daos.admin.DaoPerfilesPermisos;
 import com.auth.entities.admin.Perfil;
 import com.auth.entities.admin.PerfilesPermisos;
 import com.auth.managers.commons.ManagerSQL;
 import com.auth.models.ModelAsignarPermisos;
-import com.auth.models.ModelPermisoAsignado;
-import java.util.ArrayList;
 import java.util.List;
-import static java.util.stream.Collectors.toList;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class ManagerPerfil extends ManagerSQL<Perfil, Integer> {
 
@@ -36,23 +34,15 @@ public class ManagerPerfil extends ManagerSQL<Perfil, Integer> {
         super(new DaoPerfil());
     }
 
-    public Perfil asignarPermisos(ModelAsignarPermisos model) throws Exception {
-        ManagerPerfilesPermisos managerPerfilesPermisos = new ManagerPerfilesPermisos();
-        //borrar los actuales
-        Integer perfilId = model.getId();
-        managerPerfilesPermisos.deleteAll(managerPerfilesPermisos.stream()
-                .where(pp -> pp.getPerfilesPermisosPK().getPerfil().equals(perfilId))
-                .select(pp -> pp.getPerfilesPermisosPK())
-                .collect(toList()));
-        //ingresar los nuevos
-        List<PerfilesPermisos> permisosNuevos = new ArrayList<>();
-        for (ModelPermisoAsignado permiso : model.getPermisos()) {
-            PerfilesPermisos pp = new PerfilesPermisos(perfilId, permiso.getId());
-            pp.setProfundidad(permiso.getProfundidad());
-            permisosNuevos.add(pp);
-        }
-        managerPerfilesPermisos.persistAll(permisosNuevos);
-        DaoPerfil daoPerfil = new DaoPerfil();
-        return daoPerfil.findOne(perfilId);
+    /**
+     * asigna los permisos colocados en el modelo ModelAsignarPermisos al usuario correspondiente a la propiedad id del modelo
+     *
+     * @param model modelo para asignar permisos
+     * @return asignaciones de permisos con el perfil
+     * @throws Exception si existe un error de I/O
+     */
+    public List<PerfilesPermisos> reemplazarPermisosDelPerfil(ModelAsignarPermisos model) throws Exception {
+        DaoPerfilesPermisos daoPerfilesPermisos = new DaoPerfilesPermisos();
+        return daoPerfilesPermisos.reemplazarPermisosDelPerfil(model.getId(), model.getPermisos());
     }
 }

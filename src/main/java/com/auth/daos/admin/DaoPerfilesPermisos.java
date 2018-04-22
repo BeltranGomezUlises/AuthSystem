@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,16 +19,47 @@ package com.auth.daos.admin;
 import com.auth.daos.commons.DaoSQLFacade;
 import com.auth.entities.admin.PerfilesPermisos;
 import com.auth.entities.admin.PerfilesPermisosPK;
-import com.auth.utils.UtilsDB;
+import com.auth.entities.admin.Sucursal;
+import com.auth.models.ModelPermisoAsignado;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
-public class DaoPerfilesPermisos extends DaoSQLFacade<PerfilesPermisos, PerfilesPermisosPK>{
-    
+public class DaoPerfilesPermisos extends DaoSQLFacade<PerfilesPermisos, PerfilesPermisosPK> {
+
     public DaoPerfilesPermisos() {
-        super(UtilsDB.getEMFactoryCG(), PerfilesPermisos.class, PerfilesPermisosPK.class);
+        super(PerfilesPermisos.class, PerfilesPermisosPK.class);
     }
-    
+
+    /**
+     * reemplaza los permisos asignados al perfil por los nuevos proporsioandos
+     *
+     * @param perfilId identificador del perfil a asignar los permisos
+     * @param permisosAAsignar modelos con los permisos a asignar y sus profundidades
+     * @return asignaciones de permisos con el perfil
+     */
+    public List<PerfilesPermisos> reemplazarPermisosDelPerfil(final int perfilId, List<ModelPermisoAsignado> permisosAAsignar) {
+        EntityManager em = this.getEM();
+        em.getTransaction().begin();
+        //borrar la asignacion de permisos del perfil         
+        em.createQuery("DELETE FROM PerfilesPermisos t WHERE t.perfil1.id = :perfilId")
+                .setParameter("perfilId", perfilId).executeUpdate();
+        //crear las nuevas asignaciones y persistir
+        List<PerfilesPermisos> perfilesPermisos = new ArrayList<>();
+        PerfilesPermisos perfilPermiso;
+        for (ModelPermisoAsignado modelPermisoAsignado : permisosAAsignar) {
+            perfilPermiso = new PerfilesPermisos(perfilId, modelPermisoAsignado.getId(), em.find(Sucursal.class, modelPermisoAsignado.getSucursalId()).getId());
+            perfilPermiso.setProfundidad(modelPermisoAsignado.getProfundidad());
+            em.persist(perfilPermiso);
+            perfilesPermisos.add(perfilPermiso);
+        }
+        em.getTransaction().commit();
+        return perfilesPermisos;
+
+    }
+
 }

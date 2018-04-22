@@ -7,25 +7,22 @@ package com.auth.services;
 
 import com.auth.entities.admin.Usuario;
 import com.auth.managers.admin.ManagerUsuario;
-import com.auth.managers.exceptions.ContraseñaIncorrectaException;
 import com.auth.managers.exceptions.ParametroInvalidoException;
 import com.auth.managers.exceptions.TokenExpiradoException;
 import com.auth.managers.exceptions.TokenInvalidoException;
 import com.auth.managers.exceptions.UsuarioBlockeadoException;
 import com.auth.managers.exceptions.UsuarioInexistenteException;
 import com.auth.models.ModelCodigoRecuperacionUsuario;
-import com.auth.models.ModelContenidoCifrado;
 import com.auth.models.ModelLogin;
 import com.auth.models.ModelReseteoContra;
+import com.auth.models.ModelSesion;
 import com.auth.models.ModelUsuarioLogeado;
 import com.auth.models.Respuesta;
 import com.auth.models.enums.Status;
 import com.auth.utils.UtilsJWT;
 import com.auth.utils.UtilsPermissions;
 import com.auth.utils.UtilsSecurity;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -39,7 +36,7 @@ import org.apache.commons.mail.EmailException;
 /**
  * servicios de accesos al sistema
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 @Path("/accesos")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -57,6 +54,9 @@ public class Accesos {
     public Respuesta<ModelUsuarioLogeado> login(ModelLogin modelLogin) {
         Respuesta r;
         try {
+            if (modelLogin.getSucursalId() == null) {
+                throw new ParametroInvalidoException("Tiene que proporcionar una sucursal para iniciar sesión");
+            }
             ManagerUsuario managerUsuario = new ManagerUsuario();
 
             modelLogin.setPass(UtilsSecurity.cifrarMD5(modelLogin.getPass()));
@@ -69,14 +69,17 @@ public class Accesos {
             modelUsuarioLogeado.setTelefono(usuarioLogeado.getTelefono());
             modelUsuarioLogeado.setId(usuarioLogeado.getId());
             modelUsuarioLogeado.setCorreo(usuarioLogeado.getCorreo());
-            modelUsuarioLogeado.setToken(UtilsJWT.generateSessionToken(usuarioLogeado.getId().toString()));
+            modelUsuarioLogeado.setToken(UtilsJWT.generateSessionToken(new ModelSesion(usuarioLogeado.getId(), modelLogin.getSucursalId())));
 
             r = new Respuesta(Status.OK, "login exitoso", modelUsuarioLogeado);
-        } catch (UsuarioInexistenteException | ContraseñaIncorrectaException e) {
+        } catch (UsuarioInexistenteException e) {
             r = new Respuesta(Status.WARNING, "Usuario y/o contraseña incorrecto");
         } catch (UsuarioBlockeadoException e) {
             r = new Respuesta(Status.WARNING, "El usuario se encuentra bloqueado " + e.getMessage());
+        } catch (ParametroInvalidoException e) {
+            r = new Respuesta(Status.WARNING, e.getMessage());
         } catch (Exception e) {
+            e.printStackTrace();
             r = new Respuesta(Status.ERROR, "Error de programación: " + e.getMessage());
         }
         return r;
@@ -94,7 +97,7 @@ public class Accesos {
         Respuesta r;
         ManagerUsuario managerUsuario = new ManagerUsuario();
         try {
-            managerUsuario.logout(token);
+            //managerUsuario.logout(token);
             r = new Respuesta(Status.OK, "Logout exitosó");
         } catch (Exception e) {
             r = new Respuesta(Status.ERROR, "Error de programación: " + e.getMessage());
@@ -164,8 +167,8 @@ public class Accesos {
     @Path("/restablecerContra")
     public Respuesta resetPassword(@HeaderParam("Authorization") String tokenRestablecer, ModelReseteoContra modelReseteo) {
         Respuesta res;
-        try {            
-            Integer userId = UtilsJWT.getUserIdFrom(tokenRestablecer);            
+        try {
+            Integer userId = UtilsJWT.getUserIdFrom(tokenRestablecer);
             ManagerUsuario managerUsuario = new ManagerUsuario();
             managerUsuario.resetPassword(userId, modelReseteo.getPass());
             res = new Respuesta(Status.OK, "Contraseña reestablecida con éxito");

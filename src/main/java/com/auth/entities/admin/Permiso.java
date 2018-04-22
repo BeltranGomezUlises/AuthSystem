@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,13 @@
  */
 package com.auth.entities.admin;
 
+import com.auth.entities.commons.IEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,12 +35,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.auth.entities.commons.IEntity;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author
  */
 @Entity
 @Table(name = "permiso")
@@ -44,6 +46,7 @@ import com.auth.entities.commons.IEntity;
     @NamedQuery(name = "Permiso.findAll", query = "SELECT p FROM Permiso p")
     , @NamedQuery(name = "Permiso.findById", query = "SELECT p FROM Permiso p WHERE p.id = :id")
     , @NamedQuery(name = "Permiso.findByNombre", query = "SELECT p FROM Permiso p WHERE p.nombre = :nombre")})
+@Cacheable(false)
 public class Permiso extends IEntity<String> implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -57,11 +60,14 @@ public class Permiso extends IEntity<String> implements Serializable {
     @Column(name = "nombre")
     private String nombre;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "permiso1")
+    @JsonIgnore
     private List<PerfilesPermisos> perfilesPermisosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "permiso1")
+    @JsonIgnore
     private List<UsuariosPermisos> usuariosPermisosList;
     @JoinColumn(name = "menu", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Menu menu;
 
     public Permiso() {
@@ -71,7 +77,6 @@ public class Permiso extends IEntity<String> implements Serializable {
         this.id = id;
     }
 
-    @Override
     public String getId() {
         return id;
     }
@@ -87,8 +92,7 @@ public class Permiso extends IEntity<String> implements Serializable {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-    
-    @JsonIgnore
+
     public List<PerfilesPermisos> getPerfilesPermisosList() {
         return perfilesPermisosList;
     }
@@ -96,8 +100,7 @@ public class Permiso extends IEntity<String> implements Serializable {
     public void setPerfilesPermisosList(List<PerfilesPermisos> perfilesPermisosList) {
         this.perfilesPermisosList = perfilesPermisosList;
     }
-    
-    @JsonIgnore
+
     public List<UsuariosPermisos> getUsuariosPermisosList() {
         return usuariosPermisosList;
     }
@@ -106,7 +109,6 @@ public class Permiso extends IEntity<String> implements Serializable {
         this.usuariosPermisosList = usuariosPermisosList;
     }
 
-    @JsonIgnore
     public Menu getMenu() {
         return menu;
     }
@@ -129,12 +131,20 @@ public class Permiso extends IEntity<String> implements Serializable {
             return false;
         }
         Permiso other = (Permiso) object;
-        return this.id.equals(other.id);
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.Permiso[ id=" + id + " ]";
+        return "com.auth.entities.admin.Permiso[ id=" + id + " ]";
     }
-    
+
+    @Override
+    public String obtenerIdentificador() {
+        return id;
+    }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,18 +17,50 @@
 package com.auth.daos.admin;
 
 import com.auth.daos.commons.DaoSQLFacade;
+import com.auth.entities.admin.Sucursal;
 import com.auth.entities.admin.UsuariosPermisos;
 import com.auth.entities.admin.UsuariosPermisosPK;
-import com.auth.utils.UtilsDB;
+import com.auth.models.ModelPermisoAsignado;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
-public class DaoUsuariosPermisos extends DaoSQLFacade<UsuariosPermisos, UsuariosPermisosPK>{
-    
+public class DaoUsuariosPermisos extends DaoSQLFacade<UsuariosPermisos, UsuariosPermisosPK> {
+
     public DaoUsuariosPermisos() {
-        super(UtilsDB.getEMFactoryCG(), UsuariosPermisos.class, UsuariosPermisosPK.class);
+        super(UsuariosPermisos.class, UsuariosPermisosPK.class);
     }
-    
+
+    /**
+     * reemplaza los permisos asignados a un usuario por los proporcionados en el modelos permisos
+     *
+     * @param usuarioId identificador del usuario a reemplazar los permisos
+     * @param permisos lista de permisos con su profundidad
+     * @return asignaciones de permisos al usuario
+     */
+    public List<UsuariosPermisos> reemplazarPermisos(Integer usuarioId, List<ModelPermisoAsignado> permisos) {
+        EntityManager em = this.getEM();
+        em.getTransaction().begin();
+        //eliminar los actuales
+        em.createQuery("DELETE FROM UsuariosPermisos u WHERE u.usuario1.id = :usuarioId")
+                .setParameter("usuarioId", usuarioId)
+                .executeUpdate();
+        //reempleazar con los nuevos
+        List<UsuariosPermisos> usuariosPermisos = new ArrayList<>();
+        UsuariosPermisos usuarioPermiso;
+        for (ModelPermisoAsignado permiso : permisos) {
+            usuarioPermiso = new UsuariosPermisos(usuarioId, permiso.getId(), permiso.getSucursalId());
+            usuarioPermiso.setProfundidad(permiso.getProfundidad());
+            em.persist(usuarioPermiso);
+            usuariosPermisos.add(usuarioPermiso);
+        }
+
+        em.getTransaction().commit();
+        return usuariosPermisos;
+    }
+
 }

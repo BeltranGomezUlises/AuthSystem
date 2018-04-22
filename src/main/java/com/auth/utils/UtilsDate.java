@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class UtilsDate {
 
@@ -151,8 +151,8 @@ public class UtilsDate {
         public DateClass() {
             this.date = new Date();
         }
-        
-        public DateClass(Date date){
+
+        public DateClass(Date date) {
             this.date = date;
         }
     }

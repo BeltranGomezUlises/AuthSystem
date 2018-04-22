@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class ManagerGrupoPerfil extends ManagerSQL<GrupoPerfiles, Integer> {
 
@@ -37,14 +37,13 @@ public class ManagerGrupoPerfil extends ManagerSQL<GrupoPerfiles, Integer> {
     public GrupoPerfiles asignarPerfiles(ModelAsignarPerfilesAlGrupoPerfil model) throws Exception {
         GrupoPerfiles gp = this.findOne(model.getGrupoPerfilId());
         ManagerPerfil managerPerfil = new ManagerPerfil();
-        managerPerfil.setUsuario(this.getUsuario());
 
         List<Perfil> perfiles = new ArrayList<>();
         model.getPerfilesIds().forEach(pId -> {
             try {
                 perfiles.add(managerPerfil.findOne(pId));
             } catch (Exception e) {
-            }            
+            }
         });
         gp.setPerfilList(perfiles);
         this.update(gp);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,15 @@ package com.auth.daos.admin;
 
 import com.auth.daos.commons.DaoSQLFacade;
 import com.auth.entities.admin.Modulo;
-import com.auth.utils.UtilsDB;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
-public class DaoModulo extends DaoSQLFacade<Modulo, String>{
+public class DaoModulo extends DaoSQLFacade<Modulo, String> {
 
     public DaoModulo() {
-        super(UtilsDB.getEMFactoryCG(), Modulo.class, String.class);
+        super(Modulo.class, String.class);
     }
 
 }

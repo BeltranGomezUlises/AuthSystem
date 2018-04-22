@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,14 @@
  */
 package com.auth.managers.admin;
 
-import com.auth.daos.admin.DaoPerfil;
+import com.auth.daos.admin.DaoBitacoraContra;
+import com.auth.daos.admin.DaoSucursal;
 import com.auth.daos.admin.DaoUsuario;
+import com.auth.daos.admin.DaoUsuariosPermisos;
 import com.auth.entities.admin.BitacoraContras;
 import com.auth.entities.admin.Usuario;
-import com.auth.entities.admin.UsuariosPerfil;
-import com.auth.entities.admin.UsuariosPerfilPK;
 import com.auth.entities.admin.UsuariosPermisos;
 import com.auth.managers.commons.ManagerSQL;
-import com.auth.managers.exceptions.ContraseñaIncorrectaException;
 import com.auth.managers.exceptions.ParametroInvalidoException;
 import com.auth.managers.exceptions.UserException;
 import com.auth.managers.exceptions.UsuarioBlockeadoException;
@@ -33,25 +32,24 @@ import com.auth.models.ModelAltaUsuario;
 import com.auth.models.ModelAsignarPermisos;
 import com.auth.models.ModelCodigoRecuperacionUsuario;
 import com.auth.models.ModelLogin;
-import com.auth.models.ModelPermisoAsignado;
 import com.auth.utils.UtilsConfig;
 import com.auth.utils.UtilsDate;
 import com.auth.utils.UtilsMail;
 import com.auth.utils.UtilsSecurity;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.security.InvalidParameterException;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
 import org.apache.commons.mail.EmailException;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
 
@@ -68,12 +66,8 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
             //bitacorizar la contraseña
             BitacoraContras bc = new BitacoraContras(persisted.getId(), persisted.getContra());
             bc.setUsuario1(persisted);
-
             ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra();
-            managerBitacoraContra.setUsuario(this.getUsuario());
-
             managerBitacoraContra.persist(bc);
-
             return persisted;
         } catch (Exception e) {
             if (e.toString().contains("duplicate key value violates unique constraint")) {
@@ -84,15 +78,31 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
     }
 
     @Override
-    public void update(Usuario entity) throws Exception {
-        super.update(entity);
+    public void update(Usuario e) throws Exception {
+        Usuario usuario = this.findOne(e.getId());
+        if (e.getNombre() != null) {
+            if (!e.getNombre().isEmpty()) {
+                usuario.setNombre(e.getNombre());
+            }
+        }
+        if (e.getTelefono() != null) {
+            if (!e.getTelefono().isEmpty()) {
+                usuario.setTelefono(e.getTelefono());
+            }
+        }
+        if (e.getCorreo() != null) {
+            if (!e.getCorreo().isEmpty()) {
+                usuario.setCorreo(e.getCorreo());
+            }
+        }
+        super.update(usuario);
     }
 
     @Override
     public void delete(Integer id) throws Exception {
         Usuario u = this.findOne(id);
         u.setInhabilitado(Boolean.TRUE);
-        this.update(u);
+        this.dao.update(u);
     }
 
     public Usuario altaUsuario(ModelAltaUsuario model) throws UserException.UsuarioYaExistente, ParametroInvalidoException, Exception {
@@ -105,33 +115,28 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
             }
         }
 
+        //validar contraseña no nula
+        if (model.getContra() == null) {
+            throw new InvalidParameterException("Debe de asignar una constreña al usuario");
+        } else {
+            if (model.getContra().isEmpty()) {
+                throw new InvalidParameterException("Debe de asignar una constreña al usuario");
+            }
+        }
+        /*Inicializar el nuevo usuario*/
         Usuario nuevoUsuario = new Usuario();
-        nuevoUsuario.setContra(model.getContra());
+        nuevoUsuario.setContra(UtilsSecurity.cifrarMD5(model.getContra()));
         nuevoUsuario.setCorreo(model.getCorreo());
         nuevoUsuario.setNombre(model.getNombre());
         nuevoUsuario.setTelefono(model.getTelefono());
+        nuevoUsuario.setBloqueado(false);
+        nuevoUsuario.setBloqueadoHastaFecha(new Date());
+        nuevoUsuario.setInhabilitado(false);
+        nuevoUsuario.setNumeroIntentosLogin(0);
 
-        //validar lista de perfiles
-        List<Integer> perfilesIds = model.getPerfiles();
-        DaoPerfil daoPerfil = new DaoPerfil();
-        long inexistentes = daoPerfil.stream().where(p -> !perfilesIds.contains(p.getId())).count();
+        DaoUsuario daoUsuario = new DaoUsuario();
+        daoUsuario.registrarUsuario(nuevoUsuario, model.getPerfiles());
 
-        if (inexistentes != 0) { //mandaron un perfil que no existe en base de datos, por lo que no se puede persistir esta peticion
-            throw new ParametroInvalidoException("No existe algún perfil de los indicados para asignar al usuario");
-        } else {
-            this.persist(nuevoUsuario);
-            //generar relacion con los ids de los perfiles del usuario
-            ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();
-            UsuariosPerfil up;
-            List<UsuariosPerfil> usuariosPerfilesRelacion = new ArrayList<>();
-            for (Integer perfilId : model.getPerfiles()) {
-                up = new UsuariosPerfil();
-                up.setHereda(Boolean.TRUE);
-                up.setUsuariosPerfilPK(new UsuariosPerfilPK(nuevoUsuario.getId(), perfilId));
-                usuariosPerfilesRelacion.add(up);
-            }
-            managerUsuariosPerfil.persistAll(usuariosPerfilesRelacion);
-        }
         return nuevoUsuario;
     }
 
@@ -141,12 +146,16 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
      * @param modelLogin -> el usuario puede contener en su atributo user el nombre de usuario, el correo o el telefono como identificador
      * @return loged, usuario logeado
      * @throws UsuarioInexistenteException
-     * @throws com.auth.managers.exceptions.ContraseñaIncorrectaException
      * @throws com.auth.managers.exceptions.UsuarioBlockeadoException
      */
-    public Usuario login(ModelLogin modelLogin) throws UsuarioInexistenteException, ContraseñaIncorrectaException, UsuarioBlockeadoException, Exception {
+    public Usuario login(ModelLogin modelLogin) throws UsuarioInexistenteException, UsuarioBlockeadoException, Exception {
         Usuario loged;
         try {
+            //buscar la sucursal
+            if (new DaoSucursal().findOne(modelLogin.getSucursalId()) == null) {
+                throw new ParametroInvalidoException("No proporcionó una sucursal válida");
+            }
+
             DaoUsuario daoUsuario = new DaoUsuario();
             String identificador = modelLogin.getLogin();
             String contraseña = modelLogin.getPass();
@@ -166,7 +175,7 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
                 throw new UsuarioBlockeadoException("Usuario bloqueado hasta " + UtilsDate.format_D_MM_YYYY_HH_MM(loged.getBloqueadoHastaFecha()));
             }
             if (loged.getInhabilitado()) {
-                throw new ContraseñaIncorrectaException("No se encontro un usuario con esa contraseña");
+                throw new UsuarioInexistenteException("No se encontro un usuario con esa contraseña");
             }
 
             loged.setNumeroIntentosLogin(0);
@@ -175,12 +184,9 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
         } catch (NoSuchElementException e) {
             //verificar si existe el usuario
             this.numberAttemptVerification(modelLogin.getLogin());
-            throw new ContraseñaIncorrectaException("No se encontro un usuario con esa contraseña");
+            throw new UsuarioInexistenteException("No se encontro un usuario con esa contraseña");
         }
         return loged;
-    }
-
-    public void logout(String tokenSession) {
     }
 
     private void numberAttemptVerification(String identi) throws UsuarioInexistenteException, UsuarioBlockeadoException, Exception {
@@ -264,57 +270,47 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
         }
     }
 
-    public ModelCodigoRecuperacionUsuario enviarCodigo(String identifier) throws UsuarioInexistenteException, ParametroInvalidoException, MalformedURLException, EmailException {
-        Usuario usuarioARecuperar = null;
-        try {
-            switch (getUserIdentifierType(identifier)) {
-                case MAIL:
-                    usuarioARecuperar = this.dao.stream().where(u -> u.getCorreo().equals(identifier.toLowerCase())).findFirst().get();
-                    break;
-                case PHONE:
-                    usuarioARecuperar = this.dao.stream().where(u -> u.getTelefono().equals(identifier)).findFirst().get();
-                    break;
-                default:
-                    throw new ParametroInvalidoException("el identificador proporsionado no es váliodo. Debe de utilizar un correo electronico ó número de teléfono de 10 dígitos");
+    public ModelCodigoRecuperacionUsuario enviarCodigo(final String identifier) throws UsuarioInexistenteException, ParametroInvalidoException, MalformedURLException, EmailException {
+        final Usuario usuarioARecuperar = this.dao.stream().where(u -> u.getCorreo().equals(identifier.toLowerCase())).findFirst().get();
+        Random r = new Random();
+        //generar codigo de 8 digitos aleatorios
+        String code = String.valueOf(r.nextInt(99));
+        code += String.valueOf(r.nextInt(99));
+        code += String.valueOf(r.nextInt(99));
+        code += String.valueOf(r.nextInt(99));
+        //enviar correo con codigo de recuperacion
+        final String finalCode = code;
+        new Thread(() -> {
+            try {
+                UtilsMail.sendRecuperarContraseñaHTMLMail(identifier, usuarioARecuperar.getNombre(), finalCode);
+            } catch (EmailException ex) {
+                Logger.getLogger(ManagerUsuario.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(ManagerUsuario.class.getName()).log(Level.SEVERE, null, ex);
             }
-            Random r = new Random();
-            //generar codigo de 8 digitos aleatorios
-            String code = String.valueOf(r.nextInt(99));
-            code += String.valueOf(r.nextInt(99));
-            code += String.valueOf(r.nextInt(99));
-            code += String.valueOf(r.nextInt(99));
-            //enviar correo con codigo de recuperacion
-            switch (getUserIdentifierType(identifier)) {
-                case MAIL:
-                    UtilsMail.sendRecuperarContraseñaHTMLMail(identifier, usuarioARecuperar.getNombre(), code);
-                    break;
-                case PHONE:
-                    //UtilsSMS.sendSMS(identifier, "Hola " + usuarioARecuperar.getNombre() + " su código de recuperacion de contraseña es: " + code);
-                    break;
-            }
-            ModelCodigoRecuperacionUsuario model = new ModelCodigoRecuperacionUsuario(code, usuarioARecuperar.getId().toString());
-            return model;
-        } catch (NoSuchElementException e) {
-            throw new UsuarioInexistenteException("No se encontro usuario con el identificador proporsionado");
-        }
+        }).start();
+        ModelCodigoRecuperacionUsuario model = new ModelCodigoRecuperacionUsuario(code, usuarioARecuperar.getId());
+        return model;
+
     }
 
     public void resetPassword(Integer userId, String pass) throws Exception {
         pass = UtilsSecurity.cifrarMD5(pass);
 
-        ManagerBitacoraContra managerBitacoraContra = new ManagerBitacoraContra();
-        managerBitacoraContra.setUsuario(userId);
         BitacoraContras bitacoraContra = new BitacoraContras(userId, pass);
-        if (managerBitacoraContra.stream().anyMatch(e -> e.equals(bitacoraContra))) {
+        DaoBitacoraContra daoBitacora = new DaoBitacoraContra();
+
+        if (daoBitacora.exists(bitacoraContra.getBitacoraContrasPK())) {
             throw new ParametroInvalidoException("La contraseña que esta ingresando ya fué utilizada, intente con otra");
         }
+
         DaoUsuario daoUsuario = new DaoUsuario();
         Usuario u = dao.findOne(userId);
         u.setContra(pass);
         daoUsuario.update(u);
 
-        List<BitacoraContras> bitacoraContras = managerBitacoraContra.stream()
-                .filter(b -> b.getBitacoraContrasPK().getUsuario().equals(u.getId()))
+        List<BitacoraContras> bitacoraContras = daoBitacora.stream()
+                .where(b -> b.getBitacoraContrasPK().getUsuario() == (userId))
                 .sorted((b1, b2) -> b1.getFechaAsignada().compareTo(b2.getFechaAsignada()))
                 .collect(toList());
 
@@ -322,38 +318,22 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
         int maxNumber = UtilsConfig.getMaxPasswordRecords();
         // lastPassword.size() < maxNumber -> agregar pass actual al registro
         // lastPassword.size() >= maxNumber -> resize de lastPassword con los ultimos maxNumber contraseñas                        
-
         bitacoraContra.setUsuario1(u);
-
         if (bitacoraContras.size() < maxNumber) {
-            managerBitacoraContra.persist(bitacoraContra); //añadir la bitacora de la contra usada            
+            daoBitacora.persist(bitacoraContra); //añadir la bitacora de la contra usada            
         } else {
-            managerBitacoraContra.delete(bitacoraContras.get(0).getBitacoraContrasPK()); //remover la ultima contra asignada
-            managerBitacoraContra.persist(bitacoraContra);//agregar nueva
+            daoBitacora.delete(bitacoraContras.get(0).getBitacoraContrasPK()); //remover la ultima contra asignada
+            daoBitacora.persist(bitacoraContra);//agregar nueva
         }
     }
 
-    public List<UsuariosPermisos> asignarPermisos(ModelAsignarPermisos modelo) throws Exception {
-        ManagerUsuariosPermisos managerUsuariosPermisos = new ManagerUsuariosPermisos();
-        //eliminar los permisos anteriores
-        Integer usuarioId = modelo.getId();
-        managerUsuariosPermisos.deleteAll(managerUsuariosPermisos.stream()
-                .where(up -> up.getUsuariosPermisosPK().getUsuario().equals(usuarioId))
-                .select(up -> up.getUsuariosPermisosPK())
-                .collect(toList())
-        );
-        //asignar los nuevos
-        List<UsuariosPermisos> permisosNuevos = new ArrayList<>();
-        for (ModelPermisoAsignado permiso : modelo.getPermisos()) {
-            UsuariosPermisos u = new UsuariosPermisos(modelo.getId(), permiso.getId());
-            u.setProfundidad(permiso.getProfundidad());
-            permisosNuevos.add(u);
-        }
-        return managerUsuariosPermisos.persistAll(permisosNuevos);
+    public List<UsuariosPermisos> reemplazarPermisos(ModelAsignarPermisos modelo) throws Exception {
+        return new DaoUsuariosPermisos().reemplazarPermisos(modelo.getId(), modelo.getPermisos());
     }
 
     public String nombreDeUsuario(Integer usuarioId) {
         return dao.stream().where(u -> u.getId().equals(usuarioId)).findFirst().get().getNombre();
+
     }
 
     private enum userIdentifierType {

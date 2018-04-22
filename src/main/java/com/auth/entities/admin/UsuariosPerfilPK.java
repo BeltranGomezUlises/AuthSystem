@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,49 +24,49 @@ import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author
  */
 @Embeddable
 public class UsuariosPerfilPK implements Serializable {
 
     @Basic(optional = false)
-    @NotNull    
+    @NotNull
     @Column(name = "usuario")
-    private Integer usuario;
+    private int usuario;
     @Basic(optional = false)
-    @NotNull    
+    @NotNull
     @Column(name = "perfil")
-    private Integer perfil;
+    private int perfil;
 
     public UsuariosPerfilPK() {
     }
 
-    public UsuariosPerfilPK(Integer usuario, Integer perfil) {
+    public UsuariosPerfilPK(int usuario, int perfil) {
         this.usuario = usuario;
         this.perfil = perfil;
     }
 
-    public Integer getUsuario() {
+    public int getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(Integer usuario) {
+    public void setUsuario(int usuario) {
         this.usuario = usuario;
     }
 
-    public Integer getPerfil() {
+    public int getPerfil() {
         return perfil;
     }
 
-    public void setPerfil(Integer perfil) {
+    public void setPerfil(int perfil) {
         this.perfil = perfil;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (usuario != null ? usuario.hashCode() : 0);
-        hash += (perfil != null ? perfil.hashCode() : 0);
+        hash += (int) usuario;
+        hash += (int) perfil;
         return hash;
     }
 
@@ -77,12 +77,18 @@ public class UsuariosPerfilPK implements Serializable {
             return false;
         }
         UsuariosPerfilPK other = (UsuariosPerfilPK) object;
-        return this.usuario.equals(other.usuario) && this.perfil.equals(other.perfil);
+        if (this.usuario != other.usuario) {
+            return false;
+        }
+        if (this.perfil != other.perfil) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfilPK[ usuario=" + usuario + ", perfil=" + perfil + " ]";
+        return "com.auth.entities.admin.UsuariosPerfilPK[ usuario=" + usuario + ", perfil=" + perfil + " ]";
     }
-    
+
 }

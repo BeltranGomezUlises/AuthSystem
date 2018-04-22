@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,19 +21,37 @@ import com.auth.entities.commons.Profundidad;
 /**
  * modelo contenedor de la accion y la profundidad del permiso
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class ModelPermisoAsignado {
 
-    private String id;
+    private String permisoId;
     private Profundidad profundidad;
+    private Integer sucursalId;
+
+    public ModelPermisoAsignado() {
+    }
+
+    public ModelPermisoAsignado(String id, Profundidad profundidad, Integer sucursalId) {
+        this.permisoId = id;
+        this.profundidad = profundidad;
+        this.sucursalId = sucursalId;
+    }
+
+    public Integer getSucursalId() {
+        return sucursalId;
+    }
+
+    public void setSucursalId(Integer sucursalId) {
+        this.sucursalId = sucursalId;
+    }
 
     public String getId() {
-        return id;
+        return permisoId;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.permisoId = id;
     }
 
     public Profundidad getProfundidad() {

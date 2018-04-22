@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,10 @@ import java.util.List;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class ModelAltaUsuario {
-    
+
     private String nombre;
     private String correo;
     private String telefono;
@@ -72,5 +72,5 @@ public class ModelAltaUsuario {
     public void setPerfiles(List<Integer> perfiles) {
         this.perfiles = perfiles;
     }
-            
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +20,12 @@ import com.auth.daos.admin.DaoBitacoraContra;
 import com.auth.entities.admin.BitacoraContras;
 import com.auth.entities.admin.BitacoraContrasPK;
 import com.auth.managers.commons.ManagerSQL;
-import com.auth.managers.exceptions.TokenExpiradoException;
-import com.auth.managers.exceptions.TokenInvalidoException;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class ManagerBitacoraContra extends ManagerSQL<BitacoraContras, BitacoraContrasPK> {
-
-    public ManagerBitacoraContra(String token) throws TokenInvalidoException, TokenExpiradoException {
-        super(new DaoBitacoraContra(), token);
-    }
 
     public ManagerBitacoraContra() {
         super(new DaoBitacoraContra());

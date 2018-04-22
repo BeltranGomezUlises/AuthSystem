@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,11 @@ import com.auth.entities.commons.IEntity;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -33,7 +35,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author
  */
 @Entity
 @Table(name = "seccion")
@@ -41,6 +43,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Seccion.findAll", query = "SELECT s FROM Seccion s")
     , @NamedQuery(name = "Seccion.findById", query = "SELECT s FROM Seccion s WHERE s.id = :id")
     , @NamedQuery(name = "Seccion.findByNombre", query = "SELECT s FROM Seccion s WHERE s.nombre = :nombre")})
+@Cacheable(false)
 public class Seccion extends IEntity<String> implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -53,7 +56,7 @@ public class Seccion extends IEntity<String> implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seccion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seccion", fetch = FetchType.EAGER)
     private List<Modulo> moduloList;
 
     public Seccion() {
@@ -63,7 +66,6 @@ public class Seccion extends IEntity<String> implements Serializable {
         this.id = id;
     }
 
-    @Override
     public String getId() {
         return id;
     }
@@ -79,7 +81,7 @@ public class Seccion extends IEntity<String> implements Serializable {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-    
+
     public List<Modulo> getModuloList() {
         return moduloList;
     }
@@ -102,12 +104,20 @@ public class Seccion extends IEntity<String> implements Serializable {
             return false;
         }
         Seccion other = (Seccion) object;
-        return this.id.equals(other.id);
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.Seccion[ id=" + id + " ]";
+        return "com.auth.entities.admin.Seccion[ id=" + id + " ]";
     }
-    
+
+    @Override
+    public String obtenerIdentificador() {
+        return id;
+    }
+
 }

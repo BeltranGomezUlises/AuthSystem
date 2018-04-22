@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * clase padre de cualquier entidad de la configuracion general
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ *
+ * @author Alonso --- alonso@kriblet.com
  * @param <K> primary key type
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class IEntity<K> {
-     
-    public abstract K getId();
-                
+
+    public abstract K obtenerIdentificador();
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -29,12 +30,14 @@ import javax.persistence.Table;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author
  */
 @Entity
 @Table(name = "usuarios_perfil")
 @NamedQueries({
     @NamedQuery(name = "UsuariosPerfil.findAll", query = "SELECT u FROM UsuariosPerfil u")
+    , @NamedQuery(name = "UsuariosPerfil.findByUsuario", query = "SELECT u FROM UsuariosPerfil u WHERE u.usuariosPerfilPK.usuario = :usuario")
+    , @NamedQuery(name = "UsuariosPerfil.findByPerfil", query = "SELECT u FROM UsuariosPerfil u WHERE u.usuariosPerfilPK.perfil = :perfil")
     , @NamedQuery(name = "UsuariosPerfil.findByHereda", query = "SELECT u FROM UsuariosPerfil u WHERE u.hereda = :hereda")})
 public class UsuariosPerfil extends IEntity<UsuariosPerfilPK> implements Serializable {
 
@@ -44,10 +47,10 @@ public class UsuariosPerfil extends IEntity<UsuariosPerfilPK> implements Seriali
     @Column(name = "hereda")
     private Boolean hereda;
     @JoinColumn(name = "perfil", referencedColumnName = "id", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Perfil perfil1;
     @JoinColumn(name = "usuario", referencedColumnName = "id", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Usuario usuario1;
 
     public UsuariosPerfil() {
@@ -57,8 +60,13 @@ public class UsuariosPerfil extends IEntity<UsuariosPerfilPK> implements Seriali
         this.usuariosPerfilPK = usuariosPerfilPK;
     }
 
-    public UsuariosPerfil(Integer usuario, Integer perfil) {
+    public UsuariosPerfil(int usuario, int perfil) {
         this.usuariosPerfilPK = new UsuariosPerfilPK(usuario, perfil);
+    }
+
+    public UsuariosPerfil(int usuario, int perfil, boolean hereda) {
+        this.usuariosPerfilPK = new UsuariosPerfilPK(usuario, perfil);
+        this.setHereda(hereda);
     }
 
     public UsuariosPerfilPK getUsuariosPerfilPK() {
@@ -115,11 +123,11 @@ public class UsuariosPerfil extends IEntity<UsuariosPerfilPK> implements Seriali
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.UsuariosPerfil[ usuariosPerfilPK=" + usuariosPerfilPK + " ]";
+        return "com.auth.entities.admin.UsuariosPerfil[ usuariosPerfilPK=" + usuariosPerfilPK + " ]";
     }
 
     @Override
-    public UsuariosPerfilPK getId() {
+    public UsuariosPerfilPK obtenerIdentificador() {
         return usuariosPerfilPK;
     }
 

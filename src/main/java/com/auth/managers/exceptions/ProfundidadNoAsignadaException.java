@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@ package com.auth.managers.exceptions;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
-public class ProfundidadNoAsignadaException extends Exception{
+public class ProfundidadNoAsignadaException extends Exception {
 
     public ProfundidadNoAsignadaException() {
-        super("No asignó profundidad de acceso al manejador");        
+        super("No asignó profundidad de acceso al manejador");
     }
-       
+
 }

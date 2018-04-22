@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class ElementosSinAccesoException extends Exception {
 
@@ -28,7 +28,7 @@ public class ElementosSinAccesoException extends Exception {
 
     public ElementosSinAccesoException() {
     }
-    
+
     public ElementosSinAccesoException(List elementosSinAcceso, String mensaje) {
         super(mensaje);
         this.elementosSinAcceso = elementosSinAcceso;

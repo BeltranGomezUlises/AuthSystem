@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +16,19 @@
  */
 package com.auth.entities.admin;
 
+import com.auth.entities.commons.IEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -29,22 +36,16 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.auth.entities.commons.IEntity;
-import javax.persistence.Basic;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author
  */
 @Entity
 @Table(name = "usuario")
 @NamedQueries({
     @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u")
+    , @NamedQuery(name = "Usuario.findById", query = "SELECT u FROM Usuario u WHERE u.id = :id")
     , @NamedQuery(name = "Usuario.findByNombre", query = "SELECT u FROM Usuario u WHERE u.nombre = :nombre")
     , @NamedQuery(name = "Usuario.findByCorreo", query = "SELECT u FROM Usuario u WHERE u.correo = :correo")
     , @NamedQuery(name = "Usuario.findByTelefono", query = "SELECT u FROM Usuario u WHERE u.telefono = :telefono")
@@ -58,9 +59,8 @@ public class Usuario extends IEntity<Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
     @Size(max = 2147483647)
@@ -74,29 +74,31 @@ public class Usuario extends IEntity<Integer> implements Serializable {
     private String telefono;
     @Size(max = 2147483647)
     @Column(name = "contra")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String contra;
     @Column(name = "inhabilitado")
-    private boolean inhabilitado;
+    private Boolean inhabilitado;
     @Column(name = "fecha_ultimo_intento_login")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaUltimoIntentoLogin;
     @Column(name = "numero_intentos_login")
-    private int numeroIntentosLogin;
+    private Integer numeroIntentosLogin;
     @Column(name = "bloqueado")
-    private boolean bloqueado;
+    private Boolean bloqueado;
     @Column(name = "bloqueado_hasta_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date bloqueadoHastaFecha;
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
+    @JsonIgnore
     private List<BitacoraContras> bitacoraContrasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
+    @JsonIgnore
     private List<UsuariosPermisos> usuariosPermisosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
+    @JsonIgnore
     private List<UsuariosPerfil> usuariosPerfilList;
 
     public Usuario() {
-        id = 0;
     }
 
     public Usuario(Integer id) {
@@ -183,7 +185,6 @@ public class Usuario extends IEntity<Integer> implements Serializable {
         this.bloqueadoHastaFecha = bloqueadoHastaFecha;
     }
 
-    @JsonIgnore
     public List<BitacoraContras> getBitacoraContrasList() {
         return bitacoraContrasList;
     }
@@ -192,7 +193,6 @@ public class Usuario extends IEntity<Integer> implements Serializable {
         this.bitacoraContrasList = bitacoraContrasList;
     }
 
-    @JsonIgnore
     public List<UsuariosPermisos> getUsuariosPermisosList() {
         return usuariosPermisosList;
     }
@@ -201,7 +201,6 @@ public class Usuario extends IEntity<Integer> implements Serializable {
         this.usuariosPermisosList = usuariosPermisosList;
     }
 
-    @JsonIgnore
     public List<UsuariosPerfil> getUsuariosPerfilList() {
         return usuariosPerfilList;
     }
@@ -219,16 +218,22 @@ public class Usuario extends IEntity<Integer> implements Serializable {
 
     @Override
     public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Usuario)) {
             return false;
         }
         Usuario other = (Usuario) object;
-        return this.id.equals(other.id);
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.Usuario[ id=" + id + " ]";
+        return "com.auth.entities.admin.Usuario[ id=" + id + " ]";
+    }
+
+    @Override
+    public Integer obtenerIdentificador() {
+        return id;
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  */
 package com.auth.entities.admin;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.auth.entities.commons.IEntity;
 import java.io.Serializable;
 import java.util.List;
@@ -32,26 +31,25 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author
  */
 @Entity
 @Table(name = "grupo_perfiles")
 @NamedQueries({
     @NamedQuery(name = "GrupoPerfiles.findAll", query = "SELECT g FROM GrupoPerfiles g")
+    , @NamedQuery(name = "GrupoPerfiles.findById", query = "SELECT g FROM GrupoPerfiles g WHERE g.id = :id")
     , @NamedQuery(name = "GrupoPerfiles.findByNombre", query = "SELECT g FROM GrupoPerfiles g WHERE g.nombre = :nombre")
     , @NamedQuery(name = "GrupoPerfiles.findByDescripcion", query = "SELECT g FROM GrupoPerfiles g WHERE g.descripcion = :descripcion")})
 public class GrupoPerfiles extends IEntity<Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
     @Size(max = 2147483647)
@@ -59,20 +57,27 @@ public class GrupoPerfiles extends IEntity<Integer> implements Serializable {
     private String nombre;
     @Size(max = 2147483647)
     @Column(name = "descripcion")
-    private String descripcion;       
-
+    private String descripcion;
     @JoinTable(name = "perfil_grupo_perfiles", joinColumns = {
         @JoinColumn(name = "grupo_perfiles", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "perfil", referencedColumnName = "id")})
     @ManyToMany
     private List<Perfil> perfilList;
 
-    public GrupoPerfiles() {        
+    public GrupoPerfiles() {
     }
 
     public GrupoPerfiles(Integer id) {
         this.id = id;
-    }   
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getNombre() {
         return nombre;
@@ -88,9 +93,8 @@ public class GrupoPerfiles extends IEntity<Integer> implements Serializable {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }  
-    
-    @JsonIgnore
+    }
+
     public List<Perfil> getPerfilList() {
         return perfilList;
     }
@@ -113,16 +117,19 @@ public class GrupoPerfiles extends IEntity<Integer> implements Serializable {
             return false;
         }
         GrupoPerfiles other = (GrupoPerfiles) object;
-        return this.id.equals(other.id);
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.GrupoPerfiles[ id=" + id + " ]";
+        return "com.auth.entities.admin.GrupoPerfiles[ id=" + id + " ]";
     }
 
     @Override
-    public Integer getId() {
+    public Integer obtenerIdentificador() {
         return id;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2018 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +16,16 @@
  */
 package com.auth.entities.admin;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.auth.entities.commons.IEntity;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -36,7 +38,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author
  */
 @Entity
 @Table(name = "modulo")
@@ -44,6 +46,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Modulo.findAll", query = "SELECT m FROM Modulo m")
     , @NamedQuery(name = "Modulo.findById", query = "SELECT m FROM Modulo m WHERE m.id = :id")
     , @NamedQuery(name = "Modulo.findByNombre", query = "SELECT m FROM Modulo m WHERE m.nombre = :nombre")})
+@Cacheable(false)
 public class Modulo extends IEntity<String> implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -56,10 +59,11 @@ public class Modulo extends IEntity<String> implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modulo")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modulo", fetch = FetchType.EAGER)
     private List<Menu> menuList;
     @JoinColumn(name = "seccion", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Seccion seccion;
 
     public Modulo() {
@@ -69,7 +73,6 @@ public class Modulo extends IEntity<String> implements Serializable {
         this.id = id;
     }
 
-    @Override
     public String getId() {
         return id;
     }
@@ -94,7 +97,6 @@ public class Modulo extends IEntity<String> implements Serializable {
         this.menuList = menuList;
     }
 
-    @JsonIgnore
     public Seccion getSeccion() {
         return seccion;
     }
@@ -117,12 +119,20 @@ public class Modulo extends IEntity<String> implements Serializable {
             return false;
         }
         Modulo other = (Modulo) object;
-        return this.id.equals(other.id);
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.Modulo[ id=" + id + " ]";
+        return "com.auth.entities.admin.Modulo[ id=" + id + " ]";
+    }
+
+    @Override
+    public String obtenerIdentificador() {
+        return id;
     }
 
 }

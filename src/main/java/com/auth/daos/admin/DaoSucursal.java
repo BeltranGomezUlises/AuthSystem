@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2018 Alonso - Alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.auth.managers.exceptions;
+package com.auth.daos.admin;
+
+import com.auth.daos.commons.DaoSQLFacade;
+import com.auth.entities.admin.Sucursal;
 
 /**
+ * Entidad de sucursales
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso - Alonso@kriblet.com
  */
-public class ContraseñaIncorrectaException extends Exception{
+public class DaoSucursal extends DaoSQLFacade<Sucursal, Integer> {
 
-    public ContraseñaIncorrectaException(String message) {
-        super(message);
+    public DaoSucursal() {
+        super(Sucursal.class, Integer.class);
     }
-        
+
 }

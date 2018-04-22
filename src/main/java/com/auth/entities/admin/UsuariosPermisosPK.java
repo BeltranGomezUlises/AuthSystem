@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2018 Alonso - Alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso - Alonso@kriblet.com
  */
 @Embeddable
 public class UsuariosPermisosPK implements Serializable {
@@ -33,26 +33,31 @@ public class UsuariosPermisosPK implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "usuario")
-    private Integer usuario;
+    private int usuario;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
     @Column(name = "permiso")
     private String permiso;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "sucursal")
+    private int sucursal;
 
     public UsuariosPermisosPK() {
     }
 
-    public UsuariosPermisosPK(Integer usuario, String permiso) {
+    public UsuariosPermisosPK(int usuario, String permiso, int sucursal) {
         this.usuario = usuario;
         this.permiso = permiso;
+        this.sucursal = sucursal;
     }
 
-    public Integer getUsuario() {
+    public int getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(Integer usuario) {
+    public void setUsuario(int usuario) {
         this.usuario = usuario;
     }
 
@@ -64,11 +69,20 @@ public class UsuariosPermisosPK implements Serializable {
         this.permiso = permiso;
     }
 
+    public int getSucursal() {
+        return sucursal;
+    }
+
+    public void setSucursal(int sucursal) {
+        this.sucursal = sucursal;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (usuario != null ? usuario.hashCode() : 0);
+        hash += (int) usuario;
         hash += (permiso != null ? permiso.hashCode() : 0);
+        hash += (int) sucursal;
         return hash;
     }
 
@@ -79,12 +93,18 @@ public class UsuariosPermisosPK implements Serializable {
             return false;
         }
         UsuariosPermisosPK other = (UsuariosPermisosPK) object;
-        return this.usuario.equals(other.usuario) && this.permiso.equals(other.permiso);
+        if (this.usuario != other.usuario) {
+            return false;
+        }
+        if (!this.permiso.equals(other.permiso)) {
+            return false;
+        }
+        return this.sucursal == other.sucursal;
     }
 
     @Override
     public String toString() {
-        return "com.machineAdmin.entities.cg.admin.postgres.UsuariosPermisosPK[ usuario=" + usuario + ", permiso=" + permiso + " ]";
+        return "com.auth.entities.admin.UsuariosPermisosPK[ usuario=" + usuario + ", permiso=" + permiso + ", sucursal=" + sucursal + " ]";
     }
-    
+
 }

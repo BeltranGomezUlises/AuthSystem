@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * Copyright (C) 2017 Alonso --- alonso@kriblet.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  *
- * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
+ * @author Alonso --- alonso@kriblet.com
  */
 public class ModelPermisosAsignados {
 
@@ -91,8 +91,7 @@ public class ModelPermisosAsignados {
         }
 
         /**
-         * modelo de modulo representativo a un modulo de una seccion del
-         * sistema
+         * modelo de modulo representativo a un modulo de una seccion del sistema
          */
         public static class ModelModulo {
 
@@ -195,22 +194,31 @@ public class ModelPermisosAsignados {
                 }
 
                 /**
-                 * modelo de accion representativa a un accion de un modulo del
-                 * sistema
+                 * modelo de accion representativa a un accion de un modulo del sistema
                  */
                 public static class ModelPermiso {
 
                     private String nombre;
                     private String id;
                     private Profundidad profundidad;
+                    private Integer sucursalId;
 
                     public ModelPermiso() {
                     }
 
-                    public ModelPermiso(String nombre, String id, Profundidad profundidad) {
+                    public ModelPermiso(String nombre, String id, Profundidad profundidad, int sucursalId) {
                         this.nombre = nombre;
                         this.id = id;
                         this.profundidad = profundidad;
+                        this.sucursalId = sucursalId;
+                    }
+
+                    public Integer getSucursalId() {
+                        return sucursalId;
+                    }
+
+                    public void setSucursalId(Integer sucursalId) {
+                        this.sucursalId = sucursalId;
                     }
 
                     public ModelPermiso(String id) {
