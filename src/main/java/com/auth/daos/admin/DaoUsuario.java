@@ -18,6 +18,10 @@ package com.auth.daos.admin;
 
 import com.auth.daos.commons.DaoSQLFacade;
 import com.auth.entities.admin.Usuario;
+import com.auth.entities.admin.UsuariosPerfil;
+import com.auth.entities.admin.UsuariosPerfilPK;
+import java.util.List;
+import javax.persistence.EntityManager;
 
 /**
  *
@@ -27,6 +31,22 @@ public class DaoUsuario extends DaoSQLFacade<Usuario, Integer> {
 
     public DaoUsuario() {
         super(Usuario.class, Integer.class);
+    }
+
+    public void registrarUsuario(Usuario nuevoUsuario, List<Integer> perfilesAsignar) {
+        EntityManager em = this.getEM();
+        em.getTransaction().begin();
+        em.persist(nuevoUsuario);
+        em.flush();        
+        //generar relacion con los ids de los perfiles del usuario
+        UsuariosPerfil up;
+        for (Integer perfilId : perfilesAsignar) {
+            up = new UsuariosPerfil();
+            up.setHereda(Boolean.TRUE);
+            up.setUsuariosPerfilPK(new UsuariosPerfilPK(nuevoUsuario.getId(), perfilId));
+            em.persist(up);
+        }
+        em.getTransaction().commit();
     }
 
 }

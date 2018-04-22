@@ -17,14 +17,11 @@
 package com.auth.managers.admin;
 
 import com.auth.daos.admin.DaoBitacoraContra;
-import com.auth.daos.admin.DaoPerfil;
 import com.auth.daos.admin.DaoSucursal;
 import com.auth.daos.admin.DaoUsuario;
 import com.auth.daos.admin.DaoUsuariosPermisos;
 import com.auth.entities.admin.BitacoraContras;
 import com.auth.entities.admin.Usuario;
-import com.auth.entities.admin.UsuariosPerfil;
-import com.auth.entities.admin.UsuariosPerfilPK;
 import com.auth.entities.admin.UsuariosPermisos;
 import com.auth.managers.commons.ManagerSQL;
 import com.auth.managers.exceptions.ParametroInvalidoException;
@@ -40,7 +37,7 @@ import com.auth.utils.UtilsDate;
 import com.auth.utils.UtilsMail;
 import com.auth.utils.UtilsSecurity;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
+import java.security.InvalidParameterException;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -81,15 +78,31 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
     }
 
     @Override
-    public void update(Usuario entity) throws Exception {
-        super.update(entity);
+    public void update(Usuario e) throws Exception {
+        Usuario usuario = this.findOne(e.getId());
+        if (e.getNombre() != null) {
+            if (!e.getNombre().isEmpty()) {
+                usuario.setNombre(e.getNombre());
+            }
+        }
+        if (e.getTelefono() != null) {
+            if (!e.getTelefono().isEmpty()) {
+                usuario.setTelefono(e.getTelefono());
+            }
+        }
+        if (e.getCorreo() != null) {
+            if (!e.getCorreo().isEmpty()) {
+                usuario.setCorreo(e.getCorreo());
+            }
+        }
+        super.update(usuario);
     }
 
     @Override
     public void delete(Integer id) throws Exception {
         Usuario u = this.findOne(id);
         u.setInhabilitado(Boolean.TRUE);
-        this.update(u);
+        this.dao.update(u);
     }
 
     public Usuario altaUsuario(ModelAltaUsuario model) throws UserException.UsuarioYaExistente, ParametroInvalidoException, Exception {
@@ -102,33 +115,28 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
             }
         }
 
+        //validar contraseña no nula
+        if (model.getContra() == null) {
+            throw new InvalidParameterException("Debe de asignar una constreña al usuario");
+        } else {
+            if (model.getContra().isEmpty()) {
+                throw new InvalidParameterException("Debe de asignar una constreña al usuario");
+            }
+        }
+        /*Inicializar el nuevo usuario*/
         Usuario nuevoUsuario = new Usuario();
-        nuevoUsuario.setContra(model.getContra());
+        nuevoUsuario.setContra(UtilsSecurity.cifrarMD5(model.getContra()));
         nuevoUsuario.setCorreo(model.getCorreo());
         nuevoUsuario.setNombre(model.getNombre());
         nuevoUsuario.setTelefono(model.getTelefono());
+        nuevoUsuario.setBloqueado(false);
+        nuevoUsuario.setBloqueadoHastaFecha(new Date());
+        nuevoUsuario.setInhabilitado(false);
+        nuevoUsuario.setNumeroIntentosLogin(0);
 
-        //validar lista de perfiles
-        List<Integer> perfilesIds = model.getPerfiles();
-        DaoPerfil daoPerfil = new DaoPerfil();
-        long inexistentes = daoPerfil.stream().where(p -> !perfilesIds.contains(p.getId())).count();
+        DaoUsuario daoUsuario = new DaoUsuario();
+        daoUsuario.registrarUsuario(nuevoUsuario, model.getPerfiles());
 
-        if (inexistentes != 0) { //mandaron un perfil que no existe en base de datos, por lo que no se puede persistir esta peticion
-            throw new ParametroInvalidoException("No existe algún perfil de los indicados para asignar al usuario");
-        } else {
-            this.persist(nuevoUsuario);
-            //generar relacion con los ids de los perfiles del usuario
-            ManagerUsuariosPerfil managerUsuariosPerfil = new ManagerUsuariosPerfil();
-            UsuariosPerfil up;
-            List<UsuariosPerfil> usuariosPerfilesRelacion = new ArrayList<>();
-            for (Integer perfilId : model.getPerfiles()) {
-                up = new UsuariosPerfil();
-                up.setHereda(Boolean.TRUE);
-                up.setUsuariosPerfilPK(new UsuariosPerfilPK(nuevoUsuario.getId(), perfilId));
-                usuariosPerfilesRelacion.add(up);
-            }
-            managerUsuariosPerfil.persistAll(usuariosPerfilesRelacion);
-        }
         return nuevoUsuario;
     }
 
@@ -179,9 +187,6 @@ public class ManagerUsuario extends ManagerSQL<Usuario, Integer> {
             throw new UsuarioInexistenteException("No se encontro un usuario con esa contraseña");
         }
         return loged;
-    }
-
-    public void logout(String tokenSession) {
     }
 
     private void numberAttemptVerification(String identi) throws UsuarioInexistenteException, UsuarioBlockeadoException, Exception {

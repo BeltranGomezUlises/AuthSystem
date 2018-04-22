@@ -21,6 +21,7 @@ import com.auth.entities.admin.Sucursal;
 import com.auth.managers.exceptions.TokenExpiradoException;
 import com.auth.managers.exceptions.TokenInvalidoException;
 import com.auth.utils.UtilsJWT;
+import java.security.InvalidParameterException;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -84,8 +85,13 @@ public class Sucursales {
     @POST
     public Sucursal alta(@HeaderParam("Authorization") String token, Sucursal t) throws TokenInvalidoException, TokenExpiradoException, Exception {
         UtilsJWT.validateSessionToken(token);
-        new DaoSucursal().persist(t);
-        return t;
+        if (t.getId() != null) {
+            if (t.getId() > 0) {
+                new DaoSucursal().persist(t);
+                return t;
+            }
+        }
+        throw new InvalidParameterException("Identificador de la sucursal inválido");
     }
 
     /**
@@ -100,8 +106,14 @@ public class Sucursales {
     @PUT
     public Sucursal modificar(@HeaderParam("Authorization") String token, Sucursal t) throws TokenInvalidoException, TokenExpiradoException, Exception {
         UtilsJWT.validateSessionToken(token);
-        new DaoSucursal().update(t);
-        return t;
+        if (t.getId() != null) {
+            if (t.getId() > 0) {
+                new DaoSucursal().update(t);
+                return t;
+            }
+        }
+        throw new InvalidParameterException("Identificador de la sucursal inválido");
+
     }
 
     /**

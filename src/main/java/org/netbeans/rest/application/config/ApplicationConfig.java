@@ -33,8 +33,10 @@ public class ApplicationConfig extends Application {
         resources.add(com.auth.services.Tokens.class);
         resources.add(com.auth.services.Usuarios.class);
         resources.add(com.auth.services.commons.ServiceFacade.class);
+        resources.add(com.auth.services.commons.ServiceFacadeCRUD.class);
         resources.add(com.auth.services.commons.ServiceFacadeLCRD.class);
         resources.add(com.auth.services.commons.ServiceFacadeLRUD.class);
+        resources.add(com.auth.services.commons.ServiceFaceLCRU.class);
     }
 
 }

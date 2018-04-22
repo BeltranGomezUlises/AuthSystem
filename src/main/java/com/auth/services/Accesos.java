@@ -97,7 +97,7 @@ public class Accesos {
         Respuesta r;
         ManagerUsuario managerUsuario = new ManagerUsuario();
         try {
-            managerUsuario.logout(token);
+            //managerUsuario.logout(token);
             r = new Respuesta(Status.OK, "Logout exitosó");
         } catch (Exception e) {
             r = new Respuesta(Status.ERROR, "Error de programación: " + e.getMessage());
