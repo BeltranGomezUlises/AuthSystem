@@ -341,10 +341,10 @@ public class UtilsPermissions {
                     List<ModelPermiso> permisos = new ArrayList<>();
                     menu.getPermisoList().forEach((permiso) -> {
                         //añadir la profundidad por usuario
-                        Map<Integer, List<Profundidad>> profundidadesPorSucursal = new HashMap<>(); //key sucursal id, value lista de profundidades
+                        Map<Integer, ArrayList<Profundidad>> profundidadesPorSucursal = new HashMap<>(); //key sucursal id, value lista de profundidades
                         for (Tuple3<String, Profundidad, Integer> t : permisosPorUsuario) {
                             if (t.getOne().equals(permiso.getId())) {
-                                List<Profundidad> profs = new ArrayList<>();
+                                ArrayList<Profundidad> profs = new ArrayList<>();
                                 profs.add(t.getTwo());
                                 profundidadesPorSucursal.put(t.getThree(), profs);
                             }
@@ -352,16 +352,16 @@ public class UtilsPermissions {
                         //añadir las profundidades por perfil
                         for (Tuple3<String, Profundidad, Integer> t : permisosDeLosPerfiles) {
                             if (t.getOne().equals(permiso.getId())) {
-                                List<Profundidad> profundidades = profundidadesPorSucursal.get(t.getThree());
+                                ArrayList<Profundidad> profundidades = profundidadesPorSucursal.get(t.getThree());
                                 if (profundidades == null) {
-                                    profundidadesPorSucursal.put(t.getThree(), Arrays.asList(t.getTwo()));
+                                    profundidadesPorSucursal.put(t.getThree(), new ArrayList(Arrays.asList(t.getTwo())));
                                 } else {
                                     profundidades.add(t.getTwo());
                                     profundidadesPorSucursal.put(t.getThree(), profundidades);
                                 }
                             }
                         }
-                        for (Map.Entry<Integer, List<Profundidad>> entry : profundidadesPorSucursal.entrySet()) {
+                        for (Map.Entry<Integer, ArrayList<Profundidad>> entry : profundidadesPorSucursal.entrySet()) {
                             try {
                                 permisos.add(new ModelPermiso(permiso.getNombre(), permiso.getId(), profundidadMayor(entry.getValue()), entry.getKey()));
                             } catch (ParametroInvalidoException ex) {
